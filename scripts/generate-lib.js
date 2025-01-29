@@ -12,7 +12,7 @@ if (!libName) {
 const command = `ng generate library ${libName} --prefix=mp`;
 execSync(command, { stdio: 'inherit' });
 
-const tsconfigPath = path.join(__dirname, 'tsconfig.json');
+const tsconfigPath = path.join(__dirname, '../tsconfig.json');
 const tsconfig = JSON.parse(fs.readFileSync(tsconfigPath, 'utf8'));
 
 if (tsconfig.compilerOptions.paths && tsconfig.compilerOptions.paths[libName]) {

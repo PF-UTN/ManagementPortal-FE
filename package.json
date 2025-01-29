@@ -8,7 +8,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "generate-lib": "node generate-lib.js"
+    "generate-lib": "node scripts/generate-lib.js"
   },
   "private": true,
   "dependencies": {
