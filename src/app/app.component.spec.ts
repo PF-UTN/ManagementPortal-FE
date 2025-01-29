@@ -1,12 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
+import { CommonComponent } from '@Common';
 
 describe('AppComponent', () => {
   let fixture: ComponentFixture<AppComponent>;
   
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AppComponent],
+      imports: [AppComponent, CommonComponent],
     }).compileComponents();
     fixture = TestBed.createComponent(AppComponent);
   });
