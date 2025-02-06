@@ -1,4 +1,4 @@
-name: Deploy Angular to Vercel
+name: Deploy Angular to Vercel - Development
 
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
