@@ -34,3 +34,15 @@ jobs:
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}  # Optional: Add if you have a specific project ID
           working-directory: ./dist
           prod: true 
+          vercel-args: "--yes"
+
+      - name: Add message with deployment link to release
+        run: |
+          PREVIEW_URL="https://${{ steps.vercel_deploy.outputs.preview_url }}"
+          curl -X POST \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"body": "The production version is now deployed at [${PREVIEW_URL}](${PREVIEW_URL})"}' \
+            "https://api.github.com/repos/${{ github.repository }}/releases/${{ github.event.release.id }}/comments"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
