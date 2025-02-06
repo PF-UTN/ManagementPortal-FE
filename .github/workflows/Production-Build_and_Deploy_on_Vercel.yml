@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      
+
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
@@ -25,17 +25,30 @@ jobs:
 
       - name: Build Project Artifacts
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-
+      
       - name: Deploy Project Artifacts to Vercel
+        id: vercel_deploy
         run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
-        
+
       - name: Add message with deployment link to release
         run: |
+          # Get the deployment URL dynamically from the deployment response (output of vercel_deploy step)
           PREVIEW_URL="https://${{ steps.vercel_deploy.outputs.preview_url }}"
+          
+          # Get release information using the tag name
+          TAG_NAME="${{ github.ref }}"  # The ref will be 'refs/tags/v1.0.0'
+          TAG_NAME="${TAG_NAME/refs\/tags\//}"  # Extract only the tag name, e.g., 'v1.0.0'
+
+          # Get release ID by tag name
+          RELEASE_ID=$(curl -s \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/${{ github.repository }}/releases/tags/${TAG_NAME}" | jq -r .id)
+          
+          # Post a comment to the release page
           curl -X POST \
             -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             -H "Content-Type: application/json" \
             -d '{"body": "The production version is now deployed at [${PREVIEW_URL}](${PREVIEW_URL})"}' \
-            "https://api.github.com/repos/${{ github.repository }}/releases/${{ github.event.release.id }}/comments"
+            "https://api.github.com/repos/${{ github.repository }}/issues/${RELEASE_ID}/comments"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
