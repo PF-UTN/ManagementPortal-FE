@@ -30,25 +30,29 @@ jobs:
         id: vercel_deploy
         run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
 
-      - name: Add message with deployment link to release
-        run: |
-          # Get the deployment URL dynamically from the deployment response (output of vercel_deploy step)
-          PREVIEW_URL="https://${{ steps.vercel_deploy.outputs.preview_url }}"
-          
-          # Get release information using the tag name
-          TAG_NAME="${{ github.ref }}"  # The ref will be 'refs/tags/v1.0.0'
-          TAG_NAME="${TAG_NAME/refs\/tags\//}"  # Extract only the tag name, e.g., 'v1.0.0'
 
-          # Get release ID by tag name
-          RELEASE_ID=$(curl -s \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            "https://api.github.com/repos/${{ github.repository }}/releases/tags/${TAG_NAME}" | jq -r .id)
-          
-          # Post a comment to the release page
-          curl -X POST \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d '{"body": "The production version is now deployed at [${PREVIEW_URL}](${PREVIEW_URL})"}' \
-            "https://api.github.com/repos/${{ github.repository }}/issues/${RELEASE_ID}/comments"
+      - name: Get the latest release information
+        id: get_release
+        run: |
+          VERSION=$(git describe --tags --abbrev=0)
+          RELEASE_ID=$(curl -s -H "Authorization: token $GITHUB_TOKEN" \
+          "https://api.github.com/repos/${{ github.repository }}/releases/tags/$VERSION" | jq -r '.id')
+          echo "RELEASE_ID=$RELEASE_ID" >> $GITHUB_ENV
+
+      - name: Update release with new message
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Set the new release message
+          PREVIEW_URL="https://${{ steps.vercel_deploy.outputs.preview_url }}"
+          VERSION=$(git describe --tags --abbrev=0)
+          MESSAGE="The production version is now deployed at [${PREVIEW_URL}](${PREVIEW_URL})"
+
+          # Update the release message
+          curl -X PATCH -H "Authorization: token $GITHUB_TOKEN" \
+          -d @- https://api.github.com/repos/${{ github.repository }}/releases/$RELEASE_ID \
+          <<EOF
+          {
+            "body": "$MESSAGE"
+          }
+          EOF
