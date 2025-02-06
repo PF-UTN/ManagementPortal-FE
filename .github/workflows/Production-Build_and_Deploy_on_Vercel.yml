@@ -1,5 +1,9 @@
 name: Deploy Angular to Vercel
 
+env:
+  VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+  VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+
 on:
   push:
     tags:
@@ -11,31 +15,20 @@ jobs:
     environment: Production
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v2
+      
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "18"
-          cache: "npm"
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Build Project Artifacts
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
 
-      - name: Build Angular app
-        run: npm run build -- --configuration=production
-
-      - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v25 
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}    # Optional: Add if you have a specific org ID
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}  # Optional: Add if you have a specific project ID
-          working-directory: ./dist
-          prod: true 
-          vercel-args: "--yes"
-
+      - name: Deploy Project Artifacts to Vercel
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        
       - name: Add message with deployment link to release
         run: |
           PREVIEW_URL="https://${{ steps.vercel_deploy.outputs.preview_url }}"
