@@ -6,7 +6,7 @@ import { Component } from '@angular/core';
   imports: [],
   template: `
     <p>
-      common works! On Production
+      common works!
     </p>
   `,
   styles: ``
