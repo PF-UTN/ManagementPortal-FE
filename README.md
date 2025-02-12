@@ -30,3 +30,7 @@ Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To u
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+## Quality Gate
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=PF-UTN_ManagementPortal-FE&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=PF-UTN_ManagementPortal-FE)
