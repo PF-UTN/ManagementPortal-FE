@@ -26,9 +26,7 @@ jobs:
       - name: Build for Development
         run: npm run build:dev
 
-      - name: Alias Development to dev.management-portal-fe..vercel.app
-        run: vercel alias set "$url" dev-management-portal-fe.vercel.app --token ${{ secrets.VERCEL_TOKEN }}   
-      
       - name: Deploy Project Artifacts to Vercel
-        id: vercel_deploy
-        run: vercel deploy --token=${{ secrets.VERCEL_TOKEN }}
+        run: |
+          url="$(vercel deploy --token=${{ secrets.VERCEL_TOKEN }})"
+          vercel alias --token=${{ secrets.VERCEL_TOKEN }} set "$url" dev-management-portal-fe.vercel.app
