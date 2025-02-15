@@ -26,9 +26,24 @@ jobs:
       - name: Build for Development
         run: npm run build:dev
 
-      - name: Alias Development to dev.management-portal-fe..vercel.app
-        run: vercel alias set management-portal-fe.vercel.app dev-management-portal-fe.vercel.app --token ${{ secrets.VERCEL_TOKEN }}   
-      
       - name: Deploy Project Artifacts to Vercel
         id: vercel_deploy
         run: vercel deploy --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy Project Artifacts to Vercel Preview
+        id: vercel_deploy
+        run: |
+          echo "Deploying to Vercel preview..."
+          # Deploy without the --prebuilt flag so that Vercel uses your build output
+          DEPLOYMENT_JSON=$(vercel deploy --token=${{ secrets.VERCEL_TOKEN }} --confirm --json)
+          echo "$DEPLOYMENT_JSON"
+          # Extract the deployment URL from the JSON output
+          DEPLOY_URL=$(echo "$DEPLOYMENT_JSON" | jq -r '.url')
+          echo "Deployment URL: $DEPLOY_URL"
+          # Set the deployment URL as an output variable for later steps
+          echo "deploy_url=$DEPLOY_URL" >> $GITHUB_OUTPUT
+
+      - name: Set Alias for Preview Deployment
+        run: |
+          echo "Setting alias for deployment..."
+          vercel alias set ${{ steps.vercel_deploy.outputs.deploy_url }} dev-management-portal-fe.vercel.app --token=${{ secrets.VERCEL_TOKEN }}
