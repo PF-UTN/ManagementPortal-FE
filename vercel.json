@@ -1,12 +1,6 @@
 {
-    "builds": [
-      {
-        "src": "angular.json",
-        "use": "@vercel/static-build",
-        "config": {
-          "buildCommand": "if [ \"$VERCEL_ENV\" = \"production\" ]; then ng build; else ng build:dev; fi"
-        }
-      }
-    ]
-  }
+    "scripts": {
+      "build": "sh vercel-build.sh"
+    }
+}
   
