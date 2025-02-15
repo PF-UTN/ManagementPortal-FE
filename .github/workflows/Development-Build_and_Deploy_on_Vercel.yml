@@ -30,4 +30,4 @@ jobs:
         run: vercel alias set management-portal-fe.vercel.app dev-management-portal-fe.vercel.app --token ${{ secrets.VERCEL_TOKEN }}   
       
       - name: Deploy to Vercel (Preview)
-        run: vercel --token=${{ secrets.VERCEL_TOKEN }} --org-id=${{ secrets.VERCEL_ORG_ID }} --project-id=${{ secrets.VERCEL_PROJECT_ID }} --yes --env=preview
+        run: vercel --token=${{ secrets.VERCEL_TOKEN }} --yes --env=preview
