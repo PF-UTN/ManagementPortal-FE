@@ -28,5 +28,5 @@ jobs:
 
       - name: Deploy Project Artifacts to Vercel
         run: |
-          url="$(vercel deploy --token=${{ secrets.VERCEL_TOKEN }} --confirm --json dist/management-portal-fe | jq -r '.url')"
+          url="$(vercel deploy ./dist/management-portal-fe --token=${{ secrets.VERCEL_TOKEN }})"
           vercel alias --token=${{ secrets.VERCEL_TOKEN }} set "$url" dev-management-portal-fe.vercel.app
