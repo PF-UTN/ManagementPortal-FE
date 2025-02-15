@@ -26,7 +26,12 @@ jobs:
       - name: Build for Development
         run: npm run build:dev
 
+      - name: Move Build Output to Vercel Output Directory
+        run: |
+          mkdir -p .vercel/output
+          cp -r dist/management-portal-fe/* .vercel/output/
+
       - name: Deploy Project Artifacts to Vercel
         run: |
-          url="$(vercel deploy dist/management-portal-fe --token=${{ secrets.VERCEL_TOKEN }})"
+          url="$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})"
           vercel alias --token=${{ secrets.VERCEL_TOKEN }} set "$url" dev-management-portal-fe.vercel.app
