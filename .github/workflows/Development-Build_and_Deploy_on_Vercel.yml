@@ -26,10 +26,6 @@ jobs:
       - name: Build for Development
         run: npm run build:dev
 
-      - name: Deploy Project Artifacts to Vercel
-        id: vercel_deploy
-        run: vercel deploy --token=${{ secrets.VERCEL_TOKEN }}
-
       - name: Deploy Project Artifacts to Vercel Preview
         id: vercel_deploy
         run: |
