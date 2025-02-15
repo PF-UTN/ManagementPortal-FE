@@ -20,6 +20,9 @@ jobs:
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
+      - name: Alias Development to dev.management-portal-fe..vercel.app
+        run: vercel alias set management-portal-fe.vercel.app dev.management-portal-fe.vercel.app --token ${{ secrets.VERCEL_TOKEN }}   
+
       - name: Pull Vercel Environment Information
         run: vercel pull --yes --environment=development --token=${{ secrets.VERCEL_TOKEN }}
 
