@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'mp-Common',
@@ -6,11 +7,11 @@ import { Component } from '@angular/core';
   imports: [],
   template: `
     <p>
-      common works!
+      common works! {{ isProduction? 'Production': 'Development' }}
     </p>
   `,
   styles: ``
 })
 export class CommonComponent {
-
+  isProduction = environment.production;
 }
