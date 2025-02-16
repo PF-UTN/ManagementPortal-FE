@@ -19,19 +19,10 @@ jobs:
 
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
-        
-      - name: Install Dependencies
-        run: npm install
 
-      - name: Build for Development
-        run: npm run build:dev
-
-      - name: Move Build Output to Vercel Output Directory
-        run: |
-          mkdir -p .vercel/output
-          cp -r dist/management-portal-fe/* .vercel/output/
-
+      - name: Build for Production
+        run: npm run build
+      
       - name: Deploy Project Artifacts to Vercel
-        run: |
-          url="$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})"
-          vercel alias --token=${{ secrets.VERCEL_TOKEN }} set "$url" dev-management-portal-fe.vercel.app
+        id: vercel_deploy
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
