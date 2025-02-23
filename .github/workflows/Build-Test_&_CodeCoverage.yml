@@ -33,6 +33,7 @@ jobs:
       
       - name: Run Eslint
         run: npm run eslint:ci
+        continue-on-error: true
       
       - name: Annotate Code Linting Results
         uses: ataylorme/eslint-annotate-action@v3
