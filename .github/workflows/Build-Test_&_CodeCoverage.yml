@@ -8,6 +8,8 @@ jobs:
     name: Build And Test
     runs-on: ubuntu-latest
     permissions:
+      contents: read
+      packages: read
       pull-requests: read
       checks: write
     steps:
