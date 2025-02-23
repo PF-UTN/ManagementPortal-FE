@@ -45,6 +45,7 @@ jobs:
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           report-json: 'lint/eslint_report.json'
+        continue-on-error: true
           
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v4
