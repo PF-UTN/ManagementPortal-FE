@@ -17,4 +17,6 @@ export default {
   moduleFileExtensions: ['ts', 'html', 'js', 'json'],
   testPathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/node_modules/'],
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths || {}, { prefix: '<rootDir>/' }),
+  coverageDirectory: 'coverage',
+  coverageReporters: ['lcov', 'text-summary'],
 };
