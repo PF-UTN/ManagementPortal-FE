@@ -27,7 +27,7 @@ jobs:
         run: npm run build
 
       - name: Run Unit Tests with Jest
-        run: npm run test --ci --coverage
+        run: npm run test --ci --collectCoverage
       
       - name: Print Coverage Report Directory
         run: ls -R coverage
