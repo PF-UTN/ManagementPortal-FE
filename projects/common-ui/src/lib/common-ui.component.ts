@@ -4,13 +4,7 @@ import { Component } from '@angular/core';
   selector: 'mp-common-ui',
   standalone: true,
   imports: [],
-  template: `
-    <p>
-      common-ui works!
-    </p>
-  `,
-  styles: ``
+  template: ` <p>common-ui works!</p> `,
+  styles: ``,
 })
-export class CommonUiComponent {
-
-}
+export class CommonUiComponent {}

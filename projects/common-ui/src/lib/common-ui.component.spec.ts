@@ -8,9 +8,8 @@ describe('CommonUiComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CommonUiComponent]
-    })
-    .compileComponents();
+      imports: [CommonUiComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(CommonUiComponent);
     component = fixture.componentInstance;
