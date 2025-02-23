@@ -5,7 +5,7 @@ on:
 
 jobs:
   build-and-test:
-    name: Build Angular App
+    name: Build And Test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -27,7 +27,45 @@ jobs:
         run: npm run build
 
       - name: Run Unit Tests with Jest
-        run: npm run test --ci --collectCoverage
-      
-      - name: Print Coverage Report Directory
-        run: ls -R coverage
+        run: npm run test:ci
+
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: coverage
+
+  upload-to-sonarcloud:
+    name: Upload Coverage to SonarCloud
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Download Coverage Report
+        uses: actions/download-artifact@v3
+        with:
+          name: coverage-report
+          path: coverage
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+
+      - name: Upload Coverage to SonarCloud
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          npm install -g sonar-scanner
+          sonar-scanner \
+            -Dsonar.projectKey=PF-UTN_ManagementPortal-FE \
+            -Dsonar.organization=pf-utn \
+            -Dsonar.sources=. \
+            -Dsonar.tests=. \
+            -Dsonar.test.inclusions="**/*.spec.ts" \
+            -Dsonar.typescript.lcov.reportPaths=coverage/lcov.info \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
