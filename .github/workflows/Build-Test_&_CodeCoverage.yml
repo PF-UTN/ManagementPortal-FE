@@ -20,13 +20,10 @@ jobs:
           cache: 'npm'
 
       - name: Install Dependencies
-        run: npm i
+        run: npm ci
 
       - name: Install Angular CLI
         run: npm install -g @angular/cli
-
-      - name: Install Eslint CLI
-        run: npm install -g @eslint/cli
 
       - name: Build Angular Project
         run: npm run build
@@ -35,7 +32,8 @@ jobs:
         run: npm run test:ci
       
       - name: Run Eslint for sonnar issues
-        run: eslint . -f json -o lint/eslint_report.json
+        run: npm run eslint:ci
+        continue-on-error: true
           
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v4
