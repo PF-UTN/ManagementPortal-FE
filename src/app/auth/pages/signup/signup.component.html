@@ -1,0 +1,225 @@
+<div class="container-fluid form-container p-3">
+  <form [formGroup]="signupForm">
+  <div class="row">
+    <span class="material-icons custom-account-icon">
+      account_circle
+      </span>
+  </div>
+  <div class="row">
+    <span id="formTitle">
+      REGISTRO
+      </span>
+  </div>
+    <div class="row">
+      <div class="col-sm-12 col-md-6 d-flex align-items-center justify-content-center">
+        <mat-form-field class="w-100">
+          <mat-label>Nombre</mat-label>
+          <input matInput type="text" formControlName="name">
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('name')?.reset()">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-hint></mat-hint>
+        </mat-form-field>
+      </div>
+
+      <div class="col-sm-12 col-md-6 d-flex align-items-center justify-content-center ">
+        <mat-form-field class="w-100">
+          <mat-label>País</mat-label>
+          <mat-select type="text" formControlName="country">
+            <mat-option value="one">Argentina</mat-option>
+            <mat-option value="two">Brasil</mat-option>
+          </mat-select>
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('country')?.reset()">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-hint></mat-hint>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12 col-md-6 d-flex align-items-center justify-content-center">
+        <mat-form-field class="w-100">
+          <mat-label>Apellido</mat-label>
+          <input matInput type="text" formControlName="lastname">
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('lastname')?.reset()">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-hint></mat-hint>
+        </mat-form-field>
+      </div>
+
+      <div class="col-sm-12 col-md-6 d-flex align-items-center justify-content-center">
+        <mat-form-field class="w-100">
+          <mat-label>Provincia</mat-label>
+          <input matInput type="text" formControlName="province">
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('province')?.reset()">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-hint></mat-hint>
+        </mat-form-field>
+      </div>
+
+    </div>
+
+    <div class="row">
+
+      <div class="col-sm-12 col-md-6 d-flex align-items-center justify-content-center">
+          <mat-form-field class="w-100" >
+            <mat-label>Email</mat-label>
+            <input type="email" matInput formControlName="email" placeholder="Ej. pat@example.com">
+            <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('email')?.reset()">
+              <mat-icon>close</mat-icon>
+            </button>
+            <mat-hint></mat-hint>
+          </mat-form-field>
+        </div>
+
+          <div class="col-sm-12 col-md-6 d-flex align-items-center justify-content-center">
+          <mat-form-field class="w-100" >
+            <mat-label>Ciudad</mat-label>
+            <input type="text" matInput formControlName="town">
+            <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('town')?.reset()">
+              <mat-icon>close</mat-icon>
+            </button>
+            <mat-hint></mat-hint>
+          </mat-form-field>
+        </div>
+      </div>
+ 
+
+
+    <div class="row">
+      <div class="col-sm-12 col-md-6 d-flex align-items-center justify-content-center">
+        <mat-form-field class="w-100">
+          <mat-label>Contraseña</mat-label>
+          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password">
+          <button mat-icon-button matSuffix (click)="togglePasswordVisibility()" [attr.aria-label]="hidePassword ? 'Mostrar contraseña' : 'Ocultar contraseña'"
+           [attr.aria-pressed]="!hidePassword">
+          <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          
+          <mat-hint></mat-hint>
+        </mat-form-field>
+      </div>
+      <div class="col-md-3 d-flex align-items-center justify-content-center">
+        <mat-form-field class="w-100">
+          <mat-label>Calle</mat-label>
+          <input type="text" matInput formControlName="street">
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('street')?.reset()">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-hint></mat-hint>
+        </mat-form-field>
+      </div>
+      <div class="col-md-3 d-flex align-items-center justify-content-center">
+        <mat-form-field class="w-100">
+          <mat-label>Número</mat-label>
+          <input type="text" matInput formControlName="streetNumber">
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('streetNumber')?.reset()">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-hint></mat-hint>
+        </mat-form-field>
+      </div>
+    </div>
+
+
+
+    <div class="row">
+      <div class="col-sm-12 col-md-6 d-flex align-items-center justify-content-center">
+        <mat-form-field class="w-100">
+          <mat-label>Confirmar Contraseña</mat-label>
+          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="confirmPassword">
+          <button mat-icon-button matSuffix (click)="togglePasswordVisibility()" [attr.aria-label]="hidePassword ? 'Mostrar contraseña' : 'Ocultar contraseña'"
+           [attr.aria-pressed]="!hidePassword">
+          <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button> 
+          <mat-hint></mat-hint>
+        </mat-form-field>
+      </div>
+
+      <div class="col-md-3 d-flex align-items-center justify-content-center">
+        <mat-form-field class="w-100">
+          <mat-label>Tipo Documento</mat-label>
+          <input type="text" matInput formControlName="taxIdType">
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('taxIdType')?.reset()">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-hint></mat-hint>
+        </mat-form-field>
+      </div>
+
+
+      <div class="col-md-3 d-flex align-items-center justify-content-center">
+        <mat-form-field class="w-100">
+          <mat-label>Número Documento</mat-label>
+          <input type="text" matInput formControlName="tax">
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('tax')?.reset()">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-hint></mat-hint>
+        </mat-form-field>
+      </div>
+
+
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12 col-md-6 d-flex align-items-center justify-content-center">
+        <mat-form-field class="w-100">
+          <mat-label>Fecha de Nacimiento</mat-label>
+          <input type="text" matInput formControlName="birthdate">
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('birthdate')?.reset()">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-hint></mat-hint>
+        </mat-form-field>
+      </div>
+
+      <div class="col-sm-12 col-md-6 d-flex align-items-center justify-content-center">
+        <mat-form-field class="w-100">
+          <mat-label>Categoría IVA</mat-label>
+          <input type="text" matInput formControlName="taxCategory">
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('taxCategory')?.reset()">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-hint></mat-hint>
+        </mat-form-field>
+      </div>
+
+    </div>
+
+
+    <div class="row">
+      <div class="col-sm-12 col-md-6 d-flex align-items-center justify-content-center">
+        <mat-form-field class="w-100">
+          <mat-label>Teléfono</mat-label>
+          <span matTextPrefix> +54 </span>
+          <input type="tel" matInput formControlName="phone" placeholder="555-555-1234">
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('phone')?.reset()">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-hint></mat-hint>
+        </mat-form-field>
+      </div>
+
+      <div class="col-sm-12 col-md-6 d-flex align-items-center justify-content-center">
+        <mat-form-field class="w-100">
+          <mat-label>Nombre de Compañia</mat-label>
+          <input type="text" matInput formControlName="Company">
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('company')?.reset()">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-hint></mat-hint>
+        </mat-form-field>
+      </div>
+
+    </div>
+    
+    
+    <button mat-raised-button color="primary" class="submit-btn">Confirmar</button>
+    
+  </form>
+    
+</div>
