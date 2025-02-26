@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { SignupComponent } from '../app/auth/pages/signup/signup.component'; 
-import { LoginComponent } from '../app/auth/pages/login/login.component';
+import { SignupComponent } from '../../projects/authentication/src/lib/components/signup/signup.component'; 
+import { LoginComponent } from '../../projects/authentication/src/lib/components/login/login.component';
 
 export const routes: Routes = [
  {path: '', redirectTo:'', pathMatch:'full'},
