@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../../../../authentication/src/lib/services/auth.service';
 import { Router } from '@angular/router'; 
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -9,6 +9,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 
  
@@ -16,7 +18,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatButtonModule,MatFormFieldModule,MatInputModule,MatIconModule, FormsModule, MatSelectModule,MatSlideToggleModule],
+  imports: [CommonModule, ReactiveFormsModule, MatNativeDateModule, MatDatepickerModule , MatButtonModule,MatFormFieldModule,MatInputModule,MatIconModule, FormsModule, MatSelectModule,MatSlideToggleModule],
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.scss'],
 })
@@ -24,32 +26,22 @@ export class SignupComponent {
   signupForm: FormGroup;
   hidePassword = true;
 
-  name: string = '';
-  lastname: string = '';
-  email: string = '';
-  password: string = '';
-  confirmPassword: string = '';
-  phone: string = '';
-  birthdate: string = '';
-  country: string = '';
-  province: string = '';
-  town: string = '';
-  street: string = '';
-  streetNumber: string = '';
-  taxCategory: string = '';
-  taxIdType: string = '';
-  tax: string = '';
-  companyName: string = '';
-
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
 
     this.signupForm = this.fb.group({
-      name: ['', Validators.required],
-      lastname:['',Validators.required],
+      name: ['', [Validators.required, Validators.minLength(2)]],
+      lastname:['',[Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      confirmPassword:['',[Validators.required, Validators.minLength(6)]],
-      phone: ['', [Validators.required, Validators.minLength(10)]],
+      password: ['', [
+        Validators.required,
+        Validators.minLength(8),
+        Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$')
+      ]],
+      confirmPassword:['',[Validators.required, Validators.minLength(8)]],
+      phone: ['', [
+        Validators.required,
+        Validators.pattern('^[+]?[0-9]{1,4}?[-.\\s]?([0-9]{1,3}[-.\\s]?){1,4}$')
+      ]],
       birthdate: ['', Validators.required],
       country: ['',Validators.required],
       province: [''],
@@ -62,25 +54,30 @@ export class SignupComponent {
       companyName:[''],
 
     },
-    { validator: this.passwordsMatch });
+    { validator: this.passwordMatchValidator });
   }
 
-
-  passwordsMatch(group: FormGroup) {
-    return group.get('password')?.value === group.get('confirmPassword')?.value
-      ? null
-      : { mismatch: true };
-  }
+  passwordMatchValidator(form: FormGroup) {
+    const password = form.get('password');
+    const confirmPassword = form.get('confirmPassword');
+    return password && confirmPassword && password.value === confirmPassword.value
+      ? null : { mismatch: true };}
 
   togglePasswordVisibility() {
     this.hidePassword = !this.hidePassword;  
   }
 
-  onSubmit() {
+  onSubmit(): void {
     if (this.signupForm.valid) {
-      this.authService.signUp(this.signupForm.value).subscribe((res) => {
-        localStorage.setItem('token', res.token);
-       // this.router.navigate(['/']);
+      this.authService.signUp(this.signupForm.value).subscribe({
+        next: (response) => {
+          console.log('La solicitud de registro fue enviada con exito!', response);
+          localStorage.setItem('token', response.token); 
+          this.router.navigate(['/']); 
+        },
+        error: (error) => {
+          console.error('Error al registrar el usuario', error);
+        }
       });
     }
   }

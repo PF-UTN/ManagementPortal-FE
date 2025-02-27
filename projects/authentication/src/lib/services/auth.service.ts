@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Client } from '../models/client'
 
 interface AuthResponse {
   token: string;
@@ -10,12 +11,12 @@ interface AuthResponse {
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'https://tu-backend.com/api/auth'; // Reemplaza con la URL real
+  private apiUrl = 'https://dev-management-portal-be.vercel.app/authentication/signup';
 
   constructor(private http: HttpClient) {}
 
-  signUp(user: any): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/signup`, user);
+  signUp(client: Client): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/signup`, client);
   }
 
   logIn(credentials: any): Observable<AuthResponse> {

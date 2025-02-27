@@ -2,7 +2,7 @@
 
   .submit-btn {
     position:absolute;
-    bottom: 10px;
+    bottom: auto;
     right: 10px;
     font-size: 1.1rem; 
     padding: 1rem 2rem;
@@ -18,10 +18,10 @@
     background: #ffffff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
     padding: 1rem; 
-    height: auto; 
+    height: 75%; 
     width: 90%; 
     max-width: 1000px; 
-    max-height: 80vh;
+    max-height: 90vh;
     overflow-y: auto;
     margin: 0 auto; 
     box-sizing: border-box;

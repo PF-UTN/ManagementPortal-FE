@@ -71,7 +71,8 @@
             <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('email')?.reset()">
               <mat-icon>close</mat-icon>
             </button>
-            <mat-hint></mat-hint>
+            <mat-hint *ngIf="signupForm.get('email')?.hasError('required')">Email es requerido</mat-hint>
+            <mat-hint *ngIf="signupForm.get('email')?.hasError('email')">Email no válido</mat-hint>
           </mat-form-field>
         </div>
 
@@ -98,8 +99,8 @@
            [attr.aria-pressed]="!hidePassword">
           <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
-          
-          <mat-hint></mat-hint>
+          <mat-hint *ngIf="signupForm.get('password')?.hasError('required')">Contraseña es requerida</mat-hint>
+          <mat-hint *ngIf="signupForm.get('password')?.hasError('pattern')">Debe contener al menos 8 caracteres, una letra mayúscula, una minúscula y un número</mat-hint>
         </mat-form-field>
       </div>
       <div class="col-md-3 d-flex align-items-center justify-content-center">
@@ -135,18 +136,19 @@
            [attr.aria-pressed]="!hidePassword">
           <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button> 
-          <mat-hint></mat-hint>
+          <mat-hint *ngIf="signupForm.hasError('mismatch')">Las contraseñas no coinciden</mat-hint>
+        
         </mat-form-field>
       </div>
 
       <div class="col-md-3 d-flex align-items-center justify-content-center">
         <mat-form-field class="w-100">
-          <mat-label>Tipo Documento</mat-label>
+          <mat-label>Tipo de Documento</mat-label>
           <input type="text" matInput formControlName="taxIdType">
           <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('taxIdType')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
-          <mat-hint></mat-hint>
+          <mat-hint *ngIf="signupForm.get('taxIdType')?.hasError('required')">Tipo de Documento es requerido</mat-hint>
         </mat-form-field>
       </div>
 
@@ -158,7 +160,7 @@
           <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('tax')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
-          <mat-hint></mat-hint>
+          <mat-hint *ngIf="signupForm.get('tax')?.hasError('required')">Número Documento es requerido</mat-hint>
         </mat-form-field>
       </div>
 
@@ -169,11 +171,13 @@
       <div class="col-sm-12 col-md-6 d-flex align-items-center justify-content-center">
         <mat-form-field class="w-100">
           <mat-label>Fecha de Nacimiento</mat-label>
-          <input type="text" matInput formControlName="birthdate">
+          <input matInput [matDatepicker]="picker" formControlName="birthdate" placeholder="AAAA-MM-DD">
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
           <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('birthdate')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
-          <mat-hint></mat-hint>
+          <mat-hint *ngIf="signupForm.get('birthdate')?.hasError('required')">Fecha de Nacimiento es requerida</mat-hint>
         </mat-form-field>
       </div>
 
@@ -200,7 +204,7 @@
           <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('phone')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
-          <mat-hint></mat-hint>
+          <mat-hint *ngIf="signupForm.get('phone')?.hasError('required')">Teléfono es requerido</mat-hint>
         </mat-form-field>
       </div>
 
@@ -216,10 +220,10 @@
       </div>
 
     </div>
-    
-    
+
     <button mat-raised-button color="primary" class="submit-btn">Confirmar</button>
-    
+ 
+
   </form>
     
 </div>
