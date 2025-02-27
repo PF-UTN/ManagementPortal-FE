@@ -9,4 +9,6 @@ import { CommonUiComponent } from '@common-ui';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent {}
+export class AppComponent {
+  title = 'app';
+}

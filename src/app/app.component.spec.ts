@@ -15,4 +15,9 @@ describe('AppComponent', () => {
     const app = fixture.componentInstance;
     expect(app).toBeTruthy();
   });
+
+  it('should create the app', () => {
+    const app = fixture.componentInstance;
+    expect(app.title).toBe('app');
+  });
 });
