@@ -12,6 +12,7 @@
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:ci": "jest --coverage --ci",
+    "lint": "npx eslint --fix",
     "eslint:ci": "npx eslint . -f json -o lint/eslint_report.json",
     "format": "prettier --write \"./**/*.ts\"",
     "generate-lib": "node scripts/generate-lib.js"
