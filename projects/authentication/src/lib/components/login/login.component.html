@@ -1,1 +1,56 @@
-<p>login works!</p>
+<div class="container-fluid form-container p-3">
+    <form [formGroup]="loginForm">
+        <div class="row">
+            <span class="material-icons custom-account-icon">
+                account_circle
+            </span>
+        </div>
+        <div class="row">
+            <span id="formTitle">
+                INICIO DE SESIÓN
+            </span>
+        </div>
+        <div class="row">
+            <span id="formLeyend">
+                ¿No tienes cuenta aún? <a href=""> <strong>Regístrate</strong></a>.
+            </span>
+        </div>
+        <div class="row">
+            <div class="col-sm-24 col-md-12 d-flex align-items-center justify-content-center">
+                <mat-form-field class="w-100">
+                    <mat-label>Email</mat-label>
+                    <input type="email" matInput formControlName="email" placeholder="Ej. pat@example.com">
+                    <button matSuffix mat-icon-button aria-label="Clear" (click)="loginForm.get('email')?.reset()">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                    <mat-hint *ngIf="loginForm.get('email')?.hasError('required')">Email es requerido</mat-hint>
+                    <mat-hint *ngIf="loginForm.get('email')?.hasError('email')">Email no válido</mat-hint>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-24 col-md-12 d-flex align-items-center justify-content-center">
+                <mat-form-field class="w-100">
+                    <mat-label>Contraseña</mat-label>
+                    <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password">
+                    <button mat-icon-button matSuffix (click)="togglePasswordVisibility()"
+                        [attr.aria-label]="hidePassword ? 'Mostrar contraseña' : 'Ocultar contraseña'"
+                        [attr.aria-pressed]="!hidePassword">
+                        <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                    </button>
+                    <mat-hint *ngIf="loginForm.get('password')?.hasError('required')">Contraseña es requerida</mat-hint>
+                    <mat-hint *ngIf="loginForm.get('password')?.hasError('pattern')">Debe contener al menos 8
+                        caracteres, una letra mayúscula, una minúscula y un número</mat-hint>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="d-flex align-items-center justify-content-center m-3">
+            <button mat-raised-button color="primary" class="submit-btn">Ingresar</button>
+        </div>
+        <div class="d-flex align-items-center justify-content-center m-3">
+            <span id="formLeyend">
+                <a href=""> <strong>Olvidé mi contraseña</strong></a>.
+            </span>
+        </div>
+    </form>
+</div>
