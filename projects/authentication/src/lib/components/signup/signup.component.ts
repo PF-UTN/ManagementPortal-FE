@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../../../../authentication/src/lib/services/auth.service';
-import { Router } from '@angular/router'; 
+import { Router, RouterModule  } from '@angular/router'; 
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -18,7 +18,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatNativeDateModule, MatDatepickerModule , MatButtonModule,MatFormFieldModule,MatInputModule,MatIconModule, FormsModule, MatSelectModule,MatSlideToggleModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, MatNativeDateModule, MatDatepickerModule , MatButtonModule,MatFormFieldModule,MatInputModule,MatIconModule, FormsModule, MatSelectModule,MatSlideToggleModule],
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.scss'],
 })
@@ -26,7 +26,7 @@ export class SignupComponent {
   signupForm: FormGroup;
   hidePassword = true;
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router, private cdRef: ChangeDetectorRef) {
 
     this.signupForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
@@ -52,10 +52,12 @@ export class SignupComponent {
       taxIdType:[''],
       tax:[''],
       companyName:[''],
-
+      
     },
     { validator: this.passwordMatchValidator });
+    
   }
+
 
   passwordMatchValidator(form: FormGroup) {
     const password = form.get('password');

@@ -12,7 +12,7 @@ interface AuthResponse {
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'https://dev-management-portal-be.vercel.app/authentication/signup';
+  private apiUrl = 'http://localhost:3000/authentication';
 
   constructor(private http: HttpClient) {}
 
@@ -21,6 +21,6 @@ export class AuthService {
   }
 
   logIn(credential: Credential): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credential);
+    return this.http.post<AuthResponse>(`${this.apiUrl}/signin`, credential);
   }
 }
