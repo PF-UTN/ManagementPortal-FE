@@ -1,6 +1,6 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { AuthService } from '../../../../../authentication/src/lib/services/auth.service';
+import { AuthService } from '../../services/auth.service';
 import { Router, RouterModule  } from '@angular/router'; 
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -11,14 +11,23 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-
-
  
 
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule, MatNativeDateModule, MatDatepickerModule , MatButtonModule,MatFormFieldModule,MatInputModule,MatIconModule, FormsModule, MatSelectModule,MatSlideToggleModule],
+  imports: [  CommonModule,
+              ReactiveFormsModule, 
+              RouterModule, 
+              MatNativeDateModule, 
+              MatDatepickerModule, 
+              MatButtonModule,
+              MatFormFieldModule,
+              MatInputModule,
+              MatIconModule, 
+              FormsModule, 
+              MatSelectModule,
+              MatSlideToggleModule],
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.scss'],
 })
@@ -73,9 +82,8 @@ export class SignupComponent {
     if (this.signupForm.valid) {
       this.authService.signUp(this.signupForm.value).subscribe({
         next: (response) => {
-          console.log('La solicitud de registro fue enviada con exito!', response);
           localStorage.setItem('token', response.token); 
-          this.router.navigate(['/']); 
+          this.router.navigate(['/login']); 
         },
         error: (error) => {
           console.error('Error al registrar el usuario', error);

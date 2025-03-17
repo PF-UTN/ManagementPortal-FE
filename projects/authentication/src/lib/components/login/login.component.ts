@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { AuthService } from '../../../../../authentication/src/lib/services/auth.service';
+import { AuthService } from '../../services/auth.service';
 import { Router, RouterLink, RouterModule } from '@angular/router'; 
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -16,7 +16,19 @@ import { MatNativeDateModule } from '@angular/material/core';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, RouterModule ,MatNativeDateModule, MatDatepickerModule , MatButtonModule,MatFormFieldModule,MatInputModule,MatIconModule, FormsModule, MatSelectModule,MatSlideToggleModule],
+  imports: [  CommonModule,
+              ReactiveFormsModule, 
+              RouterLink, 
+              RouterModule,
+              MatNativeDateModule, 
+              MatDatepickerModule, 
+              MatButtonModule,
+              MatFormFieldModule,
+              MatInputModule,
+              MatIconModule, 
+              FormsModule, 
+              MatSelectModule,
+              MatSlideToggleModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
@@ -44,7 +56,6 @@ export class LoginComponent {
       this.authService.logIn(this.loginForm.value).subscribe({
         next: (response) => {
           console.log('Se inició sesión exitosamente!', response);
-          console.log(this.loginForm.value);
           localStorage.setItem('token', response.token); 
           this.router.navigate(['/']); 
         },
@@ -55,8 +66,3 @@ export class LoginComponent {
     }
 }
 }
-
-
-
-
-

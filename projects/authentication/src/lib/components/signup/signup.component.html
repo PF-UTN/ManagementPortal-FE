@@ -1,17 +1,17 @@
 <div class="container-fluid form-container p-3">
   <form [formGroup]="signupForm">
-  <div class="row">
-    <span class="material-icons custom-account-icon">
-      account_circle
-      </span>
-  </div>
-  <div class="row">
-    <span id="formTitle">
-      REGISTRO
-      </span>
-  </div>
     <div class="row">
-      <div class="col-sm-12 col-md-6 d-flex align-items-center justify-content-center">
+      <span class="material-icons custom-account-icon">
+        account_circle
+      </span>
+    </div>
+    <div class="row">
+      <span id="formTitle">
+        REGISTRO
+      </span>
+    </div>
+    <div class="row">
+      <div class="col d-flex align-items-center justify-content-center">
         <mat-form-field class="w-100">
           <mat-label>Nombre</mat-label>
           <input matInput type="text" formControlName="name">
@@ -22,7 +22,7 @@
         </mat-form-field>
       </div>
 
-      <div class="col-sm-12 col-md-6 d-flex align-items-center justify-content-center ">
+      <div class="col d-flex align-items-center justify-content-center ">
         <mat-form-field class="w-100">
           <mat-label>País</mat-label>
           <mat-select type="text" formControlName="country">
@@ -38,7 +38,7 @@
     </div>
 
     <div class="row">
-      <div class="col-sm-12 col-md-6 d-flex align-items-center justify-content-center">
+      <div class="col d-flex align-items-center justify-content-center">
         <mat-form-field class="w-100">
           <mat-label>Apellido</mat-label>
           <input matInput type="text" formControlName="lastname">
@@ -49,10 +49,13 @@
         </mat-form-field>
       </div>
 
-      <div class="col-sm-12 col-md-6 d-flex align-items-center justify-content-center">
+      <div class="col d-flex align-items-center justify-content-center">
         <mat-form-field class="w-100">
           <mat-label>Provincia</mat-label>
-          <input matInput type="text" formControlName="province">
+          <mat-select type="text" formControlName="province">
+            <mat-option value="one">Buenos Aires</mat-option>
+            <mat-option value="two">Santa Fe</mat-option>
+          </mat-select>
           <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('province')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
@@ -64,46 +67,51 @@
 
     <div class="row">
 
-      <div class="col-sm-12 col-md-6 d-flex align-items-center justify-content-center">
-          <mat-form-field class="w-100" >
-            <mat-label>Email</mat-label>
-            <input type="email" matInput formControlName="email" placeholder="Ej. pat@example.com">
-            <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('email')?.reset()">
-              <mat-icon>close</mat-icon>
-            </button>
-            <mat-hint *ngIf="signupForm.get('email')?.hasError('required')">Email es requerido</mat-hint>
-            <mat-hint *ngIf="signupForm.get('email')?.hasError('email')">Email no válido</mat-hint>
-          </mat-form-field>
-        </div>
-
-          <div class="col-sm-12 col-md-6 d-flex align-items-center justify-content-center">
-          <mat-form-field class="w-100" >
-            <mat-label>Ciudad</mat-label>
-            <input type="text" matInput formControlName="town">
-            <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('town')?.reset()">
-              <mat-icon>close</mat-icon>
-            </button>
-            <mat-hint></mat-hint>
-          </mat-form-field>
-        </div>
+      <div class="col d-flex align-items-center justify-content-center">
+        <mat-form-field class="w-100">
+          <mat-label>Email</mat-label>
+          <input type="email" matInput formControlName="email" placeholder="Ej. pat@example.com">
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('email')?.reset()">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-hint *ngIf="signupForm.get('email')?.hasError('required')">Email es requerido</mat-hint>
+          <mat-hint *ngIf="signupForm.get('email')?.hasError('email')">Email no válido</mat-hint>
+        </mat-form-field>
       </div>
- 
+
+      <div class="col d-flex align-items-center justify-content-center">
+        <mat-form-field class="w-100">
+          <mat-label>Ciudad</mat-label>
+          <mat-select type="text" formControlName="town">
+            <mat-option value="one">Rosario</mat-option>
+            <mat-option value="two">Bahia Blanca</mat-option>
+          </mat-select>
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('town')?.reset()">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-hint></mat-hint>
+        </mat-form-field>
+      </div>
+    </div>
+
 
 
     <div class="row">
-      <div class="col-sm-12 col-md-6 d-flex align-items-center justify-content-center">
+      <div class="col align-items-center justify-content-center">
         <mat-form-field class="w-100">
           <mat-label>Contraseña</mat-label>
           <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password">
-          <button mat-icon-button matSuffix (click)="togglePasswordVisibility()" [attr.aria-label]="hidePassword ? 'Mostrar contraseña' : 'Ocultar contraseña'"
-           [attr.aria-pressed]="!hidePassword">
-          <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          <button mat-icon-button matSuffix (click)="togglePasswordVisibility()"
+            [attr.aria-label]="hidePassword ? 'Mostrar contraseña' : 'Ocultar contraseña'"
+            [attr.aria-pressed]="!hidePassword">
+            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
           <mat-hint *ngIf="signupForm.get('password')?.hasError('required')">Contraseña es requerida</mat-hint>
-          <mat-hint *ngIf="signupForm.get('password')?.hasError('pattern')">Debe contener al menos 8 caracteres, una letra mayúscula, una minúscula y un número</mat-hint>
+          <mat-hint *ngIf="signupForm.get('password')?.hasError('pattern')">Debe contener al menos 8 caracteres, una
+            letra mayúscula, una minúscula y un número</mat-hint>
         </mat-form-field>
       </div>
-      <div class="col-md-3 d-flex align-items-center justify-content-center">
+      <div class="col d-flex align-items-center justify-content-center">
         <mat-form-field class="w-100">
           <mat-label>Calle</mat-label>
           <input type="text" matInput formControlName="street">
@@ -113,7 +121,7 @@
           <mat-hint></mat-hint>
         </mat-form-field>
       </div>
-      <div class="col-md-3 d-flex align-items-center justify-content-center">
+      <div class="col d-flex align-items-center justify-content-center">
         <mat-form-field class="w-100">
           <mat-label>Número</mat-label>
           <input type="text" matInput formControlName="streetNumber">
@@ -128,23 +136,27 @@
 
 
     <div class="row">
-      <div class="col-sm-12 col-md-6 d-flex align-items-center justify-content-center">
+      <div class="col d-flex align-items-center justify-content-center">
         <mat-form-field class="w-100">
           <mat-label>Confirmar Contraseña</mat-label>
           <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="confirmPassword">
-          <button mat-icon-button matSuffix (click)="togglePasswordVisibility()" [attr.aria-label]="hidePassword ? 'Mostrar contraseña' : 'Ocultar contraseña'"
-           [attr.aria-pressed]="!hidePassword">
-          <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-          </button> 
+          <button mat-icon-button matSuffix (click)="togglePasswordVisibility()"
+            [attr.aria-label]="hidePassword ? 'Mostrar contraseña' : 'Ocultar contraseña'"
+            [attr.aria-pressed]="!hidePassword">
+            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
           <mat-hint *ngIf="signupForm.hasError('mismatch')">Las contraseñas no coinciden</mat-hint>
-        
+
         </mat-form-field>
       </div>
 
-      <div class="col-md-3 d-flex align-items-center justify-content-center">
+      <div class="col d-flex align-items-center justify-content-center">
         <mat-form-field class="w-100">
           <mat-label>Tipo de Documento</mat-label>
-          <input type="text" matInput formControlName="taxIdType">
+          <mat-select type="text" formControlName="taxIdType">
+            <mat-option value="one">DNI</mat-option>
+            <mat-option value="two">CUIT</mat-option>
+          </mat-select>
           <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('taxIdType')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
@@ -153,7 +165,7 @@
       </div>
 
 
-      <div class="col-md-3 d-flex align-items-center justify-content-center">
+      <div class="col d-flex align-items-center justify-content-center">
         <mat-form-field class="w-100">
           <mat-label>Número Documento</mat-label>
           <input type="text" matInput formControlName="tax">
@@ -168,7 +180,7 @@
     </div>
 
     <div class="row">
-      <div class="col-sm-12 col-md-6 d-flex align-items-center justify-content-center">
+      <div class="col d-flex align-items-center justify-content-center">
         <mat-form-field class="w-100">
           <mat-label>Fecha de Nacimiento</mat-label>
           <input matInput [matDatepicker]="picker" formControlName="birthdate" placeholder="AAAA-MM-DD">
@@ -177,14 +189,18 @@
           <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('birthdate')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
-          <mat-hint *ngIf="signupForm.get('birthdate')?.hasError('required')">Fecha de Nacimiento es requerida</mat-hint>
+          <mat-hint *ngIf="signupForm.get('birthdate')?.hasError('required')">Fecha de Nacimiento es
+            requerida</mat-hint>
         </mat-form-field>
       </div>
 
-      <div class="col-sm-12 col-md-6 d-flex align-items-center justify-content-center">
+      <div class="col d-flex align-items-center justify-content-center">
         <mat-form-field class="w-100">
           <mat-label>Categoría IVA</mat-label>
-          <input type="text" matInput formControlName="taxCategory">
+          <mat-select type="text" formControlName="taxCategory">
+            <mat-option value="one">1</mat-option>
+            <mat-option value="two">2</mat-option>
+          </mat-select>
           <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('taxCategory')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
@@ -196,7 +212,7 @@
 
 
     <div class="row">
-      <div class="col-sm-12 col-md-6 d-flex align-items-center justify-content-center">
+      <div class="col d-flex align-items-center justify-content-center">
         <mat-form-field class="w-100">
           <mat-label>Teléfono</mat-label>
           <span matTextPrefix> +54 </span>
@@ -208,7 +224,7 @@
         </mat-form-field>
       </div>
 
-      <div class="col-sm-12 col-md-6 d-flex align-items-center justify-content-center">
+      <div class="col d-flex align-items-center justify-content-center">
         <mat-form-field class="w-100">
           <mat-label>Nombre de Compañia</mat-label>
           <input type="text" matInput formControlName="companyName">
@@ -218,12 +234,7 @@
           <mat-hint></mat-hint>
         </mat-form-field>
       </div>
-
     </div>
-
     <button mat-raised-button color="primary" class="submit-btn">Confirmar</button>
- 
-
   </form>
-    
 </div>
