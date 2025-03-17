@@ -11,24 +11,27 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { ButtonComponent } from '@Common';
+
 
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [  CommonModule,
-              ReactiveFormsModule, 
-              RouterLink, 
-              RouterModule,
-              MatNativeDateModule, 
-              MatDatepickerModule, 
-              MatButtonModule,
-              MatFormFieldModule,
-              MatInputModule,
-              MatIconModule, 
-              FormsModule, 
-              MatSelectModule,
-              MatSlideToggleModule],
+  imports: [CommonModule,
+    ReactiveFormsModule,
+    RouterLink,
+    RouterModule,
+    MatNativeDateModule,
+    MatDatepickerModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    FormsModule,
+    MatSelectModule,
+    MatSlideToggleModule,
+   ButtonComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })

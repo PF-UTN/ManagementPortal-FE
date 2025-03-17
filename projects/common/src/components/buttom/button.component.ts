@@ -3,15 +3,15 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 
 @Component({
-  selector: 'mp-buttom',
+  selector: 'mp-button',
   standalone: true,
   imports: [CommonModule,
             MatButtonModule],
-  templateUrl: './buttom.component.html',
-  styleUrl: './buttom.component.css'
+  templateUrl: './button.component.html',
+  styleUrl: './button.component.scss'
 })
 
-export class ButtomComponent {
+export class ButtonComponent {
   @Input() label: string = 'Click';  
   @Input() type: 'button' | 'submit' | 'reset' = 'button'; 
   @Input() color: 'primary' | 'secondary' | 'danger' = 'primary'; 
