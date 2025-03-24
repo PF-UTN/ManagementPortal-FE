@@ -10,11 +10,11 @@ import { TableColumn } from '../models/table-column.model';
   styleUrl: './table.component.css'
 })
 
-export class TableComponent implements OnInit {
-  @Input() columns: TableColumn<any>[] = [];
-  @Input() dataSource: any[] = [];
-  @Input() getRowClass: (row: any) => string = () => '';
-  @Input() itemsNumber: number = this.dataSource.length;
+export class TableComponent<T> implements OnInit {
+  @Input() columns: TableColumn<T>[] = [];
+  @Input() dataSource: T[] = [];
+  @Input() getRowClass: (row: T) => string = () => '';
+  @Input() itemsNumber: number = 0;
   @Input() pageIndex: number = 0;
   @Input() pageSize: number = 0;
   @Output() pageChange = new EventEmitter<{ pageIndex: number, pageSize: number }>();
@@ -26,7 +26,7 @@ export class TableComponent implements OnInit {
     this.paginatorIntl.getRangeLabel = (page: number, pageSize: number, length: number) => `${page * pageSize + 1} – ${Math.min((page + 1) * pageSize, length)} de ${length}`;
   }
 
-  tableDataSource = new MatTableDataSource<any>();
+  tableDataSource = new MatTableDataSource<T>();
   displayedColumns: string[] = [];
 
   ngOnInit() {
@@ -38,7 +38,7 @@ export class TableComponent implements OnInit {
     this.tableDataSource.paginator = this.paginator;
   }
 
-  onActionClick(row: any, action?: (element: any) => void) {
+  onActionClick(row: T, action?: (element: T) => void) {
     if (action) {
       action(row);
     }
