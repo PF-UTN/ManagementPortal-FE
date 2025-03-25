@@ -1,0 +1,21 @@
+<div *ngIf="isLoading">Cargando...</div>
+
+<mp-table
+  *ngIf="dataSource.length > 0"
+  [columns]="columns"
+  [dataSource]="dataSource"
+  [itemsNumber]="dataSource.length"
+  [pageIndex]="pageIndex"
+  [pageSize]="pageSize"
+  (pageChange)="onPageChange($event)"
+>
+  <ng-template let-element let-index="index" mpTableCell="actions">
+    <button (click)="onViewDetail(element)">Ver Detalle</button>
+    <button (click)="onApprove(element)">Aprobar</button>
+    <button (click)="onReject(element)">Rechazar</button>
+  </ng-template>
+</mp-table>
+
+<p *ngIf="!isLoading && dataSource.length === 0" class="empty-message">
+  No hay solicitudes de registro disponibles.
+</p>

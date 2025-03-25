@@ -37,11 +37,16 @@ describe('TableComponent', () => {
   });
 
   it('should render table headers correctly', () => {
+    //Arrange
+    fixture.detectChanges();
+    //Act
     const headers = fixture.debugElement.queryAll(By.css('th'));
+    //Assert
     expect(headers.length).toBe(2);
     expect(headers[0].nativeElement.textContent.trim()).toBe('Name');
     expect(headers[1].nativeElement.textContent.trim()).toBe('Action');
   });
+  
 
   it('should render rows with correct data', () => {
     const rows = fixture.debugElement.queryAll(By.css('td'));
@@ -50,11 +55,11 @@ describe('TableComponent', () => {
     expect(rows[1].nativeElement.textContent.trim()).toBe('Click');
   });
 
-  it('should call onActionClick when action button is clicked', () => {
-    jest.spyOn(component, 'onActionClick');
-    const button = fixture.debugElement.query(By.css('button'));
-    button.triggerEventHandler('click', null);
-    expect(component.onActionClick).toHaveBeenCalled();
+  it('should execute the action when onActionClick is called', () => {
+    const mockAction = jest.fn(); 
+    const row = { name: 'Test Name' };
+    component.onActionClick(row, mockAction);
+    expect(mockAction).toHaveBeenCalledWith(row);
   });
 
   it('should update pageIndex and pageSize on pagination change', () => {
@@ -70,7 +75,7 @@ describe('TableComponent', () => {
     expect(component.tableDataSource.paginator).toBe(component.paginator);
   });
 
-  it('should call goToFirstPage and reset paginator', () => {
+  it('should call firstPage of paginator on GoToFirstPage', () => {
     component.paginator = TestBed.createComponent(MatPaginator).componentInstance;
     jest.spyOn(component.paginator, 'firstPage');
     component.goToFirstPage();
