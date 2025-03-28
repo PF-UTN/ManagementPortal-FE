@@ -1,49 +1,44 @@
-.form-container {
-    position:fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    border-radius: 20px;
-    background: #ffffff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    padding: 1rem; 
-    height: 75%; 
-    width: 90%; 
-    max-width: 500px; 
-    max-height: 60vh;
-    overflow-y: auto;
-    margin: 0 auto; 
-    box-sizing: border-box;
-    margin-top: 1rem;
+@import "bootstrap/scss/functions";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/mixins";
 
+
+.container {
+  position: relative;
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  width: 100%;
+  margin: 0 auto;
+  margin-top: 0rem;
+
+ 
+  @media (min-width: map-get($grid-breakpoints, 'md')) {
+    width: 410px;
+    height: 470px;
+    margin-top: 4rem;
   }
 
+  @media (min-width: map-get($grid-breakpoints, 'xxl')) {
+
+    margin-top: 10rem;
+  }
+
+ 
+
+}
   .custom-account-icon {
     font-size: 64px;
     color:  #EADDFF;
     text-align: center;  
     margin-bottom: 1rem;
+    margin-top: 1rem;
   }
-    
   
-  #formTitle{
-    text-align: center;
-    color: #65558F;
-    font-weight: bold;
-    font-size: 20px;
-    margin-top: 1px;
-    margin-bottom: 20px;
+  .custom-size {
+    width: 350px; 
+    height: 56px;
+    margin-bottom: 2rem;
   }
-
-  #formLeyend{
-    text-align: center;
-    color: #65558F;
-    margin-top: 1px;
-    margin-bottom: 20px;
-  }
-
-  .submit-btn {
-    font-size: 1.1rem; 
-    padding: 1rem 2rem;
-    border-radius: 100px;
-  }
+  

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router, RouterLink, RouterModule } from '@angular/router'; 
 import { CommonModule } from '@angular/common';
@@ -11,9 +11,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { ButtonComponent } from '@Common';
-
-
+import { ButtonComponent, MpTitleComponent, MpSubtitleComponent, MpClickableTitleComponent  } from '@Common';
+import { User } from '../../models/user.model';
 
 @Component({
   selector: 'app-login',
@@ -31,13 +30,20 @@ import { ButtonComponent } from '@Common';
     FormsModule,
     MatSelectModule,
     MatSlideToggleModule,
-   ButtonComponent],
+    ButtonComponent,
+    MpTitleComponent,
+    MpSubtitleComponent,
+    MpClickableTitleComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
 export class LoginComponent {
 
-  loginForm: FormGroup;
+  loginForm: FormGroup<{
+    email: FormControl<string | null>;
+    password: FormControl<string | null>;
+  }>;
+  
   hidePassword = true;
   
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
@@ -50,16 +56,21 @@ export class LoginComponent {
 
     })   
   }
+
   togglePasswordVisibility() {
     this.hidePassword = !this.hidePassword;  
   }
-
+  navigateToRegister(): void {
+    this.router.navigate(['/signup']); 
+  }
   onSubmit(): void {
     if (this.loginForm.valid) {
-      this.authService.logIn(this.loginForm.value).subscribe({
+      const credentials: User = {
+        email: this.loginForm.get('email')!.value!,
+        password: this.loginForm.get('password')!.value!,
+      };
+      this.authService.logInAsync(credentials).subscribe({
         next: (response) => {
-          console.log('Se inició sesión exitosamente!', response);
-          localStorage.setItem('token', response.token); 
           this.router.navigate(['/']); 
         },
         error: (error) => {

@@ -1,12 +1,10 @@
-import { importProvidersFrom, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Client } from '../models/client.model';
 import { User } from '../models/user.model';
+import { AuthResponse } from '../models/auth-response.model';
 
-interface AuthResponse {
-  token: string;
-}
 
 @Injectable({
   providedIn: 'root',
@@ -16,11 +14,29 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  signUp(client: Client): Observable<AuthResponse> {
+  signUpAsync(client: Client): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/signup`, client);
   }
 
-  logIn(credential: User): Observable<AuthResponse> {
+  logInAsync(credential: User): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/signin`, credential);
+  }
+
+  private setToken(token: string): void {
+    localStorage.setItem('token', token);
+  }
+
+  logInAndSaveToken(credential: User): Observable<AuthResponse> {
+    return new Observable(observer => {
+      this.logInAsync(credential).subscribe({
+        next: (response) => {
+          this.setToken(response.token);  
+          observer.next(response);  
+        },
+        error: (err) => {
+          observer.error(err);  
+        }
+      });
+    });
   }
 }

@@ -14,8 +14,6 @@ import { MatButtonModule } from '@angular/material/button';
 export class ButtonComponent {
   @Input() label: string = 'Click';  
   @Input() type: 'button' | 'submit' | 'reset' = 'button'; 
-  @Input() color: 'primary' | 'secondary' | 'danger' = 'primary'; 
-  @Input() size: 'small' | 'medium' | 'large' = 'medium'; 
   @Input() disabled: boolean = false; 
 
   @Output() clicked = new EventEmitter<void>(); 

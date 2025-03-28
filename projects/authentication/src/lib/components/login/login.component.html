@@ -1,23 +1,20 @@
-<div class="container-fluid form-container p-3">
-    <form [formGroup]="loginForm">
+<div class="container d-flex flex-column justify-content-center align-items-center p-3">
+    <div class="row">
+        <span class="material-icons custom-account-icon">
+            account_circle
+        </span>
+    </div>
+    <div class="mb-3">
+        <mp-title [label]="'INICIO DE SESIÓN'" [color]="'#65558F'" [fontSize]="'1.2em'"></mp-title>
+    </div>
+    <div class="mb-4">
+        <mp-subtitle [label]="'¿No tienes cuenta aún?'" [color]="'#727073'" [fontSize]="'1em'"></mp-subtitle>
+        <mp-clickable-title [label]="' Regístrate'" [color]="'#65558F'" [fontSize]="'1em'" (clicked)="navigateToRegister()"></mp-clickable-title>
+    </div>
+    <form [formGroup]="loginForm">    
         <div class="row">
-            <span class="material-icons custom-account-icon">
-                account_circle
-            </span>
-        </div>
-        <div class="row">
-            <span id="formTitle">
-                INICIO DE SESIÓN
-            </span>
-        </div>
-        <div class="row">
-            <span id="formLeyend">
-                ¿No tienes cuenta aún? <a [routerLink]= "['/signup']"> <strong>Regístrate</strong></a>.
-            </span>
-        </div>
-        <div class="row">
-            <div class="col-sm-24 col-md-12 d-flex align-items-center justify-content-center">
-                <mat-form-field class="w-100">
+            <div class="col d-flex align-items-center justify-content-center mt-1 mb-1">
+                <mat-form-field class="custom-size" appearance="outline">
                     <mat-label>Email</mat-label>
                     <input type="email" matInput formControlName="email" placeholder="Ej. pat@example.com">
                     <button matSuffix mat-icon-button aria-label="Clear" (click)="loginForm.get('email')?.reset()">
@@ -29,27 +26,25 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-24 col-md-12 d-flex align-items-center justify-content-center">
-                <mat-form-field class="w-100">
+            <div class="col d-flex align-items-center justify-content-center mt-1 mb-1">
+                <mat-form-field class="custom-size" appearance="outline">
                     <mat-label>Contraseña</mat-label>
                     <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password">
                     <button mat-icon-button matSuffix (click)="togglePasswordVisibility()"
-                        [attr.aria-label]="hidePassword ? 'Mostrar contraseña' : 'Ocultar contraseña'"
-                        [attr.aria-pressed]="!hidePassword">
-                        <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+                      [attr.aria-label]="hidePassword ? 'Mostrar contraseña' : 'Ocultar contraseña'"
+                      [attr.aria-pressed]="!hidePassword">
+                      <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
                     </button>
                     <mat-hint *ngIf="loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched">Contraseña es requerida</mat-hint>
-                </mat-form-field>
+                  </mat-form-field>
             </div>
         </div>
-        <div class="d-flex align-items-center justify-content-center m-3">
-           <!-- <button mat-raised-button color="primary" class="submit-btn" (click)="onSubmit()"  [disabled]="loginForm.invalid">Ingresar</button>-->
+        <div class="d-flex align-items-center justify-content-center">
             <mp-button label="Ingresar" color="primary" type="submit" [disabled]="loginForm.invalid"  (clicked)="onSubmit()" ></mp-button>
         </div>
-        <div class="d-flex align-items-center justify-content-center m-3">
-            <span id="formLeyend">
-                <a href=""> <strong>Olvidé mi contraseña</strong></a>.
-            </span>
-        </div>
+
     </form>
+    <div class="mb-4 mt-3">
+        <mp-clickable-title [label]="' Olvidé mi contraseña'" [color]="'#65558F'" [fontSize]="'1em'" (clicked)="navigateToRegister()"></mp-clickable-title>
+    </div>
 </div>

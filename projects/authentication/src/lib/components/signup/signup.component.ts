@@ -1,5 +1,5 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router, RouterModule  } from '@angular/router'; 
 import { CommonModule } from '@angular/common';
@@ -11,7 +11,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
- 
+import { ButtonComponent, MpTitleComponent } from '@Common';
+import { Client } from '../../models/client.model';
+
+const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+const PHONE_REGEX = /^[+]?[0-9]{1,4}?[-.\\s]?([0-9]{1,3}[-.\\s]?){1,4}$/;
 
 @Component({
   selector: 'app-signup',
@@ -27,15 +31,34 @@ import { MatNativeDateModule } from '@angular/material/core';
               MatIconModule, 
               FormsModule, 
               MatSelectModule,
-              MatSlideToggleModule],
+              MatSlideToggleModule,
+              ButtonComponent,
+              MpTitleComponent],
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.scss'],
 })
 export class SignupComponent {
-  signupForm: FormGroup;
+  
+  signupForm: FormGroup<{
+    name: FormControl<string | null>;
+    lastname: FormControl<string | null>;
+    email: FormControl<string | null>;
+    password: FormControl<string | null>;
+    phone: FormControl<string | null>;
+    birthdate: FormControl<Date | null>;
+    country: FormControl<string | null>;
+    province: FormControl<string | null>;
+    town: FormControl<string | null>;
+    street: FormControl<string | null>;
+    streetNumber: FormControl<number | null>;
+    taxCategory: FormControl<number | null>;
+    taxIdType: FormControl<number | null>;
+    tax: FormControl<string | null>;
+    companyName: FormControl<string | null>;
+  }>;
+  
   hidePassword = true;
-
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router, private cdRef: ChangeDetectorRef) {
+  constructor(private fb: FormBuilder, protected authService: AuthService, private router: Router, private cdRef: ChangeDetectorRef) {
 
     this.signupForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
@@ -44,26 +67,27 @@ export class SignupComponent {
       password: ['', [
         Validators.required,
         Validators.minLength(8),
-        Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{8,}$')
+        Validators.pattern(PASSWORD_REGEX)
       ]],
       confirmPassword:['',[Validators.required, Validators.minLength(8)]],
       phone: ['', [
         Validators.required,
-        Validators.pattern('^[+]?[0-9]{1,4}?[-.\\s]?([0-9]{1,3}[-.\\s]?){1,4}$')
+        Validators.pattern(PHONE_REGEX)
       ]],
       birthdate: ['', Validators.required],
       country: ['',Validators.required],
-      province: [''],
-      town: [''],
-      street: [''],
-      streetNumber:[''],
-      taxCategory:[''],
-      taxIdType:[''],
-      tax:[''],
-      companyName:[''],
+      province: ['',Validators.required],
+      town: ['',Validators.required],
+      street: ['',Validators.required],
+      streetNumber:['',Validators.required],
+      taxCategory:['',Validators.required],
+      taxIdType:['',Validators.required],
+      tax:['',Validators.required],
+      companyName:['',Validators.required],
       
     },
-    { validator: this.passwordMatchValidator });
+    { validator: this.passwordMatchValidator }
+  );
     
   }
 
@@ -80,7 +104,24 @@ export class SignupComponent {
 
   onSubmit(): void {
     if (this.signupForm.valid) {
-      this.authService.signUp(this.signupForm.value).subscribe({
+      const client: Client = {
+        name: this.signupForm.get('name')!.value!,
+        lastname: this.signupForm.get('lastname')!.value!,
+        email: this.signupForm.get('email')!.value!,
+        password: this.signupForm.get('password')!.value!,
+        phone: this.signupForm.get('phone')!.value!,
+        birthdate: this.signupForm.get('birthdate')!.value!,
+        country: this.signupForm.get('country')!.value!,
+        province: this.signupForm.get('province')!.value!,
+        town: this.signupForm.get('town')!.value!,
+        street: this.signupForm.get('street')!.value!,
+        streetNumber: this.signupForm.get('streetNumber')!.value!,
+        taxCategory: this.signupForm.get('taxCategory')!.value!,
+        taxIdType: this.signupForm.get('taxIdType')!.value!,
+        tax: this.signupForm.get('tax')!.value!,
+        companyName: this.signupForm.get('companyName')!.value!,
+      };
+      this.authService.signUpAsync(client).subscribe({
         next: (response) => {
           localStorage.setItem('token', response.token); 
           this.router.navigate(['/login']); 
