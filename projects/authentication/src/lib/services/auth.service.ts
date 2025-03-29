@@ -39,4 +39,19 @@ export class AuthService {
       });
     });
   }
+
+  signUpAndSaveToken(client: Client): Observable<AuthResponse> {
+    return new Observable(observer => {
+      this.signUpAsync(client).subscribe({
+        next: (response) => {
+          this.setToken(response.token); 
+          observer.next(response);  
+        },
+        error: (err) => {
+          observer.error(err);  
+        }
+      });
+    });
+  }
+
 }

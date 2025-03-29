@@ -121,9 +121,8 @@ export class SignupComponent {
         tax: this.signupForm.get('tax')!.value!,
         companyName: this.signupForm.get('companyName')!.value!,
       };
-      this.authService.signUpAsync(client).subscribe({
-        next: (response) => {
-          localStorage.setItem('token', response.token); 
+      this.authService.signUpAndSaveToken(client).subscribe({
+        next: (response) => { 
           this.router.navigate(['/login']); 
         },
         error: (error) => {
