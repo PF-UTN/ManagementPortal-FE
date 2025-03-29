@@ -10,7 +10,7 @@ import { AuthResponse } from '../models/auth-response.model';
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:3000/authentication';
+  private apiUrl = 'https://dev-management-portal-be.vercel.app/authentication';
 
   constructor(private http: HttpClient) {}
 

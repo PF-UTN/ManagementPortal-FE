@@ -16,7 +16,7 @@
  
   @media (min-width: map-get($grid-breakpoints, 'md')) {
     width: 410px;
-    height: 470px;
+    height: 490px;
     margin-top: 4rem;
   }
 
@@ -40,5 +40,10 @@
     width: 350px; 
     height: 56px;
     margin-bottom: 2rem;
+  }
+  
+  .error-message {
+    color: red;
+    font-size: 13px;
   }
   

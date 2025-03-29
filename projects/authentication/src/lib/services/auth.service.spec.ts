@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { AuthService } from './auth.service';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { mockClient, mockUser, mockAuthResponse } from '../models/mock-data.model';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -28,52 +29,29 @@ describe('AuthService', () => {
   });
 
   it('It should perform a POST for signUpAsync()', () => {
-    const mockClient = {
-      name: 'Juan',
-      lastname: 'Pérez',
-      email: 'juan.perez@example.com',
-      password: 'password123',
-      phone: '123456789',
-      birthdate: new Date('1990-01-01'),
-      country: 'Argentina',
-      province: 'Santa Fe',
-      town: 'Rosario',
-      street: 'Calle Falsa',
-      streetNumber: 123,
-      taxCategory: 1,
-      taxIdType: 2,
-      tax: '20-12345678-9',
-      companyName: 'Mi Empresa',
-    };
   
-    const mockResponse = { token: 'mockJWTToken' };
   
     service.signUpAsync(mockClient).subscribe((response) => {
-      expect(response).toEqual(mockResponse); 
+      expect(response).toEqual(mockAuthResponse); 
     });
   
-    const req = httpMock.expectOne('http://localhost:3000/authentication/signup'); 
+    const req = httpMock.expectOne('https://dev-management-portal-be.vercel.app/authentication/signup'); 
     expect(req.request.method).toBe('POST'); 
     expect(req.request.body).toEqual(mockClient); 
-    req.flush(mockResponse); 
+    req.flush(mockAuthResponse); 
   });
 
   it('It should perform a POST for logInAsync()', () => {
-    const mockUser = {
-      email: 'juan.perez@example.com',
-      password: 'password123',
-    };
-  
-    const mockResponse = { token: 'mockJWTToken' };
+    
   
     service.logInAsync(mockUser).subscribe((response) => {
-      expect(response).toEqual(mockResponse); 
+      expect(response).toEqual(mockAuthResponse); 
     });
   
-    const req = httpMock.expectOne('http://localhost:3000/authentication/signin'); 
+    const req = httpMock.expectOne('https://dev-management-portal-be.vercel.app/authentication/signin'); 
     expect(req.request.method).toBe('POST'); 
     expect(req.request.body).toEqual(mockUser); 
-    req.flush(mockResponse); 
+    req.flush(mockAuthResponse); 
   });
   
 });

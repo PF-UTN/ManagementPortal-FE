@@ -127,7 +127,6 @@ export class SignupComponent {
           this.router.navigate(['/login']); 
         },
         error: (error) => {
-          console.error('Error al registrar el usuario', error);
         }
       });
     }

@@ -19,7 +19,6 @@ import { User } from '../../models/user.model';
   standalone: true,
   imports: [CommonModule,
     ReactiveFormsModule,
-    RouterLink,
     RouterModule,
     MatNativeDateModule,
     MatDatepickerModule,
@@ -45,6 +44,7 @@ export class LoginComponent {
   }>;
   
   hidePassword = true;
+  errorMessage: string = '';
   
   constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
     this.loginForm = this.fb.group({
@@ -72,9 +72,14 @@ export class LoginComponent {
       this.authService.logInAsync(credentials).subscribe({
         next: (response) => {
           this.router.navigate(['/']); 
+          this.errorMessage = '';
         },
         error: (error) => {
-          console.error('Error al iniciar sesión', error);
+          if (error.status === 401) {
+            this.errorMessage = 'El email o contraseña ingresados son incorrectos'; 
+          } else {
+            this.errorMessage = 'Ocurrió un error. Inténtalo de nuevo más tarde.';
+          }
         }
       });
     }
