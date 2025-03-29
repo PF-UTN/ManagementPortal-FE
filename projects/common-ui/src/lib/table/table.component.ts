@@ -1,5 +1,4 @@
-import {OnInit, Output, Input, EventEmitter, Component, ViewChild} from '@angular/core';
-import { PageEvent } from '@angular/material/paginator';
+import {OnInit, Output, Input, EventEmitter, Component} from '@angular/core';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import { TableColumn } from '../models/table-column.model';
 import { CommonModule } from '@angular/common';
@@ -27,8 +26,6 @@ export class TableComponent<T> implements OnInit {
   @Output() pageChange = new EventEmitter<{ pageIndex: number, pageSize: number }>();
   @Output() actionClicked = new EventEmitter<{ action: string, row: T }>();
   @Input() customActionsTemplate!: TemplateRef<{ $implicit: T }>;
-
-  constructor() {}
 
   tableDataSource = new MatTableDataSource<T>();
   displayedColumns: string[] = [];
