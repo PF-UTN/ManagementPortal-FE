@@ -1,54 +1,57 @@
 import {OnInit, Output, Input, EventEmitter, Component, ViewChild} from '@angular/core';
-import { MatPaginator, MatPaginatorIntl, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { PageEvent } from '@angular/material/paginator';
 import {MatTableDataSource, MatTableModule} from '@angular/material/table';
 import { TableColumn } from '../models/table-column.model';
+import { CommonModule } from '@angular/common';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatIconModule } from '@angular/material/icon';
+import { Observable } from 'rxjs';
+import { MatButtonModule } from '@angular/material/button';
+import { TemplateRef } from '@angular/core';
 
 @Component({
   selector: 'mp-table',
-  imports: [MatTableModule, MatPaginatorModule],
+  standalone: true,
+  imports: [CommonModule, MatTableModule, MatMenuModule, MatIconModule, MatButtonModule],
   templateUrl: './table.component.html',
-  styleUrl: './table.component.css'
+  styleUrl: './table.component.scss'
 })
 
 export class TableComponent<T> implements OnInit {
   @Input() columns: TableColumn<T>[] = [];
-  @Input() dataSource: T[] = [];
+  @Input() dataSource!: Observable<T[]>;
   @Input() getRowClass: (row: T) => string = () => '';
   @Input() itemsNumber: number = 0;
   @Input() pageIndex: number = 0;
   @Input() pageSize: number = 0;
   @Output() pageChange = new EventEmitter<{ pageIndex: number, pageSize: number }>();
+  @Output() actionClicked = new EventEmitter<{ action: string, row: T }>();
+  @Input() customActionsTemplate!: TemplateRef<{ $implicit: T }>;
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-
-  constructor(private paginatorIntl: MatPaginatorIntl) {
-    this.paginatorIntl.itemsPerPageLabel = "Registros por página";
-    this.paginatorIntl.getRangeLabel = (page: number, pageSize: number, length: number) => `${page * pageSize + 1} – ${Math.min((page + 1) * pageSize, length)} de ${length}`;
-  }
+  constructor() {}
 
   tableDataSource = new MatTableDataSource<T>();
   displayedColumns: string[] = [];
 
   ngOnInit() {
-    this.displayedColumns = this.columns.map(c => c.columnDef);
-    this.tableDataSource.data = this.dataSource;
-  }
+  this.displayedColumns = this.columns.map(c => c.columnDef);
 
-  ngAfterViewInit() {
-    this.tableDataSource.paginator = this.paginator;
+  if (this.dataSource) {
+    this.dataSource.subscribe({
+      next: (data) => {
+        this.tableDataSource.data = data || [];
+      },
+      error: (err) => {
+        console.error('Error al suscribirse a dataSource:', err);
+      }
+    });
+  } else {
+    console.error('dataSource is undefined or not an observable.');
   }
+}
 
-  onActionClick(row: T, action?: (element: T) => void) {
-    if (action) {
-      action(row);
-    }
+  onActionClick(action: string, row: T) {
+    this.actionClicked.emit({ action, row });
   }
-
-  onPageChange(event: PageEvent): void {
-    this.pageChange.emit({ pageIndex: event.pageIndex, pageSize: event.pageSize });
-  }
-
-  goToFirstPage() {
-    this.paginator.firstPage();
-  }
+  
 }

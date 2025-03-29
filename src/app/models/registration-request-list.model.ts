@@ -1,7 +1,8 @@
+import { User } from './user.model';
 export class registrationRequestList {
-    name: string = '';
-    email: string = '';
+    id: number = 0;
+    requestDate: string = '';
     status: string = '';
-    startDate: string = '';
+    user: User = new User(); 
 }
  
