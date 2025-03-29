@@ -54,27 +54,29 @@ export class RegistrationRequestListComponent implements OnInit {
         this.totalItems = response.total; 
         this.isLoading = false;
       },
-      error: () => {
+      error: (err) => {
+        console.error('Error al obtener los datos:', err); 
         this.isLoading = false;
       }
     });
   }
   
   handleAction(element: registrationRequestList, actionType: string): void {
-  switch (actionType) {
-    case 'viewDetail':
-      this.onViewDetail(element);
-      break;
-    case 'approve':
-      this.onApprove(element);
-      break;
-    case 'reject':
-      this.onReject(element);
-      break;
-    default:
-      console.warn('Acción no reconocida:', actionType);
+    switch (actionType) {
+      case 'viewDetail':
+        this.onViewDetail(element);
+        break;
+      case 'approve':
+        this.onApprove(element);
+        break;
+      case 'reject':
+        this.onReject(element);
+        break;
+      default:
+        console.warn('Acción no reconocida:', actionType);
+        throw new Error(`Acción no reconocida: ${actionType}`);
+    }
   }
-}
   
   onPageChange(event: { pageIndex: number, pageSize: number }): void {
     this.pageIndex = event.pageIndex;
@@ -83,18 +85,34 @@ export class RegistrationRequestListComponent implements OnInit {
   }
 
   onApprove(request: registrationRequestList): void {
-    console.log('Aprobando solicitud:', request);
+    try {
+      console.log('Aprobando solicitud:', request);
+    } catch (err) {
+      console.error('Error al aprobar la solicitud:', err);
+    }
   }
-
+  
   onReject(request: registrationRequestList): void {
-    console.log('Rechazando solicitud:', request);
+    try {
+      console.log('Rechazando solicitud:', request);
+    } catch (err) {
+      console.error('Error al rechazar la solicitud:', err);
+    }
   }
-
+  
   onViewDetail(request: registrationRequestList): void {
-    console.log('Ver detalle de:', request);
+    try {
+      console.log('Ver detalle de:', request);
+    } catch (err) {
+      console.error('Error al ver el detalle:', err);
+    }
   }
 
   getRowClass = (row: registrationRequestList): string => {
+    if (!row || !row.status) {
+      console.warn('Fila inválida o estado no definido:', row);
+      return '';
+    }
     return row.status === 'Pending' ? 'pending-row' : '';
   };
 }

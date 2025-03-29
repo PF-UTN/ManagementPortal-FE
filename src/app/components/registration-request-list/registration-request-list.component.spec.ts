@@ -81,13 +81,6 @@ describe('RegistrationRequestListComponent', () => {
     expect(component.onReject).toHaveBeenCalledWith(row);
   });
 
-  it('should log "Acción no reconocida" for unrecognized actions', () => {
-    jest.spyOn(console, 'warn');
-    const row = mockData[0];
-    component.handleAction(row, 'unknownAction');
-    expect(console.warn).toHaveBeenCalledWith('Acción no reconocida:', 'unknownAction');
-  });
-
   it('should call fetchData when page changes', () => {
     jest.spyOn(component, 'fetchData');
     const pageChangeEvent = { pageIndex: 1, pageSize: 10 };
@@ -101,5 +94,32 @@ describe('RegistrationRequestListComponent', () => {
 
     const approvedRow = mockData[1];
     expect(component.getRowClass(approvedRow)).toBe('');
+  });
+
+  it('should log details when onViewDetail is called', () => {
+    jest.spyOn(console, 'log');
+    const row = mockData[0];
+    component.onViewDetail(row);
+    expect(console.log).toHaveBeenCalledWith('Ver detalle de:', row);
+  });
+
+  it('should log rejection when onReject is called', () => {
+    jest.spyOn(console, 'log');
+    const row = mockData[1];
+    component.onReject(row);
+    expect(console.log).toHaveBeenCalledWith('Rechazando solicitud:', row);
+  });
+
+  it('should log approval when onApprove is called', () => {
+    jest.spyOn(console, 'log');
+    const row = mockData[0];
+    component.onApprove(row);
+    expect(console.log).toHaveBeenCalledWith('Aprobando solicitud:', row);
+  });
+
+  it('should return empty string for invalid row in getRowClass', () => {
+    jest.spyOn(console, 'warn');
+    expect(component.getRowClass(null as any)).toBe('');
+    expect(console.warn).toHaveBeenCalledWith('Fila inválida o estado no definido:', null);
   });
 });

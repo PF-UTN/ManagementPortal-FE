@@ -20,10 +20,6 @@ export class TableComponent<T> implements OnInit {
   @Input() columns: TableColumn<T>[] = [];
   @Input() dataSource!: Observable<T[]>;
   @Input() getRowClass: (row: T) => string = () => '';
-  @Input() itemsNumber: number = 0;
-  @Input() pageIndex: number = 0;
-  @Input() pageSize: number = 0;
-  @Output() pageChange = new EventEmitter<{ pageIndex: number, pageSize: number }>();
   @Output() actionClicked = new EventEmitter<{ action: string, row: T }>();
   @Input() customActionsTemplate!: TemplateRef<{ $implicit: T }>;
 
