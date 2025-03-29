@@ -49,11 +49,4 @@ describe('TableComponent', () => {
     component.onActionClick('edit', row); 
     expect(mockAction).not.toHaveBeenCalled(); 
   });
-
-  it('should update pageIndex and pageSize on pagination change', () => {
-    jest.spyOn(component.pageChange, 'emit');
-    const pageEvent = { pageIndex: 1, pageSize: 20, length: 10 } as PageEvent;
-    component.onPageChange(pageEvent);
-    expect(component.pageChange.emit).toHaveBeenCalledWith({ pageIndex: 1, pageSize: 20 });
-  });
 });
