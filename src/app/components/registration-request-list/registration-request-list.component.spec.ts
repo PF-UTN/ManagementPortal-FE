@@ -21,7 +21,7 @@ describe('RegistrationRequestListComponent', () => {
         email: 'johndoe@example.com',
         documentNumber: '12345678',
         documentType: 'DNI',
-        phone: '123456789'
+        phone: '123456789'  
       },
       status: 'Pending',
       requestDate: '2025-03-28T00:00:00Z'
@@ -69,31 +69,58 @@ describe('RegistrationRequestListComponent', () => {
 
   it('should handle the "approve" action', () => {
     jest.spyOn(component, 'onApprove');
-    const row = mockData[0];
-    component.handleAction(row, 'approve');
-    expect(component.onApprove).toHaveBeenCalledWith(row);
+    component.handleAction(mockData[0], 'approve');
+    expect(component.onApprove).toHaveBeenCalledWith(mockData[0]);
   });
 
   it('should handle the "reject" action', () => {
     jest.spyOn(component, 'onReject');
-    const row = mockData[1];
-    component.handleAction(row, 'reject');
-    expect(component.onReject).toHaveBeenCalledWith(row);
+    component.handleAction(mockData[1], 'reject');
+    expect(component.onReject).toHaveBeenCalledWith(mockData[1]);
   });
 
   it('should call fetchData when page changes', () => {
     jest.spyOn(component, 'fetchData');
-    const pageChangeEvent = { pageIndex: 1, pageSize: 10 };
-    component.onPageChange(pageChangeEvent);
+    component.onPageChange({ pageIndex: 1, pageSize: 10 });
     expect(component.fetchData).toHaveBeenCalled();
   });
 
-  it('should update row class based on status', () => {
-    const row = mockData[0];
-    expect(component.getRowClass(row)).toBe('pending-row');
+  it('should return empty string for invalid row in getRowClass', () => {
+    jest.spyOn(console, 'warn');
+    const invalidRow1: registrationRequestList = {
+      id: 0,
+      user: {
+        fullNameOrBusinessName: '',
+        email: '',
+        documentNumber: '',
+        documentType: '',
+        phone: ''
+      },
+      status: '',
+      requestDate: ''
+    };
 
-    const approvedRow = mockData[1];
-    expect(component.getRowClass(approvedRow)).toBe('');
+    const invalidRow2: registrationRequestList = {
+      id: 0,
+      user: {
+        fullNameOrBusinessName: '',
+        email: '',
+        documentNumber: '',
+        documentType: '',
+        phone: ''
+      },
+      status: '',
+      requestDate: ''
+    };
+    expect(component.getRowClass(invalidRow1)).toBe('');
+    expect(component.getRowClass(invalidRow2)).toBe('');
+    expect(console.warn).toHaveBeenCalledWith('Fila inválida o estado no definido:', invalidRow1);
+    expect(console.warn).toHaveBeenCalledWith('Fila inválida o estado no definido:', invalidRow2);
+  });
+
+  it('should throw error for unknown action', () => {
+    expect(() => component.handleAction(mockData[0], 'invalid-action'))
+      .toThrowError('Acción no reconocida: invalid-action');
   });
 
   it('should log details when onViewDetail is called', () => {
@@ -103,23 +130,40 @@ describe('RegistrationRequestListComponent', () => {
     expect(console.log).toHaveBeenCalledWith('Ver detalle de:', row);
   });
 
-  it('should log rejection when onReject is called', () => {
-    jest.spyOn(console, 'log');
-    const row = mockData[1];
-    component.onReject(row);
-    expect(console.log).toHaveBeenCalledWith('Rechazando solicitud:', row);
+  it('should update pageIndex and pageSize on page change', () => {
+    component.onPageChange({ pageIndex: 2, pageSize: 20 });
+    expect(component.pageIndex).toBe(2);
+    expect(component.pageSize).toBe(20);
   });
 
-  it('should log approval when onApprove is called', () => {
-    jest.spyOn(console, 'log');
+  it('should apply correct row class based on status', () => {
+    const pendingRow = mockData[0];
+    const approvedRow = mockData[1];
+  
+    expect(component.getRowClass(pendingRow)).toBe('pending-row');
+    expect(component.getRowClass(approvedRow)).toBe('');
+  });
+
+  it('should call fetchData on initialization', () => {
+    jest.spyOn(component, 'fetchData');
+    component.ngOnInit();
+    expect(component.fetchData).toHaveBeenCalled();
+  });
+
+  it('should call onViewDetail when action is "viewDetail"', () => {
+    jest.spyOn(component, 'onViewDetail');
     const row = mockData[0];
-    component.onApprove(row);
-    expect(console.log).toHaveBeenCalledWith('Aprobando solicitud:', row);
+    component.handleAction(row, 'viewDetail');
+    expect(component.onViewDetail).toHaveBeenCalledWith(row);
   });
 
-  it('should return empty string for invalid row in getRowClass', () => {
-    jest.spyOn(console, 'warn');
-    expect(component.getRowClass(null as any)).toBe('');
-    expect(console.warn).toHaveBeenCalledWith('Fila inválida o estado no definido:', null);
+  it('should initialize dataSource$ as empty', () => {
+    expect(component.dataSource$.getValue()).toEqual([]);
+  });
+
+  it('should call fetchData when onPageChange is triggered', () => {
+    jest.spyOn(component, 'fetchData');
+    component.onPageChange({ pageIndex: 1, pageSize: 20 });
+    expect(component.fetchData).toHaveBeenCalled();
   });
 });

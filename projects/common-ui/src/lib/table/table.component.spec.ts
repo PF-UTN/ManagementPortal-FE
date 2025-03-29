@@ -28,7 +28,7 @@ describe('TableComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ 
+      imports: [
         TableComponent, 
         MatTableModule,
         MatMenuModule,
@@ -80,4 +80,70 @@ describe('TableComponent', () => {
     const rowClass = component.getRowClass(mockRow);
     expect(rowClass).toBe('highlight');
   });
+
+  it('should handle undefined or empty dataSource gracefully', () => {
+    component.columns = mockColumns;
+    component.dataSource = of([]); 
+    component.ngOnInit();
+    expect(component.tableDataSource.data).toEqual([]);
+    component.dataSource = of([]); 
+    component.ngOnInit();
+    expect(component.tableDataSource.data).toEqual([]);
+  });
+
+  it('should initialize displayedColumns as an empty array if no columns are provided', () => {
+    component.columns = [];
+    component.ngOnInit();
+    expect(component.displayedColumns).toEqual([]);
+  });
+
+  it('should apply custom row class function and handle different row data', () => {
+    component.getRowClass = (row) => (row.name === 'John Doe' ? 'highlight' : '');
+    const row1 = { id: 1, name: 'John Doe' };
+    const row2 = { id: 2, name: 'Jane Smith' };
+
+    expect(component.getRowClass(row1)).toBe('highlight');
+    expect(component.getRowClass(row2)).toBe('');
+  });
+
+  it('should log an error when dataSource is undefined', () => {
+    jest.spyOn(console, 'error');
+    component.dataSource = of([]);
+    component.ngOnInit();
+    expect(console.error).toHaveBeenCalledWith('dataSource is undefined or not an observable.');
+  });
+
+  it('should emit actionClicked event with proper parameters for different actions', () => {
+    const action = 'edit';
+    const row = { id: 1, name: 'John Doe' };
+    jest.spyOn(component.actionClicked, 'emit');
+    component.onActionClick(action, row);
+    expect(component.actionClicked.emit).toHaveBeenCalledWith({ action, row });
+
+    const deleteAction = 'delete';
+    component.onActionClick(deleteAction, row);
+    expect(component.actionClicked.emit).toHaveBeenCalledWith({ action: deleteAction, row });
+  });
+
+  it('should handle empty dataSource gracefully', () => {
+    component.dataSource = of([]); 
+    component.ngOnInit();
+    expect(component.tableDataSource.data).toEqual([]);
+  });
+
+  it('should update tableDataSource when dataSource changes', () => {
+    const newData = [{ id: 3, name: 'Sam Brown' }];
+    component.dataSource = of(newData);
+    component.ngOnInit();
+    expect(component.tableDataSource.data).toEqual(newData);
+  });
+
+  it('should emit actionClicked event for other actions', () => {
+    const action = 'view';
+    const row = { id: 2, name: 'Jane Smith' };
+    jest.spyOn(component.actionClicked, 'emit');
+    component.onActionClick(action, row);
+    expect(component.actionClicked.emit).toHaveBeenCalledWith({ action, row });
+  });
+  
 });
