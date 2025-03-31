@@ -7,7 +7,7 @@ describe('MpTitleComponent', () => {
 
   beforeEach( () => {
    TestBed.configureTestingModule({
-      imports: [MpTitleComponent], // Importing standalone component
+      imports: [MpTitleComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(MpTitleComponent);
