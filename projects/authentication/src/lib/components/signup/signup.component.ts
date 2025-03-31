@@ -44,6 +44,7 @@ export class SignupComponent {
     lastname: FormControl<string | null>;
     email: FormControl<string | null>;
     password: FormControl<string | null>;
+    confirmPassword: FormControl<string | null>;
     phone: FormControl<string | null>;
     birthdate: FormControl<Date | null>;
     country: FormControl<string | null>;
@@ -109,6 +110,7 @@ export class SignupComponent {
         lastname: this.signupForm.get('lastname')!.value!,
         email: this.signupForm.get('email')!.value!,
         password: this.signupForm.get('password')!.value!,
+        confirmPassword: this.signupForm.get('confirmPassword')!.value!,
         phone: this.signupForm.get('phone')!.value!,
         birthdate: this.signupForm.get('birthdate')!.value!,
         country: this.signupForm.get('country')!.value!,
