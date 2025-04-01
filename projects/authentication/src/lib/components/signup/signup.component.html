@@ -12,11 +12,11 @@
       <div class="col d-flex align-items-center justify-content-center mb-2">
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Nombre</mat-label>
-          <input matInput type="text" formControlName="name">
-          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('name')?.reset()">
+          <input matInput type="text" formControlName="firstName">
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('firstName')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
-          <mat-hint *ngIf="signupForm.get('name')?.hasError('required') && signupForm.get('name')?.touched" class="error-message">Nombre es requerido</mat-hint>
+          <mat-hint *ngIf="signupForm.get('firstName')?.hasError('required') && signupForm.get('firstName')?.touched" class="error-message">Nombre es requerido</mat-hint>
         </mat-form-field>
       </div>
 
@@ -39,11 +39,11 @@
       <div class="col d-flex align-items-center justify-content-center mb-2">
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Apellido</mat-label>
-          <input matInput type="text" formControlName="lastname">
-          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('lastname')?.reset()">
+          <input matInput type="text" formControlName="lastName">
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('lastName')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
-          <mat-hint *ngIf="signupForm.get('lastname')?.hasError('required') && signupForm.get('lastname')?.touched" class="error-message">Apellido es requerido</mat-hint>
+          <mat-hint *ngIf="signupForm.get('lastName')?.hasError('required') && signupForm.get('lastName')?.touched" class="error-message">Apellido es requerido</mat-hint>
         </mat-form-field>
       </div>
 
@@ -149,14 +149,14 @@
       <div class="col-lg-3 d-flex align-items-center justify-content-center mb-2">
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Tipo de Documento</mat-label>
-          <mat-select type="text" formControlName="taxIdType">
-            <mat-option value="one">DNI</mat-option>
-            <mat-option value="two">CUIT</mat-option>
+          <mat-select type="text" formControlName="documentType">
+            <mat-option value="DNI">DNI</mat-option>
+            <mat-option value="CUIT">CUIT</mat-option>
           </mat-select>
-          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('taxIdType')?.reset()">
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('documentType')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
-          <mat-hint *ngIf="signupForm.get('taxIdType')?.hasError('required') && signupForm.get('taxIdType')?.touched" class="error-message">Tipo de Documento es requerido</mat-hint>
+          <mat-hint *ngIf="signupForm.get('documentType')?.hasError('required') && signupForm.get('documentType')?.touched" class="error-message">Tipo de Documento es requerido</mat-hint>
         </mat-form-field>
       </div>
 
@@ -164,11 +164,11 @@
       <div class="col-lg-3 d-flex align-items-center justify-content-center mb-2">
         <mat-form-field class="w-100"  appearance="outline">
           <mat-label>Número Documento</mat-label>
-          <input type="text" matInput formControlName="tax">
-          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('tax')?.reset()">
+          <input type="text" matInput formControlName="documentNumber">
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('documentNumber')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
-          <mat-hint *ngIf="signupForm.get('tax')?.hasError('required') && signupForm.get('tax')?.touched" class="error-message">Número Documento es requerido</mat-hint>
+          <mat-hint *ngIf="signupForm.get('documentNumber')?.hasError('required') && signupForm.get('documentNumber')?.touched" class="error-message">Número Documento es requerido</mat-hint>
         </mat-form-field>
       </div>
 
@@ -179,13 +179,13 @@
       <div class="col d-flex align-items-center justify-content-center mb-2">
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Fecha de Nacimiento</mat-label>
-          <input matInput [matDatepicker]="picker" formControlName="birthdate" placeholder="AAAA-MM-DD">
+          <input matInput [matDatepicker]="picker" formControlName="birthDate" placeholder="AAAA-MM-DD">
           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
-          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('birthdate')?.reset()">
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('birthDate')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
-          <mat-hint *ngIf="signupForm.get('birthdate')?.hasError('required') && signupForm.get('birthdate')?.touched" class="error-message">Fecha de Nacimiento es
+          <mat-hint *ngIf="signupForm.get('birthDate')?.hasError('required') && signupForm.get('birthDate')?.touched" class="error-message">Fecha de Nacimiento es
             requerida</mat-hint>
         </mat-form-field>
       </div>
@@ -200,7 +200,7 @@
           <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('taxCategory')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
-          <mat-hint *ngIf="signupForm.get('taxCategory')?.hasError('required') && signupForm.get('taxCategory')?.touched" class="error-message">Categoría IVA es requerido</mat-hint>
+          <mat-hint *ngIf="signupForm.get('')?.hasError('required') && signupForm.get('taxCategory')?.touched" class="error-message">Categoría IVA es requerido</mat-hint>
         </mat-form-field>
       </div>
 

@@ -69,7 +69,7 @@ export class LoginComponent {
         email: this.loginForm.get('email')!.value!,
         password: this.loginForm.get('password')!.value!,
       };
-      this.authService.logInAndSaveToken(credentials).subscribe({
+      this.authService.logInAsync(credentials).subscribe({
         next: (response) => {
           this.router.navigate(['/']); 
           this.errorMessage = '';

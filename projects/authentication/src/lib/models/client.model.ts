@@ -1,18 +1,18 @@
 export interface Client {
-    name: string;
-    lastname: string;
+    firstName: string;
+    lastName: string;
     email: string ;
     password: string;
     confirmPassword: string;
     phone: string;
-    birthdate: Date;
+    birthDate: Date;
     country: string;
     province: string;
     town: string;
     street: string;
     streetNumber: number;
     taxCategory: number;
-    taxIdType: number ;
-    tax: string ;
+    documentType: number ;
+    documentNumber: string ;
     companyName: string;
     }

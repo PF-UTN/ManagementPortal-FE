@@ -2,21 +2,21 @@ import { Client } from './client.model';
 import { User } from './user.model';
 
 export const mockClient: Client = {
-  name: 'Juan',
-  lastname: 'Pérez',
+  firstName: 'Juan',
+  lastName: 'Pérez',
   email: 'juan.perez@example.com',
   password: 'Password123',
   confirmPassword: 'Password123',
   phone: '123456789',
-  birthdate: new Date('1990-01-01'),
+  birthDate: new Date('1990-01-01'),
   country: 'Argentina',
   province: 'Santa Fe',
   town: 'Rosario',
   street: 'Calle Falsa',
   streetNumber: 123,
   taxCategory: 1,
-  taxIdType: 2,
-  tax: '20-12345678-9',
+  documentType: 2,
+  documentNumber: '20-12345678-9',
   companyName: 'Mi Empresa',
 };
 

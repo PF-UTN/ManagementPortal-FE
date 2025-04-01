@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Client } from '../models/client.model';
 import { User } from '../models/user.model';
 import { AuthResponse } from '../models/auth-response.model';
+import { tap } from 'rxjs/operators';
 
 
 @Injectable({
@@ -14,19 +15,23 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  signUpAsync(client: Client): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/signup`, client);
-  }
-
-  logInAsync(credential: User): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/signin`, credential);
-  }
-
   private setToken(token: string): void {
     localStorage.setItem('token', token);
   }
 
-  logInAndSaveToken(credential: User): Observable<AuthResponse> {
+  signUpAsync(client: Client): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/signup`, client).pipe(
+      tap(response => this.setToken(response.token)) // Guarda el token automáticamente
+    );
+  }
+
+  logInAsync(credential: User): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/signin`, credential).pipe(
+      tap(response => this.setToken(response.token)) // Guarda el token automáticamente
+    );
+  }
+
+/*logInAndSaveToken(credential: User): Observable<AuthResponse> {
     return new Observable(observer => {
       this.logInAsync(credential).subscribe({
         next: (response) => {
@@ -52,6 +57,6 @@ export class AuthService {
         }
       });
     });
-  }
+  }*/
 
 }
