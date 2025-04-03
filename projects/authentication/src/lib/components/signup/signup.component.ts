@@ -125,11 +125,22 @@ export class SignupComponent {
       };
       this.authService.signUpAsync(client).subscribe({
         next: (response) => { 
-
           this.router.navigate(['/login']); 
         },
         error: (error) => {
-
+          console.error('Error during signup:', error);
+          // Handle error response here, e.g., show a message to the user
+          console.log('Error during signup:', error);
+          if (error.error) {
+            console.log('Error details:', error.error);
+          } else {
+            console.log('Unexpected error:', error);
+          }
+          console.log('Error status:', error.status);
+          console.log('Error message:', error.message);
+          console.log('Error name:', error.name);
+          console.log('Error stack:', error.stack);
+          console.log(this.signupForm.value);
       
         }
       });

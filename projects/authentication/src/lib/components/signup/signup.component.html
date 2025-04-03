@@ -9,7 +9,7 @@
 </div>
   <form [formGroup]="signupForm">
     <div class="row">
-      <div class="col d-flex align-items-center justify-content-center mb-2">
+      <div class="col d-flex align-items-center justify-content-center mb-4">
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Nombre</mat-label>
           <input matInput type="text" formControlName="firstName">
@@ -20,7 +20,7 @@
         </mat-form-field>
       </div>
 
-      <div class="col d-flex align-items-center justify-content-center mb-2">
+      <div class="col d-flex align-items-center justify-content-center mb-4">
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>País</mat-label>
           <mat-select type="text" formControlName="country">
@@ -36,7 +36,7 @@
     </div>
 
     <div class="row">
-      <div class="col d-flex align-items-center justify-content-center mb-2">
+      <div class="col d-flex align-items-center justify-content-center mb-4">
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Apellido</mat-label>
           <input matInput type="text" formControlName="lastName">
@@ -47,7 +47,7 @@
         </mat-form-field>
       </div>
 
-      <div class="col d-flex align-items-center justify-content-center mb-2">
+      <div class="col d-flex align-items-center justify-content-center mb-4">
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Provincia</mat-label>
           <mat-select type="text" formControlName="province">
@@ -65,7 +65,7 @@
 
     <div class="row">
 
-      <div class="col d-flex align-items-center justify-content-center mb-2">
+      <div class="col d-flex align-items-center justify-content-center mb-4">
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Email</mat-label>
           <input type="email" matInput formControlName="email" placeholder="Ej. pat@example.com">
@@ -77,7 +77,7 @@
         </mat-form-field>
       </div>
 
-      <div class="col d-flex align-items-center justify-content-center mb-2">
+      <div class="col d-flex align-items-center justify-content-center mb-4">
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Ciudad</mat-label>
           <mat-select type="text" formControlName="town">
@@ -93,7 +93,7 @@
     </div>
 
     <div class="row">
-      <div class="col-lg-6 mb-2">
+      <div class="col-lg-6 mb-4">
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Contraseña</mat-label>
           <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password">
@@ -103,8 +103,7 @@
             <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
           <mat-hint *ngIf="signupForm.get('password')?.hasError('required') && signupForm.get('password')?.touched" class="error-message">Contraseña es requerida</mat-hint>
-          <mat-hint *ngIf="signupForm.get('password')?.hasError('pattern')">Debe contener al menos 8 caracteres, una
-            letra mayúscula, una minúscula y un número</mat-hint>
+          <mat-hint *ngIf="signupForm.get('password')?.hasError('pattern')" class="error-message">Debe contener al menos 8 caracteres, una letra mayúscula, una minúscula y un número</mat-hint>
         </mat-form-field>
       </div>
       <div class="col-lg-3 mb-2">
@@ -132,7 +131,7 @@
 
 
     <div class="row">
-      <div class="col-lg-6 d-flex align-items-center justify-content-center mb-2">
+      <div class="col-lg-6 d-flex align-items-center justify-content-center mb-4">
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Confirmar Contraseña</mat-label>
           <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="confirmPassword">
@@ -146,7 +145,7 @@
         </mat-form-field>
       </div>
 
-      <div class="col-lg-3 d-flex align-items-center justify-content-center mb-2">
+      <div class="col-lg-3 d-flex align-items-center justify-content-center mb-4">
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Tipo de Documento</mat-label>
           <mat-select type="text" formControlName="documentType">
@@ -161,7 +160,7 @@
       </div>
 
 
-      <div class="col-lg-3 d-flex align-items-center justify-content-center mb-2">
+      <div class="col-lg-3 d-flex align-items-center justify-content-center mb-4">
         <mat-form-field class="w-100"  appearance="outline">
           <mat-label>Número Documento</mat-label>
           <input type="text" matInput formControlName="documentNumber">
@@ -176,10 +175,10 @@
     </div>
 
     <div class="row">
-      <div class="col d-flex align-items-center justify-content-center mb-2">
+      <div class="col d-flex align-items-center justify-content-center mb-4">
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Fecha de Nacimiento</mat-label>
-          <input matInput [matDatepicker]="picker" formControlName="birthDate" placeholder="AAAA-MM-DD">
+          <input matInput [matDatepicker]="picker" formControlName="birthDate">
           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
           <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('birthDate')?.reset()">
@@ -190,7 +189,7 @@
         </mat-form-field>
       </div>
 
-      <div class="col d-flex align-items-center justify-content-center mb-2">
+      <div class="col d-flex align-items-center justify-content-center mb-4">
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Categoría IVA</mat-label>
           <mat-select type="text" formControlName="taxCategory">
@@ -208,7 +207,7 @@
 
 
     <div class="row">
-      <div class="col d-flex align-items-center justify-content-center mb-2">
+      <div class="col d-flex align-items-center justify-content-center mb-4">
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Teléfono</mat-label>
           <span matTextPrefix> +54 </span>
@@ -221,7 +220,7 @@
         </mat-form-field>
       </div>
 
-      <div class="col d-flex align-items-center justify-content-center mb-2">
+      <div class="col d-flex align-items-center justify-content-center mb-4">
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Nombre de Compañia</mat-label>
           <input type="text" matInput formControlName="companyName">
