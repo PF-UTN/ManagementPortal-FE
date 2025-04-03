@@ -21,42 +21,15 @@ export class AuthService {
 
   signUpAsync(client: Client): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/signup`, client).pipe(
-      tap(response => this.setToken(response.token)) // Guarda el token automáticamente
+      tap(response => this.setToken(response.token)) 
     );
   }
 
   logInAsync(credential: User): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/signin`, credential).pipe(
-      tap(response => this.setToken(response.token)) // Guarda el token automáticamente
+      tap(response => this.setToken(response.token)) 
     );
   }
 
-/*logInAndSaveToken(credential: User): Observable<AuthResponse> {
-    return new Observable(observer => {
-      this.logInAsync(credential).subscribe({
-        next: (response) => {
-          this.setToken(response.token);  
-          observer.next(response);  
-        },
-        error: (err) => {
-          observer.error(err);  
-        }
-      });
-    });
-  }
-
-  signUpAndSaveToken(client: Client): Observable<AuthResponse> {
-    return new Observable(observer => {
-      this.signUpAsync(client).subscribe({
-        next: (response) => {
-          this.setToken(response.token); 
-          observer.next(response);  
-        },
-        error: (err) => {
-          observer.error(err);  
-        }
-      });
-    });
-  }*/
 
 }
