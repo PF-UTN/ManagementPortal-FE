@@ -1,0 +1,19 @@
+.grid-container {
+    width: 100%;
+    margin-top: 20px;
+    display: grid;
+  }
+  
+  .grid-item {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: center; 
+    align-items: center; 
+  }
+  
+  mp-table {
+    width: 100%; 
+    max-width: 65%; 
+  }
+  
