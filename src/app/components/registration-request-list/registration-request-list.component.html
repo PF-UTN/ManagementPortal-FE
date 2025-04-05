@@ -1,33 +1,20 @@
-<mat-grid-list cols="12" rowHeight="auto" gutterSize="16px" class="grid-container">
-  <mat-grid-tile colspan="12" class="grid-item"> 
-    <div *ngIf="isLoading" class="loading-message">
-      Cargando...
-    </div>
+<mp-table
+  [columns]="columns"
+  [dataSource$]="dataSource$"
+  [isLoading]="isLoading"
+  [noDataMessage]="'No hay solicitudes de registro disponibles'"
+  [itemsNumber]="totalItems"
+  [getRowClass]="getRowClass"
+  [customActionsTemplate]="actionsTemplate">
+</mp-table>
 
-    <div *ngIf="!isLoading">
-      <div *ngIf="(dataSource$ | async)?.length === 0; else tableContent" class="no-data-message">
-        No hay solicitudes de registro disponibles.
-      </div>
-    </div>
-
-    <ng-template #tableContent>
-      <mp-table [columns]="columns" [dataSource]="dataSource$" [itemsNumber]="totalItems" [getRowClass]="getRowClass"
-        [customActionsTemplate]="actionsTemplate">
-      </mp-table>
-
-      <mat-paginator [length]="totalItems" [pageSize]="pageSize" [pageIndex]="pageIndex" (page)="onPageChange($event)">
-      </mat-paginator>
-    </ng-template>
-
-    <ng-template #actionsTemplate let-element>
-      <button mat-icon-button [matMenuTriggerFor]="menu">
-        <mat-icon>more_horiz</mat-icon>
-      </button>
-      <mat-menu #menu="matMenu">
-        <button mat-menu-item (click)="onViewDetail(element)">Ver Detalle</button>
-        <button mat-menu-item (click)="onApprove(element)">Aprobar</button>
-        <button mat-menu-item (click)="onReject(element)">Rechazar</button>
-      </mat-menu>
-    </ng-template>
-  </mat-grid-tile>
-</mat-grid-list>
+<ng-template #actionsTemplate let-element>
+  <button mat-icon-button [matMenuTriggerFor]="menu">
+    <mat-icon>more_horiz</mat-icon>
+  </button>
+  <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="onViewDetail(element)">Ver Detalle</button>
+    <button mat-menu-item (click)="onApprove(element)">Aprobar</button>
+    <button mat-menu-item (click)="onReject(element)">Rechazar</button>
+  </mat-menu>
+</ng-template>

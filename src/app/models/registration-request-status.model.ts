@@ -1,4 +1,4 @@
-export class RegistrationRequestStatus {
-    id: number = 0;
-    code: string = '';
+export interface RegistrationRequestStatus {
+    id: number;
+    code: string;
 }

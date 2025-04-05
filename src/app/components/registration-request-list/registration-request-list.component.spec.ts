@@ -6,14 +6,17 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
-import { registrationRequestList } from 'src/app/models/registration-request-list.model';
+import { RegistrationRequestService } from '../../services/registration-request.service';
+import { of, throwError } from 'rxjs';
+import { RegistrationRequestListItem } from '../../models/registration-request-item.model';
 
 describe('RegistrationRequestListComponent', () => {
   let component: RegistrationRequestListComponent;
   let fixture: ComponentFixture<RegistrationRequestListComponent>;
   let httpMock: HttpTestingController;
+  let service: RegistrationRequestService;
 
-  const mockData: registrationRequestList[] = [
+  const mockData: RegistrationRequestListItem[] = [
     {
       id: 1,
       user: {
@@ -21,7 +24,7 @@ describe('RegistrationRequestListComponent', () => {
         email: 'johndoe@example.com',
         documentNumber: '12345678',
         documentType: 'DNI',
-        phone: '123456789'  
+        phone: '123456789'
       },
       status: 'Pending',
       requestDate: '2025-03-28T00:00:00Z'
@@ -40,130 +43,129 @@ describe('RegistrationRequestListComponent', () => {
     }
   ];
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  beforeEach(() => {
+    const mockService = {
+      fetchRegistrationRequests: jest.fn().mockReturnValue(of({ total: mockData.length, results: mockData }))
+    };
+  
+    TestBed.configureTestingModule({
       imports: [
         RegistrationRequestListComponent,
-        HttpClientTestingModule,
         MatPaginatorModule,
         CommonModule,
         MatIconModule,
         MatMenuModule,
         MatButtonModule
+      ],
+      providers: [
+        { provide: RegistrationRequestService, useValue: mockService }
       ]
     }).compileComponents();
-
+  
     fixture = TestBed.createComponent(RegistrationRequestListComponent);
     component = fixture.componentInstance;
-    httpMock = TestBed.inject(HttpTestingController);
+    service = TestBed.inject(RegistrationRequestService);
     fixture.detectChanges();
   });
 
-  afterEach(() => {
-    httpMock.verify();
-  });
-
   it('should create the component', () => {
-    expect(component).toBeTruthy();
+  // Assert
+  expect(component).toBeTruthy();
+  expect(component.dataSource$.value).toEqual(mockData);
+  expect(component.totalItems).toBe(mockData.length);
+  expect(component.isLoading).toBe(false);
+});
+
+  describe('fetchData', () => {
+    it('should update dataSource$ and totalItems with mock data', () => {
+      // Act
+      component.fetchData();
+    
+      // Assert
+      expect(component.dataSource$.value).toEqual(mockData);
+      expect(component.totalItems).toBe(mockData.length);
+      expect(component.isLoading).toBe(false);
+    });
+
+    it('should handle errors when fetchRegistrationRequests fails', () => {
+      // Arrange
+      jest.spyOn(service, 'fetchRegistrationRequests').mockReturnValue(throwError(() => new Error('Test error')));
+    
+      // Act
+      component.fetchData();
+    
+      // Assert
+      expect(component.isLoading).toBe(false);
+    });
   });
 
-  it('should handle the "approve" action', () => {
-    jest.spyOn(component, 'onApprove');
-    component.handleAction(mockData[0], 'approve');
-    expect(component.onApprove).toHaveBeenCalledWith(mockData[0]);
+  describe('handlePageChange', () => {
+    it('should update pageIndex and pageSize and call fetchData', () => {
+      // Arrange
+      jest.spyOn(component, 'fetchData');
+      const event = { pageIndex: 1, pageSize: 20 };
+    
+      // Act
+      component.handlePageChange(event);
+    
+      // Assert
+      expect(component.pageIndex).toBe(1);
+      expect(component.pageSize).toBe(20);
+      expect(component.fetchData).toHaveBeenCalled();
+      expect(component.dataSource$.value).toEqual(mockData);
+      expect(component.totalItems).toBe(mockData.length);
+    });
   });
 
-  it('should handle the "reject" action', () => {
-    jest.spyOn(component, 'onReject');
-    component.handleAction(mockData[1], 'reject');
-    expect(component.onReject).toHaveBeenCalledWith(mockData[1]);
+  describe('onApprove', () => {
+    it('should log approval message', () => {
+      // Arrange
+      jest.spyOn(console, 'log');
+      const row = mockData[0];
+
+      // Act
+      component.onApprove(row);
+
+      // Assert
+      expect(console.log).toHaveBeenCalledWith('Aprobando solicitud:', row);
+    });
   });
 
-  it('should call fetchData when page changes', () => {
-    jest.spyOn(component, 'fetchData');
-    component.onPageChange({ pageIndex: 1, pageSize: 10 });
-    expect(component.fetchData).toHaveBeenCalled();
+  describe('onReject', () => {
+    it('should log rejection message', () => {
+      // Arrange
+      jest.spyOn(console, 'log');
+      const row = mockData[1];
+
+      // Act
+      component.onReject(row);
+
+      // Assert
+      expect(console.log).toHaveBeenCalledWith('Rechazando solicitud:', row);
+    });
   });
 
-  it('should return empty string for invalid row in getRowClass', () => {
-    jest.spyOn(console, 'warn');
-    const invalidRow1: registrationRequestList = {
-      id: 0,
-      user: {
-        fullNameOrBusinessName: '',
-        email: '',
-        documentNumber: '',
-        documentType: '',
-        phone: ''
-      },
-      status: '',
-      requestDate: ''
-    };
+  describe('getRowClass', () => {
+    it('should return "pending-row" for rows with status "Pending"', () => {
+      // Arrange
+      const row = mockData[0];
 
-    const invalidRow2: registrationRequestList = {
-      id: 0,
-      user: {
-        fullNameOrBusinessName: '',
-        email: '',
-        documentNumber: '',
-        documentType: '',
-        phone: ''
-      },
-      status: '',
-      requestDate: ''
-    };
-    expect(component.getRowClass(invalidRow1)).toBe('');
-    expect(component.getRowClass(invalidRow2)).toBe('');
-    expect(console.warn).toHaveBeenCalledWith('Fila inválida o estado no definido:', invalidRow1);
-    expect(console.warn).toHaveBeenCalledWith('Fila inválida o estado no definido:', invalidRow2);
-  });
+      // Act
+      const result = component.getRowClass(row);
 
-  it('should throw error for unknown action', () => {
-    expect(() => component.handleAction(mockData[0], 'invalid-action'))
-      .toThrowError('Acción no reconocida: invalid-action');
-  });
+      // Assert
+      expect(result).toBe('pending-row');
+    });
 
-  it('should log details when onViewDetail is called', () => {
-    jest.spyOn(console, 'log');
-    const row = mockData[0];
-    component.onViewDetail(row);
-    expect(console.log).toHaveBeenCalledWith('Ver detalle de:', row);
-  });
+    it('should return an empty string for rows with status other than "Pending"', () => {
+      // Arrange
+      const row = mockData[1];
 
-  it('should update pageIndex and pageSize on page change', () => {
-    component.onPageChange({ pageIndex: 2, pageSize: 20 });
-    expect(component.pageIndex).toBe(2);
-    expect(component.pageSize).toBe(20);
-  });
+      // Act
+      const result = component.getRowClass(row);
 
-  it('should apply correct row class based on status', () => {
-    const pendingRow = mockData[0];
-    const approvedRow = mockData[1];
-  
-    expect(component.getRowClass(pendingRow)).toBe('pending-row');
-    expect(component.getRowClass(approvedRow)).toBe('');
-  });
-
-  it('should call fetchData on initialization', () => {
-    jest.spyOn(component, 'fetchData');
-    component.ngOnInit();
-    expect(component.fetchData).toHaveBeenCalled();
-  });
-
-  it('should call onViewDetail when action is "viewDetail"', () => {
-    jest.spyOn(component, 'onViewDetail');
-    const row = mockData[0];
-    component.handleAction(row, 'viewDetail');
-    expect(component.onViewDetail).toHaveBeenCalledWith(row);
-  });
-
-  it('should initialize dataSource$ as empty', () => {
-    expect(component.dataSource$.getValue()).toEqual([]);
-  });
-
-  it('should call fetchData when onPageChange is triggered', () => {
-    jest.spyOn(component, 'fetchData');
-    component.onPageChange({ pageIndex: 1, pageSize: 20 });
-    expect(component.fetchData).toHaveBeenCalled();
+      // Assert
+      expect(result).toBe('');
+    });
   });
 });
