@@ -4,17 +4,5 @@
   [isLoading]="isLoading"
   [noDataMessage]="'No hay solicitudes de registro disponibles'"
   [itemsNumber]="totalItems"
-  [getRowClass]="getRowClass"
-  [customActionsTemplate]="actionsTemplate">
+  [getRowClass]="getRowClass">
 </mp-table>
-
-<ng-template #actionsTemplate let-element>
-  <button mat-icon-button [matMenuTriggerFor]="menu">
-    <mat-icon>more_horiz</mat-icon>
-  </button>
-  <mat-menu #menu="matMenu">
-    <button mat-menu-item (click)="onViewDetail(element)">Ver Detalle</button>
-    <button mat-menu-item (click)="onApprove(element)">Aprobar</button>
-    <button mat-menu-item (click)="onReject(element)">Rechazar</button>
-  </mat-menu>
-</ng-template>

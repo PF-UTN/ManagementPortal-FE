@@ -1,14 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { TableColumn } from 'projects/common-ui/src/lib/models/table-column.model';
 import { RegistrationRequestListItem } from '../../models/registration-request-item.model';
 import { RegistrationRequestService } from '../../services/registration-request.service';
-import { TableComponent } from '@common-ui';
+import { ColumnTypeEnum, TableColumn, TableComponent } from '@common-ui';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RegistrationRequestParams } from '../../models/registration-request-param.model';
 
 @Component({
@@ -21,11 +19,11 @@ import { RegistrationRequestParams } from '../../models/registration-request-par
 })
 export class RegistrationRequestListComponent implements OnInit {
   columns: TableColumn<RegistrationRequestListItem>[] = [
-    { columnDef: 'name', header: 'Nombre Completo | Razón Social', type: 'value', value: (element: RegistrationRequestListItem) => element.user.fullNameOrBusinessName },
-    { columnDef: 'email', header: 'Email', type: 'value', value: (element: RegistrationRequestListItem) => element.user.email },
-    { columnDef: 'status', header: 'Estado', type: 'value', value: (element: RegistrationRequestListItem) => element.status },
-    { columnDef: 'requestDate', header: 'Fecha de Solicitud', type: 'value', value: (element: RegistrationRequestListItem) => new Date(element.requestDate).toLocaleDateString() },
-    { columnDef: 'actions', header: 'Acciones', type: 'action' },
+    { columnDef: 'name', header: 'Nombre Completo | Razón Social', type: ColumnTypeEnum.VALUE, value: (element: RegistrationRequestListItem) => element.user.fullNameOrBusinessName },
+    { columnDef: 'email', header: 'Email', type: ColumnTypeEnum.VALUE, value: (element: RegistrationRequestListItem) => element.user.email },
+    { columnDef: 'status', header: 'Estado', type: ColumnTypeEnum.VALUE, value: (element: RegistrationRequestListItem) => element.status },
+    { columnDef: 'requestDate', header: 'Fecha de Solicitud', type: ColumnTypeEnum.VALUE, value: (element: RegistrationRequestListItem) => new Date(element.requestDate).toLocaleDateString() },
+    { columnDef: 'actions', header: 'Acciones', type: ColumnTypeEnum.ACTIONS, actions: [{description: 'Ver Detalle', action: (element: RegistrationRequestListItem) => this.onViewDetail(element)}, {description: 'Aprobar', action: (element: RegistrationRequestListItem) => this.onApprove(element)}, {description: 'Rechazar', action: (element: RegistrationRequestListItem) => this.onReject(element)}] },
   ];
   dataSource$ = new BehaviorSubject<RegistrationRequestListItem[]>([]);
   isLoading: boolean = true;
@@ -33,7 +31,7 @@ export class RegistrationRequestListComponent implements OnInit {
   pageSize: number = 10;
   totalItems: number = 0;
 
-  constructor(private registrationRequestService: RegistrationRequestService) {}
+  constructor(private readonly registrationRequestService: RegistrationRequestService) {}
 
   ngOnInit(): void {
     this.fetchData();

@@ -7,8 +7,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatGridListModule } from '@angular/material/grid-list'; 
 import { MatButtonModule } from '@angular/material/button';
 import { Observable } from 'rxjs';
-import { TemplateRef } from '@angular/core';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { ColumnTypeEnum } from '@common-ui';
 
 @Component({
   selector: 'mp-table',
@@ -22,7 +22,6 @@ export class TableComponent<T> implements OnInit {
   @Input() columns: TableColumn<T>[] = [];
   @Input() dataSource$: Observable<T[]>;
   @Input() getRowClass: (row: T) => string = () => '';
-  @Input() customActionsTemplate: TemplateRef<{ $implicit: T }>;
   @Input() noDataMessage: string = 'No hay datos disponibles';
   @Input() isLoading: boolean = false;
   @Input() itemsNumber: number = 0;
@@ -33,6 +32,8 @@ export class TableComponent<T> implements OnInit {
 
   tableDataSource = new MatTableDataSource<T>();
   displayedColumns: string[] = [];
+
+  ROW_TYPES = ColumnTypeEnum;
 
   ngOnInit() {
   this.displayedColumns = this.columns.map(c => c.columnDef);
@@ -50,5 +51,4 @@ export class TableComponent<T> implements OnInit {
   onPageChange(event: { pageIndex: number; pageSize: number }) {
     this.pageChange.emit(event);
   }
-  
 }

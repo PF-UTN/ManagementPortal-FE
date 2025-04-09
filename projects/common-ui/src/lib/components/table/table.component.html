@@ -10,22 +10,33 @@
     <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDef">
       <th class="table__header" mat-header-cell *matHeaderCellDef>{{ column.header }}</th>
       <td mat-cell *matCellDef="let element">
-        <ng-container *ngIf="column.columnDef === 'actions'">
-          <ng-container *ngTemplateOutlet="customActionsTemplate; context: { $implicit: element }"></ng-container>
-        </ng-container>
-        <ng-container *ngIf="column.columnDef !== 'actions'">
           <ng-container [ngSwitch]="column.type">
             <ng-container *ngSwitchCase="'value'">
               {{ column?.value(element) }}
             </ng-container>
-            <ng-container *ngSwitchCase="'multiValue'">
+            <ng-container *ngSwitchCase="ROW_TYPES.MULTI_VALUE">
               <div class="multi-value__container">
                 <p *ngFor="let item of column?.multiValue(element)" class="multi-value__item">
                   {{ item }}
                 </p>
               </div>
             </ng-container>
-          </ng-container>
+            <ng-container *ngSwitchCase="ROW_TYPES.ACTIONS">
+              <div class="actions__container">
+                <button mat-icon-button [matMenuTriggerFor]="menu">
+                  <mat-icon>more_horiz</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                  <div *ngFor="let item of column?.actions" class="actions__item">
+                    <ng-container *ngIf="item?.action">
+                      <button mat-menu-item (click)="item.action(element)">
+                        {{ item.description }}
+                      </button>
+                    </ng-container>
+                  </div>
+                </mat-menu>
+              </div>
+            </ng-container>
         </ng-container>
       </td>
     </ng-container>
