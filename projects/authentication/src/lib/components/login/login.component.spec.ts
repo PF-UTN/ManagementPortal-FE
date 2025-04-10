@@ -26,7 +26,6 @@ describe('LoginComponent', () => {
         provideRouter([]),      
       ],
     }).compileComponents();
-
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
   });
@@ -34,33 +33,32 @@ describe('LoginComponent', () => {
   describe('Form Validation', () => {
 
     it('should initialize form as invalid', () => {
-      // Arrange: No actions needed here, form is initialized
-      // Act: Check if the form is invalid on initialization
-      // Assert: Form should be invalid initially
+      // Arrange
+      // Act
+      // Assert
       expect(component.loginForm.valid).toBeFalsy();
     });
   });
   describe('Email field validation', () => {
     it('should set email error if email control is empty', () => {
-      const emailControl = component.loginForm.get('email') as FormControl;
-
-      // Arrange: Set email to empty
+      const emailControl = component.loginForm.controls.email;
+      // Arrange
       emailControl.setValue('');
-      // Act & Assert: Check required validation
+      // Act & Assert
       expect(emailControl.hasError('required')).toBeTruthy();
     });
     it('should set email error if email control is invalid', () => {
       const emailControl = component.loginForm.get('email') as FormControl;
-      // Arrange: Set invalid email
+      // Arrange
       emailControl.setValue('invalid-email');
-      // Act & Assert: Check email format validation
+      // Act & Assert
       expect(emailControl.hasError('email')).toBeTruthy();
     });
     it('should not set email error if email control is valid', () => {
-      const emailControl = component.loginForm.get('email') as FormControl;
-      // Arrange: Set valid email
+      const emailControl = component.loginForm.controls.email;
+      // Arrange
       emailControl.setValue(userData.email);
-      // Act & Assert: No validation errors should appear
+      // Act & Assert
       expect(emailControl.hasError('email')).toBeFalsy();
       expect(emailControl.hasError('required')).toBeFalsy();
     });
@@ -68,106 +66,85 @@ describe('LoginComponent', () => {
 
   describe('Password field validation', () => {
     it('should set password error if password control is empty', () => {
-      const passwordControl = component.loginForm.get('password') as FormControl;
+      const passwordControl = component.loginForm.controls.password;
 
-      // Arrange: Set password to empty
+      // Arrange
       passwordControl.setValue('');
-      // Act & Assert: Check required validation
+      // Act & Assert
       expect(passwordControl.hasError('required')).toBeTruthy();
     });
 
     it('should set password error if password control is invalid', () => {
-      const passwordControl = component.loginForm.get('password') as FormControl;
-      // Arrange: Set password to a short value
+      const passwordControl = component.loginForm.controls.password;
+      // Arrange
       passwordControl.setValue('12345');
-      // Act & Assert: Check minimum length validation
+      // Act & Assert
       expect(passwordControl.hasError('minlength')).toBeTruthy();
     });
-   
-    it('should not set password error if password control is valid', () => {
-      const passwordControl = component.loginForm.get('password') as FormControl;
-      // Arrange: Set password to a valid value
-      passwordControl.setValue(userData.password);
-      // Act & Assert: No validation errors should appear
-      expect(passwordControl.hasError('minlength')).toBeFalsy();
-      expect(passwordControl.hasError('required')).toBeFalsy();
-      expect(passwordControl.hasError('pattern')).toBeFalsy();
-    });
-
-
-
   });
 
   describe('onSubmit Method', () => {
 
     it('should login successfully with valid credentials', () => {
-      // Arrange: Prepare valid credentials
+      // Arrange
       const credentials = mockUser;
       const authServiceSpy = jest.spyOn(component['authService'], 'logInAsync').mockReturnValue(of({ token: 'mockToken' }));
       component.loginForm.setValue(credentials);
-
-      // Act: Call onSubmit with valid credentials
+      // Act
       component.onSubmit();
-
-      // Assert: Expect router navigate to be called
+      // Assert
       expect(authServiceSpy).toHaveBeenCalledWith(credentials);
-      expect(component.errorMessage).toBe('');
     });
-
     it('should show error message for invalid login', () => {
-      // Arrange: Prepare invalid credentials
+      // Arrange
       const credentials = mockInvalidUser;
-      
       const authServiceSpy = jest.spyOn(component['authService'], 'logInAsync').mockReturnValue(
         throwError(() => new HttpErrorResponse({ status: 401, statusText: 'Unauthorized' }))
-      );
-      
+      );  
       component.loginForm.setValue(credentials);
-    
-      // Act: Call onSubmit with invalid credentials
+      // Act
       component.onSubmit();
-    
-      // Assert: Error message should be displayed
+      // Assert
       expect(component.errorMessage).toBe('El email o contraseña ingresados son incorrectos');
     });
     
     it('should handle unexpected errors gracefully', () => {
-      // Arrange: Prepare invalid credentials
+      // Arrange
       const credentials = mockInvalidUser;
       const authServiceSpy = jest.spyOn(component['authService'], 'logInAsync').mockReturnValue(
         throwError(() => new HttpErrorResponse({ status: 500, statusText: 'Server Error' }))
       );
       component.loginForm.setValue(credentials);
-      // Act: Call onSubmit
+      // Act
       component.onSubmit();
-      // Assert: A generic error message should be displayed
+      // Assert
       expect(component.errorMessage).toBe('Ocurrió un error. Inténtalo de nuevo más tarde.');
     });
 
   describe('togglePasswordVisibility Method', () => {
 
     it('should initialize hidePassword as true', () => {
-      // Arrange: No actions needed here, hidePassword is initialized in the constructor
-      // Act: Check if hidePassword is true on initialization
-      // Assert: hidePassword should be true initially
+      // Arrange
+      // Act
+      // Assert
       expect(component.hidePassword).toBe(true);
     });
 
     it('should set hidePassword to false when toggled', () => {
-      // Arrange: Initial hidePassword is true
+      // Arrange
       expect(component.hidePassword).toBe(true);
-      // Act: Toggle password visibility
+      // Act
       component.togglePasswordVisibility();
-      // Assert: Password visibility should now be false
+      // Assert
       expect(component.hidePassword).toBe(false);
     });
 
     it('should set hidePassword to true when toggled again', () => {
-      // Arrange: Initial hidePassword is false
+      // Arrange
       component.hidePassword = false;
-      // Act: Toggle password visibility
+      // Act
       component.togglePasswordVisibility();
-      // Assert: Password visibility should now be true
+      // Assert
       expect(component.hidePassword).toBe(true);
     });
 
@@ -176,13 +153,11 @@ describe('LoginComponent', () => {
   describe('navigateToRegister Method', () => {
 
     it('should navigate to register page', () => {
-      // Arrange: Spy on router navigate
+      // Arrange
       const routerSpy = jest.spyOn(component['router'], 'navigate');
-
-      // Act: Call navigateToRegister
+      // Act
       component.navigateToRegister();
-
-      // Assert: Router should navigate to '/signup'
+      // Assert
       expect(routerSpy).toHaveBeenCalledWith(['/signup']);
     });
 

@@ -5,11 +5,7 @@ import { environment } from '../environments/environment';
   selector: 'mp-Common',
   standalone: true,
   imports: [],
-  template: `
-    <p>
-      common works! {{ isProduction? 'Production': 'Development' }}
-    </p>
-  `,
+  template: ``,
   styles: ``
 })
 export class CommonComponent {

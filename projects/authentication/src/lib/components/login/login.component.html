@@ -1,15 +1,15 @@
-<div class="container d-flex flex-column justify-content-center align-items-center p-3">
+<div class="background-container justify-content-center align-items-center d-flex">
+<div class="container justify-content-center align-items-center d-flex flex-column">
     <div class="row">
         <span class="material-icons custom-account-icon">
             account_circle
         </span>
     </div>
     <div class="mb-3">
-        <mp-title [label]="'INICIO DE SESIÓN'" [color]="'#65558F'" [fontSize]="'1.2em'"></mp-title>
+        <mp-title> INICIO DE SESIÓN </mp-title>
     </div>
     <div class="mb-4">
-        <mp-subtitle [label]="'¿No tienes cuenta aún?'" [color]="'#727073'" [fontSize]="'1em'"></mp-subtitle>
-        <mp-clickable-title [label]="' Regístrate'" [color]="'#65558F'" [fontSize]="'1em'" (clicked)="navigateToRegister()"></mp-clickable-title>
+        <mp-subtitle> ¿No tienes cuenta aún? <a href="/signup" class="text-decoration-none" style="color: #65558F;"> Regístrate</a></mp-subtitle>
     </div>
     <form [formGroup]="loginForm">    
         <div class="row">
@@ -41,10 +41,12 @@
         </div>
         <p *ngIf="errorMessage" class="error-message d-flex   justify-content-center align-items-center">{{ errorMessage }}</p>
         <div class="d-flex align-items-center justify-content-center">
-            <mp-button label="Ingresar" color="primary" type="submit" [disabled]="loginForm.invalid"  (clicked)="onSubmit()" ></mp-button>
+            <mp-button type="primary"   [disabled]="loginForm.invalid"  (onClick)="onSubmit()" >Ingresar</mp-button>
         </div>
     </form>
     <div class="mb-4 mt-3">
-        <mp-clickable-title [label]="' Olvidé mi contraseña'" [color]="'#65558F'" [fontSize]="'1em'" (clicked)="navigateToRegister()"></mp-clickable-title>
+        <mp-subtitle><a href="/" class="text-decoration-none" style="color: #65558F;"> Olvidé mi contraseña</a></mp-subtitle>
+ 
     </div>
+</div>
 </div>

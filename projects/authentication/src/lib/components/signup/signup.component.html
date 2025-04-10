@@ -1,151 +1,99 @@
-<div class="container d-flex flex-column justify-content-center align-items-center p-5">
-<div class="row">
-  <span class="material-icons custom-account-icon">
-    account_circle
-  </span>
-</div>
-<div class="mb-3">
-  <mp-title [label]="'REGISTRO'" [color]="'#65558F'" [fontSize]="'1.2em'"></mp-title>
-</div>
-  <form [formGroup]="signupForm">
+<div class="background-container justify-content-center align-items-center d-flex">
+  <div class="container d-flex flex-column justify-content-center align-items-center">
     <div class="row">
-      <div class="col d-flex align-items-center justify-content-center mb-4">
+      <span class="material-icons custom-account-icon"> account_circle </span>
+    </div>
+    <div class="mb-3">
+      <mp-title>REGISTRO</mp-title>
+    </div>
+    <form [formGroup]="signupForm" class="form">
+
+      <div class="form-group">
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Nombre</mat-label>
-          <input matInput type="text" formControlName="firstName">
+          <input matInput type="text" formControlName="firstName" />
           <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('firstName')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
-          <mat-hint *ngIf="signupForm.get('firstName')?.hasError('required') && signupForm.get('firstName')?.touched" class="error-message">Nombre es requerido</mat-hint>
+          <mat-hint *ngIf="
+                signupForm.get('firstName')?.hasError('required') &&
+                signupForm.get('firstName')?.touched
+              " class="error-message">Nombre es requerido</mat-hint>
         </mat-form-field>
       </div>
 
-      <div class="col d-flex align-items-center justify-content-center mb-4">
-        <mat-form-field class="w-100" appearance="outline">
-          <mat-label>País</mat-label>
-          <mat-select type="text" formControlName="country">
-            <mat-option value="one">Argentina</mat-option>
-            <mat-option value="two">Brasil</mat-option>
-          </mat-select>
-          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('country')?.reset()">
-            <mat-icon>close</mat-icon>
-          </button>
-          <mat-hint *ngIf="signupForm.get('country')?.hasError('required') && signupForm.get('country')?.touched" class="error-message">País es requerido</mat-hint>
-        </mat-form-field>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col d-flex align-items-center justify-content-center mb-4">
+      <div class="form-group">
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Apellido</mat-label>
-          <input matInput type="text" formControlName="lastName">
+          <input matInput type="text" formControlName="lastName" />
           <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('lastName')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
-          <mat-hint *ngIf="signupForm.get('lastName')?.hasError('required') && signupForm.get('lastName')?.touched" class="error-message">Apellido es requerido</mat-hint>
+          <mat-hint *ngIf="
+                signupForm.get('lastName')?.hasError('required') &&
+                signupForm.get('lastName')?.touched
+              " class="error-message">Apellido es requerido</mat-hint>
         </mat-form-field>
       </div>
 
-      <div class="col d-flex align-items-center justify-content-center mb-4">
-        <mat-form-field class="w-100" appearance="outline">
-          <mat-label>Provincia</mat-label>
-          <mat-select type="text" formControlName="province">
-            <mat-option value="one">Buenos Aires</mat-option>
-            <mat-option value="two">Santa Fe</mat-option>
-          </mat-select>
-          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('province')?.reset()">
-            <mat-icon>close</mat-icon>
-          </button>
-          <mat-hint *ngIf="signupForm.get('province')?.hasError('required') && signupForm.get('province')?.touched" class="error-message">Provincia es requerido</mat-hint>
-        </mat-form-field>
-      </div>
-
-    </div>
-
-    <div class="row">
-
-      <div class="col d-flex align-items-center justify-content-center mb-4">
+      <div class="form-group">
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Email</mat-label>
-          <input type="email" matInput formControlName="email" placeholder="Ej. pat@example.com">
+          <input type="email" matInput formControlName="email" placeholder="Ej. pat@example.com" />
           <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('email')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
-          <mat-hint *ngIf="signupForm.get('email')?.hasError('required') && signupForm.get('email')?.touched" class="error-message">Email es requerido</mat-hint>
+          <mat-hint *ngIf="
+                signupForm.get('email')?.hasError('required') &&
+                signupForm.get('email')?.touched
+              " class="error-message">Email es requerido</mat-hint>
           <mat-hint *ngIf="signupForm.get('email')?.hasError('email')">Email no válido</mat-hint>
         </mat-form-field>
       </div>
 
-      <div class="col d-flex align-items-center justify-content-center mb-4">
-        <mat-form-field class="w-100" appearance="outline">
-          <mat-label>Ciudad</mat-label>
-          <mat-select type="text" formControlName="town">
-            <mat-option value="one">Rosario</mat-option>
-            <mat-option value="two">Bahia Blanca</mat-option>
-          </mat-select>
-          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('town')?.reset()">
-            <mat-icon>close</mat-icon>
-          </button>
-          <mat-hint *ngIf="signupForm.get('town')?.hasError('required') && signupForm.get('town')?.touched" class="error-message">Ciudad es requerido</mat-hint>
-        </mat-form-field>
-      </div>
-    </div>
 
-    <div class="row">
-      <div class="col-lg-6 mb-4">
+
+      <div class="form-group">
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Contraseña</mat-label>
-          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password">
-          <button mat-icon-button matSuffix (click)="togglePasswordVisibility()"
-            [attr.aria-label]="hidePassword ? 'Mostrar contraseña' : 'Ocultar contraseña'"
-            [attr.aria-pressed]="!hidePassword">
-            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" />
+          <button mat-icon-button matSuffix (click)="togglePasswordVisibility()" [attr.aria-label]="
+                hidePassword ? 'Mostrar contraseña' : 'Ocultar contraseña'
+              " [attr.aria-pressed]="!hidePassword">
+            <mat-icon>{{
+              hidePassword ? "visibility_off" : "visibility"
+              }}</mat-icon>
           </button>
-          <mat-hint *ngIf="signupForm.get('password')?.hasError('required') && signupForm.get('password')?.touched" class="error-message">Contraseña es requerida</mat-hint>
-          <mat-hint *ngIf="signupForm.get('password')?.hasError('pattern')" class="error-message">Debe contener al menos 8 caracteres, una letra mayúscula, una minúscula y un número</mat-hint>
+          <mat-hint *ngIf="
+                signupForm.get('password')?.hasError('required') &&
+                signupForm.get('password')?.touched
+              " class="error-message">Contraseña es requerida</mat-hint>
+          <mat-hint *ngIf="signupForm.get('password')?.hasError('pattern')" class="error-message">Debe contener al menos
+            8 caracteres, una letra mayúscula, una
+            minúscula y un número</mat-hint>
         </mat-form-field>
       </div>
-      <div class="col-lg-3 mb-2">
-        <mat-form-field class="w-100" appearance="outline">
-          <mat-label>Calle</mat-label>
-          <input type="text" matInput formControlName="street">
-          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('street')?.reset()">
-            <mat-icon>close</mat-icon>
-          </button>
-          <mat-hint *ngIf="signupForm.get('street')?.hasError('required') && signupForm.get('street')?.touched" class="error-message">Calle es requerido</mat-hint>
-        </mat-form-field>
-      </div>
-      <div class="col-lg-3 mb-2" >
-        <mat-form-field class="w-100" appearance="outline">
-          <mat-label>Número</mat-label>
-          <input type="text" matInput formControlName="streetNumber">
-          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('streetNumber')?.reset()">
-            <mat-icon>close</mat-icon>
-          </button>
-          <mat-hint *ngIf="signupForm.get('streetNumber')?.hasError('required') && signupForm.get('streetNumber')?.touched" class="error-message">Número de calle es requerido</mat-hint>
-        </mat-form-field>
-      </div>
-    </div>
 
-
-
-    <div class="row">
-      <div class="col-lg-6 d-flex align-items-center justify-content-center mb-4">
+      <div class="form-group">
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Confirmar Contraseña</mat-label>
-          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="confirmPassword">
-          <button mat-icon-button matSuffix (click)="togglePasswordVisibility()"
-            [attr.aria-label]="hidePassword ? 'Mostrar contraseña' : 'Ocultar contraseña'"
-            [attr.aria-pressed]="!hidePassword">
-            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="confirmPassword" />
+          <button mat-icon-button matSuffix (click)="togglePasswordVisibility()" [attr.aria-label]="
+                hidePassword ? 'Mostrar contraseña' : 'Ocultar contraseña'
+              " [attr.aria-pressed]="!hidePassword">
+            <mat-icon>{{
+              hidePassword ? "visibility_off" : "visibility"
+              }}</mat-icon>
           </button>
-          <mat-hint *ngIf="signupForm.hasError('mismatch') && signupForm.get('confirmPassword')?.touched " class="error-message">Las contraseñas no coinciden</mat-hint>
-
+          <mat-hint *ngIf="
+                signupForm.hasError('mismatch') &&
+                signupForm.get('confirmPassword')?.touched
+              " class="error-message">Las contraseñas no coinciden</mat-hint>
         </mat-form-field>
       </div>
 
-      <div class="col-lg-3 d-flex align-items-center justify-content-center mb-4">
+
+      <div class="form-group">
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Tipo de Documento</mat-label>
           <mat-select type="text" formControlName="documentType">
@@ -155,41 +103,173 @@
           <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('documentType')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
-          <mat-hint *ngIf="signupForm.get('documentType')?.hasError('required') && signupForm.get('documentType')?.touched" class="error-message">Tipo de Documento es requerido</mat-hint>
+          <mat-hint *ngIf="
+                signupForm.get('documentType')?.hasError('required') &&
+                signupForm.get('documentType')?.touched
+              " class="error-message">Tipo de Documento es requerido</mat-hint>
         </mat-form-field>
       </div>
 
-
-      <div class="col-lg-3 d-flex align-items-center justify-content-center mb-4">
-        <mat-form-field class="w-100"  appearance="outline">
+      <div class="form-group">
+        <mat-form-field class="w-100" appearance="outline">
           <mat-label>Número Documento</mat-label>
-          <input type="text" matInput formControlName="documentNumber">
+          <input type="text" matInput formControlName="documentNumber" />
           <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('documentNumber')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
-          <mat-hint *ngIf="signupForm.get('documentNumber')?.hasError('required') && signupForm.get('documentNumber')?.touched" class="error-message">Número Documento es requerido</mat-hint>
+          <mat-hint *ngIf="
+                signupForm.get('documentNumber')?.hasError('required') &&
+                signupForm.get('documentNumber')?.touched
+              " class="error-message">Número Documento es requerido</mat-hint>
         </mat-form-field>
       </div>
 
 
-    </div>
 
-    <div class="row">
-      <div class="col d-flex align-items-center justify-content-center mb-4">
+      <div class="form-group">
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Fecha de Nacimiento</mat-label>
-          <input matInput [matDatepicker]="picker" formControlName="birthDate">
+          <input matInput [matDatepicker]="picker" formControlName="birthDate" />
           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
           <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('birthDate')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
-          <mat-hint *ngIf="signupForm.get('birthDate')?.hasError('required') && signupForm.get('birthDate')?.touched" class="error-message">Fecha de Nacimiento es
-            requerida</mat-hint>
+          <mat-hint *ngIf="
+                signupForm.get('birthDate')?.hasError('required') &&
+                signupForm.get('birthDate')?.touched
+              " class="error-message">Fecha de Nacimiento es requerida</mat-hint>
         </mat-form-field>
       </div>
 
-      <div class="col d-flex align-items-center justify-content-center mb-4">
+      <div class="form-group">
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-label>País</mat-label>
+          <mat-select type="text" formControlName="country">
+            <mat-option value="one">Argentina</mat-option>
+            <mat-option value="two">Brasil</mat-option>
+          </mat-select>
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('country')?.reset()">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-hint *ngIf="
+                signupForm.get('country')?.hasError('required') &&
+                signupForm.get('country')?.touched
+              " class="error-message">País es requerido</mat-hint>
+        </mat-form-field>
+      </div>
+
+
+
+
+
+      <div class="form-group">
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-label>Provincia</mat-label>
+          <mat-select type="text" formControlName="province">
+            <mat-option value="one">Buenos Aires</mat-option>
+            <mat-option value="two">Santa Fe</mat-option>
+          </mat-select>
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('province')?.reset()">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-hint *ngIf="
+                signupForm.get('province')?.hasError('required') &&
+                signupForm.get('province')?.touched
+              " class="error-message">Provincia es requerido</mat-hint>
+        </mat-form-field>
+      </div>
+
+
+
+
+      <div class="form-group">
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-label>Ciudad</mat-label>
+          <mat-select type="text" formControlName="town">
+            <mat-option value="one">Rosario</mat-option>
+            <mat-option value="two">Bahia Blanca</mat-option>
+          </mat-select>
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('town')?.reset()">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-hint *ngIf="
+                signupForm.get('town')?.hasError('required') &&
+                signupForm.get('town')?.touched
+              " class="error-message">Ciudad es requerido</mat-hint>
+        </mat-form-field>
+      </div>
+
+
+
+
+      <div class="form-group">
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-label>Calle</mat-label>
+          <input type="text" matInput formControlName="street" />
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('street')?.reset()">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-hint *ngIf="
+                signupForm.get('street')?.hasError('required') &&
+                signupForm.get('street')?.touched
+              " class="error-message">Calle es requerido</mat-hint>
+        </mat-form-field>
+      </div>
+      <div class="form-group">
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-label>Número</mat-label>
+          <input type="text" matInput formControlName="streetNumber" />
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('streetNumber')?.reset()">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-hint *ngIf="
+                signupForm.get('streetNumber')?.hasError('required') &&
+                signupForm.get('streetNumber')?.touched
+              " class="error-message">Número de calle es requerido</mat-hint>
+        </mat-form-field>
+      </div>
+
+
+
+
+
+
+
+
+
+      <div class="form-group">
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-label>Teléfono</mat-label>
+          <span matTextPrefix> +54 </span>
+          <input type="tel" matInput formControlName="phone" placeholder="555-555-1234" />
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('phone')?.reset()">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-hint *ngIf="
+                signupForm.get('phone')?.hasError('required') &&
+                signupForm.get('phone')?.touched
+              " class="error-message">Teléfono es requerido</mat-hint>
+          <mat-hint *ngIf="signupForm.get('phone')?.hasError('pattern')">Teléfono no válido</mat-hint>
+        </mat-form-field>
+      </div>
+
+      <div class="form-group">
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-label>Nombre de Compañia</mat-label>
+          <input type="text" matInput formControlName="companyName" />
+          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('company')?.reset()">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-hint *ngIf="
+                signupForm.get('companyName')?.hasError('required') &&
+                signupForm.get('companyName')?.touched
+              " class="error-message">Nombre de compañia es requerido</mat-hint>
+        </mat-form-field>
+      </div>
+
+
+      <div class="form-group">
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Categoría IVA</mat-label>
           <mat-select type="text" formControlName="taxCategory">
@@ -199,40 +279,18 @@
           <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('taxCategory')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
-          <mat-hint *ngIf="signupForm.get('')?.hasError('required') && signupForm.get('taxCategory')?.touched" class="error-message">Categoría IVA es requerido</mat-hint>
+          <mat-hint *ngIf="
+                signupForm.get('')?.hasError('required') &&
+                signupForm.get('taxCategory')?.touched
+              " class="error-message">Categoría IVA es requerido</mat-hint>
         </mat-form-field>
       </div>
 
-    </div>
-
-
-    <div class="row">
-      <div class="col d-flex align-items-center justify-content-center mb-4">
-        <mat-form-field class="w-100" appearance="outline">
-          <mat-label>Teléfono</mat-label>
-          <span matTextPrefix> +54 </span>
-          <input type="tel" matInput formControlName="phone" placeholder="555-555-1234">
-          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('phone')?.reset()">
-            <mat-icon>close</mat-icon>
-          </button>
-          <mat-hint *ngIf="signupForm.get('phone')?.hasError('required')  && signupForm.get('phone')?.touched" class="error-message">Teléfono es requerido</mat-hint>
-          <mat-hint *ngIf="signupForm.get('phone')?.hasError('pattern') ">Teléfono no válido</mat-hint>
-        </mat-form-field>
+      <div class=" w-100 form-group  button-container">
+        <mp-button type="primary" [disabled]="signupForm.invalid" (onClick)="onSubmit()">Registrarme</mp-button>
       </div>
-
-      <div class="col d-flex align-items-center justify-content-center mb-4">
-        <mat-form-field class="w-100" appearance="outline">
-          <mat-label>Nombre de Compañia</mat-label>
-          <input type="text" matInput formControlName="companyName">
-          <button matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('company')?.reset()">
-            <mat-icon>close</mat-icon>
-          </button>
-          <mat-hint *ngIf="signupForm.get('companyName')?.hasError('required')  && signupForm.get('companyName')?.touched" class="error-message">Nombre de compañia es requerido</mat-hint>
-        </mat-form-field>
-      </div>
-    </div>
-    <div class="d-flex align-items-center justify-content-end">
-    <mp-button label="Registrarme" color="primary" type="submit" [disabled]="signupForm.invalid" (clicked)="onSubmit()" ></mp-button>
+      
+    </form>
   </div>
-  </form>
+
 </div>

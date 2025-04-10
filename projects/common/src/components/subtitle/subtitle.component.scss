@@ -1,0 +1,14 @@
+$primary-color:  #727073; 
+$secondary-color: #65558F; 
+
+.subtitle {
+  &__primary {
+    color: $primary-color;
+  }
+
+  &__secondary {
+    color: $secondary-color;
+  }
+}
+
+

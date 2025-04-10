@@ -11,7 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { ButtonComponent, MpTitleComponent } from '@Common';
+import { ButtonComponent, TitleComponent } from '@Common';
 import { Client } from '../../models/client.model';
 
 const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
@@ -33,29 +33,29 @@ const PHONE_REGEX = /^[+]?[0-9]{1,4}?[-.\\s]?([0-9]{1,3}[-.\\s]?){1,4}$/;
               MatSelectModule,
               MatSlideToggleModule,
               ButtonComponent,
-              MpTitleComponent],
+              TitleComponent],
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.scss'],
 })
 export class SignupComponent {
   
   signupForm: FormGroup<{
-    firstName: FormControl<string | null>;
-    lastName: FormControl<string | null>;
-    email: FormControl<string | null>;
-    password: FormControl<string | null>;
-    confirmPassword: FormControl<string | null>;
-    phone: FormControl<string | null>;
-    birthDate: FormControl<Date | null>;
-    country: FormControl<string | null>;
-    province: FormControl<string | null>;
-    town: FormControl<string | null>;
-    street: FormControl<string | null>;
-    streetNumber: FormControl<number | null>;
-    taxCategory: FormControl<number | null>;
-    documentType: FormControl<number | null>;
-    documentNumber: FormControl<string | null>;
-    companyName: FormControl<string | null>;
+    firstName: FormControl<string>;
+    lastName: FormControl<string>;
+    email: FormControl<string>;
+    password: FormControl<string>;
+    confirmPassword: FormControl<string>;
+    phone: FormControl<string>;
+    birthDate: FormControl<Date>;
+    country: FormControl<string>;
+    province: FormControl<string>;
+    town: FormControl<string>;
+    street: FormControl<string>;
+    streetNumber: FormControl<number>;
+    taxCategory: FormControl<number>;
+    documentType: FormControl<number>;
+    documentNumber: FormControl<string>;
+    companyName: FormControl<string>;
   }>;
   
   hidePassword = true;
@@ -106,22 +106,22 @@ export class SignupComponent {
   onSubmit(): void {
     if (this.signupForm.valid) {
       const client: Client = {
-        firstName: this.signupForm.get('firstName')!.value!,
-        lastName: this.signupForm.get('lastName')!.value!,
-        email: this.signupForm.get('email')!.value!,
-        password: this.signupForm.get('password')!.value!,
-        confirmPassword: this.signupForm.get('confirmPassword')!.value!,
-        phone: this.signupForm.get('phone')!.value!,
-        birthDate: this.signupForm.get('birthDate')!.value!,
-        country: this.signupForm.get('country')!.value!,
-        province: this.signupForm.get('province')!.value!,
-        town: this.signupForm.get('town')!.value!,
-        street: this.signupForm.get('street')!.value!,
-        streetNumber: this.signupForm.get('streetNumber')!.value!,
-        taxCategory: this.signupForm.get('taxCategory')!.value!,
-        documentType: this.signupForm.get('documentType')!.value!,
-        documentNumber: this.signupForm.get('documentNumber')!.value!,
-        companyName: this.signupForm.get('companyName')!.value!,
+        firstName: this.signupForm.controls.password.value!,
+        lastName: this.signupForm.controls.lastName.value!,
+        email: this.signupForm.controls.email.value!,
+        password: this.signupForm.controls.password.value!,
+        confirmPassword: this.signupForm.controls.confirmPassword.value!,
+        phone: this.signupForm.controls.phone.value!,
+        birthDate: this.signupForm.controls.birthDate.value!,
+        country: this.signupForm.controls.country.value!,
+        province: this.signupForm.controls.province.value!,
+        town: this.signupForm.controls.town.value!,
+        street: this.signupForm.controls.street.value!,
+        streetNumber: this.signupForm.controls.streetNumber.value!,
+        taxCategory: this.signupForm.controls.taxCategory.value!,
+        documentType: this.signupForm.controls.documentType.value!,
+        documentNumber: this.signupForm.controls.documentNumber.value!,
+        companyName: this.signupForm.controls.companyName.value!,
       };
       this.authService.signUpAsync(client).subscribe({
         next: (response) => { 
@@ -129,7 +129,7 @@ export class SignupComponent {
         },
         error: (error) => {
           console.error('Error during signup:', error);
-          // Handle error response here, e.g., show a message to the user
+  
           console.log('Error during signup:', error);
           if (error.error) {
             console.log('Error details:', error.error);

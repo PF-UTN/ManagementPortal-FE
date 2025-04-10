@@ -1,49 +1,43 @@
 @import "bootstrap/scss/functions";
 @import "bootstrap/scss/variables";
-@import "bootstrap/scss/mixins";
 
+.background-container {
+  height: 100vh;
+  width: 100vw;
+  background-image: url('../../../../../../src/app/assets/images/background.jpg');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-attachment: fixed;
+  background-size: cover;
+}
 
 .container {
-  position: relative;
   background-color: #ffffff;
   padding: 20px;
   border-radius: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-  width: 100%;
-  margin: 0 auto;
-  margin-top: 0rem;
 
- 
   @media (min-width: map-get($grid-breakpoints, 'md')) {
     width: 410px;
     height: 490px;
-    margin-top: 4rem;
   }
-
-  @media (min-width: map-get($grid-breakpoints, 'xxl')) {
-
-    margin-top: 10rem;
-  }
-
- 
-
 }
-  .custom-account-icon {
-    font-size: 64px;
-    color:  #EADDFF;
-    text-align: center;  
-    margin-bottom: 1rem;
-    margin-top: 1rem;
-  }
-  
-  .custom-size {
-    width: 350px; 
-    height: 56px;
-    margin-bottom: 2rem;
-  }
-  
-  .error-message {
-    color: red;
-    font-size: 13px;
-  }
-  
+
+.custom-account-icon {
+  font-size: 64px;
+  color: #EADDFF;
+  text-align: center;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+}
+
+.custom-size {
+  width: 350px;
+  height: 56px;
+  margin-bottom: 2rem;
+}
+
+.error-message {
+  color: red;
+  font-size: 13px;
+}

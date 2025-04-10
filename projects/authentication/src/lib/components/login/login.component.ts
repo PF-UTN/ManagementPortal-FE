@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-import { Router, RouterLink, RouterModule } from '@angular/router'; 
+import { Router, RouterLink, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -11,8 +11,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { ButtonComponent, MpTitleComponent, MpSubtitleComponent, MpClickableTitleComponent  } from '@Common';
+import { ButtonComponent, TitleComponent, SubtitleComponent } from '@Common';
 import { User } from '../../models/user.model';
+import { ERROR_MESSAGES } from '@Common';
 
 @Component({
   selector: 'app-login',
@@ -30,9 +31,8 @@ import { User } from '../../models/user.model';
     MatSelectModule,
     MatSlideToggleModule,
     ButtonComponent,
-    MpTitleComponent,
-    MpSubtitleComponent,
-    MpClickableTitleComponent],
+    TitleComponent,
+    SubtitleComponent,],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
@@ -42,47 +42,45 @@ export class LoginComponent {
     email: FormControl<string | null>;
     password: FormControl<string | null>;
   }>;
-  
+
   hidePassword = true;
   errorMessage: string = '';
-  
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
-    this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [
-        Validators.required,
-        Validators.minLength(8)
-      ]]
 
-    })   
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
+    this.loginForm = new FormGroup({
+      email: new FormControl<string | null>(null, { validators:  [Validators.required, Validators.email]}),
+      password: new FormControl<string | null>(null, { validators: [Validators.required, Validators.minLength(8)] }),
+    });
   }
 
   togglePasswordVisibility() {
-    this.hidePassword = !this.hidePassword;  
+    this.hidePassword = !this.hidePassword;
   }
+
   navigateToRegister(): void {
-    this.router.navigate(['/signup']); 
+    this.router.navigate(['/signup']);
   }
+
   onSubmit(): void {
     if (this.loginForm.valid) {
       const credentials: User = {
-        email: this.loginForm.get('email')!.value!,
-        password: this.loginForm.get('password')!.value!,
+        email: this.loginForm.controls.email.value!,
+        password: this.loginForm.controls.password.value!,
       };
       this.authService.logInAsync(credentials).subscribe({
         next: (response) => {
-          this.router.navigate(['/']); 
+          this.router.navigate(['/']);
           this.errorMessage = '';
         },
         error: (error) => {
           if (error.status === 401) {
-            this.errorMessage = 'El email o contraseña ingresados son incorrectos'; 
+            this.errorMessage = ERROR_MESSAGES.invalidCredentials;
           } else {
-            this.errorMessage = 'Ocurrió un error. Inténtalo de nuevo más tarde.';
+            this.errorMessage = ERROR_MESSAGES.unexpectedError;
           }
         }
       });
     }
   }
-  
+
 }

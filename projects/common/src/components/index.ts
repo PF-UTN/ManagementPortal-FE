@@ -1,4 +1,3 @@
-export * from './mp-buttom/button.component';
-export * from './mp-title/mp-title.component';
-export * from './mp-subtitle/mp-subtitle.component';
-export * from './mp-clickable-title/mp-clickable-title.component';
+export * from './buttom/button.component';
+export * from './title/title.component';
+export * from './subtitle/subtitle.component';
