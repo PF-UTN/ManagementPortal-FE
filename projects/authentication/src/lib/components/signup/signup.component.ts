@@ -106,7 +106,7 @@ export class SignupComponent {
   onSubmit(): void {
     if (this.signupForm.valid) {
       const client: Client = {
-        firstName: this.signupForm.controls.password.value!,
+        firstName: this.signupForm.controls.firstName.value!,
         lastName: this.signupForm.controls.lastName.value!,
         email: this.signupForm.controls.email.value!,
         password: this.signupForm.controls.password.value!,

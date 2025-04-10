@@ -364,9 +364,7 @@ describe('SignupComponent', () => {
         component.signupForm.controls.lastName.setValue(clientData.lastName);
         component.signupForm.controls.email.setValue(clientData.email);
         component.signupForm.controls.password.setValue(clientData.password);
-        component.signupForm.controls.confirmPassword.setValue(
-          clientData.password
-        );
+        component.signupForm.controls.confirmPassword.setValue(clientData.password);
         component.signupForm.controls.phone.setValue(clientData.phone);
         component.signupForm.controls.birthDate.setValue(clientData.birthDate);
         component.signupForm.controls.country.setValue(clientData.country);
