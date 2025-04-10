@@ -1,6 +1,6 @@
-import { readFileSync } from 'fs';
 import { pathsToModuleNameMapper } from 'ts-jest';
 
+import { readFileSync } from 'fs';
 
 const { compilerOptions } = JSON.parse(readFileSync(new URL('./tsconfig.json', import.meta.url), 'utf8'));
 

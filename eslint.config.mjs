@@ -18,7 +18,9 @@ export default [
         'error',
         {
           groups: [
-            ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+            ['internal'],
+            ['external'],
+            ['parent', 'sibling', 'index'],
           ],
           pathGroups: [
             {
@@ -33,6 +35,14 @@ export default [
             order: 'asc',
             caseInsensitive: true,
           },
+        },
+      ],
+      'no-multiple-empty-lines': [
+        'error',
+        {
+          max: 1,
+          maxEOF: 1,
+          maxBOF: 0,
         },
       ],
     },
