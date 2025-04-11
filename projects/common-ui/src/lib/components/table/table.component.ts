@@ -1,4 +1,4 @@
-import { OnInit, Output, Input, EventEmitter, Component } from '@angular/core';
+import { OnInit, Output, Input, EventEmitter, Component, ViewChild } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { TableColumn } from '../../models/table-column.model';
 import { CommonModule } from '@angular/common';
@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatGridListModule } from '@angular/material/grid-list'; 
 import { MatButtonModule } from '@angular/material/button';
 import { Observable } from 'rxjs';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorIntl, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { ColumnTypeEnum } from '@common-ui';
 
 @Component({
@@ -24,11 +24,18 @@ export class TableComponent<T> implements OnInit {
   @Input() getRowClass: (row: T) => string = () => '';
   @Input() noDataMessage: string = 'No hay datos disponibles';
   @Input() isLoading: boolean = false;
-  @Input() itemsNumber: number = 0;
-  @Input() pageSize: number = 10;
-  @Input() pageIndex: number = 0;
+  @Input() itemsNumber: number;
+  @Input() pageSize: number;
+  @Input() pageIndex: number;
   @Output() pageChange = new EventEmitter<{ pageIndex: number; pageSize: number }>();
   @Output() actionClicked = new EventEmitter<{ action: string, row: T }>();
+
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+
+  constructor(private paginatorIntl: MatPaginatorIntl) {
+    this.paginatorIntl.itemsPerPageLabel = "Registros por página";
+    this.paginatorIntl.getRangeLabel = (page, pageSize, length) => `${page * pageSize + 1} – ${Math.min((page + 1) * pageSize, length)} de ${length}`;
+  }
 
   tableDataSource = new MatTableDataSource<T>();
   displayedColumns: string[] = [];

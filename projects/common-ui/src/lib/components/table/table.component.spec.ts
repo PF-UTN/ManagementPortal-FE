@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { TableColumn } from '../../models/table-column.model';
 import { of, throwError } from 'rxjs';
+import { ColumnTypeEnum } from '@common-ui'
 
 interface MockData {
   id: number;
@@ -17,8 +18,8 @@ describe('TableComponent', () => {
   let fixture: ComponentFixture<TableComponent<MockData>>;
 
   const mockColumns: TableColumn<MockData>[] = [
-    { columnDef: 'id', header: 'ID', type: 'value', value: (row) => row.id.toString() },
-    { columnDef: 'name', header: 'Name', type: 'value', value: (row) => row.name }
+    { columnDef: 'id', header: 'ID', type: ColumnTypeEnum.VALUE, value: (row) => row.id.toString() },
+    { columnDef: 'name', header: 'Name', type: ColumnTypeEnum.VALUE, value: (row) => row.name }
   ];
 
   const mockData: MockData[] = [
