@@ -11,7 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { ButtonComponent, TitleComponent } from '@Common';
+import { ButtonComponent, ERROR_MESSAGES, TitleComponent } from '@Common';
 import { Client } from '../../models/client.model';
 
 const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
@@ -128,20 +128,6 @@ export class SignupComponent {
           this.router.navigate(['/login']); 
         },
         error: (error) => {
-          console.error('Error during signup:', error);
-  
-          console.log('Error during signup:', error);
-          if (error.error) {
-            console.log('Error details:', error.error);
-          } else {
-            console.log('Unexpected error:', error);
-          }
-          console.log('Error status:', error.status);
-          console.log('Error message:', error.message);
-          console.log('Error name:', error.name);
-          console.log('Error stack:', error.stack);
-          console.log(this.signupForm.value);
-      
         }
       });
     }

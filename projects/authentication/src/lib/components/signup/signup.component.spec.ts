@@ -397,7 +397,7 @@ describe('SignupComponent', () => {
         const clientData = mockClient;
         const authServiceSpy = jest
           .spyOn(component['authService'], 'signUpAsync')
-          .mockReturnValue(of({ token: 'mockToken' }));
+          .mockReturnValue(of({ access_token: 'mockToken' }));
         component.signupForm.setValue(clientData);
         fixture.detectChanges();
         // Act

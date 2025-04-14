@@ -13,7 +13,7 @@ import { tap } from 'rxjs/operators';
 export class AuthService {
   private apiUrl = 'https://dev-management-portal-be.vercel.app/authentication';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   private setToken(token: string): void {
     localStorage.setItem('token', token);
@@ -21,13 +21,13 @@ export class AuthService {
 
   signUpAsync(client: Client): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/signup`, client).pipe(
-      tap(response => this.setToken(response.token)) 
+      tap(response => this.setToken(response.access_token))
     );
   }
 
   logInAsync(credential: User): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/signin`, credential).pipe(
-      tap(response => this.setToken(response.token)) 
+      tap(response => this.setToken(response.access_token))
     );
   }
 

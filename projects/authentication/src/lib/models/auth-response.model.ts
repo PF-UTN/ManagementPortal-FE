@@ -1,4 +1,4 @@
 export class AuthResponse {
-    constructor(public token: string) {}
+    constructor(public access_token: string) {}
   }
   

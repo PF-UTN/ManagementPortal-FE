@@ -1,14 +1,12 @@
-$primary-color:  #727073; 
-$secondary-color: #65558F; 
+@import '../../constants/Varibles';
 
-.subtitle {
-  &__primary {
-    color: $primary-color;
-  }
+$primary-color: $muted-lavender;
+$secondary-color: $muted-purple;
 
-  &__secondary {
-    color: $secondary-color;
-  }
+.subtitle__primary {
+  color: $primary-color;
 }
 
-
+.subtitle__secondary {
+  color: $secondary-color;
+}

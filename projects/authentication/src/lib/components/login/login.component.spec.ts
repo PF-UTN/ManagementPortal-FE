@@ -7,6 +7,7 @@ import { FormControl } from '@angular/forms';
 import { throwError, of } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { mockUser, mockInvalidUser } from '../../models/mock-data.model';
+import { ERROR_MESSAGES } from '@Common';
 
 
 
@@ -88,7 +89,7 @@ describe('LoginComponent', () => {
     it('should login successfully with valid credentials', () => {
       // Arrange
       const credentials = mockUser;
-      const authServiceSpy = jest.spyOn(component['authService'], 'logInAsync').mockReturnValue(of({ token: 'mockToken' }));
+      const authServiceSpy = jest.spyOn(component['authService'], 'logInAsync').mockReturnValue(of({ access_token: 'mockToken' }));
       component.loginForm.setValue(credentials);
       // Act
       component.onSubmit();
@@ -105,7 +106,7 @@ describe('LoginComponent', () => {
       // Act
       component.onSubmit();
       // Assert
-      expect(component.errorMessage).toBe('El email o contraseña ingresados son incorrectos');
+      expect(component.errorMessage).toBe(ERROR_MESSAGES.invalidCredentials);
     });
     
     it('should handle unexpected errors gracefully', () => {
@@ -118,7 +119,7 @@ describe('LoginComponent', () => {
       // Act
       component.onSubmit();
       // Assert
-      expect(component.errorMessage).toBe('Ocurrió un error. Inténtalo de nuevo más tarde.');
+      expect(component.errorMessage).toBe(ERROR_MESSAGES.unexpectedError);
     });
 
   describe('togglePasswordVisibility Method', () => {

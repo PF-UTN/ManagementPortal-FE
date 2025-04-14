@@ -15,6 +15,7 @@ import { ButtonComponent, TitleComponent, SubtitleComponent } from '@Common';
 import { User } from '../../models/user.model';
 import { ERROR_MESSAGES } from '@Common';
 
+
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -32,7 +33,7 @@ import { ERROR_MESSAGES } from '@Common';
     MatSlideToggleModule,
     ButtonComponent,
     TitleComponent,
-    SubtitleComponent,],
+    SubtitleComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
@@ -70,7 +71,6 @@ export class LoginComponent {
       this.authService.logInAsync(credentials).subscribe({
         next: (response) => {
           this.router.navigate(['/']);
-          this.errorMessage = '';
         },
         error: (error) => {
           if (error.status === 401) {

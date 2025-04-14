@@ -1,16 +1,18 @@
+@import '../../../../common/src/constants/Varibles';
+
 .button {
-  background-color: #66548a !important; 
-  color: #fff !important; 
+  background-color: $dark-muted-purple !important; 
+  color: $white-color !important; 
   border-radius: 50px; 
   padding: 20px 50px; 
   font-size: 14px;
   height: 40px;
   width: 160px;
   &:hover {
-    background-color: #574378 !important; 
+    background-color: $dusky-violet !important; 
   }
   &:disabled {
-    background-color: #a8a1c4 !important; 
+    background-color: $lavender-gray !important; 
     cursor: not-allowed;
   }
   }
