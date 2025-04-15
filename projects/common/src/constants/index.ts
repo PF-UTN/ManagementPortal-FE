@@ -1,3 +1,3 @@
-export * from './ButtonType';
-export * from './errorMessages'
+export * from './button_type';
+export * from './error_messages'
 

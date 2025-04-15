@@ -1,12 +1,5 @@
-@import '../../constants/Varibles';
+@import '../../../../../src/styles/varibles';
 
-$primary-color: $muted-lavender;
-$secondary-color: $muted-purple;
-
-.subtitle__primary {
-  color: $primary-color;
-}
-
-.subtitle__secondary {
-  color: $secondary-color;
+.subtitle {
+  color: $muted-lavender;
 }
