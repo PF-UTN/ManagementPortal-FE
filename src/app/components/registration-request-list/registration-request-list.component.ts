@@ -78,6 +78,6 @@ export class RegistrationRequestListComponent implements OnInit {
   }
 
   getRowClass = (row: RegistrationRequestListItem): string => {
-    return row.status === 'Pending' ? 'pending-row' : '';
+    return row.status === 'Pending' ? 'table__pending-row' : '';
   };
 }

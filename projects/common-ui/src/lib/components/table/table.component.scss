@@ -1,9 +1,14 @@
+@import '../../../../../../src/styles.scss';
+
 .table {
   width: 100%;
-  font-family: Arial, sans-serif;
 
   &__header {
     font-weight: bold;
-    background-color: #dad9d9;
+    background-color: $table-header-bg-color;
+  }
+
+  &__pending-row {
+    background-color: $table-pending-bg-color; 
   }
 }
