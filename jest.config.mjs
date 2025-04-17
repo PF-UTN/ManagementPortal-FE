@@ -1,4 +1,5 @@
 import { pathsToModuleNameMapper } from 'ts-jest';
+
 import { readFileSync } from 'fs';
 
 const { compilerOptions } = JSON.parse(readFileSync(new URL('./tsconfig.json', import.meta.url), 'utf8'));
@@ -17,4 +18,6 @@ export default {
   moduleFileExtensions: ['ts', 'html', 'js', 'json'],
   testPathIgnorePatterns: ['<rootDir>/dist/', '<rootDir>/node_modules/'],
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths || {}, { prefix: '<rootDir>/' }),
+  coverageDirectory: 'coverage',
+  coverageReporters: ['lcov', 'text-summary'],
 };
