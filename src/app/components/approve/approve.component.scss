@@ -1,0 +1,60 @@
+@import '../../../styles.scss';
+
+.drawer-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100%;
+  z-index: 1000;
+  display: flex;
+  background: $background-drawer-container;
+
+  &__drawer {
+    width: 500px;
+    padding: 16px;
+    background: $background-drawer;
+  }
+
+  &__layout {
+    display: flex;
+    flex-direction: column;
+    height: 100%; 
+  }
+
+  &__title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    border-bottom: 1px solid;
+    padding-bottom: 15px; 
+  }
+
+  &__content {
+    font-size: 0.9rem;
+    flex-grow: 1; 
+    overflow-y: auto;
+    border-bottom: 1px solid;
+    padding-bottom: 15px; 
+  }
+
+  &__row {
+    display: flex;
+    flex-direction: column; 
+    gap: 2px;
+    margin-top: 15px; 
+
+    p {
+      margin: 0; 
+      line-height: 1.2; 
+    }
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: center; 
+    gap: 15px; 
+    padding: 16px; 
+    margin-top: auto; 
+  }
+}
+

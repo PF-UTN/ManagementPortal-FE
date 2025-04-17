@@ -8,11 +8,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { RegistrationRequestParams } from '../../models/registration-request-param.model';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { ApproveDrawerComponent } from '../approve/approve.component';
 
 @Component({
   selector: 'mp-registration-request-list',
   standalone: true,
-  imports: [TableComponent, CommonModule, MatIconModule, MatMenuModule, MatButtonModule],
+  imports: [TableComponent, CommonModule, MatIconModule, MatMenuModule, MatButtonModule, MatSidenavModule, ApproveDrawerComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './registration-request-list.component.html',
   styleUrl: './registration-request-list.component.scss'
@@ -30,8 +32,12 @@ export class RegistrationRequestListComponent implements OnInit {
   pageIndex: number = 0;
   pageSize: number = 10;
   totalItems: number = 0;
+  isDrawerOpen: boolean = false; 
+  selectedRequest: RegistrationRequestListItem;
 
-  constructor(private readonly registrationRequestService: RegistrationRequestService) {}
+
+  constructor(private readonly registrationRequestService: RegistrationRequestService
+  ) {}
 
   ngOnInit(): void {
     this.fetchData();
@@ -70,7 +76,12 @@ export class RegistrationRequestListComponent implements OnInit {
   }
 
   onApprove(request: RegistrationRequestListItem): void {
-    console.log('Aprobando solicitud:', request);
+    this.selectedRequest = request; 
+    this.isDrawerOpen = true; 
+  }
+
+  closeDrawer(): void {
+    this.isDrawerOpen = false; 
   }
 
   onReject(request: RegistrationRequestListItem): void {
