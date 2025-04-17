@@ -1,8 +1,16 @@
-import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
+import {
+  HttpTestingController,
+  provideHttpClientTesting,
+} from '@angular/common/http/testing';
+import { TestBed } from '@angular/core/testing';
+
 import { AuthService } from './auth.service';
-import {HttpTestingController, provideHttpClientTesting} from '@angular/common/http/testing';
-import {mockClient, mockUser, mockAuthResponse} from '../models/mock-data.model';
+import {
+  mockClient,
+  mockUser,
+  mockAuthResponse,
+} from '../models/mock-data.model';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -29,7 +37,7 @@ describe('AuthService', () => {
       expect(response).toEqual(mockAuthResponse);
     });
     const req = httpMock.expectOne(
-      'https://dev-management-portal-be.vercel.app/authentication/signup'
+      'https://dev-management-portal-be.vercel.app/authentication/signup',
     );
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual(mockClient);
@@ -41,7 +49,7 @@ describe('AuthService', () => {
       expect(response).toEqual(mockAuthResponse);
     });
     const req = httpMock.expectOne(
-      'https://dev-management-portal-be.vercel.app/authentication/signin'
+      'https://dev-management-portal-be.vercel.app/authentication/signin',
     );
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual(mockUser);

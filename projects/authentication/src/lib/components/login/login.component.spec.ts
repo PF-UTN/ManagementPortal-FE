@@ -1,38 +1,31 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ReactiveFormsModule } from '@angular/forms';
-import { provideHttpClient } from '@angular/common/http';
-import { provideRouter } from '@angular/router';
-import { LoginComponent } from './login.component';
-import { FormControl } from '@angular/forms';
-import { throwError, of } from 'rxjs';
-import { HttpErrorResponse } from '@angular/common/http';
-import { mockUser, mockInvalidUser } from '../../models/mock-data.model';
 import { ERROR_MESSAGES } from '@Common';
 
+import { provideHttpClient } from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
+import { FormControl } from '@angular/forms';
+import { provideRouter } from '@angular/router';
+import { throwError, of } from 'rxjs';
 
+import { LoginComponent } from './login.component';
+import { mockUser, mockInvalidUser } from '../../models/mock-data.model';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
   const userData = mockUser;
 
-  beforeEach( () => {
-     TestBed.configureTestingModule({
-      imports: [
-        ReactiveFormsModule,    
-        LoginComponent,         
-      ],
-      providers: [
-        provideHttpClient(),    
-        provideRouter([]),      
-      ],
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [ReactiveFormsModule, LoginComponent],
+      providers: [provideHttpClient(), provideRouter([])],
     }).compileComponents();
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
   });
 
   describe('Form Validation', () => {
-
     it('should initialize form as invalid', () => {
       // Arrange
       // Act
@@ -85,11 +78,12 @@ describe('LoginComponent', () => {
   });
 
   describe('onSubmit Method', () => {
-
     it('should login successfully with valid credentials', () => {
       // Arrange
       const credentials = mockUser;
-      const authServiceSpy = jest.spyOn(component['authService'], 'logInAsync').mockReturnValue(of({ access_token: 'mockToken' }));
+      const authServiceSpy = jest
+        .spyOn(component['authService'], 'logInAsync')
+        .mockReturnValue(of({ access_token: 'mockToken' }));
       component.loginForm.setValue(credentials);
       // Act
       component.onSubmit();
@@ -99,22 +93,38 @@ describe('LoginComponent', () => {
     it('should show error message for invalid login', () => {
       // Arrange
       const credentials = mockInvalidUser;
-      const authServiceSpy = jest.spyOn(component['authService'], 'logInAsync').mockReturnValue(
-        throwError(() => new HttpErrorResponse({ status: 401, statusText: 'Unauthorized' }))
-      );  
+      jest
+        .spyOn(component['authService'], 'logInAsync')
+        .mockReturnValue(
+          throwError(
+            () =>
+              new HttpErrorResponse({
+                status: 401,
+                statusText: 'Unauthorized',
+              }),
+          ),
+        );
       component.loginForm.setValue(credentials);
       // Act
       component.onSubmit();
       // Assert
       expect(component.errorMessage).toBe(ERROR_MESSAGES.invalidCredentials);
     });
-    
+
     it('should handle unexpected errors gracefully', () => {
       // Arrange
       const credentials = mockInvalidUser;
-      const authServiceSpy = jest.spyOn(component['authService'], 'logInAsync').mockReturnValue(
-        throwError(() => new HttpErrorResponse({ status: 500, statusText: 'Server Error' }))
-      );
+      jest
+        .spyOn(component['authService'], 'logInAsync')
+        .mockReturnValue(
+          throwError(
+            () =>
+              new HttpErrorResponse({
+                status: 500,
+                statusText: 'Server Error',
+              }),
+          ),
+        );
       component.loginForm.setValue(credentials);
       // Act
       component.onSubmit();
@@ -122,47 +132,42 @@ describe('LoginComponent', () => {
       expect(component.errorMessage).toBe(ERROR_MESSAGES.unexpectedError);
     });
 
-  describe('togglePasswordVisibility Method', () => {
+    describe('togglePasswordVisibility Method', () => {
+      it('should initialize hidePassword as true', () => {
+        // Arrange
+        // Act
+        // Assert
+        expect(component.hidePassword).toBe(true);
+      });
 
-    it('should initialize hidePassword as true', () => {
-      // Arrange
-      // Act
-      // Assert
-      expect(component.hidePassword).toBe(true);
+      it('should set hidePassword to false when toggled', () => {
+        // Arrange
+        expect(component.hidePassword).toBe(true);
+        // Act
+        component.togglePasswordVisibility();
+        // Assert
+        expect(component.hidePassword).toBe(false);
+      });
+
+      it('should set hidePassword to true when toggled again', () => {
+        // Arrange
+        component.hidePassword = false;
+        // Act
+        component.togglePasswordVisibility();
+        // Assert
+        expect(component.hidePassword).toBe(true);
+      });
     });
 
-    it('should set hidePassword to false when toggled', () => {
-      // Arrange
-      expect(component.hidePassword).toBe(true);
-      // Act
-      component.togglePasswordVisibility();
-      // Assert
-      expect(component.hidePassword).toBe(false);
+    describe('navigateToRegister Method', () => {
+      it('should navigate to register page', () => {
+        // Arrange
+        const routerSpy = jest.spyOn(component['router'], 'navigate');
+        // Act
+        component.navigateToRegister();
+        // Assert
+        expect(routerSpy).toHaveBeenCalledWith(['/signup']);
+      });
     });
-
-    it('should set hidePassword to true when toggled again', () => {
-      // Arrange
-      component.hidePassword = false;
-      // Act
-      component.togglePasswordVisibility();
-      // Assert
-      expect(component.hidePassword).toBe(true);
-    });
-
   });
-
-  describe('navigateToRegister Method', () => {
-
-    it('should navigate to register page', () => {
-      // Arrange
-      const routerSpy = jest.spyOn(component['router'], 'navigate');
-      // Act
-      component.navigateToRegister();
-      // Assert
-      expect(routerSpy).toHaveBeenCalledWith(['/signup']);
-    });
-
-  });
-
-});
 });

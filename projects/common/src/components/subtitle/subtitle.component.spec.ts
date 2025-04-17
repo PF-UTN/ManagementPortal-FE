@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+
 import { SubtitleComponent } from './subtitle.component';
 
 describe('SubtitleComponent', () => {

@@ -1,7 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ButtonComponent } from './button.component';
 import { MatButtonModule } from '@angular/material/button';
 import { By } from '@angular/platform-browser';
+
+import { ButtonComponent } from './button.component';
 
 describe('ButtonComponent', () => {
   let component: ButtonComponent;
@@ -18,7 +19,6 @@ describe('ButtonComponent', () => {
   });
 
   describe('Template Rendering', () => {
-
     it('should have disabled attribute when disabled', () => {
       // Arrange
       component.disabled = true;

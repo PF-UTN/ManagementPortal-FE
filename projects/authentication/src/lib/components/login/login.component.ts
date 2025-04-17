@@ -1,25 +1,34 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
-import { AuthService } from '../../services/auth.service';
-import { Router, RouterLink, RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
 import { ButtonComponent, TitleComponent, SubtitleComponent } from '@Common';
-import { User } from '../../models/user.model';
 import { ERROR_MESSAGES } from '@Common';
 
+import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+  FormControl,
+} from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { Router, RouterModule } from '@angular/router';
+
+import { User } from '../../models/user.model';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule,
+  imports: [
+    CommonModule,
     ReactiveFormsModule,
     RouterModule,
     MatNativeDateModule,
@@ -33,12 +42,12 @@ import { ERROR_MESSAGES } from '@Common';
     MatSlideToggleModule,
     ButtonComponent,
     TitleComponent,
-    SubtitleComponent],
+    SubtitleComponent,
+  ],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+  styleUrl: './login.component.scss',
 })
 export class LoginComponent {
-
   loginForm: FormGroup<{
     email: FormControl<string | null>;
     password: FormControl<string | null>;
@@ -47,10 +56,18 @@ export class LoginComponent {
   hidePassword = true;
   errorMessage: string = '';
 
-  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router,
+  ) {
     this.loginForm = new FormGroup({
-      email: new FormControl<string | null>(null, { validators:  [Validators.required, Validators.email]}),
-      password: new FormControl<string | null>(null, { validators: [Validators.required, Validators.minLength(8)] }),
+      email: new FormControl<string | null>(null, {
+        validators: [Validators.required, Validators.email],
+      }),
+      password: new FormControl<string | null>(null, {
+        validators: [Validators.required, Validators.minLength(8)],
+      }),
     });
   }
 
@@ -69,7 +86,7 @@ export class LoginComponent {
         password: this.loginForm.controls.password.value!,
       };
       this.authService.logInAsync(credentials).subscribe({
-        next: (response) => {
+        next: () => {
           this.router.navigate(['/']);
         },
         error: (error) => {
@@ -78,9 +95,8 @@ export class LoginComponent {
           } else {
             this.errorMessage = ERROR_MESSAGES.unexpectedError;
           }
-        }
+        },
       });
     }
   }
-
 }

@@ -1,12 +1,12 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { SignupComponent } from './signup.component';
-import { ReactiveFormsModule } from '@angular/forms';
 import { provideHttpClient } from '@angular/common/http';
-import { provideRouter } from '@angular/router';
-import { FormControl } from '@angular/forms';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { provideRouter } from '@angular/router';
+import { of } from 'rxjs';
+
+import { SignupComponent } from './signup.component';
 import { mockClient } from '../../models/mock-data.model';
-import { throwError, of } from 'rxjs';
 
 describe('SignupComponent', () => {
   let component: SignupComponent;
@@ -364,7 +364,9 @@ describe('SignupComponent', () => {
         component.signupForm.controls.lastName.setValue(clientData.lastName);
         component.signupForm.controls.email.setValue(clientData.email);
         component.signupForm.controls.password.setValue(clientData.password);
-        component.signupForm.controls.confirmPassword.setValue(clientData.password);
+        component.signupForm.controls.confirmPassword.setValue(
+          clientData.password,
+        );
         component.signupForm.controls.phone.setValue(clientData.phone);
         component.signupForm.controls.birthDate.setValue(clientData.birthDate);
         component.signupForm.controls.country.setValue(clientData.country);
@@ -372,19 +374,19 @@ describe('SignupComponent', () => {
         component.signupForm.controls.town.setValue(clientData.town);
         component.signupForm.controls.street.setValue(clientData.street);
         component.signupForm.controls.streetNumber.setValue(
-          clientData.streetNumber
+          clientData.streetNumber,
         );
         component.signupForm.controls.taxCategory.setValue(
-          clientData.taxCategory
+          clientData.taxCategory,
         );
         component.signupForm.controls.documentType.setValue(
-          clientData.documentType
+          clientData.documentType,
         );
         component.signupForm.controls.documentNumber.setValue(
-          clientData.documentNumber
+          clientData.documentNumber,
         );
         component.signupForm.controls.companyName.setValue(
-          clientData.companyName
+          clientData.companyName,
         );
         fixture.detectChanges();
         // Act & Assert

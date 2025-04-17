@@ -1,18 +1,27 @@
-import { Component, ChangeDetectorRef } from '@angular/core';
-import { FormBuilder, FormGroup, FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { AuthService } from '../../services/auth.service';
-import { Router, RouterModule  } from '@angular/router'; 
+import { ButtonComponent, TitleComponent } from '@Common';
+
 import { CommonModule } from '@angular/common';
+import { Component, ChangeDetectorRef } from '@angular/core';
+import {
+  FormBuilder,
+  FormGroup,
+  FormControl,
+  Validators,
+  FormsModule,
+  ReactiveFormsModule,
+} from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { ButtonComponent, ERROR_MESSAGES, TitleComponent } from '@Common';
+import { Router, RouterModule } from '@angular/router';
+
 import { Client } from '../../models/client.model';
+import { AuthService } from '../../services/auth.service';
 
 const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 const PHONE_REGEX = /^[+]?[0-9]{1,4}?[-.\\s]?([0-9]{1,3}[-.\\s]?){1,4}$/;
@@ -20,25 +29,26 @@ const PHONE_REGEX = /^[+]?[0-9]{1,4}?[-.\\s]?([0-9]{1,3}[-.\\s]?){1,4}$/;
 @Component({
   selector: 'app-signup',
   standalone: true,
-  imports: [  CommonModule,
-              ReactiveFormsModule, 
-              RouterModule, 
-              MatNativeDateModule, 
-              MatDatepickerModule, 
-              MatButtonModule,
-              MatFormFieldModule,
-              MatInputModule,
-              MatIconModule, 
-              FormsModule, 
-              MatSelectModule,
-              MatSlideToggleModule,
-              ButtonComponent,
-              TitleComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterModule,
+    MatNativeDateModule,
+    MatDatepickerModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatIconModule,
+    FormsModule,
+    MatSelectModule,
+    MatSlideToggleModule,
+    ButtonComponent,
+    TitleComponent,
+  ],
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.scss'],
 })
 export class SignupComponent {
-  
   signupForm: FormGroup<{
     firstName: FormControl<string>;
     lastName: FormControl<string>;
@@ -57,50 +67,56 @@ export class SignupComponent {
     documentNumber: FormControl<string>;
     companyName: FormControl<string>;
   }>;
-  
+
   hidePassword = true;
-  constructor(private fb: FormBuilder, protected authService: AuthService, private router: Router, private cdRef: ChangeDetectorRef) {
-
-    this.signupForm = this.fb.group({
-      firstName: ['', [Validators.required, Validators.minLength(2)]],
-      lastName:['',[Validators.required, Validators.minLength(2)]],
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [
-        Validators.required,
-        Validators.minLength(8),
-        Validators.pattern(PASSWORD_REGEX)
-      ]],
-      confirmPassword:['',[Validators.required, Validators.minLength(8)]],
-      phone: ['', [
-        Validators.required,
-        Validators.pattern(PHONE_REGEX)
-      ]],
-      birthDate: ['', Validators.required],
-      country: ['',Validators.required],
-      province: ['',Validators.required],
-      town: ['',Validators.required],
-      street: ['',Validators.required],
-      streetNumber:['',Validators.required],
-      taxCategory:['',Validators.required],
-      documentType:['',Validators.required],
-      documentNumber:['',Validators.required],
-      companyName:['',Validators.required],
-      
-    },
-    { validator: this.passwordMatchValidator }
-  );
-    
+  constructor(
+    private fb: FormBuilder,
+    protected authService: AuthService,
+    private router: Router,
+    private cdRef: ChangeDetectorRef,
+  ) {
+    this.signupForm = this.fb.group(
+      {
+        firstName: ['', [Validators.required, Validators.minLength(2)]],
+        lastName: ['', [Validators.required, Validators.minLength(2)]],
+        email: ['', [Validators.required, Validators.email]],
+        password: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(8),
+            Validators.pattern(PASSWORD_REGEX),
+          ],
+        ],
+        confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
+        phone: ['', [Validators.required, Validators.pattern(PHONE_REGEX)]],
+        birthDate: ['', Validators.required],
+        country: ['', Validators.required],
+        province: ['', Validators.required],
+        town: ['', Validators.required],
+        street: ['', Validators.required],
+        streetNumber: ['', Validators.required],
+        taxCategory: ['', Validators.required],
+        documentType: ['', Validators.required],
+        documentNumber: ['', Validators.required],
+        companyName: ['', Validators.required],
+      },
+      { validator: this.passwordMatchValidator },
+    );
   }
-
 
   passwordMatchValidator(form: FormGroup) {
     const password = form.get('password');
     const confirmPassword = form.get('confirmPassword');
-    return password && confirmPassword && password.value === confirmPassword.value
-      ? null : { mismatch: true };}
+    return password &&
+      confirmPassword &&
+      password.value === confirmPassword.value
+      ? null
+      : { mismatch: true };
+  }
 
   togglePasswordVisibility() {
-    this.hidePassword = !this.hidePassword;  
+    this.hidePassword = !this.hidePassword;
   }
 
   onSubmit(): void {
@@ -124,11 +140,10 @@ export class SignupComponent {
         companyName: this.signupForm.controls.companyName.value!,
       };
       this.authService.signUpAsync(client).subscribe({
-        next: (response) => { 
-          this.router.navigate(['/login']); 
+        next: () => {
+          this.router.navigate(['/login']);
         },
-        error: (error) => {
-        }
+        error: () => {},
       });
     }
   }
