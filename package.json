@@ -59,6 +59,9 @@
     "typescript": "~5.5.2",
     "typescript-eslint": "^8.24.1"
   },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "*"
+  },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
