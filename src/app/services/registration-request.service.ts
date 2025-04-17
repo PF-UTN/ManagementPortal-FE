@@ -11,7 +11,7 @@ import { RegistrationRequestListItem } from '../models/registration-request-item
 export class RegistrationRequestService {
 
   private baseUrl = 'https://dev-management-portal-be.vercel.app/registration-request';
-  private header = { 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RAdGVzdC5jb20iLCJzdWIiOjEsInBlcm1pc3Npb25zIjpbInJlZ2lzdHJhdGlvbi1yZXF1ZXN0OnJlYWQiLCJyZWdpc3RyYXRpb24tcmVxdWVzdDpjcmVhdGUiLCJyZWdpc3RyYXRpb24tcmVxdWVzdDp1cGRhdGUiLCJyZWdpc3RyYXRpb24tcmVxdWVzdDpkZWxldGUiXSwiaWF0IjoxNzQ0ODk0NjUxLCJleHAiOjE3NDQ4OTgyNTF9.8mqKojg_yiyMkQx9bDl-RETwMIti54NuDd0mJByeEVk' }
+  private header = { 'Authorization': 'Bearer ' } //token
 
   constructor(private http: HttpClient) { }
 
