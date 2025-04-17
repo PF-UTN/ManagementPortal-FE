@@ -1,6 +1,9 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { AppComponent } from './app.component';
 import { CommonUiComponent } from '@common-ui';
+
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { AppComponent } from './app.component';
+
 describe('AppComponent', () => {
   let fixture: ComponentFixture<AppComponent>;
 
