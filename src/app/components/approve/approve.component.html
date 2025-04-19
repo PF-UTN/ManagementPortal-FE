@@ -1,0 +1,29 @@
+<mat-drawer-container class="drawer-container">
+  <mat-drawer class="drawer-container__drawer" mode="side" position="end" [opened]="true">
+    <div class="drawer-container__layout">
+    <h2 class="drawer-container__title">Aprobar Solicitud</h2>
+    <div class="drawer-container__content">
+      <div class="drawer-container__row">
+        <p><strong>Nombre | Razon Social</strong></p>
+        {{ data.user.fullNameOrBusinessName }}
+      </div>
+      <div class="drawer-container__row">
+        <p><strong>Email</strong></p>
+        <p>{{ data.user.email }}</p>
+      </div>
+      <div class="drawer-container__row">
+        <p><strong>Telefono</strong></p>
+        <p>{{ data.user.phone }}</p>
+      </div>
+      <div class="drawer-container__row">
+        <p><strong>Documento</strong></p>
+        <p>{{ data.user.documentType }} - {{ data.user.documentNumber }}</p>
+      </div>
+    </div>
+      <div class="drawer-container__actions">
+        <button mat-button color="accent" (click)="closeDrawer()">Cancelar</button>
+        <button mat-button color="primary" [disabled]="isLoading" (click)="approve()">Aprobar</button>
+      </div>
+    </div>
+  </mat-drawer>
+</mat-drawer-container>

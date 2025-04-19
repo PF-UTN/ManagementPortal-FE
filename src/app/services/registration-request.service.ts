@@ -9,13 +9,23 @@ import { RegistrationRequestListItem } from '../models/registration-request-item
   providedIn: 'root'
 })
 export class RegistrationRequestService {
-  
-  private apiUrl = 'https://dev-management-portal-be.vercel.app/registration-request/search';
 
-  constructor(private http: HttpClient) {}
+  private baseUrl = 'https://dev-management-portal-be.vercel.app/registration-request';
+  private header = { 'Authorization': 'Bearer ' } //token
 
-  fetchRegistrationRequests(params: RegistrationRequestParams): 
-        Observable<{ total: number; results: RegistrationRequestListItem[] }> {
-    return this.http.post<{ total: number; results: RegistrationRequestListItem[] }>(this.apiUrl, params);
+  constructor(private http: HttpClient) { }
+
+  fetchRegistrationRequests(params: RegistrationRequestParams):
+    Observable<{ total: number; results: RegistrationRequestListItem[] }> {
+    const url = `${this.baseUrl}/search`;
+    return this.http.post<{
+      total: number; results: RegistrationRequestListItem[]
+    }>(url, params, { headers: this.header });
+  }
+
+  approveRegistrationRequest(id: number, note: string): Observable<void> {
+    const url = `${this.baseUrl}/${id}/approve`;
+    const body = { note }
+    return this.http.post<void>(url, body, { headers: this.header });
   }
 }
