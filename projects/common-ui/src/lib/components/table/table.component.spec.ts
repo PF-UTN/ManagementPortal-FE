@@ -1,12 +1,14 @@
+import { ColumnTypeEnum } from '@common-ui';
+
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { TableComponent } from './table.component';
-import { MatTableModule } from '@angular/material/table';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTableModule } from '@angular/material/table';
+import { of } from 'rxjs';
+
+import { TableComponent } from './table.component';
 import { TableColumn } from '../../models/table-column.model';
-import { of, throwError } from 'rxjs';
-import { ColumnTypeEnum } from '@common-ui'
 
 interface MockData {
   id: number;
@@ -18,13 +20,23 @@ describe('TableComponent', () => {
   let fixture: ComponentFixture<TableComponent<MockData>>;
 
   const mockColumns: TableColumn<MockData>[] = [
-    { columnDef: 'id', header: 'ID', type: ColumnTypeEnum.VALUE, value: (row) => row.id.toString() },
-    { columnDef: 'name', header: 'Name', type: ColumnTypeEnum.VALUE, value: (row) => row.name }
+    {
+      columnDef: 'id',
+      header: 'ID',
+      type: ColumnTypeEnum.VALUE,
+      value: (row) => row.id.toString(),
+    },
+    {
+      columnDef: 'name',
+      header: 'Name',
+      type: ColumnTypeEnum.VALUE,
+      value: (row) => row.name,
+    },
   ];
 
   const mockData: MockData[] = [
     { id: 1, name: 'John Doe' },
-    { id: 2, name: 'Jane Smith' }
+    { id: 2, name: 'Jane Smith' },
   ];
 
   beforeEach(async () => {
@@ -34,8 +46,8 @@ describe('TableComponent', () => {
         MatTableModule,
         MatMenuModule,
         MatIconModule,
-        MatButtonModule
-      ]
+        MatButtonModule,
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TableComponent<MockData>);
@@ -132,7 +144,8 @@ describe('TableComponent', () => {
 
     it('should apply custom row class function and handle different row data', () => {
       // Arrange
-      component.getRowClass = (row) => (row.name === 'John Doe' ? 'highlight' : '');
+      component.getRowClass = (row) =>
+        row.name === 'John Doe' ? 'highlight' : '';
       const row1 = { id: 1, name: 'John Doe' };
       const row2 = { id: 2, name: 'Jane Smith' };
 
@@ -157,7 +170,10 @@ describe('TableComponent', () => {
       component.onActionClick(action, row);
 
       // Assert
-      expect(component.actionClicked.emit).toHaveBeenCalledWith({ action, row });
+      expect(component.actionClicked.emit).toHaveBeenCalledWith({
+        action,
+        row,
+      });
     });
 
     it('should emit actionClicked event for other actions', () => {
@@ -170,7 +186,10 @@ describe('TableComponent', () => {
       component.onActionClick(action, row);
 
       // Assert
-      expect(component.actionClicked.emit).toHaveBeenCalledWith({ action, row });
+      expect(component.actionClicked.emit).toHaveBeenCalledWith({
+        action,
+        row,
+      });
     });
   });
 });
