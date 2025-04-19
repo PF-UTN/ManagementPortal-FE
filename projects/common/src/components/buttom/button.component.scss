@@ -1,0 +1,19 @@
+@import '../../../../../src/styles/varibles';
+
+.button {
+  background-color: $dark-muted-purple !important; 
+  color: $white-color !important; 
+  border-radius: 50px; 
+  padding: 20px 50px; 
+  font-size: 14px;
+  height: 40px;
+  width: 160px;
+  &:hover {
+    background-color: $dusky-violet !important; 
+  }
+  &:disabled {
+    background-color: $lavender-gray !important; 
+    cursor: not-allowed;
+  }
+  }
+  
