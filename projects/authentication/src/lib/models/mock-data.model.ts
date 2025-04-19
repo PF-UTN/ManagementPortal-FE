@@ -26,10 +26,8 @@ export const mockUser: User = {
 };
 
 export const mockInvalidUser: User = {
-  email: 'invalid@example.com',
+  email: 'invalid@example.com', 
   password: 'wrongPassword',
 };
 
-export const mockAuthResponse = {
-  token: 'mockJWTToken',
-};
+export const mockAuthResponse = { token: 'mockJWTToken' };

@@ -93,15 +93,17 @@ describe('LoginComponent', () => {
     it('should show error message for invalid login', () => {
       // Arrange
       const credentials = mockInvalidUser;
-      jest.spyOn(component['authService'], 'logInAsync').mockReturnValue(
-        throwError(
-          () =>
-            new HttpErrorResponse({
-              status: 401,
-              statusText: 'Unauthorized',
-            }),
-        ),
-      );
+      jest
+        .spyOn(component['authService'], 'logInAsync')
+        .mockReturnValue(
+          throwError(
+            () =>
+              new HttpErrorResponse({
+                status: 401,
+                statusText: 'Unauthorized',
+              }),
+          ),
+        );
       component.loginForm.setValue(credentials);
       // Act
       component.onSubmit();
@@ -112,15 +114,17 @@ describe('LoginComponent', () => {
     it('should handle unexpected errors gracefully', () => {
       // Arrange
       const credentials = mockInvalidUser;
-      jest.spyOn(component['authService'], 'logInAsync').mockReturnValue(
-        throwError(
-          () =>
-            new HttpErrorResponse({
-              status: 500,
-              statusText: 'Server Error',
-            }),
-        ),
-      );
+      jest
+        .spyOn(component['authService'], 'logInAsync')
+        .mockReturnValue(
+          throwError(
+            () =>
+              new HttpErrorResponse({
+                status: 500,
+                statusText: 'Server Error',
+              }),
+          ),
+        );
       component.loginForm.setValue(credentials);
       // Act
       component.onSubmit();

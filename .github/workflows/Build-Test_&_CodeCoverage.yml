@@ -1,7 +1,7 @@
 name: Build - Test & CodeCoverage
 on:
   pull_request:
-    branches: ['main']
+    branches: [ "main" ]
 
 jobs:
   build-and-test:
@@ -35,18 +35,18 @@ jobs:
 
       - name: Run Unit Tests with Jest
         run: npm run test:ci
-
+      
       - name: Run Eslint
         run: npm run eslint:ci
         continue-on-error: true
-
+      
       - name: Annotate Code Linting Results
         uses: ataylorme/eslint-annotate-action@v3
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           report-json: 'lint/eslint_report.json'
         continue-on-error: true
-
+          
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v4
         env:
