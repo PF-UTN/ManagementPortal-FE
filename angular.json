@@ -129,7 +129,7 @@
         }
       }
     },
-    "common-ui": {
+    "Common-UI": {
       "projectType": "library",
       "root": "projects/common-ui",
       "sourceRoot": "projects/common-ui/src",

@@ -1,8 +1,11 @@
+import {
+  HttpClientTestingModule,
+  HttpTestingController,
+} from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+
 import { RegistrationRequestService } from './registration-request.service';
 import { RegistrationRequestParams } from '../models/registration-request-param.model';
-import { RegistrationRequestListItem } from '../models/registration-request-item.model';
 
 describe('RegistrationRequestService', () => {
   let service: RegistrationRequestService;
@@ -18,10 +21,10 @@ describe('RegistrationRequestService', () => {
           email: 'johndoe@example.com',
           documentNumber: '12345678',
           documentType: 'DNI',
-          phone: '123456789'
+          phone: '123456789',
         },
         status: 'Pending',
-        requestDate: '2025-03-28T00:00:00Z'
+        requestDate: '2025-03-28T00:00:00Z',
       },
       {
         id: 2,
@@ -30,18 +33,18 @@ describe('RegistrationRequestService', () => {
           email: 'janesmith@example.com',
           documentNumber: '87654321',
           documentType: 'DNI',
-          phone: '987654321'
+          phone: '987654321',
         },
         status: 'Approved',
-        requestDate: '2025-03-27T00:00:00Z'
-      }
-    ]
+        requestDate: '2025-03-27T00:00:00Z',
+      },
+    ],
   };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
-      providers: [RegistrationRequestService]
+      providers: [RegistrationRequestService],
     });
 
     service = TestBed.inject(RegistrationRequestService);
@@ -63,7 +66,7 @@ describe('RegistrationRequestService', () => {
         page: 1,
         pageSize: 10,
         searchText: '',
-        filters: { status: ['Pending'] }
+        filters: { status: ['Pending'] },
       };
 
       // Act
@@ -73,7 +76,9 @@ describe('RegistrationRequestService', () => {
       });
 
       // Intercepta la solicitud HTTP
-      const req = httpMock.expectOne('https://dev-management-portal-be.vercel.app/registration-request/search');
+      const req = httpMock.expectOne(
+        'https://dev-management-portal-be.vercel.app/registration-request/search',
+      );
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(params);
 
@@ -87,7 +92,7 @@ describe('RegistrationRequestService', () => {
         page: 1,
         pageSize: 10,
         searchText: '',
-        filters: { status: ['Pending'] }
+        filters: { status: ['Pending'] },
       };
       const mockError = new ErrorEvent('Network error');
 
@@ -97,11 +102,13 @@ describe('RegistrationRequestService', () => {
         error: (error) => {
           // Assert
           expect(error.error).toBe(mockError);
-        }
+        },
       });
 
       // Intercepta la solicitud HTTP y simula un error
-      const req = httpMock.expectOne('https://dev-management-portal-be.vercel.app/registration-request/search');
+      const req = httpMock.expectOne(
+        'https://dev-management-portal-be.vercel.app/registration-request/search',
+      );
       expect(req.request.method).toBe('POST');
       req.error(mockError);
     });

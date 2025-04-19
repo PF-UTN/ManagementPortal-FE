@@ -1,10 +1,9 @@
-import { ButtonComponent, TitleComponent, SubtitleComponent } from '@Common';
 import { ERROR_MESSAGES } from '@Common';
+import { ButtonComponent, SubtitleComponent, TitleComponent } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import {
-  FormBuilder,
   FormGroup,
   Validators,
   FormsModule,
@@ -57,9 +56,8 @@ export class LoginComponent {
   errorMessage: string = '';
 
   constructor(
-    private fb: FormBuilder,
-    private authService: AuthService,
-    private router: Router,
+    private readonly authService: AuthService,
+    private readonly router: Router,
   ) {
     this.loginForm = new FormGroup({
       email: new FormControl<string | null>(null, {
