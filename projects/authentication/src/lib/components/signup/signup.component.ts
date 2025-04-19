@@ -1,4 +1,4 @@
-import { ButtonComponent, TitleComponent } from '@common-ui';
+import { ButtonComponent, TitleComponent } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';

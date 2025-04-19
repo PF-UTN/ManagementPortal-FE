@@ -1,4 +1,4 @@
-import { ColumnTypeEnum, TableColumn, TableComponent } from '@common-ui';
+import { ColumnTypeEnum, TableColumn, TableComponent } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';

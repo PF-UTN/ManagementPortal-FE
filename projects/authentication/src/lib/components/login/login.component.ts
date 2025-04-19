@@ -1,5 +1,5 @@
 import { ERROR_MESSAGES } from '@Common';
-import { ButtonComponent, SubtitleComponent, TitleComponent } from '@common-ui';
+import { ButtonComponent, SubtitleComponent, TitleComponent } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';

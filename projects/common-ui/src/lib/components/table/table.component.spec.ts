@@ -1,4 +1,4 @@
-import { ColumnTypeEnum } from '@common-ui';
+import { ColumnTypeEnum } from '@Common-UI';
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';

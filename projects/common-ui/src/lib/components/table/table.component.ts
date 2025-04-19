@@ -1,4 +1,4 @@
-import { ColumnTypeEnum } from '@common-ui';
+import { ColumnTypeEnum } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
 import {
