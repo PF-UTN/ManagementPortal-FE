@@ -154,7 +154,7 @@ describe('RegistrationRequestListComponent', () => {
       const result = component.getRowClass(row);
 
       // Assert
-      expect(result).toBe('pending-row');
+      expect(result).toBe('table__pending-row');
     });
 
     it('should return an empty string for rows with status other than "Pending"', () => {
