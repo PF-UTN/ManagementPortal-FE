@@ -1,7 +1,6 @@
-@import "bootstrap/scss/functions";
-@import "bootstrap/scss/variables";
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';
 @import '../../../../../../src/styles/varibles';
-
 
 .custom-account-icon {
   font-size: 64px;
@@ -41,14 +40,13 @@
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-
 }
 
 .form .form-group {
   margin-bottom: 20px;
   margin-left: 20px;
   margin-right: 20px;
-  width: calc(100%/ 2 - 100px);
+  width: calc(100% / 2 - 100px);
 }
 
 .form .mat-form-field {

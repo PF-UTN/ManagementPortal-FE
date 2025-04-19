@@ -1,7 +1,9 @@
-<button class="button"
-  mat-raised-button  
-  [disabled]="disabled" 
+<button
+  class="button"
+  mat-raised-button
+  [disabled]="disabled"
   [attr.type]="type"
-  (click)="clickEvent()">
+  (click)="clickEvent()"
+>
   <ng-content></ng-content>
 </button>
