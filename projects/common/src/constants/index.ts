@@ -1,3 +1,1 @@
-export * from './button_type';
-export * from './error_messages'
-
+export * from './error-messages.constant';

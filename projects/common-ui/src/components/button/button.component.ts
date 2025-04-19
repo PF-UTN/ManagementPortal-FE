@@ -1,10 +1,9 @@
-import { ButtonTypeEnum } from '@Common';
-
 import { CommonModule } from '@angular/common';
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 
-import { ButtonType } from '../../lib/models/buttonType.model';
+import { ButtonType } from './model/button-type.constant';
+import { ButtonTypeEnum } from './model/button-types.model';
 
 @Component({
   selector: 'mp-button',

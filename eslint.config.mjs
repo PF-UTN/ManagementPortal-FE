@@ -1,11 +1,11 @@
-import importPlugin from "eslint-plugin-import";
-import tseslint from "typescript-eslint";
+import importPlugin from 'eslint-plugin-import';
+import tseslint from 'typescript-eslint';
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
   ...tseslint.configs.strict,
   {
-    ignores: ['**/*.{js, mjs, cjs}', "dist/**", "node_modules/**"],
+    ignores: ['**/*.{js, mjs, cjs}', 'dist/**', 'node_modules/**'],
   },
   {
     plugins: {
@@ -17,11 +17,7 @@ export default [
       'import/order': [
         'error',
         {
-          groups: [
-            ['internal'],
-            ['external'],
-            ['parent', 'sibling', 'index'],
-          ],
+          groups: [['internal'], ['external'], ['parent', 'sibling', 'index']],
           pathGroups: [
             {
               pattern: '@**',
@@ -43,6 +39,19 @@ export default [
           max: 1,
           maxEOF: 1,
           maxBOF: 0,
+        },
+      ],
+      'newline-per-chained-call': [
+        'error',
+        {
+          ignoreChainWithDepth: 1,
+        },
+      ],
+      indent: [
+        'error',
+        2,
+        {
+          MemberExpression: 1,
         },
       ],
     },

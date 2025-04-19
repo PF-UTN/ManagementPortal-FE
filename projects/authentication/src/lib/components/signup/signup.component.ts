@@ -1,7 +1,7 @@
-import { ButtonComponent, TitleComponent } from '@Common';
+import { ButtonComponent, TitleComponent } from '@common-ui';
 
 import { CommonModule } from '@angular/common';
-import { Component, ChangeDetectorRef } from '@angular/core';
+import { Component } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -70,10 +70,9 @@ export class SignupComponent {
 
   hidePassword = true;
   constructor(
-    private fb: FormBuilder,
+    private readonly fb: FormBuilder,
     protected authService: AuthService,
-    private router: Router,
-    private cdRef: ChangeDetectorRef,
+    private readonly router: Router,
   ) {
     this.signupForm = this.fb.group(
       {
@@ -122,22 +121,22 @@ export class SignupComponent {
   onSubmit(): void {
     if (this.signupForm.valid) {
       const client: Client = {
-        firstName: this.signupForm.controls.firstName.value!,
-        lastName: this.signupForm.controls.lastName.value!,
-        email: this.signupForm.controls.email.value!,
-        password: this.signupForm.controls.password.value!,
-        confirmPassword: this.signupForm.controls.confirmPassword.value!,
-        phone: this.signupForm.controls.phone.value!,
-        birthDate: this.signupForm.controls.birthDate.value!,
-        country: this.signupForm.controls.country.value!,
-        province: this.signupForm.controls.province.value!,
-        town: this.signupForm.controls.town.value!,
-        street: this.signupForm.controls.street.value!,
-        streetNumber: this.signupForm.controls.streetNumber.value!,
-        taxCategory: this.signupForm.controls.taxCategory.value!,
-        documentType: this.signupForm.controls.documentType.value!,
-        documentNumber: this.signupForm.controls.documentNumber.value!,
-        companyName: this.signupForm.controls.companyName.value!,
+        firstName: this.signupForm.controls.firstName.value,
+        lastName: this.signupForm.controls.lastName.value,
+        email: this.signupForm.controls.email.value,
+        password: this.signupForm.controls.password.value,
+        confirmPassword: this.signupForm.controls.confirmPassword.value,
+        phone: this.signupForm.controls.phone.value,
+        birthDate: this.signupForm.controls.birthDate.value,
+        country: this.signupForm.controls.country.value,
+        province: this.signupForm.controls.province.value,
+        town: this.signupForm.controls.town.value,
+        street: this.signupForm.controls.street.value,
+        streetNumber: this.signupForm.controls.streetNumber.value,
+        taxCategory: this.signupForm.controls.taxCategory.value,
+        documentType: this.signupForm.controls.documentType.value,
+        documentNumber: this.signupForm.controls.documentNumber.value,
+        companyName: this.signupForm.controls.companyName.value,
       };
       this.authService.signUpAsync(client).subscribe({
         next: () => {
