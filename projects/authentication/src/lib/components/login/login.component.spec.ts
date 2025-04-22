@@ -1,10 +1,8 @@
 import { ERROR_MESSAGES } from '@Common';
 
-import { provideHttpClient } from '@angular/common/http';
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, provideHttpClient } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ReactiveFormsModule } from '@angular/forms';
-import { FormControl } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { provideRouter } from '@angular/router';
 import { throwError, of } from 'rxjs';
 
@@ -93,17 +91,15 @@ describe('LoginComponent', () => {
     it('should show error message for invalid login', () => {
       // Arrange
       const credentials = mockInvalidUser;
-      jest
-        .spyOn(component['authService'], 'logInAsync')
-        .mockReturnValue(
-          throwError(
-            () =>
-              new HttpErrorResponse({
-                status: 401,
-                statusText: 'Unauthorized',
-              }),
-          ),
-        );
+      jest.spyOn(component['authService'], 'logInAsync').mockReturnValue(
+        throwError(
+          () =>
+            new HttpErrorResponse({
+              status: 401,
+              statusText: 'Unauthorized',
+            }),
+        ),
+      );
       component.loginForm.setValue(credentials);
       // Act
       component.onSubmit();
@@ -114,17 +110,15 @@ describe('LoginComponent', () => {
     it('should handle unexpected errors gracefully', () => {
       // Arrange
       const credentials = mockInvalidUser;
-      jest
-        .spyOn(component['authService'], 'logInAsync')
-        .mockReturnValue(
-          throwError(
-            () =>
-              new HttpErrorResponse({
-                status: 500,
-                statusText: 'Server Error',
-              }),
-          ),
-        );
+      jest.spyOn(component['authService'], 'logInAsync').mockReturnValue(
+        throwError(
+          () =>
+            new HttpErrorResponse({
+              status: 500,
+              statusText: 'Server Error',
+            }),
+        ),
+      );
       component.loginForm.setValue(credentials);
       // Act
       component.onSubmit();
