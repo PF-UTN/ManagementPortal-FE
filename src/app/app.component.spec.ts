@@ -1,12 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+
 import { AppComponent } from './app.component';
-import { CommonUiComponent } from '@common-ui';
+
 describe('AppComponent', () => {
   let fixture: ComponentFixture<AppComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AppComponent, CommonUiComponent],
+      imports: [AppComponent],
     }).compileComponents();
     fixture = TestBed.createComponent(AppComponent);
   });

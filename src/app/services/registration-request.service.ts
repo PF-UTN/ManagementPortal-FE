@@ -1,17 +1,17 @@
-import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { RegistrationRequestParams } from '../models/registration-request-param.model';
-import { RegistrationRequestListItem } from '../models/registration-request-item.model';
 
+import { RegistrationRequestListItem } from '../models/registration-request-item.model';
+import { RegistrationRequestParams } from '../models/registration-request-param.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class RegistrationRequestService {
 
   private baseUrl = 'https://dev-management-portal-be.vercel.app/registration-request';
-  private header = { 'Authorization': 'Bearer ' } //token
+  private header = { 'Authorization': 'Bearer ' } 
 
   constructor(private http: HttpClient) { }
 

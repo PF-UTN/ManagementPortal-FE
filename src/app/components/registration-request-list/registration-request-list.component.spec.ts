@@ -1,19 +1,18 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { RegistrationRequestListComponent } from './registration-request-list.component';
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { MatPaginatorModule } from '@angular/material/paginator';
 import { CommonModule } from '@angular/common';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatButtonModule } from '@angular/material/button';
-import { RegistrationRequestService } from '../../services/registration-request.service';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { of, throwError } from 'rxjs';
+
+import { RegistrationRequestListComponent } from './registration-request-list.component';
 import { RegistrationRequestListItem } from '../../models/registration-request-item.model';
+import { RegistrationRequestService } from '../../services/registration-request.service';
 
 describe('RegistrationRequestListComponent', () => {
   let component: RegistrationRequestListComponent;
   let fixture: ComponentFixture<RegistrationRequestListComponent>;
-  let httpMock: HttpTestingController;
   let service: RegistrationRequestService;
 
   const mockData: RegistrationRequestListItem[] = [
@@ -24,10 +23,10 @@ describe('RegistrationRequestListComponent', () => {
         email: 'johndoe@example.com',
         documentNumber: '12345678',
         documentType: 'DNI',
-        phone: '123456789'
+        phone: '123456789',
       },
       status: 'Pending',
-      requestDate: '2025-03-28T00:00:00Z'
+      requestDate: '2025-03-28T00:00:00Z',
     },
     {
       id: 2,
@@ -36,18 +35,20 @@ describe('RegistrationRequestListComponent', () => {
         email: 'janesmith@example.com',
         documentNumber: '87654321',
         documentType: 'DNI',
-        phone: '987654321'
+        phone: '987654321',
       },
       status: 'Approved',
-      requestDate: '2025-03-27T00:00:00Z'
-    }
+      requestDate: '2025-03-27T00:00:00Z',
+    },
   ];
 
   beforeEach(() => {
     const mockService = {
-      fetchRegistrationRequests: jest.fn().mockReturnValue(of({ total: mockData.length, results: mockData }))
+      fetchRegistrationRequests: jest
+        .fn()
+        .mockReturnValue(of({ total: mockData.length, results: mockData })),
     };
-  
+
     TestBed.configureTestingModule({
       imports: [
         RegistrationRequestListComponent,
@@ -55,13 +56,13 @@ describe('RegistrationRequestListComponent', () => {
         CommonModule,
         MatIconModule,
         MatMenuModule,
-        MatButtonModule
+        MatButtonModule,
       ],
       providers: [
-        { provide: RegistrationRequestService, useValue: mockService }
-      ]
+        { provide: RegistrationRequestService, useValue: mockService },
+      ],
     }).compileComponents();
-  
+
     fixture = TestBed.createComponent(RegistrationRequestListComponent);
     component = fixture.componentInstance;
     service = TestBed.inject(RegistrationRequestService);
@@ -69,18 +70,18 @@ describe('RegistrationRequestListComponent', () => {
   });
 
   it('should create the component', () => {
-  // Assert
-  expect(component).toBeTruthy();
-  expect(component.dataSource$.value).toEqual(mockData);
-  expect(component.totalItems).toBe(mockData.length);
-  expect(component.isLoading).toBe(false);
-});
+    // Assert
+    expect(component).toBeTruthy();
+    expect(component.dataSource$.value).toEqual(mockData);
+    expect(component.totalItems).toBe(mockData.length);
+    expect(component.isLoading).toBe(false);
+  });
 
   describe('fetchData', () => {
     it('should update dataSource$ and totalItems with mock data', () => {
       // Act
       component.fetchData();
-    
+
       // Assert
       expect(component.dataSource$.value).toEqual(mockData);
       expect(component.totalItems).toBe(mockData.length);
@@ -89,11 +90,13 @@ describe('RegistrationRequestListComponent', () => {
 
     it('should handle errors when fetchRegistrationRequests fails', () => {
       // Arrange
-      jest.spyOn(service, 'fetchRegistrationRequests').mockReturnValue(throwError(() => new Error('Test error')));
-    
+      jest
+        .spyOn(service, 'fetchRegistrationRequests')
+        .mockReturnValue(throwError(() => new Error('Test error')));
+
       // Act
       component.fetchData();
-    
+
       // Assert
       expect(component.isLoading).toBe(false);
     });
@@ -104,10 +107,10 @@ describe('RegistrationRequestListComponent', () => {
       // Arrange
       jest.spyOn(component, 'fetchData');
       const event = { pageIndex: 1, pageSize: 20 };
-    
+
       // Act
       component.handlePageChange(event);
-    
+
       // Assert
       expect(component.pageIndex).toBe(1);
       expect(component.pageSize).toBe(20);
@@ -154,7 +157,7 @@ describe('RegistrationRequestListComponent', () => {
       const result = component.getRowClass(row);
 
       // Assert
-      expect(result).toBe('pending-row');
+      expect(result).toBe('table__pending-row');
     });
 
     it('should return an empty string for rows with status other than "Pending"', () => {
