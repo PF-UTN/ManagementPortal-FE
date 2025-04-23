@@ -1,11 +1,17 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { ApproveDrawerComponent } from './approve.component';
-import { RegistrationRequestService } from '../../services/registration-request.service';
-import { MatSidenavModule } from '@angular/material/sidenav';
+import {
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick,
+} from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
+
+import { ApproveDrawerComponent } from './approve.component';
 import { RegistrationRequestListItem } from '../../models/registration-request-item.model';
+import { RegistrationRequestService } from '../../services/registration-request.service';
 
 describe('ApproveDrawerComponent', () => {
   let component: ApproveDrawerComponent;
@@ -14,10 +20,14 @@ describe('ApproveDrawerComponent', () => {
 
   beforeEach(async () => {
     mockRegistrationRequestService = {
-      approveRegistrationRequest: jest.fn(),
-      fetchRegistrationRequests: jest.fn(),
-    } as Partial<jest.Mocked<RegistrationRequestService>> as jest.Mocked<RegistrationRequestService>;
-  
+      approveRegistrationRequest: jest.fn().mockReturnValue(of(undefined)),
+      fetchRegistrationRequests: jest
+        .fn()
+        .mockReturnValue(of({ total: 0, results: [] })),
+    } as Partial<
+      jest.Mocked<RegistrationRequestService>
+    > as jest.Mocked<RegistrationRequestService>;
+
     await TestBed.configureTestingModule({
       imports: [
         ApproveDrawerComponent,
@@ -26,10 +36,13 @@ describe('ApproveDrawerComponent', () => {
         NoopAnimationsModule,
       ],
       providers: [
-        { provide: RegistrationRequestService, useValue: mockRegistrationRequestService },
+        {
+          provide: RegistrationRequestService,
+          useValue: mockRegistrationRequestService,
+        },
       ],
     }).compileComponents();
-  
+
     fixture = TestBed.createComponent(ApproveDrawerComponent);
     component = fixture.componentInstance;
   });
@@ -71,41 +84,47 @@ describe('ApproveDrawerComponent', () => {
         requestDate: '2025-03-28T00:00:00Z',
       } as RegistrationRequestListItem;
     });
-  
+
     it('should call approveRegistrationRequest and emit approveRequest on success', fakeAsync(() => {
       // Arrange
       jest.spyOn(component.approveRequest, 'emit');
-      mockRegistrationRequestService.approveRegistrationRequest.mockReturnValue(of(void 0));
-  
+      mockRegistrationRequestService.approveRegistrationRequest.mockReturnValue(
+        of(undefined),
+      );
+
       // Act
       component.approve();
-      fixture.detectChanges(); 
-  
-      tick(); 
-      fixture.detectChanges(); 
-  
+      fixture.detectChanges();
+
+      tick();
+      fixture.detectChanges();
+
       // Assert
-      expect(mockRegistrationRequestService.approveRegistrationRequest).toHaveBeenCalledWith(1, '');
-      expect(component.isLoading).toBe(false); 
+      expect(
+        mockRegistrationRequestService.approveRegistrationRequest,
+      ).toHaveBeenCalledWith(1, '');
+      expect(component.isLoading).toBe(false);
       expect(component.approveRequest.emit).toHaveBeenCalled();
     }));
-  
+
     it('should handle errors when approveRegistrationRequest fails', fakeAsync(() => {
       // Arrange
       mockRegistrationRequestService.approveRegistrationRequest.mockReturnValue(
-        throwError(() => new Error('Error al aprobar'))
+        throwError(() => new Error('Error al aprobar')),
       );
-  
+
       // Act
       component.approve();
-      fixture.detectChanges(); 
-  
-      tick(); 
-      fixture.detectChanges(); 
-  
+      fixture.detectChanges();
+
+      tick();
+      fixture.detectChanges();
+
       // Assert
-      expect(mockRegistrationRequestService.approveRegistrationRequest).toHaveBeenCalledWith(1, '');
-      expect(component.isLoading).toBe(false); 
+      expect(
+        mockRegistrationRequestService.approveRegistrationRequest,
+      ).toHaveBeenCalledWith(1, '');
+      expect(component.isLoading).toBe(false);
     }));
   });
 });
