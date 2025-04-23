@@ -5,12 +5,12 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatSidenavModule } from '@angular/material/sidenav';
 import { BehaviorSubject } from 'rxjs';
 
 import { RegistrationRequestListItem } from '../../models/registration-request-item.model';
 import { RegistrationRequestParams } from '../../models/registration-request-param.model';
 import { RegistrationRequestService } from '../../services/registration-request.service';
-import { MatSidenavModule } from '@angular/material/sidenav';
 import { ApproveDrawerComponent } from '../approve/approve.component';
 
 @Component({
@@ -22,8 +22,8 @@ import { ApproveDrawerComponent } from '../approve/approve.component';
     MatIconModule,
     MatMenuModule,
     MatButtonModule,
-    MatSidenavModule, 
-    ApproveDrawerComponent
+    MatSidenavModule,
+    ApproveDrawerComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './registration-request-list.component.html',
@@ -85,9 +85,8 @@ export class RegistrationRequestListComponent implements OnInit {
   pageIndex: number = 0;
   pageSize: number = 10;
   totalItems: number = 0;
-  isDrawerOpen: boolean = false; 
+  isDrawerOpen: boolean = false;
   selectedRequest: RegistrationRequestListItem;
-
 
   constructor(
     private readonly registrationRequestService: RegistrationRequestService,
@@ -132,12 +131,12 @@ export class RegistrationRequestListComponent implements OnInit {
   }
 
   onApprove(request: RegistrationRequestListItem): void {
-    this.selectedRequest = request; 
-    this.isDrawerOpen = true; 
+    this.selectedRequest = request;
+    this.isDrawerOpen = true;
   }
 
   closeDrawer(): void {
-    this.isDrawerOpen = false; 
+    this.isDrawerOpen = false;
   }
 
   onReject(request: RegistrationRequestListItem): void {

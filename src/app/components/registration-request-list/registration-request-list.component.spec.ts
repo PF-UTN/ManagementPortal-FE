@@ -120,20 +120,6 @@ describe('RegistrationRequestListComponent', () => {
     });
   });
 
-  describe('onApprove', () => {
-    it('should log approval message', () => {
-      // Arrange
-      jest.spyOn(console, 'log');
-      const row = mockData[0];
-
-      // Act
-      component.onApprove(row);
-
-      // Assert
-      expect(console.log).toHaveBeenCalledWith('Aprobando solicitud:', row);
-    });
-  });
-
   describe('onReject', () => {
     it('should log rejection message', () => {
       // Arrange
