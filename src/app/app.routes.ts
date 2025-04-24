@@ -1,4 +1,4 @@
-import { SignupComponent, LoginComponent } from '@Authentication';
+import { SignupComponent, LoginComponent, AuthGuard } from '@Authentication';
 
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
@@ -6,7 +6,7 @@ import { RouterModule, Routes } from '@angular/router';
 export const routes: Routes = [
   { path: '', redirectTo: '', pathMatch: 'full' },
   { path: 'signup', component: SignupComponent },
-  { path: 'login', component: LoginComponent },
+  { path: 'login', component: LoginComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({

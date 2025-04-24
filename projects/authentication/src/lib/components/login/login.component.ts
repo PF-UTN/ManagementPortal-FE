@@ -54,6 +54,7 @@ export class LoginComponent {
 
   hidePassword = true;
   errorMessage: string = '';
+  isSubmitting = false;
 
   constructor(
     private readonly authService: AuthService,
@@ -77,7 +78,18 @@ export class LoginComponent {
     this.router.navigate(['/signup']);
   }
 
+  onKeydownEnter(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      if (this.loginForm.invalid) {
+        event.preventDefault();
+        return;
+      }
+      this.onSubmit();
+    }
+  }
+
   onSubmit(): void {
+    this.isSubmitting = true;
     if (this.loginForm.valid) {
       const credentials: User = {
         email: this.loginForm.controls.email.value!,
@@ -85,9 +97,11 @@ export class LoginComponent {
       };
       this.authService.logInAsync(credentials).subscribe({
         next: () => {
+          this.isSubmitting = false;
           this.router.navigate(['/']);
         },
         error: (error) => {
+          this.isSubmitting = false;
           if (error.status === 401) {
             this.errorMessage = ERROR_MESSAGES.invalidCredentials;
           } else {

@@ -1,7 +1,6 @@
-@import "bootstrap/scss/functions";
-@import "bootstrap/scss/variables";
-@import "../../../../../../src/styles/varibles";
-
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';
+@import '../../../../../../src/styles/varibles';
 
 .background-container {
   height: 100vh;
@@ -21,7 +20,7 @@
 
   @media (min-width: map-get($grid-breakpoints, 'md')) {
     width: 410px;
-    height: 490px;
+    height: 510px;
   }
 }
 
@@ -42,4 +41,5 @@
 .error-message {
   color: $red-color;
   font-size: 13px;
+  margin-bottom: 2rem;
 }

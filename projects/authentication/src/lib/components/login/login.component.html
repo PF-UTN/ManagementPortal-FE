@@ -11,17 +11,17 @@
     <div class="mb-4">
         <mp-subtitle> ¿No tienes cuenta aún? <a href="/signup" class="text-decoration-none"> Regístrate</a></mp-subtitle>
     </div>
-    <form [formGroup]="loginForm">    
+    <form [formGroup]="loginForm" (keydown)="onKeydownEnter($event)">    
         <div class="row">
             <div class="col d-flex align-items-center justify-content-center mt-1 ">
                 <mat-form-field class="custom-size" appearance="outline">
                     <mat-label>Email</mat-label>
                     <input type="email" matInput formControlName="email" placeholder="Ej. pat@example.com">
-                    <button matSuffix mat-icon-button aria-label="Clear" (click)="loginForm.get('email')?.reset()">
+                    <button  type="button" matSuffix mat-icon-button aria-label="Clear" (click)="loginForm.get('email')?.reset()">
                         <mat-icon>close</mat-icon>
                     </button>
                     <mat-hint *ngIf="loginForm.get('email')?.hasError('required') && loginForm.get('email')?.touched" class="error-message" >Email es requerido</mat-hint>
-                    <mat-hint *ngIf="loginForm.get('email')?.hasError('email')">Email no válido</mat-hint>
+                    <mat-hint *ngIf="loginForm.get('email')?.hasError('email')" class="error-message">Email no válido</mat-hint>
                 </mat-form-field>
             </div>
         </div>
@@ -39,9 +39,9 @@
                   </mat-form-field>
             </div>
         </div>
-        <p *ngIf="errorMessage" class="error-message d-flex   justify-content-center align-items-center">{{ errorMessage }}</p>
+        <p *ngIf="errorMessage" class="error-message d-flex justify-content-center align-items-center">{{ errorMessage }}</p>
         <div class="d-flex align-items-center justify-content-center">
-            <mp-button type="primary" [disabled]="loginForm.invalid"  (onClick)="onSubmit()" >Ingresar</mp-button>
+            <mp-button type="primary" [disabled]="loginForm.invalid || isSubmitting"  (onClick)="onSubmit()" >Ingresar</mp-button>
         </div>
     </form>
     <div class="mb-4 mt-3">
