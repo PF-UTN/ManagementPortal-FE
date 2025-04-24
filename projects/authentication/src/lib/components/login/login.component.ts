@@ -9,6 +9,9 @@ import {
   FormsModule,
   ReactiveFormsModule,
   FormControl,
+  ValidatorFn,
+  AbstractControl,
+  ValidationErrors,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -23,6 +26,7 @@ import { Router, RouterModule } from '@angular/router';
 import { User } from '../../models/user.model';
 import { AuthService } from '../../services/auth.service';
 
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -55,6 +59,7 @@ export class LoginComponent {
   hidePassword = true;
   errorMessage: string = '';
   isSubmitting = false;
+  invalidEmail = false;
 
   constructor(
     private readonly authService: AuthService,
@@ -62,7 +67,7 @@ export class LoginComponent {
   ) {
     this.loginForm = new FormGroup({
       email: new FormControl<string | null>(null, {
-        validators: [Validators.required, Validators.email],
+        validators: [Validators.required, this.customEmailValidator()],
       }),
       password: new FormControl<string | null>(null, {
         validators: [Validators.required, Validators.minLength(8)],
@@ -88,6 +93,13 @@ export class LoginComponent {
     }
   }
 
+  customEmailValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const isValid = EMAIL_REGEX.test(control.value);
+      return isValid ? null : { invalidEmail: true };
+    };
+  }
+
   onSubmit(): void {
     this.isSubmitting = true;
     if (this.loginForm.valid) {
@@ -103,7 +115,7 @@ export class LoginComponent {
         error: (error) => {
           this.isSubmitting = false;
           if (error.status === 401) {
-            this.errorMessage = ERROR_MESSAGES.invalidCredentials;
+            this.errorMessage = error.error.message;
           } else {
             this.errorMessage = ERROR_MESSAGES.unexpectedError;
           }

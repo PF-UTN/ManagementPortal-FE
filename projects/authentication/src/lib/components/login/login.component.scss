@@ -20,7 +20,7 @@
 
   @media (min-width: map-get($grid-breakpoints, 'md')) {
     width: 410px;
-    height: 510px;
+    height: auto;
   }
 }
 
@@ -42,4 +42,5 @@
   color: $red-color;
   font-size: 13px;
   margin-bottom: 2rem;
+  text-align: center;
 }
