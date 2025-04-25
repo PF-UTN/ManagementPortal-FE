@@ -44,7 +44,7 @@ describe('LoginComponent', () => {
       // Arrange
       emailControl.setValue('invalid-email');
       // Act & Assert
-      expect(emailControl.hasError('email')).toBeTruthy();
+      expect(emailControl.hasError('invalidEmail')).toBeTruthy();
     });
     it('should not set email error if email control is valid', () => {
       const emailControl = component.loginForm.controls.email;
@@ -97,6 +97,7 @@ describe('LoginComponent', () => {
             new HttpErrorResponse({
               status: 401,
               statusText: 'Unauthorized',
+              error: { message: ERROR_MESSAGES.invalidCredentials },
             }),
         ),
       );
@@ -116,6 +117,7 @@ describe('LoginComponent', () => {
             new HttpErrorResponse({
               status: 500,
               statusText: 'Server Error',
+              error: { message: ERROR_MESSAGES.unexpectedError },
             }),
         ),
       );
