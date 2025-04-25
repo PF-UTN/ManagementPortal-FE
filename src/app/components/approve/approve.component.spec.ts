@@ -7,6 +7,7 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { mockDeep, DeepMockProxy } from 'jest-mock-extended';
 import { of, throwError } from 'rxjs';
 
 import { ApproveDrawerComponent } from './approve.component';
@@ -16,17 +17,10 @@ import { RegistrationRequestService } from '../../services/registration-request.
 describe('ApproveDrawerComponent', () => {
   let component: ApproveDrawerComponent;
   let fixture: ComponentFixture<ApproveDrawerComponent>;
-  let mockRegistrationRequestService: jest.Mocked<RegistrationRequestService>;
+  let mockRegistrationRequestService: DeepMockProxy<RegistrationRequestService>;
 
   beforeEach(async () => {
-    mockRegistrationRequestService = {
-      approveRegistrationRequest: jest.fn().mockReturnValue(of(undefined)),
-      fetchRegistrationRequests: jest
-        .fn()
-        .mockReturnValue(of({ total: 0, results: [] })),
-    } as Partial<
-      jest.Mocked<RegistrationRequestService>
-    > as jest.Mocked<RegistrationRequestService>;
+    mockRegistrationRequestService = mockDeep<RegistrationRequestService>();
 
     await TestBed.configureTestingModule({
       imports: [
@@ -59,45 +53,38 @@ describe('ApproveDrawerComponent', () => {
   describe('closeDrawer', () => {
     it('should emit the close event', () => {
       // Arrange
-      jest.spyOn(component.close, 'emit');
+      const emitSpy = jest.spyOn(component.close, 'emit');
 
       // Act
       component.closeDrawer();
 
       // Assert
-      expect(component.close.emit).toHaveBeenCalled();
+      expect(emitSpy).toHaveBeenCalled();
     });
   });
 
   describe('approve', () => {
     beforeEach(() => {
-      component.data = {
+      component.data = mockDeep<RegistrationRequestListItem>({
         id: 1,
         user: {
           fullNameOrBusinessName: 'John Doe',
           email: 'johndoe@example.com',
-          documentNumber: '12345678',
-          documentType: 'DNI',
-          phone: '123456789',
         },
         status: 'Pending',
         requestDate: '2025-03-28T00:00:00Z',
-      } as RegistrationRequestListItem;
+      });
     });
 
     it('should call approveRegistrationRequest and emit approveRequest on success', fakeAsync(() => {
       // Arrange
       jest.spyOn(component.approveRequest, 'emit');
       mockRegistrationRequestService.approveRegistrationRequest.mockReturnValue(
-        of(undefined),
+        of(null),
       );
 
       // Act
-      component.approve();
-      fixture.detectChanges();
-
-      tick();
-      fixture.detectChanges();
+      component.handleApproveClick();
 
       // Assert
       expect(
@@ -114,7 +101,7 @@ describe('ApproveDrawerComponent', () => {
       );
 
       // Act
-      component.approve();
+      component.handleApproveClick();
       fixture.detectChanges();
 
       tick();

@@ -1,4 +1,4 @@
-@import '../../../styles.scss';
+@import '../../../styles/varibles';
 
 .drawer-container {
   position: fixed;
@@ -8,53 +8,46 @@
   height: 100%;
   z-index: 1000;
   display: flex;
-  background: $background-drawer-container;
+  background: $black-color;
 
   &__drawer {
     width: 500px;
     padding: 16px;
-    background: $background-drawer;
+    background: $white-color;
   }
 
   &__layout {
     display: flex;
     flex-direction: column;
-    height: 100%; 
-  }
-
-  &__title {
-    font-size: 1.3rem;
-    font-weight: bold;
-    border-bottom: 1px solid;
-    padding-bottom: 15px; 
+    height: 100%;
   }
 
   &__content {
     font-size: 0.9rem;
-    flex-grow: 1; 
+    flex-grow: 1;
     overflow-y: auto;
+    border-top: 1px solid;
     border-bottom: 1px solid;
-    padding-bottom: 15px; 
+    padding-bottom: 15px;
+    margin-top: 15px;
   }
 
   &__row {
     display: flex;
-    flex-direction: column; 
-    gap: 2px;
-    margin-top: 15px; 
+    flex-direction: column;
+    margin-top: 15px;
 
-    p {
-      margin: 0; 
-      line-height: 1.2; 
+    &__label {
+      margin: 0;
+      line-height: 1.2em;
     }
   }
 
   &__actions {
     display: flex;
-    justify-content: center; 
-    gap: 15px; 
-    padding: 16px; 
-    margin-top: auto; 
+    justify-content: center;
+    gap: 15px;
+    padding: 16px;
+    margin-top: auto;
   }
 }
-
