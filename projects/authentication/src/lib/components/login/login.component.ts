@@ -1,4 +1,3 @@
-import { ERROR_MESSAGES } from '@Common';
 import { ButtonComponent, SubtitleComponent, TitleComponent } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
@@ -114,11 +113,7 @@ export class LoginComponent {
         },
         error: (error) => {
           this.isSubmitting = false;
-          if (error.status === 401) {
-            this.errorMessage = error.error.message;
-          } else {
-            this.errorMessage = ERROR_MESSAGES.unexpectedError;
-          }
+          this.errorMessage = error.error.message;
         },
       });
     }
