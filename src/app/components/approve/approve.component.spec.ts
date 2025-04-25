@@ -113,5 +113,86 @@ describe('ApproveDrawerComponent', () => {
       ).toHaveBeenCalledWith(1, '');
       expect(component.isLoading).toBe(false);
     }));
+
+    it('should set isLoading to false after approveRegistrationRequest succeeds', fakeAsync(() => {
+      // Arrange
+      mockRegistrationRequestService.approveRegistrationRequest.mockReturnValue(
+        of({}),
+      );
+
+      // Act
+      component.handleApproveClick();
+      tick();
+
+      // Assert
+      expect(component.isLoading).toBe(false);
+    }));
+  });
+
+  describe('handleKeyDownApprove', () => {
+    beforeEach(() => {
+      component.data = mockDeep<RegistrationRequestListItem>({
+        id: 1,
+        user: {
+          fullNameOrBusinessName: 'John Doe',
+          email: 'johndoe@example.com',
+        },
+        status: 'Pending',
+        requestDate: '2025-03-28T00:00:00Z',
+      });
+    });
+
+    it('should call handleApproveClick when Enter key is pressed', () => {
+      // Arrange
+      mockRegistrationRequestService.approveRegistrationRequest.mockReturnValue(
+        of({}),
+      );
+      const event = new KeyboardEvent('keydown', { key: 'Enter' });
+      jest.spyOn(component, 'handleApproveClick');
+
+      // Act
+      component.handleKeyDownApprove(event);
+
+      // Assert
+      expect(component.handleApproveClick).toHaveBeenCalled();
+    });
+
+    it('should not call handleApproveClick for other keys', () => {
+      // Arrange
+      const event = new KeyboardEvent('keydown', { key: 'Escape' });
+      jest.spyOn(component, 'handleApproveClick');
+
+      // Act
+      component.handleKeyDownApprove(event);
+
+      // Assert
+      expect(component.handleApproveClick).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('handleKeyDown', () => {
+    it('should call closeDrawer when Escape key is pressed', () => {
+      // Arrange
+      const event = new KeyboardEvent('keydown', { key: 'Escape' });
+      jest.spyOn(component, 'closeDrawer');
+
+      // Act
+      component.handleKeyDown(event);
+
+      // Assert
+      expect(component.closeDrawer).toHaveBeenCalled();
+    });
+
+    it('should not call closeDrawer for other keys', () => {
+      // Arrange
+      const event = new KeyboardEvent('keydown', { key: 'Enter' });
+      jest.spyOn(component, 'closeDrawer');
+
+      // Act
+      component.handleKeyDown(event);
+
+      // Assert
+      expect(component.closeDrawer).not.toHaveBeenCalled();
+    });
   });
 });
