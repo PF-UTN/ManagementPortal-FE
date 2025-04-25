@@ -27,12 +27,24 @@ export class ApproveDrawerComponent {
   isLoading: boolean = false;
 
   constructor(
-    private registrationRequestService: RegistrationRequestService,
-    @Inject(MatSnackBar) private snackBar: MatSnackBar,
+    private readonly registrationRequestService: RegistrationRequestService,
+    @Inject(MatSnackBar) private readonly snackBar: MatSnackBar,
   ) {}
 
   closeDrawer(): void {
     this.close.emit();
+  }
+
+  handleKeyDown(event: KeyboardEvent): void {
+    if (event.key === 'Escape') {
+      this.closeDrawer();
+    }
+  }
+
+  handleKeyDownApprove(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      this.handleApproveClick();
+    }
   }
 
   handleApproveClick(): void {

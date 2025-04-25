@@ -9,11 +9,11 @@ import { RegistrationRequestParams } from '../models/registration-request-param.
   providedIn: 'root',
 })
 export class RegistrationRequestService {
-  private baseUrl =
+  private readonly baseUrl =
     'https://dev-management-portal-be.vercel.app/registration-request';
-  private header = { Authorization: 'Bearer ' };
+  private readonly header = { Authorization: 'Bearer ' };
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   fetchRegistrationRequests(
     params: RegistrationRequestParams,

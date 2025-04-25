@@ -24,13 +24,15 @@
         <mp-button 
           [disabled]="isLoading"
           type="secondary"
-          (click)="closeDrawer()">
+          (click)="closeDrawer()"
+          (keydown)="handleKeyDown($event)">
             Cancelar
           </mp-button>
         <mp-button
           [disabled]="isLoading" 
           type="secondary"
-          (click)="handleApproveClick()">
+          (click)="handleApproveClick()"
+          (keydown)="handleKeyDownApprove($event)">
           Aprobar
         </mp-button>
       </div>
