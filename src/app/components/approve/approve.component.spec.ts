@@ -80,7 +80,7 @@ describe('ApproveDrawerComponent', () => {
       // Arrange
       jest.spyOn(component.approveRequest, 'emit');
       mockRegistrationRequestService.approveRegistrationRequest.mockReturnValue(
-        of(null),
+        of({}),
       );
 
       // Act
