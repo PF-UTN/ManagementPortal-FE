@@ -5,7 +5,8 @@
     "paths": {
       "@Common": ["projects/common/src/public-api"],
       "@Common-UI": ["projects/common-ui/src/public-api"],
-      "@Authentication": ["projects/authentication/src/public-api"]
+      "@Authentication": ["projects/authentication/src/public-api"],
+      "@Home": ["projects/home/src/public-api"]
     },
     "outDir": "./dist/out-tsc",
     "strict": true,
