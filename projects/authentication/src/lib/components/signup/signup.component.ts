@@ -1,7 +1,8 @@
+import { NavBarService } from '@Common';
 import { ButtonComponent, TitleComponent } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -48,7 +49,7 @@ const PHONE_REGEX = /^[+]?[0-9]{1,4}?[-.\\s]?([0-9]{1,3}[-.\\s]?){1,4}$/;
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.scss'],
 })
-export class SignupComponent {
+export class SignupComponent implements OnInit {
   signupForm: FormGroup<{
     firstName: FormControl<string>;
     lastName: FormControl<string>;
@@ -73,7 +74,15 @@ export class SignupComponent {
     private fb: FormBuilder,
     protected authService: AuthService,
     private router: Router,
-  ) {
+    private readonly navBarService: NavBarService,
+  ) {}
+
+  ngOnInit(): void {
+    this.navBarService.hideNavBar();
+    this.initForm();
+  }
+
+  private initForm() {
     this.signupForm = this.fb.group(
       {
         firstName: ['', [Validators.required, Validators.minLength(2)]],

@@ -3,8 +3,11 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "../../out-tsc/spec",
-    "types": ["jest"]
+    "outDir": "../../out-tsc/lib",
+    "declaration": true,
+    "declarationMap": true,
+    "inlineSources": true,
+    "types": []
   },
-  "include": ["**/*.spec.ts", "**/*.d.ts"]
+  "exclude": ["**/*.spec.ts"]
 }
