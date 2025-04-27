@@ -1,16 +1,23 @@
+import { NavBarService } from '@Common';
+
 import { provideHttpClient } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { provideRouter } from '@angular/router';
+import { Router } from '@angular/router';
+import { mockDeep } from 'jest-mock-extended';
 import { of } from 'rxjs';
 
 import { SignupComponent } from './signup.component';
 import { mockClient } from '../../models/mock-data.model';
+import { AuthService } from '../../services';
 
 describe('SignupComponent', () => {
   let component: SignupComponent;
   let fixture: ComponentFixture<SignupComponent>;
+  let navBarService: NavBarService;
+  let authService: AuthService;
+
   const clientData = mockClient;
   const clientInvalidData = {
     ...clientData,
@@ -22,17 +29,46 @@ describe('SignupComponent', () => {
     documentNumber: '',
     companyName: '',
   };
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ReactiveFormsModule, SignupComponent, BrowserAnimationsModule],
-      providers: [provideHttpClient(), provideRouter([])],
-    }).compileComponents();
+      providers: [
+        { provider: NavBarService, useValue: mockDeep<NavBarService>() },
+        { provider: Router, useValue: mockDeep<Router>() },
+        { provider: AuthService, useValue: mockDeep<AuthService>() },
+        provideHttpClient(),
+      ],
+    });
 
     fixture = TestBed.createComponent(SignupComponent);
     component = fixture.componentInstance;
+
+    navBarService = TestBed.inject(NavBarService);
+    authService = TestBed.inject(AuthService);
+
+    fixture.detectChanges();
   });
 
-  describe('Form validation', () => {
+  describe('OnInit', () => {
+    it('should hide navBar', () => {
+      // Arrange
+      const navBarServiceSpy = jest.spyOn(navBarService, 'hideNavBar');
+
+      // Act
+      component.ngOnInit();
+
+      // Assert
+      expect(navBarServiceSpy).toHaveBeenCalled();
+    });
+
+    it('should initialize form as invalid', () => {
+      // Arrange
+      // Act
+      // Assert
+      expect(component.signupForm.valid).toBeFalsy();
+    });
+
     it('should initialize form as invalid', () => {
       // Arrange
       // Act
@@ -118,6 +154,7 @@ describe('SignupComponent', () => {
         expect(emailControl.hasError('required')).toBeFalsy();
       });
     });
+
     describe('Password field validation', () => {
       it('should set password error if password control is empty', () => {
         const passwordControl = component.signupForm.controls.password;
@@ -141,6 +178,7 @@ describe('SignupComponent', () => {
         // Act & Assert
         expect(passwordControl.hasError('pattern')).toBeTruthy();
       });
+
       it('should not set password error if password control is valid', () => {
         const passwordControl = component.signupForm.controls.password;
         // Arrange
@@ -398,7 +436,7 @@ describe('SignupComponent', () => {
         // Arrange
         const clientData = mockClient;
         const authServiceSpy = jest
-          .spyOn(component['authService'], 'signUpAsync')
+          .spyOn(authService, 'signUpAsync')
           .mockReturnValue(of({ access_token: 'mockToken' }));
         component.signupForm.setValue(clientData);
         fixture.detectChanges();

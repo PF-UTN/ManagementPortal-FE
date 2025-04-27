@@ -1,0 +1,30 @@
+<div class="container">
+  <div class="container__header">
+    <img alt="logo" src="images\dog.jpeg" class="container__header__image"/>
+    <div routerLink="/inicio">
+      <h2 class="container__header__title">Portal de Gestión</h2>
+    </div>
+  </div>
+  <div class="container__body">
+    <div class="container__body__menu">
+      <nav>
+        <ng-container *ngFor="let item of items">
+          <div
+            [routerLink]="'/' + item.route"
+            routerLinkActive="active-link"
+            class="container__body__menu__item"
+          >
+            <mat-icon>{{ item.icon }}</mat-icon>
+            <p class="container__body__menu__item__title">{{ item.title }}</p>
+          </div>
+        </ng-container>
+      </nav>
+    </div>
+    <div class="container__body__footer">
+      <div class="container__body__menu__item">
+        <mat-icon>settings</mat-icon>
+        <p class="container__body__menu__item__title">Configuración</p>
+      </div>
+    </div>
+  </div>
+</div>
