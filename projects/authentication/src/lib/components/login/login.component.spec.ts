@@ -1,8 +1,12 @@
-import { ERROR_MESSAGES } from '@Common';
+import { ERROR_MESSAGES, KeyboardEventMock } from '@Common';
 
 import { HttpErrorResponse, provideHttpClient } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import {
+  AbstractControl,
+  FormControl,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { provideRouter } from '@angular/router';
 import { throwError, of } from 'rxjs';
 
@@ -46,13 +50,42 @@ describe('LoginComponent', () => {
       // Act & Assert
       expect(emailControl.hasError('invalidEmail')).toBeTruthy();
     });
-    it('should not set email error if email control is valid', () => {
+    it('should not set email REGEX error if email control is valid', () => {
       const emailControl = component.loginForm.controls.email;
       // Arrange
       emailControl.setValue(userData.email);
       // Act & Assert
-      expect(emailControl.hasError('email')).toBeFalsy();
+      expect(emailControl.hasError('invalidEmail')).toBeFalsy();
+    });
+    it('should not set email required error if email control is valid', () => {
+      const emailControl = component.loginForm.controls.email;
+      // Arrange
+      emailControl.setValue(userData.email);
+      // Act & Assert
       expect(emailControl.hasError('required')).toBeFalsy();
+    });
+    it('should set invalidEmail error if customEmailValidator detects invalid email', () => {
+      // Arrange
+      const control = { value: 'invalid-email' } as AbstractControl;
+      const validatorFn = component.customEmailValidator();
+
+      // Act
+      const result = validatorFn(control);
+
+      // Assert
+      expect(result).toEqual({ invalidEmail: true });
+    });
+
+    it('should return null if customEmailValidator detects valid email', () => {
+      // Arrange
+      const control = { value: mockUser.email } as AbstractControl;
+      const validatorFn = component.customEmailValidator();
+
+      // Act
+      const result = validatorFn(control);
+
+      // Assert
+      expect(result).toBeNull();
     });
   });
 
@@ -163,6 +196,61 @@ describe('LoginComponent', () => {
         component.navigateToRegister();
         // Assert
         expect(routerSpy).toHaveBeenCalledWith(['/signup']);
+      });
+    });
+
+    describe('onKeydownEnter Method', () => {
+      it('should prevent default action if Enter is pressed and form is invalid', () => {
+        // Arrange
+        const event = KeyboardEventMock('Enter');
+        component.loginForm.controls.email.setValue('');
+        component.loginForm.controls.password.setValue('');
+
+        // Act
+        component.onKeydownEnter(event);
+
+        // Assert
+        expect(event.preventDefault).toHaveBeenCalled();
+      });
+
+      it('should not call onSubmit if Enter is pressed and form is invalid', () => {
+        // Arrange
+        const event = KeyboardEventMock('Enter');
+        const onSubmitSpy = jest.spyOn(component, 'onSubmit');
+        component.loginForm.controls.email.setValue('');
+        component.loginForm.controls.password.setValue('');
+
+        // Act
+        component.onKeydownEnter(event);
+
+        // Assert
+        expect(onSubmitSpy).not.toHaveBeenCalled();
+      });
+
+      it('should call onSubmit if Enter is pressed and form is valid', () => {
+        // Arrange
+        const event = KeyboardEventMock('Enter');
+        const onSubmitSpy = jest.spyOn(component, 'onSubmit');
+        component.loginForm.controls.email.setValue(mockUser.email);
+        component.loginForm.controls.password.setValue(mockUser.password);
+
+        // Act
+        component.onKeydownEnter(event);
+
+        // Assert
+        expect(onSubmitSpy).toHaveBeenCalled();
+      });
+
+      it('should do nothing if another key is pressed', () => {
+        // Arrange
+        const event = KeyboardEventMock('A');
+        const onSubmitSpy = jest.spyOn(component, 'onSubmit');
+
+        // Act
+        component.onKeydownEnter(event);
+
+        // Assert
+        expect(onSubmitSpy).not.toHaveBeenCalled();
       });
     });
   });
