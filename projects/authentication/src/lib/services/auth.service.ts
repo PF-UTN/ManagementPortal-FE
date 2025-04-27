@@ -28,6 +28,10 @@ export class AuthService {
   logInAsync(credential: User): Observable<AuthResponse> {
     return this.http
       .post<AuthResponse>(`${this.apiUrl}/signin`, credential)
-      .pipe(tap((response) => this.setToken(response.access_token)));
+      .pipe(
+        tap((response) => {
+          this.setToken(response.access_token);
+        }),
+      );
   }
 }

@@ -1,7 +1,8 @@
+import { NavBarService } from '@Common';
 import { ButtonComponent, SubtitleComponent, TitleComponent } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   FormGroup,
   Validators,
@@ -49,7 +50,7 @@ const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   loginForm: FormGroup<{
     email: FormControl<string | null>;
     password: FormControl<string | null>;
@@ -63,7 +64,16 @@ export class LoginComponent {
   constructor(
     private readonly authService: AuthService,
     private readonly router: Router,
-  ) {
+    private readonly navBarService: NavBarService,
+  ) {}
+
+  ngOnInit(): void {
+    this.navBarService.hideNavBar();
+
+    this.initForm();
+  }
+
+  private initForm() {
     this.loginForm = new FormGroup({
       email: new FormControl<string | null>(null, {
         validators: [Validators.required, this.customEmailValidator()],
@@ -79,7 +89,7 @@ export class LoginComponent {
   }
 
   navigateToRegister(): void {
-    this.router.navigate(['/signup']);
+    this.router.navigate(['signup']);
   }
 
   onKeydownEnter(event: KeyboardEvent): void {
@@ -106,10 +116,12 @@ export class LoginComponent {
         email: this.loginForm.controls.email.value!,
         password: this.loginForm.controls.password.value!,
       };
+
       this.authService.logInAsync(credentials).subscribe({
         next: () => {
+          this.router.navigate(['inicio']);
+          this.navBarService.showNavBar();
           this.isSubmitting = false;
-          this.router.navigate(['/']);
         },
         error: (error) => {
           this.isSubmitting = false;
