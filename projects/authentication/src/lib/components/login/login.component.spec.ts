@@ -1,4 +1,4 @@
-import { ERROR_MESSAGES, NavBarService, KeyboardEventMock } from '@Common';
+import { ERROR_MESSAGES, NavBarService } from '@Common';
 
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -285,61 +285,6 @@ describe('LoginComponent', () => {
 
       // Assert
       expect(routerSpy).toHaveBeenCalledWith(['signup']);
-    });
-  });
-
-  describe('onKeydownEnter Method', () => {
-    it('should prevent default action if Enter is pressed and form is invalid', () => {
-      // Arrange
-      const event = KeyboardEventMock('Enter');
-      component.loginForm.controls.email.setValue('');
-      component.loginForm.controls.password.setValue('');
-
-      // Act
-      component.onKeydownEnter(event);
-
-      // Assert
-      expect(event.preventDefault).toHaveBeenCalled();
-    });
-
-    it('should not call onSubmit if Enter is pressed and form is invalid', () => {
-      // Arrange
-      const event = KeyboardEventMock('Enter');
-      const onSubmitSpy = jest.spyOn(component, 'onSubmit');
-      component.loginForm.controls.email.setValue('');
-      component.loginForm.controls.password.setValue('');
-
-      // Act
-      component.onKeydownEnter(event);
-
-      // Assert
-      expect(onSubmitSpy).not.toHaveBeenCalled();
-    });
-
-    it('should call onSubmit if Enter is pressed and form is valid', () => {
-      // Arrange
-      const event = KeyboardEventMock('Enter');
-      const onSubmitSpy = jest.spyOn(component, 'onSubmit');
-      component.loginForm.controls.email.setValue(mockUser.email);
-      component.loginForm.controls.password.setValue(mockUser.password);
-
-      // Act
-      component.onKeydownEnter(event);
-
-      // Assert
-      expect(onSubmitSpy).toHaveBeenCalled();
-    });
-
-    it('should do nothing if another key is pressed', () => {
-      // Arrange
-      const event = KeyboardEventMock('A');
-      const onSubmitSpy = jest.spyOn(component, 'onSubmit');
-
-      // Act
-      component.onKeydownEnter(event);
-
-      // Assert
-      expect(onSubmitSpy).not.toHaveBeenCalled();
     });
   });
 });

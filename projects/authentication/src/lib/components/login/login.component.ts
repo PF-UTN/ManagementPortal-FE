@@ -68,8 +68,11 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    if (this.authService.isAuthenticated()) {
+      this.navBarService.showNavBar();
+      this.router.navigate(['inicio']);
+    }
     this.navBarService.hideNavBar();
-
     this.initForm();
   }
 
@@ -90,16 +93,6 @@ export class LoginComponent implements OnInit {
 
   navigateToRegister(): void {
     this.router.navigate(['signup']);
-  }
-
-  onKeydownEnter(event: KeyboardEvent): void {
-    if (event.key === 'Enter') {
-      if (this.loginForm.invalid) {
-        event.preventDefault();
-        return;
-      }
-      this.onSubmit();
-    }
   }
 
   customEmailValidator(): ValidatorFn {
