@@ -23,13 +23,21 @@ describe('LoginComponent', () => {
   let router: Router;
   let navBarService: NavBarService;
   const userData = mockUser;
+  const mockAuthService = mockDeep<AuthService>();
 
   beforeEach(() => {
+    mockAuthService.logInAsync.mockReturnValue(
+      of({
+        success: true,
+        access_token: 'mockAccessToken',
+      }),
+    );
+
     TestBed.configureTestingModule({
       imports: [ReactiveFormsModule, LoginComponent, BrowserAnimationsModule],
       providers: [
         { provide: NavBarService, useValue: mockDeep<NavBarService>() },
-        { provide: AuthService, useValue: mockDeep<AuthService>() },
+        { provide: AuthService, useValue: mockAuthService },
         { provide: Router, useValue: mockDeep<Router>() },
         { provide: HttpClient, useValue: mockDeep<HttpClient>() },
       ],
@@ -235,159 +243,103 @@ describe('LoginComponent', () => {
       // Assert
       expect(component.errorMessage).toBe(ERROR_MESSAGES.unexpectedError);
     });
-
-    describe('togglePasswordVisibility Method', () => {
-      it('should initialize hidePassword as true', () => {
-        // Arrange
-        // Act
-        // Assert
-        expect(component.hidePassword).toBe(true);
-      });
-
-      it('should set hidePassword to false when toggled', () => {
-        // Arrange
-        expect(component.hidePassword).toBe(true);
-
-        // Act
-        component.togglePasswordVisibility();
-
-        // Assert
-        expect(component.hidePassword).toBe(false);
-      });
-
-      it('should set hidePassword to true when toggled again', () => {
-        // Arrange
-        component.hidePassword = false;
-
-        // Act
-        component.togglePasswordVisibility();
-
-        // Assert
-        expect(component.hidePassword).toBe(true);
-      });
+  });
+  describe('togglePasswordVisibility Method', () => {
+    it('should initialize hidePassword as true', () => {
+      // Arrange
+      // Act
+      // Assert
+      expect(component.hidePassword).toBe(true);
     });
 
-    describe('navigateToRegister Method', () => {
-      it('should navigate to register page', () => {
-        // Arrange
-        const routerSpy = jest.spyOn(router, 'navigate');
+    it('should set hidePassword to false when toggled', () => {
+      // Arrange
+      expect(component.hidePassword).toBe(true);
 
-        // Act
-        component.navigateToRegister();
+      // Act
+      component.togglePasswordVisibility();
 
-        // Assert
-        expect(routerSpy).toHaveBeenCalledWith(['signup']);
-      });
+      // Assert
+      expect(component.hidePassword).toBe(false);
     });
 
-    describe('onKeydownEnter Method', () => {
-      it('should prevent default action if Enter is pressed and form is invalid', () => {
-        // Arrange
-        const event = KeyboardEventMock('Enter');
-        component.loginForm.controls.email.setValue('');
-        component.loginForm.controls.password.setValue('');
+    it('should set hidePassword to true when toggled again', () => {
+      // Arrange
+      component.hidePassword = false;
 
-        // Act
-        component.onKeydownEnter(event);
+      // Act
+      component.togglePasswordVisibility();
 
-        // Assert
-        expect(event.preventDefault).toHaveBeenCalled();
-      });
+      // Assert
+      expect(component.hidePassword).toBe(true);
+    });
+  });
 
-      it('should not call onSubmit if Enter is pressed and form is invalid', () => {
-        // Arrange
-        const event = KeyboardEventMock('Enter');
-        const onSubmitSpy = jest.spyOn(component, 'onSubmit');
-        component.loginForm.controls.email.setValue('');
-        component.loginForm.controls.password.setValue('');
+  describe('navigateToRegister Method', () => {
+    it('should navigate to register page', () => {
+      // Arrange
+      const routerSpy = jest.spyOn(router, 'navigate');
 
-        // Act
-        component.onKeydownEnter(event);
+      // Act
+      component.navigateToRegister();
 
-        // Assert
-        expect(onSubmitSpy).not.toHaveBeenCalled();
-      });
+      // Assert
+      expect(routerSpy).toHaveBeenCalledWith(['signup']);
+    });
+  });
 
-      it('should call onSubmit if Enter is pressed and form is valid', () => {
-        // Arrange
-        const event = KeyboardEventMock('Enter');
-        const onSubmitSpy = jest.spyOn(component, 'onSubmit');
-        component.loginForm.controls.email.setValue(mockUser.email);
-        component.loginForm.controls.password.setValue(mockUser.password);
+  describe('onKeydownEnter Method', () => {
+    it('should prevent default action if Enter is pressed and form is invalid', () => {
+      // Arrange
+      const event = KeyboardEventMock('Enter');
+      component.loginForm.controls.email.setValue('');
+      component.loginForm.controls.password.setValue('');
 
-        // Act
-        component.onKeydownEnter(event);
+      // Act
+      component.onKeydownEnter(event);
 
-        // Assert
-        expect(onSubmitSpy).toHaveBeenCalled();
-      });
-
-      it('should do nothing if another key is pressed', () => {
-        // Arrange
-        const event = KeyboardEventMock('A');
-        const onSubmitSpy = jest.spyOn(component, 'onSubmit');
-
-        // Act
-        component.onKeydownEnter(event);
-
-        // Assert
-        expect(onSubmitSpy).not.toHaveBeenCalled();
-      });
+      // Assert
+      expect(event.preventDefault).toHaveBeenCalled();
     });
 
-    describe('onKeydownEnter Method', () => {
-      it('should prevent default action if Enter is pressed and form is invalid', () => {
-        // Arrange
-        const event = KeyboardEventMock('Enter');
-        component.loginForm.controls.email.setValue('');
-        component.loginForm.controls.password.setValue('');
+    it('should not call onSubmit if Enter is pressed and form is invalid', () => {
+      // Arrange
+      const event = KeyboardEventMock('Enter');
+      const onSubmitSpy = jest.spyOn(component, 'onSubmit');
+      component.loginForm.controls.email.setValue('');
+      component.loginForm.controls.password.setValue('');
 
-        // Act
-        component.onKeydownEnter(event);
+      // Act
+      component.onKeydownEnter(event);
 
-        // Assert
-        expect(event.preventDefault).toHaveBeenCalled();
-      });
+      // Assert
+      expect(onSubmitSpy).not.toHaveBeenCalled();
+    });
 
-      it('should not call onSubmit if Enter is pressed and form is invalid', () => {
-        // Arrange
-        const event = KeyboardEventMock('Enter');
-        const onSubmitSpy = jest.spyOn(component, 'onSubmit');
-        component.loginForm.controls.email.setValue('');
-        component.loginForm.controls.password.setValue('');
+    it('should call onSubmit if Enter is pressed and form is valid', () => {
+      // Arrange
+      const event = KeyboardEventMock('Enter');
+      const onSubmitSpy = jest.spyOn(component, 'onSubmit');
+      component.loginForm.controls.email.setValue(mockUser.email);
+      component.loginForm.controls.password.setValue(mockUser.password);
 
-        // Act
-        component.onKeydownEnter(event);
+      // Act
+      component.onKeydownEnter(event);
 
-        // Assert
-        expect(onSubmitSpy).not.toHaveBeenCalled();
-      });
+      // Assert
+      expect(onSubmitSpy).toHaveBeenCalled();
+    });
 
-      it('should call onSubmit if Enter is pressed and form is valid', () => {
-        // Arrange
-        const event = KeyboardEventMock('Enter');
-        const onSubmitSpy = jest.spyOn(component, 'onSubmit');
-        component.loginForm.controls.email.setValue(mockUser.email);
-        component.loginForm.controls.password.setValue(mockUser.password);
+    it('should do nothing if another key is pressed', () => {
+      // Arrange
+      const event = KeyboardEventMock('A');
+      const onSubmitSpy = jest.spyOn(component, 'onSubmit');
 
-        // Act
-        component.onKeydownEnter(event);
+      // Act
+      component.onKeydownEnter(event);
 
-        // Assert
-        expect(onSubmitSpy).toHaveBeenCalled();
-      });
-
-      it('should do nothing if another key is pressed', () => {
-        // Arrange
-        const event = KeyboardEventMock('A');
-        const onSubmitSpy = jest.spyOn(component, 'onSubmit');
-
-        // Act
-        component.onKeydownEnter(event);
-
-        // Assert
-        expect(onSubmitSpy).not.toHaveBeenCalled();
-      });
+      // Assert
+      expect(onSubmitSpy).not.toHaveBeenCalled();
     });
   });
 });
