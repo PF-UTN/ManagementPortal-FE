@@ -32,7 +32,7 @@ describe('AuthService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('It should perform a POST for signUpAsync()', () => {
+  it('should perform a POST for signUpAsync()', () => {
     service.signUpAsync(mockClient).subscribe((response) => {
       expect(response).toEqual(mockAuthResponse);
     });
@@ -44,7 +44,7 @@ describe('AuthService', () => {
     req.flush(mockAuthResponse);
   });
 
-  it('It should perform a POST for logInAsync()', () => {
+  it('should perform a POST for logInAsync()', () => {
     service.logInAsync(mockUser).subscribe((response) => {
       expect(response).toEqual(mockAuthResponse);
     });
@@ -54,5 +54,23 @@ describe('AuthService', () => {
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual(mockUser);
     req.flush(mockAuthResponse);
+  });
+
+  describe('isAuthenticated()', () => {
+    it('should return true when a token exists in localStorage', () => {
+      jest.spyOn(Storage.prototype, 'getItem').mockReturnValue('mock-token');
+
+      const result = service.isAuthenticated();
+
+      expect(result).toBe(true);
+    });
+
+    it('should return false when no token exists in localStorage', () => {
+      jest.spyOn(Storage.prototype, 'getItem').mockReturnValue(null);
+
+      const result = service.isAuthenticated();
+
+      expect(result).toBe(false);
+    });
   });
 });
