@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { RegistrationRequestListComponent } from './components/registration-request-list/registration-request-list.component';
+import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
 
 export const routes: Routes = [
   {
@@ -18,6 +19,7 @@ export const routes: Routes = [
     pathMatch: 'full',
     component: RegistrationRequestListComponent,
   },
+  { path: 'unauthorized', pathMatch: 'full', component: UnauthorizedComponent },
   { path: '*', redirectTo: 'inicio', pathMatch: 'full' },
 ];
 
