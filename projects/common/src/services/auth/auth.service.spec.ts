@@ -10,7 +10,7 @@ import {
   mockClient,
   mockUser,
   mockAuthResponse,
-} from '../models/mock-data.model';
+} from '../../../../authentication/src/lib/models/mock-data.model';
 
 describe('AuthService', () => {
   let service: AuthService;

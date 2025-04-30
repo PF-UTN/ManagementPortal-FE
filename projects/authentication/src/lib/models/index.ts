@@ -1,2 +1,2 @@
-export * from './client.model';
-export * from './user.model';
+export * from '../../../../common/src/models/client.model';
+export * from '../../../../common/src/models/user.model';

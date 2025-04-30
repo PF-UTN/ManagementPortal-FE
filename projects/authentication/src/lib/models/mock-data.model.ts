@@ -1,5 +1,5 @@
-import { Client } from './client.model';
-import { User } from './user.model';
+import { Client } from '../../../../common/src/models/client.model';
+import { User } from '../../../../common/src/models/user.model';
 
 export const mockClient: Client = {
   firstName: 'Juan',
@@ -26,7 +26,7 @@ export const mockUser: User = {
 };
 
 export const mockInvalidUser: User = {
-  email: 'invalid@example.com', 
+  email: 'invalid@example.com',
   password: 'wrongPassword',
 };
 

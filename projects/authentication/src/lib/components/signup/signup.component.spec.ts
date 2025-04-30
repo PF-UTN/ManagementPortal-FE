@@ -1,4 +1,4 @@
-import { NavBarService } from '@Common';
+import { AuthService, NavBarService } from '@Common';
 
 import { provideHttpClient } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -10,7 +10,6 @@ import { of } from 'rxjs';
 
 import { SignupComponent } from './signup.component';
 import { mockClient } from '../../models/mock-data.model';
-import { AuthService } from '../../services';
 
 describe('SignupComponent', () => {
   let component: SignupComponent;
