@@ -1,3 +1,5 @@
+import { RoleGuard, RolesEnum } from '@Common';
+
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
@@ -13,11 +15,15 @@ export const routes: Routes = [
   {
     path: 'inicio',
     loadChildren: () => import('@Home').then((m) => m.HomeRoutingModule),
+    canActivate: [RoleGuard],
+    data: { admittedRoles: [RolesEnum.Employee, RolesEnum.Client] },
   },
   {
     path: 'solicitudes-registro',
     pathMatch: 'full',
     component: RegistrationRequestListComponent,
+    canActivate: [RoleGuard],
+    data: { admittedRoles: [RolesEnum.Employee] },
   },
   { path: 'unauthorized', pathMatch: 'full', component: UnauthorizedComponent },
   { path: '*', redirectTo: 'inicio', pathMatch: 'full' },
@@ -25,6 +31,7 @@ export const routes: Routes = [
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
+  providers: [RoleGuard],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}

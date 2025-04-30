@@ -1,4 +1,10 @@
-import { AuthService, ERROR_MESSAGES, NavBarService } from '@Common';
+import {
+  AuthService,
+  ERROR_MESSAGES,
+  mockInvalidUser,
+  mockUser,
+  NavBarService,
+} from '@Common';
 
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -9,8 +15,6 @@ import { mockDeep } from 'jest-mock-extended';
 import { throwError, of } from 'rxjs';
 
 import { LoginComponent } from './login.component';
-import { mockUser, mockInvalidUser } from '../../models/mock-data.model';
-
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
