@@ -70,7 +70,7 @@ export class RegistrationRequestListComponent implements OnInit {
         {
           description: 'Aprobar',
           action: (element: RegistrationRequestListItem) =>
-            this.onApprove(element),
+            this.onApproveDrawer(element),
         },
         {
           description: 'Rechazar',
@@ -106,7 +106,7 @@ export class RegistrationRequestListComponent implements OnInit {
     };
 
     this.registrationRequestService
-      .fetchRegistrationRequests(params)
+      .postSearchRegistrationRequest(params)
       .subscribe({
         next: (response) => {
           this.dataSource$.next(response.results);
@@ -130,9 +130,15 @@ export class RegistrationRequestListComponent implements OnInit {
     console.log('Ver detalle de:', request);
   }
 
-  onApprove(request: RegistrationRequestListItem): void {
+  onApproveDrawer(request: RegistrationRequestListItem): void {
     this.selectedRequest = request;
     this.isDrawerOpen = true;
+    setTimeout(() => {
+      const drawerElement = document.querySelector('.drawer-container__drawer');
+      if (drawerElement) {
+        (drawerElement as HTMLElement).focus();
+      }
+    });
   }
 
   closeDrawer(): void {

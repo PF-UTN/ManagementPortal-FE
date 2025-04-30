@@ -45,7 +45,7 @@ describe('RegistrationRequestListComponent', () => {
 
   beforeEach(() => {
     service = mockDeep<RegistrationRequestService>();
-    service.fetchRegistrationRequests.mockReturnValue(
+    service.postSearchRegistrationRequest.mockReturnValue(
       of({ total: mockData.length, results: mockData }),
     );
 
@@ -87,7 +87,7 @@ describe('RegistrationRequestListComponent', () => {
 
     it('should handle errors when fetchRegistrationRequests fails', () => {
       // Arrange
-      service.fetchRegistrationRequests.mockReturnValue(
+      service.postSearchRegistrationRequest.mockReturnValue(
         throwError(() => new Error('Test error')),
       );
 
@@ -117,13 +117,13 @@ describe('RegistrationRequestListComponent', () => {
     });
   });
 
-  describe('onApprove', () => {
+  describe('onApproveDrawer', () => {
     it('should set selectedRequest and open the drawer', () => {
       // Arrange
       const request = mockData[0];
 
       // Act
-      component.onApprove(request);
+      component.onApproveDrawer(request);
 
       // Assert
       expect(component.selectedRequest).toBe(request);

@@ -42,28 +42,23 @@ describe('ApproveDrawerComponent', () => {
   });
 
   it('should create the component', () => {
-    // Arrange
-    // Act
-    const isComponentCreated = component;
-
-    // Assert
-    expect(isComponentCreated).toBeTruthy();
+    expect(component).toBeTruthy();
   });
 
   describe('closeDrawer', () => {
     it('should emit the close event', () => {
       // Arrange
-      const emitSpy = jest.spyOn(component.close, 'emit');
+      const closeSpy = jest.spyOn(component.close, 'emit');
 
       // Act
       component.closeDrawer();
 
       // Assert
-      expect(emitSpy).toHaveBeenCalled();
+      expect(closeSpy).toHaveBeenCalled();
     });
   });
 
-  describe('approve', () => {
+  describe('handleApproveClick', () => {
     beforeEach(() => {
       component.data = mockDeep<RegistrationRequestListItem>({
         id: 1,
@@ -78,20 +73,21 @@ describe('ApproveDrawerComponent', () => {
 
     it('should call approveRegistrationRequest and emit approveRequest on success', fakeAsync(() => {
       // Arrange
-      jest.spyOn(component.approveRequest, 'emit');
+      const approveSpy = jest.spyOn(component.approveRequest, 'emit');
       mockRegistrationRequestService.approveRegistrationRequest.mockReturnValue(
-        of({}),
+        of({ message: 'Solicitud aprobada con éxito.' }),
       );
 
       // Act
       component.handleApproveClick();
+      tick();
 
       // Assert
       expect(
         mockRegistrationRequestService.approveRegistrationRequest,
       ).toHaveBeenCalledWith(1, '');
-      expect(component.isLoading).toBe(false);
-      expect(component.approveRequest.emit).toHaveBeenCalled();
+      expect(component.isLoading()).toBe(false);
+      expect(approveSpy).toHaveBeenCalled();
     }));
 
     it('should handle errors when approveRegistrationRequest fails', fakeAsync(() => {
@@ -102,72 +98,14 @@ describe('ApproveDrawerComponent', () => {
 
       // Act
       component.handleApproveClick();
-      fixture.detectChanges();
-
       tick();
-      fixture.detectChanges();
 
       // Assert
       expect(
         mockRegistrationRequestService.approveRegistrationRequest,
       ).toHaveBeenCalledWith(1, '');
-      expect(component.isLoading).toBe(false);
+      expect(component.isLoading()).toBe(false);
     }));
-
-    it('should set isLoading to false after approveRegistrationRequest succeeds', fakeAsync(() => {
-      // Arrange
-      mockRegistrationRequestService.approveRegistrationRequest.mockReturnValue(
-        of({}),
-      );
-
-      // Act
-      component.handleApproveClick();
-      tick();
-
-      // Assert
-      expect(component.isLoading).toBe(false);
-    }));
-  });
-
-  describe('handleKeyDownApprove', () => {
-    beforeEach(() => {
-      component.data = mockDeep<RegistrationRequestListItem>({
-        id: 1,
-        user: {
-          fullNameOrBusinessName: 'John Doe',
-          email: 'johndoe@example.com',
-        },
-        status: 'Pending',
-        requestDate: '2025-03-28T00:00:00Z',
-      });
-    });
-
-    it('should call handleApproveClick when Enter key is pressed', () => {
-      // Arrange
-      mockRegistrationRequestService.approveRegistrationRequest.mockReturnValue(
-        of({}),
-      );
-      const event = new KeyboardEvent('keydown', { key: 'Enter' });
-      jest.spyOn(component, 'handleApproveClick');
-
-      // Act
-      component.handleKeyDownApprove(event);
-
-      // Assert
-      expect(component.handleApproveClick).toHaveBeenCalled();
-    });
-
-    it('should not call handleApproveClick for other keys', () => {
-      // Arrange
-      const event = new KeyboardEvent('keydown', { key: 'Escape' });
-      jest.spyOn(component, 'handleApproveClick');
-
-      // Act
-      component.handleKeyDownApprove(event);
-
-      // Assert
-      expect(component.handleApproveClick).not.toHaveBeenCalled();
-    });
   });
 
   describe('handleKeyDown', () => {
@@ -183,16 +121,46 @@ describe('ApproveDrawerComponent', () => {
       expect(component.closeDrawer).toHaveBeenCalled();
     });
 
-    it('should not call closeDrawer for other keys', () => {
+    it('should call handleApproveClick when Enter key is pressed', () => {
       // Arrange
+      component.data = {
+        id: 1,
+        user: {
+          fullNameOrBusinessName: 'John Doe',
+          email: 'johndoe@example.com',
+        },
+        status: 'Pending',
+        requestDate: '2025-03-28T00:00:00Z',
+      } as RegistrationRequestListItem;
+
       const event = new KeyboardEvent('keydown', { key: 'Enter' });
+      jest.spyOn(component, 'handleApproveClick');
+      mockRegistrationRequestService.approveRegistrationRequest.mockReturnValue(
+        of({ message: 'Solicitud aprobada con éxito.' }),
+      );
+
+      // Act
+      component.handleKeyDown(event);
+
+      // Assert
+      expect(component.handleApproveClick).toHaveBeenCalled();
+      expect(
+        mockRegistrationRequestService.approveRegistrationRequest,
+      ).toHaveBeenCalledWith(1, '');
+    });
+
+    it('should not call any method for other keys', () => {
+      // Arrange
+      const event = new KeyboardEvent('keydown', { key: 'ArrowUp' });
       jest.spyOn(component, 'closeDrawer');
+      jest.spyOn(component, 'handleApproveClick');
 
       // Act
       component.handleKeyDown(event);
 
       // Assert
       expect(component.closeDrawer).not.toHaveBeenCalled();
+      expect(component.handleApproveClick).not.toHaveBeenCalled();
     });
   });
 });

@@ -1,40 +1,42 @@
-<mat-drawer-container class="drawer-container">
-  <mat-drawer class="drawer-container__drawer" mode="side" position="end" [opened]="true">
+<mat-drawer-container class="drawer-container" (keydown)="handleKeyDown($event)">
+  <mat-drawer class="drawer-container__drawer" mode="side" position="end" [opened]="isDrawerOpen" (closed)="closeDrawer()" tabindex="0">
     <div class="drawer-container__layout">
-    <mp-title>Aprobar Solicitud de Registro</mp-title>
-    <div class="drawer-container__content">
-      <div class="drawer-container__row">
-        <p class="drawer-contaioner__row__label"><strong>Nombre | Razon Social</strong></p>
-        {{ data.user.fullNameOrBusinessName }}
+      <mp-title>Aprobar Solicitud de Registro</mp-title>
+      <div class="drawer-container__content">
+        <div class="drawer-container__row">
+          <strong>Nombre | Razón Social</strong>
+          <p>{{ data.user.fullNameOrBusinessName }}</p>
+        </div>
+        <div class="drawer-container__row">
+          <strong>Email</strong>
+          <p>{{ data.user.email }}</p>
+        </div>
+        <div class="drawer-container__row">
+          <strong>Teléfono</strong>
+          <p>{{ data.user.phone }}</p>
+        </div>
+        <div class="drawer-container__row">
+          <strong>Documento</strong>
+          <p>{{ data.user.documentType }} - {{ data.user.documentNumber }}</p>
+        </div>
       </div>
-      <div class="drawer-container__row">
-        <p class="drawer-contaioner__row__label"><strong>Email</strong></p>
-        <p class="drawer-contaioner__row__label">{{ data.user.email }}</p>
-      </div>
-      <div class="drawer-container__row">
-        <p class="drawer-contaioner__row__label"><strong>Telefono</strong></p>
-        <p class="drawer-contaioner__row__label">{{ data.user.phone }}</p>
-      </div>
-      <div class="drawer-container__row">
-        <p class="drawer-contaioner__row__label"><strong>Documento</strong></p>
-        <p class="drawer-contaioner__row__label">{{ data.user.documentType }} - {{ data.user.documentNumber }}</p>
-      </div>
-    </div>
       <div class="drawer-container__actions">
-        <mp-button 
-          [disabled]="isLoading"
-          type="secondary"
-          (click)="closeDrawer()"
-          (keydown)="handleKeyDown($event)">
+        <div class="col-6 text-start">
+          <mp-button 
+            [disabled]="isLoading()"
+            type="secondary"
+            (click)="closeDrawer()">
             Cancelar
           </mp-button>
-        <mp-button
-          [disabled]="isLoading" 
-          type="secondary"
-          (click)="handleApproveClick()"
-          (keydown)="handleKeyDownApprove($event)">
-          Aprobar
-        </mp-button>
+        </div>
+        <div class="col-6 text-end">
+          <mp-button
+            [disabled]="isLoading()" 
+            type="secondary"
+            (click)="handleApproveClick()">
+            Aprobar
+          </mp-button>
+        </div>
       </div>
     </div>
   </mat-drawer>

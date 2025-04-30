@@ -1,6 +1,13 @@
 import { TitleComponent, ButtonComponent } from '@Common-UI';
 
-import { Component, Input, Output, EventEmitter, Inject } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  Inject,
+  signal,
+} from '@angular/core';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 
@@ -8,7 +15,7 @@ import { RegistrationRequestListItem } from '../../models/registration-request-i
 import { RegistrationRequestService } from '../../services/registration-request.service';
 
 @Component({
-  selector: 'app-approve-drawer',
+  selector: 'mp-approve-drawer',
   templateUrl: './approve.component.html',
   styleUrls: ['./approve.component.scss'],
   standalone: true,
@@ -24,7 +31,8 @@ export class ApproveDrawerComponent {
   @Output() close = new EventEmitter<void>();
   @Output() approveRequest = new EventEmitter<void>();
 
-  isLoading: boolean = false;
+  isLoading = signal(false);
+  isDrawerOpen: boolean = true;
 
   constructor(
     private readonly registrationRequestService: RegistrationRequestService,
@@ -32,28 +40,25 @@ export class ApproveDrawerComponent {
   ) {}
 
   closeDrawer(): void {
+    this.isDrawerOpen = false;
     this.close.emit();
   }
 
   handleKeyDown(event: KeyboardEvent): void {
     if (event.key === 'Escape') {
       this.closeDrawer();
-    }
-  }
-
-  handleKeyDownApprove(event: KeyboardEvent): void {
-    if (event.key === 'Enter') {
+    } else if (event.key === 'Enter') {
       this.handleApproveClick();
     }
   }
 
   handleApproveClick(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.registrationRequestService
       .approveRegistrationRequest(this.data.id, '')
       .subscribe({
         next: () => {
-          this.isLoading = false;
+          this.isLoading.set(false);
           this.approveRequest.emit();
           this.snackBar.open('Solicitud aprobada con éxito.', 'Cerrar', {
             duration: 3000,
@@ -61,7 +66,7 @@ export class ApproveDrawerComponent {
           this.closeDrawer();
         },
         error: () => {
-          this.isLoading = false;
+          this.isLoading.set(false);
         },
       });
   }
