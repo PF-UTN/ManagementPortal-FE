@@ -163,4 +163,60 @@ describe('ApproveDrawerComponent', () => {
       expect(component.handleApproveClick).not.toHaveBeenCalled();
     });
   });
+
+  describe('mp-button keydown events', () => {
+    it('should call closeDrawer when Escape key is pressed on the Cancel button', () => {
+      // Arrange
+      component.data = {
+        id: 1,
+        user: {
+          fullNameOrBusinessName: 'John Doe',
+          email: 'johndoe@example.com',
+        },
+        status: 'Pending',
+        requestDate: '2025-03-28T00:00:00Z',
+      } as RegistrationRequestListItem;
+
+      const event = new KeyboardEvent('keydown', { key: 'Escape' });
+      jest.spyOn(component, 'closeDrawer');
+      fixture.detectChanges();
+
+      const cancelButton = fixture.nativeElement.querySelector(
+        'mp-button[type="secondary"]',
+      );
+
+      // Act
+      cancelButton.dispatchEvent(event);
+
+      // Assert
+      expect(component.closeDrawer).toHaveBeenCalled();
+    });
+
+    it('should call handleApproveClick when Enter key is pressed on the Approve button', () => {
+      // Arrange
+      component.data = {
+        id: 1,
+        user: {
+          fullNameOrBusinessName: 'John Doe',
+          email: 'johndoe@example.com',
+        },
+        status: 'Pending',
+        requestDate: '2025-03-28T00:00:00Z',
+      } as RegistrationRequestListItem;
+
+      const event = new KeyboardEvent('keydown', { key: 'Enter' });
+      jest.spyOn(component, 'handleApproveClick');
+      fixture.detectChanges();
+
+      const approveButton = fixture.nativeElement.querySelector(
+        'mp-button[type="secondary"]:last-child',
+      );
+
+      // Act
+      approveButton.dispatchEvent(event);
+
+      // Assert
+      expect(component.handleApproveClick).toHaveBeenCalled();
+    });
+  });
 });
