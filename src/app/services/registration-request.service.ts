@@ -10,7 +10,7 @@ export interface SearchRegistrationRequestResponse {
   results: RegistrationRequestListItem[];
 }
 
-export interface ApproveResponse {
+export interface RequestResponse {
   message: string;
 }
 
@@ -33,9 +33,18 @@ export class RegistrationRequestService {
   approveRegistrationRequest(
     id: number,
     note: string,
-  ): Observable<ApproveResponse> {
+  ): Observable<RequestResponse> {
     const url = `${this.baseUrl}/${id}/approve`;
     const body = { note };
-    return this.http.post<ApproveResponse>(url, body);
+    return this.http.post<RequestResponse>(url, body);
+  }
+
+  rejectRegistrationRequest(
+    id: number,
+    note: string,
+  ): Observable<RequestResponse> {
+    const url = `${this.baseUrl}/${id}/reject`;
+    const body = { note };
+    return this.http.post<RequestResponse>(url, body);
   }
 }
