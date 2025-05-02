@@ -1,4 +1,4 @@
-import { NavBarService } from '@Common';
+import { AuthService, NavBarService } from '@Common';
 import { ButtonComponent, TitleComponent } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
@@ -21,8 +21,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { Router, RouterModule } from '@angular/router';
 
-import { Client } from '../../models/client.model';
-import { AuthService } from '../../services/auth.service';
+import { Client } from '../../../../../common/src/models/client.model';
 
 const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
 const PHONE_REGEX = /^[+]?[0-9]{1,4}?[-.\\s]?([0-9]{1,3}[-.\\s]?){1,4}$/;
