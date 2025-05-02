@@ -15,6 +15,7 @@ import { throwError, of } from 'rxjs';
 import { LoginComponent } from './login.component';
 import { mockUser, mockInvalidUser } from '../../models/mock-data.model';
 import { AuthService } from '../../services';
+import { customEmailValidator } from '../../validators';
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
@@ -106,7 +107,7 @@ describe('LoginComponent', () => {
     it('should set invalidEmail error if customEmailValidator detects invalid email', () => {
       // Arrange
       const control = { value: 'invalid-email' } as AbstractControl;
-      const validatorFn = component.customEmailValidator();
+      const validatorFn = customEmailValidator();
 
       // Act
       const result = validatorFn(control);
@@ -118,7 +119,7 @@ describe('LoginComponent', () => {
     it('should return null if customEmailValidator detects valid email', () => {
       // Arrange
       const control = { value: mockUser.email } as AbstractControl;
-      const validatorFn = component.customEmailValidator();
+      const validatorFn = customEmailValidator();
 
       // Act
       const result = validatorFn(control);
@@ -265,7 +266,7 @@ describe('LoginComponent', () => {
 
     it('should set hidePassword to true when toggled again', () => {
       // Arrange
-      component.hidePassword = false;
+      component.hidePassword.set(false);
 
       // Act
       component.togglePasswordVisibility();

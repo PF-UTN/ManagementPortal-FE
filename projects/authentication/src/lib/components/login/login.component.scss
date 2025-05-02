@@ -41,6 +41,12 @@
 .error-message {
   color: $red-color;
   font-size: 13px;
-  margin-bottom: 2rem;
   text-align: center;
+}
+
+.error-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem 0;
 }
