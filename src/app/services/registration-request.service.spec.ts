@@ -70,7 +70,7 @@ describe('RegistrationRequestService', () => {
       };
 
       // Act
-      service.fetchRegistrationRequests(params).subscribe((response) => {
+      service.postSearchRegistrationRequest(params).subscribe((response) => {
         // Assert
         expect(response).toEqual(mockResponse);
       });
@@ -97,7 +97,7 @@ describe('RegistrationRequestService', () => {
       const mockError = new ErrorEvent('Network error');
 
       // Act
-      service.fetchRegistrationRequests(params).subscribe({
+      service.postSearchRegistrationRequest(params).subscribe({
         next: () => fail('Expected an error, but got a response'),
         error: (error) => {
           // Assert

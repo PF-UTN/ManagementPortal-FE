@@ -6,3 +6,11 @@
   [itemsNumber]="totalItems"
   [getRowClass]="getRowClass">
 </mp-table>
+
+<mp-approve-drawer
+  *ngIf="isDrawerOpen"
+  [data]="selectedRequest"
+  (approveRequest)="fetchData()"
+  (close)="closeDrawer()"
+  >
+</mp-approve-drawer>
