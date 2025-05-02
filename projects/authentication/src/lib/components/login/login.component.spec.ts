@@ -250,18 +250,18 @@ describe('LoginComponent', () => {
       // Arrange
       // Act
       // Assert
-      expect(component.hidePassword).toBe(true);
+      expect(component.hidePassword()).toBe(true);
     });
 
     it('should set hidePassword to false when toggled', () => {
       // Arrange
-      expect(component.hidePassword).toBe(true);
+      expect(component.hidePassword()).toBe(true);
 
       // Act
       component.togglePasswordVisibility();
 
       // Assert
-      expect(component.hidePassword).toBe(false);
+      expect(component.hidePassword()).toBe(false);
     });
 
     it('should set hidePassword to true when toggled again', () => {
@@ -272,7 +272,7 @@ describe('LoginComponent', () => {
       component.togglePasswordVisibility();
 
       // Assert
-      expect(component.hidePassword).toBe(true);
+      expect(component.hidePassword()).toBe(true);
     });
   });
 
