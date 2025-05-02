@@ -66,7 +66,7 @@ export class RejectDrawerComponent {
 
   handleRejectClick(): void {
     if (this.rejectionReasonInput.invalid || !this.rejectionReason.trim()) {
-      this.rejectionReasonInput.control.markAsTouched(); // Marca el campo como "tocado"
+      this.rejectionReasonInput.control.markAsTouched();
       return;
     }
     this.isLoading.set(true);
@@ -74,7 +74,7 @@ export class RejectDrawerComponent {
       .rejectRegistrationRequest(this.data.id, this.rejectionReason)
       .subscribe({
         next: () => {
-          this.isLoading = signal(false);
+          this.isLoading.set(false);
           this.rejectRequest.emit();
           this.snackBar.open('Solicitud rechazada con éxito.', 'Cerrar', {
             duration: 3000,
@@ -82,7 +82,7 @@ export class RejectDrawerComponent {
           this.closeDrawer();
         },
         error: () => {
-          this.isLoading = signal(false);
+          this.isLoading.set(false);
         },
       });
   }

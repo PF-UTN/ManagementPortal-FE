@@ -4,13 +4,11 @@ import {
   fakeAsync,
   tick,
 } from '@angular/core/testing';
-import { FormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSidenavModule } from '@angular/material/sidenav';
+import { NgModel } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { of, throwError } from 'rxjs';
+import { mockDeep, DeepMockProxy } from 'jest-mock-extended';
+import { throwError } from 'rxjs';
 
 import { RejectDrawerComponent } from './reject.component';
 import { RegistrationRequestListItem } from '../../models/registration-request-item.model';
@@ -19,111 +17,186 @@ import { RegistrationRequestService } from '../../services/registration-request.
 describe('RejectDrawerComponent', () => {
   let component: RejectDrawerComponent;
   let fixture: ComponentFixture<RejectDrawerComponent>;
-  let mockRegistrationRequestService: jest.Mocked<RegistrationRequestService>;
+  let mockRegistrationRequestService: DeepMockProxy<RegistrationRequestService>;
+  let mockSnackBar: MatSnackBar;
+
+  const mockData: RegistrationRequestListItem = {
+    id: 1,
+    user: {
+      fullNameOrBusinessName: 'John Doe',
+      email: 'johndoe@example.com',
+      phone: '123456789',
+      documentType: 'DNI',
+      documentNumber: '12345678',
+    },
+    status: 'Pending',
+    requestDate: '2025-03-28T00:00:00Z',
+  };
 
   beforeEach(async () => {
-    mockRegistrationRequestService = {
-      rejectRegistrationRequest: jest.fn(),
-      approveRegistrationRequest: jest.fn(),
-      fetchRegistrationRequests: jest.fn(),
-    } as Partial<
-      jest.Mocked<RegistrationRequestService>
-    > as jest.Mocked<RegistrationRequestService>;
+    mockRegistrationRequestService = mockDeep<RegistrationRequestService>();
+    mockSnackBar = {
+      open: jest.fn(),
+    } as unknown as MatSnackBar;
 
     await TestBed.configureTestingModule({
-      imports: [
-        RejectDrawerComponent,
-        MatSidenavModule,
-        MatButtonModule,
-        MatFormFieldModule,
-        MatInputModule,
-        FormsModule,
-        NoopAnimationsModule,
-      ],
+      imports: [RejectDrawerComponent, NoopAnimationsModule],
       providers: [
         {
           provide: RegistrationRequestService,
           useValue: mockRegistrationRequestService,
         },
+        { provide: MatSnackBar, useValue: mockSnackBar },
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(RejectDrawerComponent);
     component = fixture.componentInstance;
+
+    component.data = mockData;
+
+    fixture.detectChanges();
   });
 
   it('should create the component', () => {
-    // Arrange
-    // Act
-    const isComponentCreated = component;
-
-    // Assert
-    expect(isComponentCreated).toBeTruthy();
+    expect(component).toBeTruthy();
   });
 
   describe('closeDrawer', () => {
     it('should emit the close event', () => {
       // Arrange
-      jest.spyOn(component.close, 'emit');
+      const closeSpy = jest.spyOn(component.close, 'emit');
 
       // Act
       component.closeDrawer();
 
       // Assert
-      expect(component.close.emit).toHaveBeenCalled();
+      expect(component.isDrawerOpen).toBe(false);
+      expect(closeSpy).toHaveBeenCalled();
     });
   });
 
-  describe('reject', () => {
+  describe('handleRejectClick', () => {
     beforeEach(() => {
-      // Arrange
-      component.data = {
-        id: 1,
-        user: {
-          fullNameOrBusinessName: 'John Doe',
-          email: 'johndoe@example.com',
-          documentNumber: '12345678',
-          documentType: 'DNI',
-          phone: '123456789',
+      component.data = mockData;
+
+      component.rejectionReasonInput = {
+        invalid: false,
+        control: {
+          markAsTouched: jest.fn(),
         },
-        status: 'Pending',
-        requestDate: '2025-03-28T00:00:00Z',
-      } as RegistrationRequestListItem;
-      component.rejectionReason = 'Motivo de prueba';
+      } as unknown as NgModel;
     });
 
-    it('should call rejectRegistrationRequest and emit rejectRequest on success', fakeAsync(() => {
+    it('should not proceed if rejectionReason is invalid', () => {
       // Arrange
-      jest.spyOn(component.rejectRequest, 'emit');
-      mockRegistrationRequestService.rejectRegistrationRequest.mockReturnValue(
-        of(void 0),
-      );
+      component.rejectionReason = '';
+      jest.spyOn(component.rejectionReasonInput.control, 'markAsTouched');
 
       // Act
-      component.reject();
-      tick();
+      component.handleRejectClick();
 
       // Assert
       expect(
+        component.rejectionReasonInput.control.markAsTouched,
+      ).toHaveBeenCalled();
+      expect(
         mockRegistrationRequestService.rejectRegistrationRequest,
-      ).toHaveBeenCalledWith(1, 'Motivo de prueba');
-      expect(component.rejectRequest.emit).toHaveBeenCalled();
-    }));
+      ).not.toHaveBeenCalled();
+    });
 
     it('should handle errors when rejectRegistrationRequest fails', fakeAsync(() => {
       // Arrange
+      component.rejectionReason = 'Motivo válido';
       mockRegistrationRequestService.rejectRegistrationRequest.mockReturnValue(
         throwError(() => new Error('Error al rechazar')),
       );
 
       // Act
-      component.reject();
+      component.handleRejectClick();
       tick();
 
       // Assert
       expect(
         mockRegistrationRequestService.rejectRegistrationRequest,
-      ).toHaveBeenCalledWith(1, 'Motivo de prueba');
+      ).toHaveBeenCalledWith(1, 'Motivo válido');
+      expect(component.isLoading()).toBe(false);
     }));
+  });
+
+  describe('handleKeyDown', () => {
+    it('should call closeDrawer when Escape key is pressed', () => {
+      // Arrange
+      const event = new KeyboardEvent('keydown', { key: 'Escape' });
+      jest.spyOn(component, 'closeDrawer');
+
+      // Act
+      component.handleKeyDown(event);
+
+      // Assert
+      expect(component.closeDrawer).toHaveBeenCalled();
+    });
+
+    it('should call handleRejectClick when Enter key is pressed', () => {
+      // Arrange
+      const event = new KeyboardEvent('keydown', { key: 'Enter' });
+      jest.spyOn(component, 'handleRejectClick');
+
+      // Act
+      component.handleKeyDown(event);
+
+      // Assert
+      expect(component.handleRejectClick).toHaveBeenCalled();
+    });
+
+    it('should not call any method for other keys', () => {
+      // Arrange
+      const event = new KeyboardEvent('keydown', { key: 'ArrowUp' });
+      jest.spyOn(component, 'closeDrawer');
+      jest.spyOn(component, 'handleRejectClick');
+
+      // Act
+      component.handleKeyDown(event);
+
+      // Assert
+      expect(component.closeDrawer).not.toHaveBeenCalled();
+      expect(component.handleRejectClick).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('mp-button keydown events', () => {
+    it('should call closeDrawer when Escape key is pressed on the Cancel button', () => {
+      // Arrange
+      const event = new KeyboardEvent('keydown', { key: 'Escape' });
+      jest.spyOn(component, 'closeDrawer');
+      fixture.detectChanges();
+
+      const cancelButton = fixture.nativeElement.querySelector(
+        'mp-button[type="secondary"]',
+      );
+
+      // Act
+      cancelButton.dispatchEvent(event);
+
+      // Assert
+      expect(component.closeDrawer).toHaveBeenCalled();
+    });
+
+    it('should call handleRejectClick when Enter key is pressed on the Reject button', () => {
+      // Arrange
+      const event = new KeyboardEvent('keydown', { key: 'Enter' });
+      jest.spyOn(component, 'handleRejectClick');
+      fixture.detectChanges();
+
+      const rejectButton = fixture.nativeElement.querySelector(
+        'mp-button[type="secondary"]:last-child',
+      );
+
+      // Act
+      rejectButton.dispatchEvent(event);
+
+      // Assert
+      expect(component.handleRejectClick).toHaveBeenCalled();
+    });
   });
 });
