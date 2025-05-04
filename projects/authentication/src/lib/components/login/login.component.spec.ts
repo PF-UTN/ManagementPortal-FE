@@ -24,21 +24,13 @@ describe('LoginComponent', () => {
   let router: Router;
   let navBarService: NavBarService;
   const userData = mockUser;
-  const mockAuthService = mockDeep<AuthService>();
 
   beforeEach(() => {
-    mockAuthService.logInAsync.mockReturnValue(
-      of({
-        success: true,
-        access_token: 'mockAccessToken',
-      }),
-    );
-
     TestBed.configureTestingModule({
       imports: [ReactiveFormsModule, LoginComponent, BrowserAnimationsModule],
       providers: [
         { provide: NavBarService, useValue: mockDeep<NavBarService>() },
-        { provide: AuthService, useValue: mockAuthService },
+        { provide: AuthService, useValue: mockDeep<AuthService>() },
         { provide: Router, useValue: mockDeep<Router>() },
         { provide: HttpClient, useValue: mockDeep<HttpClient>() },
       ],

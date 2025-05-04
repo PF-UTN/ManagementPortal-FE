@@ -56,7 +56,7 @@ export class LoginComponent implements OnInit {
   }>;
 
   hidePassword = signal(true);
-  errorMessage: string | null = null;
+  errorMessage: string | null;
   isSubmitting = signal(false);
 
   constructor(
@@ -66,10 +66,6 @@ export class LoginComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (this.authService.isAuthenticated()) {
-      this.navBarService.showNavBar();
-      this.router.navigate(['inicio']);
-    }
     this.navBarService.hideNavBar();
     this.initForm();
   }

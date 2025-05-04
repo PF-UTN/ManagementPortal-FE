@@ -2,7 +2,7 @@ import { NavBarService } from '@Common';
 import { ButtonComponent, TitleComponent } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -21,6 +21,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { Router, RouterModule } from '@angular/router';
 
+import { DocumentType } from '../../constants/documentType.enum';
+import { IvaCategory } from '../../constants/ivaCategory.enum';
 import { Client } from '../../models/client.model';
 import { AuthService } from '../../services/auth.service';
 
@@ -64,12 +66,18 @@ export class SignupComponent implements OnInit {
     street: FormControl<string>;
     streetNumber: FormControl<number>;
     taxCategory: FormControl<number>;
-    documentType: FormControl<number>;
+    documentType: FormControl<string>;
     documentNumber: FormControl<string>;
     companyName: FormControl<string>;
   }>;
 
-  hidePassword = true;
+  isSubmitting = signal(false);
+  maxDocumentLength: number | null = null;
+  hidePassword = signal(true);
+  hideConfirmPassword = signal(true);
+  documentTypes = Object.values(DocumentType);
+  ivaCategories = Object.values(IvaCategory);
+
   constructor(
     private fb: FormBuilder,
     protected authService: AuthService,
@@ -111,6 +119,51 @@ export class SignupComponent implements OnInit {
       },
       { validator: this.passwordMatchValidator },
     );
+
+    this.signupForm.get('documentType')?.valueChanges.subscribe(() => {
+      this.signupForm.get('documentNumber')?.reset();
+    });
+
+    this.signupForm.controls.documentType.valueChanges.subscribe((value) => {
+      switch (value) {
+        case DocumentType.CUIT:
+          this.maxDocumentLength = 11;
+          break;
+        case DocumentType.CUIL:
+          this.maxDocumentLength = 11;
+          break;
+        case DocumentType.DNI:
+          this.maxDocumentLength = 8;
+          break;
+        default:
+          this.maxDocumentLength = null;
+      }
+
+      const docNumberControl = this.signupForm.controls.documentNumber;
+      const validators = [Validators.required];
+
+      if (this.maxDocumentLength) {
+        validators.push(Validators.maxLength(this.maxDocumentLength));
+      }
+
+      docNumberControl.setValidators(validators);
+      docNumberControl.updateValueAndValidity();
+    });
+  }
+
+  preventNonNumericInput(event: KeyboardEvent): void {
+    const allowedKeys = ['Backspace', 'ArrowLeft', 'ArrowRight', 'Tab'];
+    if (
+      allowedKeys.includes(event.key) ||
+      (event.ctrlKey && ['a', 'c', 'v', 'x'].includes(event.key.toLowerCase()))
+    ) {
+      return;
+    }
+
+    const isNumber = /^[0-9]$/.test(event.key);
+    if (!isNumber) {
+      event.preventDefault();
+    }
   }
 
   passwordMatchValidator(form: FormGroup) {
@@ -123,11 +176,12 @@ export class SignupComponent implements OnInit {
       : { mismatch: true };
   }
 
-  togglePasswordVisibility() {
-    this.hidePassword = !this.hidePassword;
+  toggleVisibility(signal: WritableSignal<boolean>): void {
+    signal.set(!signal());
   }
 
   onSubmit(): void {
+    this.isSubmitting.set(true);
     if (this.signupForm.valid) {
       const client: Client = {
         firstName: this.signupForm.controls.firstName.value,
@@ -149,9 +203,12 @@ export class SignupComponent implements OnInit {
       };
       this.authService.signUpAsync(client).subscribe({
         next: () => {
+          this.isSubmitting.set(false);
           this.router.navigate(['/login']);
         },
-        error: () => {},
+        error: () => {
+          this.isSubmitting.set(false);
+        },
       });
     }
   }
