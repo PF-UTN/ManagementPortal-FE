@@ -461,6 +461,21 @@ describe('SignupComponent', () => {
 
         expect(documentNumberControl.valid).toBe(false);
       });
+      it('should set maxDocumentLength to 1 when documentType is CUIT', () => {
+        const documentTypeControl = component.signupForm.controls.documentType;
+        documentTypeControl.setValue('CUIT');
+        expect(component.maxDocumentLength).toBe(11);
+      });
+      it('should add maxLength(11) validator when documentType is CUIT', () => {
+        const documentTypeControl = component.signupForm.controls.documentType;
+        const documentNumberControl =
+          component.signupForm.controls.documentNumber;
+
+        documentTypeControl.setValue('CUIT');
+        documentNumberControl.setValue('123456789101');
+
+        expect(documentNumberControl.valid).toBe(false);
+      });
       it('should set maxDocumentLength to null when documentType is unknown', () => {
         const documentTypeControl = component.signupForm.controls.documentType;
         documentTypeControl.setValue('');

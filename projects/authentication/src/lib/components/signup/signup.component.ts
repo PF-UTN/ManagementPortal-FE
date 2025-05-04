@@ -180,8 +180,8 @@ export class SignupComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.isSubmitting.set(true);
     if (this.signupForm.valid) {
+      this.isSubmitting.set(true);
       const client: Client = {
         firstName: this.signupForm.controls.firstName.value,
         lastName: this.signupForm.controls.lastName.value,
