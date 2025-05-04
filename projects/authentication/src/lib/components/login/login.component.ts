@@ -1,4 +1,4 @@
-import { NavBarService } from '@Common';
+import { AuthService, NavBarService } from '@Common';
 import { ButtonComponent, SubtitleComponent, TitleComponent } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
@@ -22,8 +22,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { Router, RouterModule } from '@angular/router';
 
-import { User } from '../../models/user.model';
-import { AuthService } from '../../services/auth.service';
+import { User } from '../../../../../common/src/models/user.model';
 import { customEmailValidator } from '../../validators/email.validator';
 
 @Component({

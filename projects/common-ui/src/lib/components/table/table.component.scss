@@ -1,14 +1,14 @@
-@import '../../../../../../src/styles.scss';
+@import '../../../../../../src/styles/varibles';
 
 .table {
   width: 100%;
 
   &__header {
     font-weight: bold;
-    background-color: $table-header-bg-color;
+    background-color: $lavander-color;
   }
 
   &__pending-row {
-    background-color: $table-pending-bg-color; 
+    background-color: $lavender-gray;
   }
 }

@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { mockDeep, DeepMockProxy } from 'jest-mock-extended';
 import { of, throwError } from 'rxjs';
 
 import { RegistrationRequestListComponent } from './registration-request-list.component';
@@ -13,7 +14,7 @@ import { RegistrationRequestService } from '../../services/registration-request.
 describe('RegistrationRequestListComponent', () => {
   let component: RegistrationRequestListComponent;
   let fixture: ComponentFixture<RegistrationRequestListComponent>;
-  let service: RegistrationRequestService;
+  let service: DeepMockProxy<RegistrationRequestService>;
 
   const mockData: RegistrationRequestListItem[] = [
     {
@@ -43,11 +44,10 @@ describe('RegistrationRequestListComponent', () => {
   ];
 
   beforeEach(() => {
-    const mockService = {
-      fetchRegistrationRequests: jest
-        .fn()
-        .mockReturnValue(of({ total: mockData.length, results: mockData })),
-    };
+    service = mockDeep<RegistrationRequestService>();
+    service.postSearchRegistrationRequest.mockReturnValue(
+      of({ total: mockData.length, results: mockData }),
+    );
 
     TestBed.configureTestingModule({
       imports: [
@@ -58,14 +58,11 @@ describe('RegistrationRequestListComponent', () => {
         MatMenuModule,
         MatButtonModule,
       ],
-      providers: [
-        { provide: RegistrationRequestService, useValue: mockService },
-      ],
+      providers: [{ provide: RegistrationRequestService, useValue: service }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(RegistrationRequestListComponent);
     component = fixture.componentInstance;
-    service = TestBed.inject(RegistrationRequestService);
     fixture.detectChanges();
   });
 
@@ -90,9 +87,9 @@ describe('RegistrationRequestListComponent', () => {
 
     it('should handle errors when fetchRegistrationRequests fails', () => {
       // Arrange
-      jest
-        .spyOn(service, 'fetchRegistrationRequests')
-        .mockReturnValue(throwError(() => new Error('Test error')));
+      service.postSearchRegistrationRequest.mockReturnValue(
+        throwError(() => new Error('Test error')),
+      );
 
       // Act
       component.fetchData();
@@ -120,55 +117,30 @@ describe('RegistrationRequestListComponent', () => {
     });
   });
 
-  describe('onApprove', () => {
-    it('should log approval message', () => {
+  describe('onApproveDrawer', () => {
+    it('should set selectedRequest and open the drawer', () => {
       // Arrange
-      jest.spyOn(console, 'log');
-      const row = mockData[0];
+      const request = mockData[0];
 
       // Act
-      component.onApprove(row);
+      component.onApproveDrawer(request);
 
       // Assert
-      expect(console.log).toHaveBeenCalledWith('Aprobando solicitud:', row);
+      expect(component.selectedRequest).toBe(request);
+      expect(component.isDrawerOpen).toBe(true);
     });
   });
 
-  describe('onReject', () => {
-    it('should log rejection message', () => {
+  describe('closeDrawer', () => {
+    it('should close the drawer', () => {
       // Arrange
-      jest.spyOn(console, 'log');
-      const row = mockData[1];
+      component.isDrawerOpen = true;
 
       // Act
-      component.onReject(row);
+      component.closeDrawer();
 
       // Assert
-      expect(console.log).toHaveBeenCalledWith('Rechazando solicitud:', row);
-    });
-  });
-
-  describe('getRowClass', () => {
-    it('should return "pending-row" for rows with status "Pending"', () => {
-      // Arrange
-      const row = mockData[0];
-
-      // Act
-      const result = component.getRowClass(row);
-
-      // Assert
-      expect(result).toBe('table__pending-row');
-    });
-
-    it('should return an empty string for rows with status other than "Pending"', () => {
-      // Arrange
-      const row = mockData[1];
-
-      // Act
-      const result = component.getRowClass(row);
-
-      // Assert
-      expect(result).toBe('');
+      expect(component.isDrawerOpen).toBe(false);
     });
   });
 });

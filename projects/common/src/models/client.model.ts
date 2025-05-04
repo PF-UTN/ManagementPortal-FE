@@ -12,7 +12,7 @@ export interface Client {
   street: string;
   streetNumber: number;
   taxCategory: number;
-  documentType: string;
+  documentType: number;
   documentNumber: string;
   companyName: string;
 }

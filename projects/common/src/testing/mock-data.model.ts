@@ -1,5 +1,5 @@
-import { Client } from './client.model';
-import { User } from './user.model';
+import { Client } from '../models/client.model';
+import { User } from '../models/user.model';
 
 export const mockClient: Client = {
   firstName: 'Juan',
@@ -30,4 +30,4 @@ export const mockInvalidUser: User = {
   password: 'wrongPassword',
 };
 
-export const mockAuthResponse = { token: 'mockJWTToken' };
+export const mockAuthResponse = { access_token: 'mockJWTToken' };

@@ -4,13 +4,18 @@ import {
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import * as JwtDecodeModule from 'jwt-decode';
 
 import { AuthService } from './auth.service';
 import {
   mockClient,
   mockUser,
   mockAuthResponse,
-} from '../models/mock-data.model';
+} from '../../testing/mock-data.model';
+
+jest.mock('jwt-decode', () => ({
+  jwtDecode: jest.fn(),
+}));
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -26,6 +31,8 @@ describe('AuthService', () => {
 
   afterEach(() => {
     httpMock.verify();
+    localStorage.clear();
+    jest.clearAllMocks();
   });
 
   it('should be created', () => {
@@ -56,21 +63,21 @@ describe('AuthService', () => {
     req.flush(mockAuthResponse);
   });
 
-  describe('isAuthenticated()', () => {
-    it('should return true when a token exists in localStorage', () => {
-      jest.spyOn(Storage.prototype, 'getItem').mockReturnValue('mock-token');
+  it('should set userRole after signUpAsync()', () => {
+    // Arrange
+    const mockDecodedToken = { role: 'admin' };
+    jest.spyOn(JwtDecodeModule, 'jwtDecode').mockReturnValue(mockDecodedToken);
 
-      const result = service.isAuthenticated();
-
-      expect(result).toBe(true);
+    // Act
+    service.signUpAsync(mockClient).subscribe(() => {
+      // Assert
+      expect(service.userRole).toBe(mockDecodedToken.role);
     });
 
-    it('should return false when no token exists in localStorage', () => {
-      jest.spyOn(Storage.prototype, 'getItem').mockReturnValue(null);
+    const req = httpMock.expectOne(
+      'https://dev-management-portal-be.vercel.app/authentication/signup',
+    );
 
-      const result = service.isAuthenticated();
-
-      expect(result).toBe(false);
-    });
+    req.flush(mockAuthResponse);
   });
 });
