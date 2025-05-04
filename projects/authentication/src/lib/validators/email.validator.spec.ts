@@ -1,7 +1,7 @@
 import { FormControl } from '@angular/forms';
 
 import { customEmailValidator } from './email.validator';
-import { mockUser } from '../models/mock-data.model';
+import { mockUser } from '../../../../common/src/testing/mock-data.model';
 
 describe('customEmailValidator', () => {
   const validator = customEmailValidator();
