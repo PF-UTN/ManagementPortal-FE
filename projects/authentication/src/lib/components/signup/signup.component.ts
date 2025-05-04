@@ -71,7 +71,7 @@ export class SignupComponent implements OnInit {
   }>;
 
   isSubmitting = signal(false);
-  maxDocumentLength: number | null = null;
+  maxDocumentLength: number | null;
   hidePassword = signal(true);
   hideConfirmPassword = signal(true);
   documentTypes = Object.values(DocumentType);
