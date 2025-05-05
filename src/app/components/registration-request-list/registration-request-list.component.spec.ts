@@ -118,7 +118,7 @@ describe('RegistrationRequestListComponent', () => {
   });
 
   describe('onApproveDrawer', () => {
-    it('should set selectedRequest and open the drawer', () => {
+    it('should set selectedRequest and open the approve drawer', () => {
       // Arrange
       const request = mockData[0];
 
@@ -127,20 +127,54 @@ describe('RegistrationRequestListComponent', () => {
 
       // Assert
       expect(component.selectedRequest).toBe(request);
-      expect(component.isDrawerOpen).toBe(true);
+      expect(component.isDrawerApproveOpen).toBe(true);
+    });
+  });
+
+  describe('onRejectDrawer', () => {
+    it('should set selectedRequest and open the reject drawer', () => {
+      // Arrange
+      const request = mockData[1];
+
+      // Act
+      component.onRejectDrawer(request);
+
+      // Assert
+      expect(component.selectedRequest).toBe(request);
+      expect(component.isDrawerRejectOpen).toBe(true);
     });
   });
 
   describe('closeDrawer', () => {
-    it('should close the drawer', () => {
+    it('should close both approve and reject drawers', () => {
       // Arrange
-      component.isDrawerOpen = true;
+      component.isDrawerApproveOpen = true;
+      component.isDrawerRejectOpen = true;
 
       // Act
       component.closeDrawer();
 
       // Assert
-      expect(component.isDrawerOpen).toBe(false);
+      expect(component.isDrawerApproveOpen).toBe(false);
+      expect(component.isDrawerRejectOpen).toBe(false);
+    });
+  });
+
+  describe('getRowClass', () => {
+    it('should return "table__pending-row" for rows with status "Pending"', () => {
+      // Act
+      const rowClass = component.getRowClass(mockData[0]);
+
+      // Assert
+      expect(rowClass).toBe('table__pending-row');
+    });
+
+    it('should return an empty string for rows with status other than "Pending"', () => {
+      // Act
+      const rowClass = component.getRowClass(mockData[1]);
+
+      // Assert
+      expect(rowClass).toBe('');
     });
   });
 });
