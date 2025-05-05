@@ -8,13 +8,19 @@ import {
 
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormControl,
+  ReactiveFormsModule,
+  AbstractControl,
+} from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
 import { mockDeep } from 'jest-mock-extended';
 import { throwError, of } from 'rxjs';
 
 import { LoginComponent } from './login.component';
+import { customEmailValidator } from '../../validators';
+
 describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
@@ -78,17 +84,44 @@ describe('LoginComponent', () => {
       emailControl.setValue('invalid-email');
 
       // Act & Assert
-      expect(emailControl.hasError('email')).toBeTruthy();
+      expect(emailControl.hasError('invalidEmail')).toBeTruthy();
     });
-
-    it('should not set email error if email control is valid', () => {
+    it('should not set email REGEX error if email control is valid', () => {
+      const emailControl = component.loginForm.controls.email;
       // Arrange
+      emailControl.setValue(userData.email);
+      // Act & Assert
+      expect(emailControl.hasError('invalidEmail')).toBeFalsy();
+    });
+    it('should not set email required error if email control is valid', () => {
       const emailControl = component.loginForm.controls.email;
       emailControl.setValue(userData.email);
 
       // Act & Assert
-      expect(emailControl.hasError('email')).toBeFalsy();
       expect(emailControl.hasError('required')).toBeFalsy();
+    });
+    it('should set invalidEmail error if customEmailValidator detects invalid email', () => {
+      // Arrange
+      const control = { value: 'invalid-email' } as AbstractControl;
+      const validatorFn = customEmailValidator();
+
+      // Act
+      const result = validatorFn(control);
+
+      // Assert
+      expect(result).toEqual({ invalidEmail: true });
+    });
+
+    it('should return null if customEmailValidator detects valid email', () => {
+      // Arrange
+      const control = { value: mockUser.email } as AbstractControl;
+      const validatorFn = customEmailValidator();
+
+      // Act
+      const result = validatorFn(control);
+
+      // Assert
+      expect(result).toBeNull();
     });
   });
 
@@ -173,6 +206,7 @@ describe('LoginComponent', () => {
             new HttpErrorResponse({
               status: 401,
               statusText: 'Unauthorized',
+              error: { message: ERROR_MESSAGES.invalidCredentials },
             }),
         ),
       );
@@ -194,6 +228,7 @@ describe('LoginComponent', () => {
             new HttpErrorResponse({
               status: 500,
               statusText: 'Server Error',
+              error: { message: ERROR_MESSAGES.unexpectedError },
             }),
         ),
       );
@@ -205,49 +240,48 @@ describe('LoginComponent', () => {
       // Assert
       expect(component.errorMessage).toBe(ERROR_MESSAGES.unexpectedError);
     });
-
-    describe('togglePasswordVisibility Method', () => {
-      it('should initialize hidePassword as true', () => {
-        // Arrange
-        // Act
-        // Assert
-        expect(component.hidePassword).toBe(true);
-      });
-
-      it('should set hidePassword to false when toggled', () => {
-        // Arrange
-        expect(component.hidePassword).toBe(true);
-
-        // Act
-        component.togglePasswordVisibility();
-
-        // Assert
-        expect(component.hidePassword).toBe(false);
-      });
-
-      it('should set hidePassword to true when toggled again', () => {
-        // Arrange
-        component.hidePassword = false;
-
-        // Act
-        component.togglePasswordVisibility();
-
-        // Assert
-        expect(component.hidePassword).toBe(true);
-      });
+  });
+  describe('togglePasswordVisibility Method', () => {
+    it('should initialize hidePassword as true', () => {
+      // Arrange
+      // Act
+      // Assert
+      expect(component.hidePassword()).toBe(true);
     });
 
-    describe('navigateToRegister Method', () => {
-      it('should navigate to register page', () => {
-        // Arrange
-        const routerSpy = jest.spyOn(router, 'navigate');
+    it('should set hidePassword to false when toggled', () => {
+      // Arrange
+      expect(component.hidePassword()).toBe(true);
 
-        // Act
-        component.navigateToRegister();
+      // Act
+      component.togglePasswordVisibility();
 
-        // Assert
-        expect(routerSpy).toHaveBeenCalledWith(['signup']);
-      });
+      // Assert
+      expect(component.hidePassword()).toBe(false);
+    });
+
+    it('should set hidePassword to true when toggled again', () => {
+      // Arrange
+      component.hidePassword.set(false);
+
+      // Act
+      component.togglePasswordVisibility();
+
+      // Assert
+      expect(component.hidePassword()).toBe(true);
+    });
+  });
+
+  describe('navigateToRegister Method', () => {
+    it('should navigate to register page', () => {
+      // Arrange
+      const routerSpy = jest.spyOn(router, 'navigate');
+
+      // Act
+      component.navigateToRegister();
+
+      // Assert
+      expect(routerSpy).toHaveBeenCalledWith(['signup']);
     });
   });
 });

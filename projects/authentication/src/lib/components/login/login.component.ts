@@ -1,8 +1,10 @@
-import { AuthService, ERROR_MESSAGES, NavBarService } from '@Common';
+import { AuthService, NavBarService } from '@Common';
 import { ButtonComponent, SubtitleComponent, TitleComponent } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { signal } from '@angular/core';
 import {
   FormGroup,
   Validators,
@@ -21,6 +23,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { Router, RouterModule } from '@angular/router';
 
 import { User } from '../../../../../common/src/models/user.model';
+import { customEmailValidator } from '../../validators/email.validator';
 
 @Component({
   selector: 'app-login',
@@ -51,8 +54,9 @@ export class LoginComponent implements OnInit {
     password: FormControl<string | null>;
   }>;
 
-  hidePassword = true;
-  errorMessage: string = '';
+  hidePassword = signal(true);
+  errorMessage: string | null;
+  isSubmitting = signal(false);
 
   constructor(
     private readonly authService: AuthService,
@@ -62,14 +66,13 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     this.navBarService.hideNavBar();
-
     this.initForm();
   }
 
   private initForm() {
     this.loginForm = new FormGroup({
       email: new FormControl<string | null>(null, {
-        validators: [Validators.required, Validators.email],
+        validators: [Validators.required, customEmailValidator()],
       }),
       password: new FormControl<string | null>(null, {
         validators: [Validators.required, Validators.minLength(8)],
@@ -78,7 +81,7 @@ export class LoginComponent implements OnInit {
   }
 
   togglePasswordVisibility() {
-    this.hidePassword = !this.hidePassword;
+    this.hidePassword.set(!this.hidePassword());
   }
 
   navigateToRegister(): void {
@@ -86,6 +89,7 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit(): void {
+    this.isSubmitting.set(true);
     if (this.loginForm.valid) {
       const credentials: User = {
         email: this.loginForm.controls.email.value!,
@@ -96,13 +100,11 @@ export class LoginComponent implements OnInit {
         next: () => {
           this.router.navigate(['inicio']);
           this.navBarService.showNavBar();
+          this.isSubmitting.set(false);
         },
-        error: (error) => {
-          if (error.status === 401) {
-            this.errorMessage = ERROR_MESSAGES.invalidCredentials;
-          } else {
-            this.errorMessage = ERROR_MESSAGES.unexpectedError;
-          }
+        error: (error: HttpErrorResponse) => {
+          this.isSubmitting.set(false);
+          this.errorMessage = error.error.message;
         },
       });
     }

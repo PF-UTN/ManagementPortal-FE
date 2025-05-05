@@ -15,8 +15,8 @@ export const mockClient: Client = {
   street: 'Calle Falsa',
   streetNumber: 123,
   taxCategory: 1,
-  documentType: 2,
-  documentNumber: '20-12345678-9',
+  documentType: 'CUIL',
+  documentNumber: '20123456789',
   companyName: 'Mi Empresa',
 };
 

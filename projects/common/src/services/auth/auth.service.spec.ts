@@ -39,7 +39,7 @@ describe('AuthService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('It should perform a POST for signUpAsync()', () => {
+  it('should perform a POST for signUpAsync()', () => {
     service.signUpAsync(mockClient).subscribe((response) => {
       expect(response).toEqual(mockAuthResponse);
     });
@@ -51,7 +51,7 @@ describe('AuthService', () => {
     req.flush(mockAuthResponse);
   });
 
-  it('It should perform a POST for logInAsync()', () => {
+  it('should perform a POST for logInAsync()', () => {
     service.logInAsync(mockUser).subscribe((response) => {
       expect(response).toEqual(mockAuthResponse);
     });

@@ -1,6 +1,7 @@
 import { AuthService, mockClient, NavBarService } from '@Common';
 
 import { provideHttpClient } from '@angular/common/http';
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -441,6 +442,61 @@ describe('SignupComponent', () => {
         component.onSubmit();
         // Assert
         expect(authServiceSpy).toHaveBeenCalledWith(clientData);
+      });
+    });
+    describe('Document Type Change Logic', () => {
+      it('should set maxDocumentLength to 8 when documentType is DNI', () => {
+        const documentTypeControl = component.signupForm.controls.documentType;
+        documentTypeControl.setValue('DNI');
+        expect(component.maxDocumentLength).toBe(8);
+      });
+
+      it('should add maxLength(8) validator when documentType is DNI', () => {
+        const documentTypeControl = component.signupForm.controls.documentType;
+        const documentNumberControl =
+          component.signupForm.controls.documentNumber;
+
+        documentTypeControl.setValue('DNI');
+        documentNumberControl.setValue('123456789');
+
+        expect(documentNumberControl.valid).toBe(false);
+      });
+      it('should set maxDocumentLength to 1 when documentType is CUIT', () => {
+        const documentTypeControl = component.signupForm.controls.documentType;
+        documentTypeControl.setValue('CUIT');
+        expect(component.maxDocumentLength).toBe(11);
+      });
+      it('should add maxLength(11) validator when documentType is CUIT', () => {
+        const documentTypeControl = component.signupForm.controls.documentType;
+        const documentNumberControl =
+          component.signupForm.controls.documentNumber;
+
+        documentTypeControl.setValue('CUIT');
+        documentNumberControl.setValue('123456789101');
+
+        expect(documentNumberControl.valid).toBe(false);
+      });
+      it('should set maxDocumentLength to null when documentType is unknown', () => {
+        const documentTypeControl = component.signupForm.controls.documentType;
+        documentTypeControl.setValue('');
+        expect(component.maxDocumentLength).toBeNull();
+      });
+    });
+    describe('toggleVisibility', () => {
+      it('should toggle signal from true to false', () => {
+        const testSignal = signal(true);
+
+        component.toggleVisibility(testSignal);
+
+        expect(testSignal()).toBe(false);
+      });
+
+      it('should toggle signal from false to true', () => {
+        const testSignal = signal(false);
+
+        component.toggleVisibility(testSignal);
+
+        expect(testSignal()).toBe(true);
       });
     });
   });
