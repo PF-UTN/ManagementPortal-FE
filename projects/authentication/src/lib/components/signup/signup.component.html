@@ -14,10 +14,16 @@
           <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('firstName')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
-          <mat-hint *ngIf="
+          <mat-error *ngIf="
                 signupForm.get('firstName')?.hasError('required') &&
                 signupForm.get('firstName')?.touched
-              " class="error-message">Nombre es requerido</mat-hint>
+              " >Nombre es requerido</mat-error>
+          <mat-error *ngIf="signupForm.get('firstName')?.hasError('maxlength') && signupForm.get('firstName')?.touched">
+            El valor no puede superar los 50 caracteres.
+          </mat-error>
+          <mat-error *ngIf="signupForm.get('firstName')?.hasError('minlength') && signupForm.get('firstName')?.touched">
+            Debe tener al menos 2 caracteres.
+          </mat-error>
         </mat-form-field>
       </div>
       <div class="form-group">
@@ -27,10 +33,16 @@
           <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('lastName')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
-          <mat-hint *ngIf="
+          <mat-error *ngIf="
                 signupForm.get('lastName')?.hasError('required') &&
                 signupForm.get('lastName')?.touched
-              " class="error-message">Apellido es requerido</mat-hint>
+              ">Apellido es requerido</mat-error>
+          <mat-error *ngIf="signupForm.get('lastName')?.hasError('maxlength') && signupForm.get('lastName')?.touched">
+            El valor no puede superar los 50 caracteres.
+          </mat-error>
+          <mat-error *ngIf="signupForm.get('lastName')?.hasError('minlength') && signupForm.get('lastName')?.touched">
+            Debe tener al menos 2 caracteres.
+          </mat-error>
         </mat-form-field>
       </div>
       <div class="form-group">
@@ -40,11 +52,11 @@
           <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('email')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
-          <mat-hint *ngIf="
+          <mat-error *ngIf="
                 signupForm.get('email')?.hasError('required') &&
                 signupForm.get('email')?.touched
-              " class="error-message">Email es requerido</mat-hint>
-          <mat-hint *ngIf="signupForm.get('email')?.hasError('email')">Email no válido</mat-hint>
+              " >Email es requerido</mat-error>
+          <mat-error *ngIf="signupForm.get('email')?.hasError('email')">Email no válido</mat-error>
         </mat-form-field>
       </div>
       <div class="form-group">
@@ -58,13 +70,17 @@
               hidePassword() ? "visibility_off" : "visibility"
               }}</mat-icon>
           </button>
-          <mat-hint *ngIf="
+          <mat-error *ngIf="
                 signupForm.get('password')?.hasError('required') &&
                 signupForm.get('password')?.touched
-              " class="error-message">Contraseña es requerida</mat-hint>
-          <mat-hint *ngIf="signupForm.get('password')?.hasError('pattern')" class="error-message">Debe contener al menos
+              ">Contraseña es requerida</mat-error>
+          <mat-error *ngIf="signupForm.get('password')?.hasError('pattern')">Debe contener al menos
             8 caracteres, una letra mayúscula, una
-            minúscula y un número</mat-hint>
+            minúscula y un número</mat-error>
+          <mat-error *ngIf="signupForm.get('password')?.hasError('maxlength') && signupForm.get('password')?.touched &&
+          !signupForm.get('password')?.hasError('pattern')">
+              No puede tener más de 255 caracteres.
+            </mat-error>            
         </mat-form-field>
       </div>
       <div class="form-group">
@@ -78,19 +94,15 @@
               hideConfirmPassword() ? "visibility_off" : "visibility"
               }}</mat-icon>
           </button>
-          <mat-hint *ngIf="
+          <mat-error *ngIf="
                 signupForm.get('confirmPassword')?.hasError('required') &&
                 signupForm.get('confirmPassword')?.touched
-              " class="error-message">
+              ">
               Confirmar Contraseña es requerida
-          </mat-hint>
-          <mat-hint *ngIf="
-                signupForm.hasError('mismatch') &&
-               !signupForm.get('email')?.hasError('required')&&
-                signupForm.get('confirmPassword')?.touched
-              " class="error-message">
-              Las contraseñas no coinciden
-          </mat-hint>
+          </mat-error>
+          <mat-error *ngIf="signupForm.get('confirmPassword')?.hasError('mismatch')">
+            Las contraseñas no coinciden
+          </mat-error>
         </mat-form-field>
       </div>
       <div class="form-group">
@@ -104,10 +116,10 @@
           <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('documentType')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
-          <mat-hint *ngIf="
+          <mat-error *ngIf="
                 signupForm.get('documentType')?.hasError('required') &&
                 signupForm.get('documentType')?.touched
-              " class="error-message">Tipo de Documento es requerido</mat-hint>
+              ">Tipo de Documento es requerido</mat-error>
         </mat-form-field>
       </div>
       <div class="form-group">
@@ -117,10 +129,10 @@
           <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('documentNumber')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
-          <mat-hint *ngIf="
+          <mat-error *ngIf="
                 signupForm.get('documentNumber')?.hasError('required') &&
                 signupForm.get('documentNumber')?.touched
-              " class="error-message">Número Documento es requerido</mat-hint>
+              ">Número Documento es requerido</mat-error>
         </mat-form-field>
       </div>
       <div class="form-group">
@@ -132,10 +144,10 @@
           <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('birthDate')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
-          <mat-hint *ngIf="
+          <mat-error *ngIf="
                 signupForm.get('birthDate')?.hasError('required') &&
                 signupForm.get('birthDate')?.touched
-              " class="error-message">Fecha de Nacimiento es requerida</mat-hint>
+              ">Fecha de Nacimiento es requerida</mat-error>
         </mat-form-field>
       </div>
       <div class="form-group">
@@ -148,10 +160,10 @@
           <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('country')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
-          <mat-hint *ngIf="
+          <mat-error *ngIf="
                 signupForm.get('country')?.hasError('required') &&
                 signupForm.get('country')?.touched
-              " class="error-message">País es requerido</mat-hint>
+              ">País es requerido</mat-error>
         </mat-form-field>
       </div>
       <div class="form-group">
@@ -164,10 +176,10 @@
           <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('province')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
-          <mat-hint *ngIf="
+          <mat-error *ngIf="
                 signupForm.get('province')?.hasError('required') &&
                 signupForm.get('province')?.touched
-              " class="error-message">Provincia es requerido</mat-hint>
+              ">Provincia es requerido</mat-error>
         </mat-form-field>
       </div>
       <div class="form-group">
@@ -180,10 +192,10 @@
           <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('town')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
-          <mat-hint *ngIf="
+          <mat-error *ngIf="
                 signupForm.get('town')?.hasError('required') &&
                 signupForm.get('town')?.touched
-              " class="error-message">Ciudad es requerido</mat-hint>
+              ">Ciudad es requerido</mat-error>
         </mat-form-field>
       </div>
       <div class="form-group">
@@ -193,10 +205,10 @@
           <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('street')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
-          <mat-hint *ngIf="
+          <mat-error *ngIf="
                 signupForm.get('street')?.hasError('required') &&
                 signupForm.get('street')?.touched
-              " class="error-message">Calle es requerido</mat-hint>
+              ">Calle es requerido</mat-error>
         </mat-form-field>
       </div>
       <div class="form-group">
@@ -206,24 +218,24 @@
           <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('streetNumber')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
-          <mat-hint *ngIf="
+          <mat-error *ngIf="
                 signupForm.get('streetNumber')?.hasError('required') &&
                 signupForm.get('streetNumber')?.touched
-              " class="error-message">Número de Calle es requerido</mat-hint>
+              ">Número de Calle es requerido</mat-error>
         </mat-form-field>
       </div>
       <div class="form-group">
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Teléfono</mat-label>
-          <span matTextPrefix> +54 </span>
+          <span matTextPrefix>+54</span>
           <input type="tel" matInput formControlName="phone" placeholder="555-555-1234" />
           <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('phone')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
-          <mat-hint *ngIf="
+          <mat-error *ngIf="
                 signupForm.get('phone')?.hasError('required') &&
                 signupForm.get('phone')?.touched
-              " class="error-message">Teléfono es requerido</mat-hint>
+              ">Teléfono es requerido</mat-error>
           <mat-hint *ngIf="signupForm.get('phone')?.hasError('pattern')">Teléfono no válido</mat-hint>
         </mat-form-field>
       </div>
@@ -234,10 +246,10 @@
           <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('company')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
-          <mat-hint *ngIf="
+          <mat-error *ngIf="
                 signupForm.get('companyName')?.hasError('required') &&
                 signupForm.get('companyName')?.touched
-              " class="error-message">Nombre de Compañia es requerido</mat-hint>
+              ">Nombre de Compañia es requerido</mat-error>
         </mat-form-field>
       </div>
       <div class="form-group">
@@ -246,15 +258,15 @@
           <mat-select type="text" formControlName="taxCategory" (keydown.enter)="$event.preventDefault()">
             <mat-option *ngFor="let category of ivaCategories" [value]="category">
               {{ category }}
-            </mat-option>
+            </mat-option> 
           </mat-select>
           <button type="button" mat-icon-button aria-label="Clear" (click)="signupForm.get('taxCategory')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
-          <mat-hint *ngIf="
+          <mat-error *ngIf="
                 signupForm.get('taxCategory')?.hasError('required') &&
                 signupForm.get('taxCategory')?.touched
-              " class="error-message">Categoría IVA es requerido</mat-hint>
+              ">Categoría IVA es requerido</mat-error>
         </mat-form-field>
       </div>
       <div class=" w-100 form-group  button-container">

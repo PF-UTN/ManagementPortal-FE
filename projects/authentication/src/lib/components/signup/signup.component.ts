@@ -92,8 +92,22 @@ export class SignupComponent implements OnInit {
   private initForm() {
     this.signupForm = this.fb.group(
       {
-        firstName: ['', [Validators.required, Validators.minLength(2)]],
-        lastName: ['', [Validators.required, Validators.minLength(2)]],
+        firstName: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(2),
+            Validators.maxLength(50),
+          ],
+        ],
+        lastName: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(2),
+            Validators.maxLength(50),
+          ],
+        ],
         email: ['', [Validators.required, Validators.email]],
         password: [
           '',
@@ -101,6 +115,7 @@ export class SignupComponent implements OnInit {
             Validators.required,
             Validators.minLength(8),
             Validators.pattern(PASSWORD_REGEX),
+            Validators.maxLength(255),
           ],
         ],
         confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
@@ -116,7 +131,7 @@ export class SignupComponent implements OnInit {
         documentNumber: ['', Validators.required],
         companyName: ['', Validators.required],
       },
-      { validator: this.passwordMatchValidator },
+      { validators: this.matchPasswords('password', 'confirmPassword') },
     );
 
     this.signupForm.get('documentType')?.valueChanges.subscribe(() => {
@@ -165,14 +180,29 @@ export class SignupComponent implements OnInit {
     }
   }
 
-  passwordMatchValidator(form: FormGroup) {
-    const password = form.get('password');
-    const confirmPassword = form.get('confirmPassword');
-    return password &&
-      confirmPassword &&
-      password.value === confirmPassword.value
-      ? null
-      : { mismatch: true };
+  matchPasswords(passwordKey: string, confirmPasswordKey: string) {
+    return (formGroup: FormGroup) => {
+      const password = formGroup.get(passwordKey);
+      const confirmPassword = formGroup.get(confirmPasswordKey);
+
+      if (!password || !confirmPassword) return null;
+
+      if (!confirmPassword.value) return null;
+
+      const errors = confirmPassword.errors || {};
+
+      if (password.value !== confirmPassword.value) {
+        confirmPassword.setErrors({ ...errors, mismatch: true });
+      } else {
+        if ('mismatch' in errors) {
+          delete errors['mismatch'];
+          const hasOtherErrors = Object.keys(errors).length > 0;
+          confirmPassword.setErrors(hasOtherErrors ? errors : null);
+        }
+      }
+
+      return null;
+    };
   }
 
   toggleVisibility(signal: WritableSignal<boolean>): void {

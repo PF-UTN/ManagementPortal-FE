@@ -186,7 +186,7 @@ describe('SignupComponent', () => {
         expect(passwordControl.hasError('required')).toBeFalsy();
         expect(passwordControl.hasError('pattern')).toBeFalsy();
       });
-      it('should show error message if password and confirmPassword do not match', () => {
+      it('should show error on confirmPassword control if passwords do not match', () => {
         const passwordControl = component.signupForm.controls.password;
         const confirmPasswordControl =
           component.signupForm.controls.confirmPassword;
@@ -194,10 +194,9 @@ describe('SignupComponent', () => {
         passwordControl.setValue(clientData.password);
         confirmPasswordControl.setValue(clientInvalidData.password);
         // Act
-        const form = component.signupForm;
-        form.updateValueAndValidity();
+        component.signupForm.updateValueAndValidity();
         // Assert
-        expect(form.hasError('mismatch')).toBeTruthy();
+        expect(confirmPasswordControl.hasError('mismatch')).toBeTruthy();
       });
     });
     describe('Confirm phone field validation', () => {
