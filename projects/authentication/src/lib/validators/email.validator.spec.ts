@@ -15,4 +15,14 @@ describe('customEmailValidator', () => {
     const control = new FormControl('invalid-email');
     expect(validator(control)).toEqual({ invalidEmail: true });
   });
+
+  it('should return error for email with single character TLD', () => {
+    const control = new FormControl('test@test.c');
+    expect(validator(control)).toEqual({ invalidEmail: true });
+  });
+
+  it('should trim spaces and still validate correctly', () => {
+    const control = new FormControl('  valid@email.com  ');
+    expect(validator(control)).toBeNull();
+  });
 });

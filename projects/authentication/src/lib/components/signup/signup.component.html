@@ -11,13 +11,14 @@
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Nombre</mat-label>
           <input matInput type="text" formControlName="firstName" />
-          <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('firstName')?.reset()">
+          <button type="button" matSuffix mat-icon-button aria-label="Clear"
+            (click)="signupForm.get('firstName')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
           <mat-error *ngIf="
                 signupForm.get('firstName')?.hasError('required') &&
                 signupForm.get('firstName')?.touched
-              " >Nombre es requerido</mat-error>
+              ">Nombre es requerido</mat-error>
           <mat-error *ngIf="signupForm.get('firstName')?.hasError('maxlength') && signupForm.get('firstName')?.touched">
             El valor no puede superar los 50 caracteres.
           </mat-error>
@@ -30,7 +31,8 @@
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Apellido</mat-label>
           <input matInput type="text" formControlName="lastName" />
-          <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('lastName')?.reset()">
+          <button type="button" matSuffix mat-icon-button aria-label="Clear"
+            (click)="signupForm.get('lastName')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
           <mat-error *ngIf="
@@ -55,8 +57,8 @@
           <mat-error *ngIf="
                 signupForm.get('email')?.hasError('required') &&
                 signupForm.get('email')?.touched
-              " >Email es requerido</mat-error>
-          <mat-error *ngIf="signupForm.get('email')?.hasError('email')">Email no válido</mat-error>
+              ">Email es requerido</mat-error>
+          <mat-error *ngIf="signupForm.get('email')?.hasError('invalidEmail')">Email no válido</mat-error>
         </mat-form-field>
       </div>
       <div class="form-group">
@@ -79,15 +81,16 @@
             minúscula y un número</mat-error>
           <mat-error *ngIf="signupForm.get('password')?.hasError('maxlength') && signupForm.get('password')?.touched &&
           !signupForm.get('password')?.hasError('pattern')">
-              No puede tener más de 255 caracteres.
-            </mat-error>            
+            No puede tener más de 255 caracteres.
+          </mat-error>
         </mat-form-field>
       </div>
       <div class="form-group">
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Confirmar Contraseña</mat-label>
           <input matInput [type]="hideConfirmPassword() ? 'password' : 'text'" formControlName="confirmPassword" />
-          <button type="button" mat-icon-button matSuffix (click)="toggleVisibility(hideConfirmPassword)" [attr.aria-label]="
+          <button type="button" mat-icon-button matSuffix (click)="toggleVisibility(hideConfirmPassword)"
+            [attr.aria-label]="
                 hideConfirmPassword() ? 'Mostrar contraseña' : 'Ocultar contraseña'
               " [attr.aria-pressed]="!hideConfirmPassword()">
             <mat-icon>{{
@@ -98,7 +101,7 @@
                 signupForm.get('confirmPassword')?.hasError('required') &&
                 signupForm.get('confirmPassword')?.touched
               ">
-              Confirmar Contraseña es requerida
+            Confirmar Contraseña es requerida
           </mat-error>
           <mat-error *ngIf="signupForm.get('confirmPassword')?.hasError('mismatch')">
             Las contraseñas no coinciden
@@ -113,7 +116,8 @@
               {{ type }}
             </mat-option>
           </mat-select>
-          <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('documentType')?.reset()">
+          <button type="button" matSuffix mat-icon-button aria-label="Clear"
+            (click)="signupForm.get('documentType')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
           <mat-error *ngIf="
@@ -125,8 +129,10 @@
       <div class="form-group">
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Número Documento</mat-label>
-          <input type="text" matInput formControlName="documentNumber" [attr.maxLength]="maxDocumentLength || null" (keydown)="preventNonNumericInput($event)" />
-          <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('documentNumber')?.reset()">
+          <input type="text" matInput formControlName="documentNumber" [attr.maxLength]="maxDocumentLength || null"
+            (keydown)="preventNonNumericInput($event)" />
+          <button type="button" matSuffix mat-icon-button aria-label="Clear"
+            (click)="signupForm.get('documentNumber')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
           <mat-error *ngIf="
@@ -141,45 +147,14 @@
           <input matInput [matDatepicker]="picker" formControlName="birthDate" />
           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
-          <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('birthDate')?.reset()">
+          <button type="button" matSuffix mat-icon-button aria-label="Clear"
+            (click)="signupForm.get('birthDate')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
           <mat-error *ngIf="
                 signupForm.get('birthDate')?.hasError('required') &&
                 signupForm.get('birthDate')?.touched
               ">Fecha de Nacimiento es requerida</mat-error>
-        </mat-form-field>
-      </div>
-      <div class="form-group">
-        <mat-form-field class="w-100" appearance="outline">
-          <mat-label>País</mat-label>
-          <mat-select type="text" formControlName="country">
-            <mat-option value="one">Argentina</mat-option>
-            <mat-option value="two">Brasil</mat-option>
-          </mat-select>
-          <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('country')?.reset()">
-            <mat-icon>close</mat-icon>
-          </button>
-          <mat-error *ngIf="
-                signupForm.get('country')?.hasError('required') &&
-                signupForm.get('country')?.touched
-              ">País es requerido</mat-error>
-        </mat-form-field>
-      </div>
-      <div class="form-group">
-        <mat-form-field class="w-100" appearance="outline">
-          <mat-label>Provincia</mat-label>
-          <mat-select type="text" formControlName="province">
-            <mat-option value="one">Buenos Aires</mat-option>
-            <mat-option value="two">Santa Fe</mat-option>
-          </mat-select>
-          <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('province')?.reset()">
-            <mat-icon>close</mat-icon>
-          </button>
-          <mat-error *ngIf="
-                signupForm.get('province')?.hasError('required') &&
-                signupForm.get('province')?.touched
-              ">Provincia es requerido</mat-error>
         </mat-form-field>
       </div>
       <div class="form-group">
@@ -202,7 +177,8 @@
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Calle</mat-label>
           <input type="text" matInput formControlName="street" />
-          <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('street')?.reset()">
+          <button type="button" matSuffix mat-icon-button aria-label="Clear"
+            (click)="signupForm.get('street')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
           <mat-error *ngIf="
@@ -214,8 +190,9 @@
       <div class="form-group">
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Número de calle</mat-label>
-          <input type="text" matInput formControlName="streetNumber" />
-          <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('streetNumber')?.reset()">
+          <input type="number" matInput formControlName="streetNumber" />
+          <button type="button" matSuffix mat-icon-button aria-label="Clear"
+            (click)="signupForm.get('streetNumber')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
           <mat-error *ngIf="
@@ -228,7 +205,7 @@
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Teléfono</mat-label>
           <span matTextPrefix>+54</span>
-          <input type="tel" matInput formControlName="phone" placeholder="555-555-1234" />
+          <input type="number" matInput formControlName="phone" placeholder="555-555-1234" />
           <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('phone')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
@@ -236,20 +213,7 @@
                 signupForm.get('phone')?.hasError('required') &&
                 signupForm.get('phone')?.touched
               ">Teléfono es requerido</mat-error>
-          <mat-hint *ngIf="signupForm.get('phone')?.hasError('pattern')">Teléfono no válido</mat-hint>
-        </mat-form-field>
-      </div>
-      <div class="form-group">
-        <mat-form-field class="w-100" appearance="outline">
-          <mat-label>Nombre de Compañia</mat-label>
-          <input type="text" matInput formControlName="companyName" />
-          <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('company')?.reset()">
-            <mat-icon>close</mat-icon>
-          </button>
-          <mat-error *ngIf="
-                signupForm.get('companyName')?.hasError('required') &&
-                signupForm.get('companyName')?.touched
-              ">Nombre de Compañia es requerido</mat-error>
+          <mat-error *ngIf="signupForm.get('phone')?.hasError('pattern')">Teléfono no válido</mat-error>
         </mat-form-field>
       </div>
       <div class="form-group">
@@ -258,20 +222,38 @@
           <mat-select type="text" formControlName="taxCategory" (keydown.enter)="$event.preventDefault()">
             <mat-option *ngFor="let category of ivaCategories" [value]="category">
               {{ category }}
-            </mat-option> 
+            </mat-option>
           </mat-select>
-          <button type="button" mat-icon-button aria-label="Clear" (click)="signupForm.get('taxCategory')?.reset()">
+          <button *ngIf="signupForm.get('taxCategory')?.value" mat-icon-button matSuffix type="button"
+            aria-label="Clear" (click)="signupForm.get('taxCategory')?.reset()">
             <mat-icon>close</mat-icon>
           </button>
           <mat-error *ngIf="
-                signupForm.get('taxCategory')?.hasError('required') &&
-                signupForm.get('taxCategory')?.touched
-              ">Categoría IVA es requerido</mat-error>
+              signupForm.get('taxCategory')?.hasError('required') &&
+              signupForm.get('taxCategory')?.touched
+            ">
+            Categoría IVA es requerido
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="form-group">
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-label>Nombre de Compañia</mat-label>
+          <input type="text" matInput formControlName="companyName" />
+          <button type="button" matSuffix mat-icon-button aria-label="Clear"
+            (click)="signupForm.get('company')?.reset()">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-error *ngIf="
+                signupForm.get('companyName')?.hasError('required') &&
+                signupForm.get('companyName')?.touched
+              ">Nombre de Compañia es requerido</mat-error>
         </mat-form-field>
       </div>
       <div class=" w-100 form-group  button-container">
-        <mp-button type="primary" [disabled]="signupForm.invalid || isSubmitting()" (onClick)="onSubmit()">{{ isSubmitting() ? 'Registrando...' : 'Registrar' }}</mp-button>
-      </div> 
+        <mp-button type="primary" [disabled]="signupForm.invalid || isSubmitting()" (onClick)="onSubmit()">{{
+          isSubmitting() ? 'Registrando...' : 'Registrar' }}</mp-button>
+      </div>
     </form>
   </div>
 </div>

@@ -9,8 +9,6 @@ export const mockClient: Client = {
   confirmPassword: 'Password123',
   phone: '123456789',
   birthDate: new Date('1990-01-01'),
-  country: 'Argentina',
-  province: 'Santa Fe',
   town: 'Rosario',
   street: 'Calle Falsa',
   streetNumber: 123,

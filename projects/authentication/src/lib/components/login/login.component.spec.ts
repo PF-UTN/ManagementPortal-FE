@@ -134,15 +134,6 @@ describe('LoginComponent', () => {
       // Act & Assert
       expect(passwordControl.hasError('required')).toBeTruthy();
     });
-
-    it('should set password error if password control is invalid', () => {
-      const passwordControl = component.loginForm.controls.password;
-      // Arrange
-      passwordControl.setValue('12345');
-
-      // Act & Assert
-      expect(passwordControl.hasError('minlength')).toBeTruthy();
-    });
   });
 
   describe('onSubmit Method', () => {

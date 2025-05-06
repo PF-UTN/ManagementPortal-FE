@@ -141,14 +141,14 @@ describe('SignupComponent', () => {
         // Arrange
         emailControl.setValue('invalid-email');
         // Act & Assert
-        expect(emailControl.hasError('email')).toBeTruthy();
+        expect(emailControl.hasError('invalidEmail')).toBeTruthy();
       });
       it('should not set email error if email control is valid', () => {
         const emailControl = component.signupForm.controls.email;
         // Arrange
         emailControl.setValue(clientData.email);
         // Act & Assert
-        expect(emailControl.hasError('email')).toBeFalsy();
+        expect(emailControl.hasError('invalidEmail')).toBeFalsy();
         expect(emailControl.hasError('required')).toBeFalsy();
       });
     });
@@ -243,39 +243,6 @@ describe('SignupComponent', () => {
         birthdateControl.setValue(clientData.birthDate);
         // Act & Assert
         expect(birthdateControl.hasError('required')).toBeFalsy();
-      });
-    });
-
-    describe('Country field validation', () => {
-      it('should set country error if country control is empty', () => {
-        const countryControl = component.signupForm.controls.country;
-        // Arrange
-        countryControl.setValue('');
-        // Act & Assert
-        expect(countryControl.hasError('required')).toBeTruthy();
-      });
-      it('should not set country error if country control is valid', () => {
-        const countryControl = component.signupForm.controls.country;
-        // Arrange
-        countryControl.setValue(clientData.country);
-        // Act & Assert
-        expect(countryControl.hasError('required')).toBeFalsy();
-      });
-    });
-    describe('Province field validation', () => {
-      it('should set province error if province control is empty', () => {
-        const provinceControl = component.signupForm.controls.province;
-        // Arrange
-        provinceControl.setValue('');
-        // Act & Assert
-        expect(provinceControl.hasError('required')).toBeTruthy();
-      });
-      it('should not set province error if province control is valid', () => {
-        const provinceControl = component.signupForm.controls.province;
-        // Arrange
-        provinceControl.setValue(clientData.province);
-        // Act & Assert
-        expect(provinceControl.hasError('required')).toBeFalsy();
       });
     });
     describe('Town fields validation', () => {
@@ -404,8 +371,6 @@ describe('SignupComponent', () => {
         );
         component.signupForm.controls.phone.setValue(clientData.phone);
         component.signupForm.controls.birthDate.setValue(clientData.birthDate);
-        component.signupForm.controls.country.setValue(clientData.country);
-        component.signupForm.controls.province.setValue(clientData.province);
         component.signupForm.controls.town.setValue(clientData.town);
         component.signupForm.controls.street.setValue(clientData.street);
         component.signupForm.controls.streetNumber.setValue(
