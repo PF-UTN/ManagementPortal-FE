@@ -238,7 +238,7 @@ export class SignupComponent implements OnInit {
         .signUpAsync(client)
         .pipe(finalize(() => this.isSubmitting.set(false)))
         .subscribe({
-          next: () => this.router.navigate(['/login']),
+          next: () => void this.router.navigate(['/login']),
           error: () => {},
         });
     }
