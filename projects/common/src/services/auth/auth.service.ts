@@ -37,9 +37,7 @@ export class AuthService {
   }
 
   signUpAsync(client: Client): Observable<AuthResponse> {
-    return this.http
-      .post<AuthResponse>(`${this.apiUrl}/signup`, client)
-      .pipe(tap((response) => this.setToken(response.access_token)));
+    return this.http.post<AuthResponse>(`${this.apiUrl}/signup`, client);
   }
 
   logInAsync(credential: User): Observable<AuthResponse> {

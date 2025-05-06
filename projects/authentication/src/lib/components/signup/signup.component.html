@@ -78,7 +78,7 @@
               ">Contraseña es requerida</mat-error>
           <mat-error *ngIf="signupForm.get('password')?.hasError('pattern')">Debe contener al menos
             8 caracteres, una letra mayúscula, una
-            minúscula y un número</mat-error>
+            minúscula, un número y un caracter especial</mat-error>
           <mat-error *ngIf="signupForm.get('password')?.hasError('maxlength') && signupForm.get('password')?.touched &&
           !signupForm.get('password')?.hasError('pattern')">
             No puede tener más de 255 caracteres.
@@ -144,7 +144,7 @@
       <div class="form-group">
         <mat-form-field class="w-100" appearance="outline">
           <mat-label>Fecha de Nacimiento</mat-label>
-          <input matInput [matDatepicker]="picker" formControlName="birthDate" />
+          <input matInput [matDatepicker]="picker" formControlName="birthDate" readonly/>
           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker></mat-datepicker>
           <button type="button" matSuffix mat-icon-button aria-label="Clear"
@@ -202,10 +202,10 @@
         </mat-form-field>
       </div>
       <div class="form-group">
-        <mat-form-field class="w-100" appearance="outline">
+        <mat-form-field class="w-100" appearance="outline" (keydown)="preventNonNumericInput($event)">
           <mat-label>Teléfono</mat-label>
           <span matTextPrefix>+54</span>
-          <input type="number" matInput formControlName="phone" placeholder="555-555-1234" />
+          <input type="text" matInput formControlName="phone" placeholder="555-555-1234" />
           <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('phone')?.reset()">
             <mat-icon>close</mat-icon>
           </button>

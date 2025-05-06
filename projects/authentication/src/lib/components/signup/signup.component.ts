@@ -2,7 +2,6 @@ import { AuthService, NavBarService } from '@Common';
 import { ButtonComponent, TitleComponent } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import {
   FormBuilder,
@@ -21,6 +20,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { Router, RouterModule } from '@angular/router';
+import { finalize } from 'rxjs';
 
 import { Client } from '../../../../../common/src/models/client.model';
 import { DocumentType } from '../../constants/documentType.enum';
@@ -234,19 +234,13 @@ export class SignupComponent implements OnInit {
         documentNumber: this.signupForm.controls.documentNumber.value,
         companyName: this.signupForm.controls.companyName.value,
       };
-      this.authService.signUpAsync(client).subscribe({
-        next: () => {
-          this.isSubmitting.set(false);
-          this.router.navigate(['/login']);
-        },
-        error: (error: HttpErrorResponse) => {
-          this.isSubmitting.set(false);
-          console.error('Error al registrar:', error);
-          if (error.status === 400) {
-            console.warn('Detalles del error 400:', error.error);
-          }
-        },
-      });
+      this.authService
+        .signUpAsync(client)
+        .pipe(finalize(() => this.isSubmitting.set(false)))
+        .subscribe({
+          next: () => this.router.navigate(['/login']),
+          error: () => {},
+        });
     }
   }
 }
