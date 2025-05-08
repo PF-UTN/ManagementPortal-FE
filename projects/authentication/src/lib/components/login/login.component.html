@@ -20,8 +20,8 @@
                     <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="loginForm.get('email')?.reset()">
                         <mat-icon>close</mat-icon>
                     </button>
-                    <mat-hint *ngIf="loginForm.get('email')?.hasError('required') && loginForm.get('email')?.touched" class="error-message" >Email es requerido</mat-hint>
-                    <mat-hint *ngIf="loginForm.get('email')?.hasError('invalidEmail') && !loginForm.get('email')?.hasError('required') && loginForm.get('email')?.touched" class="error-message">Email no válido</mat-hint>
+                    <mat-error *ngIf="loginForm.get('email')?.hasError('required') && loginForm.get('email')?.touched">Email es requerido</mat-error>
+                    <mat-error *ngIf="loginForm.get('email')?.hasError('invalidEmail') && !loginForm.get('email')?.hasError('required') && loginForm.get('email')?.touched">Email no válido</mat-error>
                 </mat-form-field>
             </div>
         </div>
@@ -35,7 +35,7 @@
                       [attr.aria-pressed]="!hidePassword()">
                       <mat-icon>{{ hidePassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
                     </button>
-                    <mat-hint *ngIf="loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched" class="error-message">Contraseña es requerida</mat-hint>
+                    <mat-error *ngIf="loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched">Contraseña es requerida</mat-error>
                   </mat-form-field>
             </div>
         </div>
