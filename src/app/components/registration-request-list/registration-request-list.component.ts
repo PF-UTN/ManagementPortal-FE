@@ -12,6 +12,7 @@ import { RegistrationRequestListItem } from '../../models/registration-request-i
 import { RegistrationRequestParams } from '../../models/registration-request-param.model';
 import { RegistrationRequestService } from '../../services/registration-request.service';
 import { ApproveDrawerComponent } from '../approve/approve.component';
+import { RejectDrawerComponent } from '../reject/reject.component';
 
 @Component({
   selector: 'mp-registration-request-list',
@@ -24,6 +25,7 @@ import { ApproveDrawerComponent } from '../approve/approve.component';
     MatButtonModule,
     MatSidenavModule,
     ApproveDrawerComponent,
+    RejectDrawerComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './registration-request-list.component.html',
@@ -63,11 +65,6 @@ export class RegistrationRequestListComponent implements OnInit {
       type: ColumnTypeEnum.ACTIONS,
       actions: [
         {
-          description: 'Ver Detalle',
-          action: (element: RegistrationRequestListItem) =>
-            this.onViewDetail(element),
-        },
-        {
           description: 'Aprobar',
           action: (element: RegistrationRequestListItem) =>
             this.onApproveDrawer(element),
@@ -75,7 +72,7 @@ export class RegistrationRequestListComponent implements OnInit {
         {
           description: 'Rechazar',
           action: (element: RegistrationRequestListItem) =>
-            this.onReject(element),
+            this.onRejectDrawer(element),
         },
       ],
     },
@@ -85,7 +82,8 @@ export class RegistrationRequestListComponent implements OnInit {
   pageIndex: number = 0;
   pageSize: number = 10;
   totalItems: number = 0;
-  isDrawerOpen: boolean = false;
+  isDrawerApproveOpen: boolean = false;
+  isDrawerRejectOpen: boolean = false;
   selectedRequest: RegistrationRequestListItem;
 
   constructor(
@@ -132,7 +130,7 @@ export class RegistrationRequestListComponent implements OnInit {
 
   onApproveDrawer(request: RegistrationRequestListItem): void {
     this.selectedRequest = request;
-    this.isDrawerOpen = true;
+    this.isDrawerApproveOpen = true;
     setTimeout(() => {
       const drawerElement = document.querySelector('.drawer-container__drawer');
       if (drawerElement) {
@@ -142,11 +140,19 @@ export class RegistrationRequestListComponent implements OnInit {
   }
 
   closeDrawer(): void {
-    this.isDrawerOpen = false;
+    this.isDrawerApproveOpen = false;
+    this.isDrawerRejectOpen = false;
   }
 
-  onReject(request: RegistrationRequestListItem): void {
-    console.log('Rechazando solicitud:', request);
+  onRejectDrawer(request: RegistrationRequestListItem): void {
+    this.selectedRequest = request;
+    this.isDrawerRejectOpen = true;
+    setTimeout(() => {
+      const drawerElement = document.querySelector('.drawer-container__drawer');
+      if (drawerElement) {
+        (drawerElement as HTMLElement).focus();
+      }
+    });
   }
 
   getRowClass = (row: RegistrationRequestListItem): string => {
