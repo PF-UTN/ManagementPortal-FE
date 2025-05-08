@@ -20,12 +20,15 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { Router, RouterModule } from '@angular/router';
+import { finalize } from 'rxjs';
 
 import { Client } from '../../../../../common/src/models/client.model';
 import { DocumentType } from '../../constants/documentType.enum';
 import { IvaCategory } from '../../constants/ivaCategory.enum';
+import { customEmailValidator } from '../../validators';
 
-const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+const PASSWORD_REGEX =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,}$/;
 const PHONE_REGEX = /^[+]?[0-9]{1,4}?[-.\\s]?([0-9]{1,3}[-.\\s]?){1,4}$/;
 
 @Component({
@@ -59,8 +62,6 @@ export class SignupComponent implements OnInit {
     confirmPassword: FormControl<string>;
     phone: FormControl<string>;
     birthDate: FormControl<Date>;
-    country: FormControl<string>;
-    province: FormControl<string>;
     town: FormControl<string>;
     street: FormControl<string>;
     streetNumber: FormControl<number>;
@@ -92,22 +93,42 @@ export class SignupComponent implements OnInit {
   private initForm() {
     this.signupForm = this.fb.group(
       {
-        firstName: ['', [Validators.required, Validators.minLength(2)]],
-        lastName: ['', [Validators.required, Validators.minLength(2)]],
-        email: ['', [Validators.required, Validators.email]],
+        firstName: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(2),
+            Validators.maxLength(50),
+          ],
+        ],
+        lastName: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(2),
+            Validators.maxLength(50),
+          ],
+        ],
+        email: ['', [Validators.required, customEmailValidator()]],
         password: [
           '',
           [
             Validators.required,
             Validators.minLength(8),
             Validators.pattern(PASSWORD_REGEX),
+            Validators.maxLength(255),
           ],
         ],
         confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
-        phone: ['', [Validators.required, Validators.pattern(PHONE_REGEX)]],
+        phone: [
+          '',
+          [
+            Validators.required,
+            Validators.pattern(PHONE_REGEX),
+            Validators.maxLength(20),
+          ],
+        ],
         birthDate: ['', Validators.required],
-        country: ['', Validators.required],
-        province: ['', Validators.required],
         town: ['', Validators.required],
         street: ['', Validators.required],
         streetNumber: ['', Validators.required],
@@ -116,7 +137,7 @@ export class SignupComponent implements OnInit {
         documentNumber: ['', Validators.required],
         companyName: ['', Validators.required],
       },
-      { validator: this.passwordMatchValidator },
+      { validators: this.matchPasswords('password', 'confirmPassword') },
     );
 
     this.signupForm.get('documentType')?.valueChanges.subscribe(() => {
@@ -165,14 +186,29 @@ export class SignupComponent implements OnInit {
     }
   }
 
-  passwordMatchValidator(form: FormGroup) {
-    const password = form.get('password');
-    const confirmPassword = form.get('confirmPassword');
-    return password &&
-      confirmPassword &&
-      password.value === confirmPassword.value
-      ? null
-      : { mismatch: true };
+  matchPasswords(passwordKey: string, confirmPasswordKey: string) {
+    return (formGroup: FormGroup) => {
+      const password = formGroup.get(passwordKey);
+      const confirmPassword = formGroup.get(confirmPasswordKey);
+
+      if (!password || !confirmPassword) return null;
+
+      if (!confirmPassword.value) return null;
+
+      const errors = confirmPassword.errors || {};
+
+      if (password.value !== confirmPassword.value) {
+        confirmPassword.setErrors({ ...errors, mismatch: true });
+      } else {
+        if ('mismatch' in errors) {
+          delete errors['mismatch'];
+          const hasOtherErrors = Object.keys(errors).length > 0;
+          confirmPassword.setErrors(hasOtherErrors ? errors : null);
+        }
+      }
+
+      return null;
+    };
   }
 
   toggleVisibility(signal: WritableSignal<boolean>): void {
@@ -190,8 +226,6 @@ export class SignupComponent implements OnInit {
         confirmPassword: this.signupForm.controls.confirmPassword.value,
         phone: this.signupForm.controls.phone.value,
         birthDate: this.signupForm.controls.birthDate.value,
-        country: this.signupForm.controls.country.value,
-        province: this.signupForm.controls.province.value,
         town: this.signupForm.controls.town.value,
         street: this.signupForm.controls.street.value,
         streetNumber: this.signupForm.controls.streetNumber.value,
@@ -200,15 +234,13 @@ export class SignupComponent implements OnInit {
         documentNumber: this.signupForm.controls.documentNumber.value,
         companyName: this.signupForm.controls.companyName.value,
       };
-      this.authService.signUpAsync(client).subscribe({
-        next: () => {
-          this.isSubmitting.set(false);
-          this.router.navigate(['/login']);
-        },
-        error: () => {
-          this.isSubmitting.set(false);
-        },
-      });
+      this.authService
+        .signUpAsync(client)
+        .pipe(finalize(() => this.isSubmitting.set(false)))
+        .subscribe({
+          next: () => void this.router.navigate(['/login']),
+          error: () => {},
+        });
     }
   }
 }

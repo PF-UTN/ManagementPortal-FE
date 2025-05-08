@@ -11,7 +11,7 @@ describe('RegistrationRequestService', () => {
   let service: RegistrationRequestService;
   let httpMock: HttpTestingController;
 
-  const mockResponse = {
+  const mockSearchResponse = {
     total: 2,
     results: [
       {
@@ -41,6 +41,10 @@ describe('RegistrationRequestService', () => {
     ],
   };
 
+  const mockResponse = {
+    message: 'Operación realizada con éxito.',
+  };
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
@@ -59,7 +63,7 @@ describe('RegistrationRequestService', () => {
     expect(service).toBeTruthy();
   });
 
-  describe('fetchRegistrationRequests', () => {
+  describe('postSearchRegistrationRequest', () => {
     it('should send a POST request with the correct parameters and return data', () => {
       // Arrange
       const params: RegistrationRequestParams = {
@@ -72,18 +76,14 @@ describe('RegistrationRequestService', () => {
       // Act
       service.postSearchRegistrationRequest(params).subscribe((response) => {
         // Assert
-        expect(response).toEqual(mockResponse);
+        expect(response).toEqual(mockSearchResponse);
       });
-
-      // Intercepta la solicitud HTTP
       const req = httpMock.expectOne(
         'https://dev-management-portal-be.vercel.app/registration-request/search',
       );
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(params);
-
-      // Responde con datos simulados
-      req.flush(mockResponse);
+      req.flush(mockSearchResponse);
     });
 
     it('should handle HTTP errors', () => {
@@ -104,13 +104,51 @@ describe('RegistrationRequestService', () => {
           expect(error.error).toBe(mockError);
         },
       });
-
-      // Intercepta la solicitud HTTP y simula un error
       const req = httpMock.expectOne(
         'https://dev-management-portal-be.vercel.app/registration-request/search',
       );
       expect(req.request.method).toBe('POST');
       req.error(mockError);
+    });
+  });
+
+  describe('approveRegistrationRequest', () => {
+    it('should send a POST request to approve a registration request', () => {
+      // Arrange
+      const id = 1;
+      const note = 'Aprobado por el administrador';
+
+      // Act
+      service.approveRegistrationRequest(id, note).subscribe((response) => {
+        // Assert
+        expect(response).toEqual(mockResponse);
+      });
+      const req = httpMock.expectOne(
+        `https://dev-management-portal-be.vercel.app/registration-request/${id}/approve`,
+      );
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({ note });
+      req.flush(mockResponse);
+    });
+  });
+
+  describe('rejectRegistrationRequest', () => {
+    it('should send a POST request to reject a registration request', () => {
+      // Arrange
+      const id = 1;
+      const note = 'Rechazado por falta de documentación';
+
+      // Act
+      service.rejectRegistrationRequest(id, note).subscribe((response) => {
+        // Assert
+        expect(response).toEqual(mockResponse);
+      });
+      const req = httpMock.expectOne(
+        `https://dev-management-portal-be.vercel.app/registration-request/${id}/reject`,
+      );
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual({ note });
+      req.flush(mockResponse);
     });
   });
 });
