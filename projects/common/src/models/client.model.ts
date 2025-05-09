@@ -6,8 +6,6 @@ export interface Client {
   confirmPassword: string;
   phone: string;
   birthDate: Date;
-  country: string;
-  province: string;
   town: string;
   street: string;
   streetNumber: number;
