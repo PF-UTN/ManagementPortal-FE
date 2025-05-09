@@ -45,9 +45,10 @@
   </table>
 
   <mat-paginator *ngIf="tableDataSource.data?.length" 
-    [length]="itemsNumber" 
-    [pageSize]="pageSize" 
-    [pageIndex]="pageIndex" 
+    [length]="itemsNumber"
+    [pageSize]="pageSize"
+    [pageIndex]="pageIndex"
+    [pageSizeOptions]="[5, 10, 20, 50]" 
     (page)="onPageChange($event)">
   </mat-paginator>
 </div>

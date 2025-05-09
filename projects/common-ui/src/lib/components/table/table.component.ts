@@ -17,6 +17,7 @@ import {
   MatPaginator,
   MatPaginatorIntl,
   MatPaginatorModule,
+  PageEvent,
 } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Observable } from 'rxjs';
@@ -44,9 +45,9 @@ export class TableComponent<T> implements OnInit {
   @Input() getRowClass: (row: T) => string = () => '';
   @Input() noDataMessage: string = 'No hay datos disponibles';
   @Input() isLoading: boolean = false;
-  @Input() itemsNumber: number;
-  @Input() pageSize: number;
-  @Input() pageIndex: number;
+  @Input() itemsNumber: number = 0;
+  @Input() pageSize: number = 10;
+  @Input() pageIndex: number = 0;
   @Output() pageChange = new EventEmitter<{
     pageIndex: number;
     pageSize: number;
@@ -55,7 +56,7 @@ export class TableComponent<T> implements OnInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private readonly paginatorIntl: MatPaginatorIntl) {
+  constructor(private paginatorIntl: MatPaginatorIntl) {
     this.paginatorIntl.itemsPerPageLabel = 'Registros por página';
     this.paginatorIntl.getRangeLabel = (page, pageSize, length) =>
       `${page * pageSize + 1} – ${Math.min((page + 1) * pageSize, length)} de ${length}`;
@@ -75,11 +76,18 @@ export class TableComponent<T> implements OnInit {
     });
   }
 
+  ngAfterViewInit() {
+    this.tableDataSource.paginator = this.paginator;
+  }
+
   onActionClick(action: string, row: T) {
     this.actionClicked.emit({ action, row });
   }
 
-  onPageChange(event: { pageIndex: number; pageSize: number }) {
-    this.pageChange.emit(event);
+  onPageChange(event: PageEvent): void {
+    this.pageChange.emit({
+      pageIndex: event.pageIndex,
+      pageSize: event.pageSize,
+    });
   }
 }
