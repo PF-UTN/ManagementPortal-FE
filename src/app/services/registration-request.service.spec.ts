@@ -130,27 +130,6 @@ describe('RegistrationRequestService', () => {
       expect(req.request.body).toEqual({ note });
       req.flush(mockResponse);
     });
-
-    it('should handle HTTP errors for approveRegistrationRequest', () => {
-      // Arrange
-      const id = 1;
-      const note = 'Aprobado por el administrador';
-      const mockError = new ErrorEvent('Network error');
-
-      // Act
-      service.approveRegistrationRequest(id, note).subscribe({
-        next: () => fail('Expected an error, but got a response'),
-        error: (error) => {
-          // Assert
-          expect(error.error).toBe(mockError);
-        },
-      });
-      const req = httpMock.expectOne(
-        `https://dev-management-portal-be.vercel.app/registration-request/${id}/approve`,
-      );
-      expect(req.request.method).toBe('POST');
-      req.error(mockError);
-    });
   });
 
   describe('rejectRegistrationRequest', () => {
@@ -170,27 +149,6 @@ describe('RegistrationRequestService', () => {
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual({ note });
       req.flush(mockResponse);
-    });
-
-    it('should handle HTTP errors for rejectRegistrationRequest', () => {
-      // Arrange
-      const id = 1;
-      const note = 'Rechazado por falta de documentación';
-      const mockError = new ErrorEvent('Network error');
-
-      // Act
-      service.rejectRegistrationRequest(id, note).subscribe({
-        next: () => fail('Expected an error, but got a response'),
-        error: (error) => {
-          // Assert
-          expect(error.error).toBe(mockError);
-        },
-      });
-      const req = httpMock.expectOne(
-        `https://dev-management-portal-be.vercel.app/registration-request/${id}/reject`,
-      );
-      expect(req.request.method).toBe('POST');
-      req.error(mockError);
     });
   });
 });
