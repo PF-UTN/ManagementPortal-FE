@@ -3,7 +3,6 @@ import { ActivatedRouteSnapshot, Router, UrlTree } from '@angular/router';
 import { mockDeep, DeepMockProxy } from 'jest-mock-extended';
 
 import { RoleGuard } from './role.guard';
-import { RoleHierarchy } from '../constants/role-hierarchy.config';
 import { AuthService } from '../services';
 
 describe('RoleGuard', () => {
@@ -62,9 +61,8 @@ describe('RoleGuard', () => {
 
     it('should allow access if user has an allowed role in hierarchy', () => {
       // Arrange
-      routeSnapshot.data = { admittedRoles: ['admin'] };
-      authService.userRole = 'superadmin';
-      RoleHierarchy['superadmin'] = ['superadmin', 'admin'];
+      jest.replaceProperty(authService, 'userRole', 'admin');
+      jest.spyOn(authService, 'hasAccess').mockReturnValue(true);
 
       // Act
       const result = guard.canActivate(routeSnapshot);
@@ -75,9 +73,8 @@ describe('RoleGuard', () => {
 
     it('should redirect to unauthorized if user role is not allowed', () => {
       // Arrange
-      routeSnapshot.data = { admittedRoles: ['admin'] };
-      authService.userRole = 'user';
-      RoleHierarchy['user'] = ['user'];
+      jest.replaceProperty(authService, 'userRole', 'admin');
+      jest.spyOn(authService, 'hasAccess').mockReturnValue(false);
 
       const mockUnauthorizedTree = {} as UrlTree;
       jest.spyOn(router, 'createUrlTree').mockReturnValue(mockUnauthorizedTree);

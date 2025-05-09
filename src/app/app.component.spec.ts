@@ -1,5 +1,7 @@
 import { NavBarService } from '@Common';
 
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { mockDeep } from 'jest-mock-extended';
@@ -16,6 +18,8 @@ describe('AppComponent', () => {
       providers: [
         { provide: NavBarService, useValue: mockDeep<NavBarService>() },
         { provide: ActivatedRoute, useValue: mockDeep<ActivatedRoute>() },
+        provideHttpClient(),
+        provideHttpClientTesting(),
       ],
     });
 
