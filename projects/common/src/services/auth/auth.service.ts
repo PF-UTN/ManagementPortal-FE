@@ -4,6 +4,7 @@ import { jwtDecode } from 'jwt-decode';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
+import { RoleHierarchy } from '../../constants';
 import { AuthResponse } from '../../models/auth-response.model';
 import { Client } from '../../models/client.model';
 import { TokenPayload } from '../../models/token-payload.model';
@@ -48,6 +49,22 @@ export class AuthService {
           this.setToken(response.access_token);
         }),
       );
+  }
+
+  hasAccess(allowedRoles: string[]): boolean {
+    if (allowedRoles.length === 0) {
+      return true;
+    }
+
+    if (!this.userRole) {
+      return false;
+    }
+
+    const userAccessibleRoles = RoleHierarchy[this.userRole];
+
+    return allowedRoles.some((allowedRole) =>
+      userAccessibleRoles.includes(allowedRole),
+    );
   }
 
   resetPasswordAsync(email: string): Observable<void> {

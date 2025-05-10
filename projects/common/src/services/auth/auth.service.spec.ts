@@ -7,6 +7,7 @@ import { TestBed } from '@angular/core/testing';
 import * as JwtDecodeModule from 'jwt-decode';
 
 import { AuthService } from './auth.service';
+import { RoleHierarchy } from '../../constants';
 import {
   mockClient,
   mockUser,
@@ -79,5 +80,60 @@ describe('AuthService', () => {
     );
 
     req.flush(mockAuthResponse);
+  });
+
+  describe('hasAccess', () => {
+    beforeEach(() => {
+      Object.assign(RoleHierarchy, {
+        admin: ['admin', 'user', 'guest'],
+        guest: ['guest'],
+      });
+    });
+
+    it('should return true if allowedRoles is empty', () => {
+      // Arrange
+      const allowedRoles: string[] = [];
+
+      // Act
+      const result = service.hasAccess(allowedRoles);
+
+      // Assert
+      expect(result).toBe(true);
+    });
+
+    it('should return false if user has not set user role', () => {
+      // Arrange
+      const allowedRoles = ['admin', 'user'];
+
+      // Act
+      const result = service.hasAccess(allowedRoles);
+
+      // Assert
+      expect(result).toBe(false);
+    });
+
+    it('should return true if user has access to the allowed roles', () => {
+      // Arrange
+      service.userRole = 'admin';
+      const allowedRoles = ['admin', 'user'];
+
+      // Act
+      const result = service.hasAccess(allowedRoles);
+
+      // Assert
+      expect(result).toBe(true);
+    });
+
+    it('should return false if user does not have access to the allowed roles', () => {
+      // Arrange
+      service.userRole = 'guest';
+      const allowedRoles = ['admin', 'user'];
+
+      // Act
+      const result = service.hasAccess(allowedRoles);
+
+      // Assert
+      expect(result).toBe(false);
+    });
   });
 });

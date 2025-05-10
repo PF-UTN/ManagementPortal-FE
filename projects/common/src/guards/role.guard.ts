@@ -7,7 +7,6 @@ import {
   MaybeAsync,
 } from '@angular/router';
 
-import { RoleHierarchy } from '../constants/role-hierarchy.config';
 import { AuthService } from '../services';
 
 @Injectable({
@@ -30,11 +29,7 @@ export class RoleGuard implements CanActivate {
       return this.router.createUrlTree(['/login']);
     }
 
-    const userAccessibleRoles = RoleHierarchy[this.authService.userRole];
-
-    const hasAccess = allowedRoles.some((allowedRole) => {
-      return userAccessibleRoles.includes(allowedRole);
-    });
+    const hasAccess = this.authService.hasAccess(allowedRoles);
 
     if (!hasAccess) {
       return this.router.createUrlTree(['/unauthorized']);
