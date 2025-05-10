@@ -135,4 +135,138 @@ describe('LateralDrawerService', () => {
       expect(() => service.close()).not.toThrow();
     });
   });
+
+  describe('updateConfig', () => {
+    it('should throw an error if the drawer is not initialized', () => {
+      // Arrange
+      const newConfig = { title: 'Updated Title' };
+
+      // Act & Assert
+      expect(() => service.updateConfig(newConfig)).toThrow(
+        'Drawer is not initialized or no config is set. Ensure the drawer is open before updating the config.',
+      );
+    });
+
+    it('should update the title in the config', () => {
+      // Arrange
+      const drawerMock = mockDeep<LateralDrawerComponent>();
+      service.setDrawer(drawerComponent, container);
+      jest.spyOn(container, 'createComponent').mockReturnValue(componentRef);
+      jest.spyOn(container.injector, 'get').mockReturnValue(drawerMock);
+
+      const initialConfig: LateralDrawerConfig = {
+        title: 'Initial Title',
+        footer: {
+          firstButton: {
+            text: 'Close',
+            click: jest.fn(),
+          },
+        },
+      };
+
+      const newConfig = { title: 'Updated Title' };
+
+      // Act
+      service.open(DummyComponent, {}, initialConfig);
+      service.updateConfig(newConfig);
+
+      // Assert
+      expect(drawerMock.config.title).toBe('Updated Title');
+    });
+
+    it('should preserve the footer when updating the title', () => {
+      // Arrange
+      const drawerMock = mockDeep<LateralDrawerComponent>();
+      service.setDrawer(drawerComponent, container);
+      jest.spyOn(container, 'createComponent').mockReturnValue(componentRef);
+      jest.spyOn(container.injector, 'get').mockReturnValue(drawerMock);
+
+      const initialConfig: LateralDrawerConfig = {
+        title: 'Initial Title',
+        footer: {
+          firstButton: {
+            text: 'Close',
+            click: jest.fn(),
+          },
+        },
+      };
+
+      const newConfig = { title: 'Updated Title' };
+
+      // Act
+      service.open(DummyComponent, {}, initialConfig);
+      service.updateConfig(newConfig);
+
+      // Assert
+      expect(drawerMock.config.footer).toEqual(initialConfig.footer);
+    });
+
+    it('should update the footer button text', () => {
+      // Arrange
+      const drawerMock = mockDeep<LateralDrawerComponent>();
+      service.setDrawer(drawerComponent, container);
+      jest.spyOn(container, 'createComponent').mockReturnValue(componentRef);
+      jest.spyOn(container.injector, 'get').mockReturnValue(drawerMock);
+
+      const initialConfig: LateralDrawerConfig = {
+        title: 'Initial Title',
+        footer: {
+          firstButton: {
+            text: 'Close',
+            click: jest.fn(),
+          },
+        },
+      };
+
+      const newConfig = {
+        footer: {
+          firstButton: {
+            text: 'Updated Close',
+            click: jest.fn(),
+          },
+        },
+      };
+
+      // Act
+      service.open(DummyComponent, {}, initialConfig);
+      service.updateConfig(newConfig);
+
+      // Assert
+      expect(drawerMock.config.footer.firstButton.text).toBe('Updated Close');
+    });
+
+    it('should preserve the title when updating the footer', () => {
+      // Arrange
+      const drawerMock = mockDeep<LateralDrawerComponent>();
+      service.setDrawer(drawerComponent, container);
+      jest.spyOn(container, 'createComponent').mockReturnValue(componentRef);
+      jest.spyOn(container.injector, 'get').mockReturnValue(drawerMock);
+
+      const initialConfig: LateralDrawerConfig = {
+        title: 'Initial Title',
+        footer: {
+          firstButton: {
+            text: 'Close',
+            click: jest.fn(),
+          },
+        },
+      };
+
+      const newConfig = {
+        footer: {
+          firstButton: {
+            text: 'Updated Close',
+            click: jest.fn(),
+          },
+        },
+      };
+
+      // Act
+      service.open(DummyComponent, {}, initialConfig);
+      service.updateConfig(newConfig);
+
+      // Assert
+      expect(drawerMock.config.title).toBe('Initial Title');
+    });
+  });
 });

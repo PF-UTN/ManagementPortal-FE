@@ -6,7 +6,9 @@
           <mp-title>{{ config.title }}</mp-title>
         </div>
         <div class="drawer-content__header__icon">
-          <span class="material-icons close-icon drawer-content__header__icon__close" (click)="closeDrawer()">close</span>
+          <span class="material-icons close-icon drawer-content__header__icon__close" 
+            (click)="closeDrawer()"
+            tabindex="0">close</span>
         </div>
       </div>
       <div class="drawer-content__body">
@@ -15,24 +17,19 @@
       <div class="drawer-content__footer" *ngIf="config.footer">
         <div class="row">
           <div *ngIf="config.footer.secondButton" class="col">
-            <mp-button
-              [disabled]="config.footer.secondButton.disabled ?? false"
-              type="secondary"
-              (click)="config.footer.secondButton.click()"
-            >
+            <mp-button [disabled]="config.footer.secondButton.disabled ?? false" type="secondary"
+              (click)="config.footer.secondButton.click()">
               {{ config.footer.secondButton.text }}
             </mp-button>
           </div>
           <div class="col">
-            <mp-button
-              [disabled]="config.footer.firstButton.disabled ?? false"
-              (click)="config.footer.firstButton.click()"
-            >
+            <mp-button [disabled]="config.footer.firstButton.disabled ?? false"
+              (click)="config.footer.firstButton.click()">
               {{ config.footer.firstButton.text }}
             </mp-button>
           </div>
         </div>
       </div>
-    </div>    
+    </div>
   </mat-drawer>
 </mat-drawer-container>

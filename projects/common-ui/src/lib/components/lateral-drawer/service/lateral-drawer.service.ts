@@ -15,6 +15,8 @@ import { LateralDrawerConfig } from '../model/lateral-drawer-config.model';
 export class LateralDrawerService {
   private drawer: MatDrawer;
   private container: ViewContainerRef;
+  private drawerComponent: LateralDrawerComponent;
+
   config: LateralDrawerConfig;
 
   setDrawer(drawer: MatDrawer, container: ViewContainerRef): void {
@@ -44,13 +46,25 @@ export class LateralDrawerService {
 
     if (config) {
       this.config = config;
-      const drawerComponent = this.container.injector.get(
+      this.drawerComponent = this.container.injector.get(
         LateralDrawerComponent,
       );
-      drawerComponent.config = config;
+      this.drawerComponent.config = config;
     }
 
     this.drawer.open();
+  }
+
+  updateConfig(newConfig: Partial<LateralDrawerConfig>): void {
+    if (!this.config || !this.drawerComponent) {
+      throw new Error(
+        'Drawer is not initialized or no config is set. Ensure the drawer is open before updating the config.',
+      );
+    }
+
+    this.config = { ...this.config, ...newConfig };
+
+    this.drawerComponent.config = this.config;
   }
 
   close(): void {
