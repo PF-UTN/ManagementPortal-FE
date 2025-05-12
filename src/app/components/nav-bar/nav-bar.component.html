@@ -10,6 +10,7 @@
       <nav>
         <ng-container *ngFor="let item of items">
           <div
+            *ngIf="item.shouldRender"
             [routerLink]="'/' + item.route"
             routerLinkActive="active-link"
             class="container__body__menu__item"
