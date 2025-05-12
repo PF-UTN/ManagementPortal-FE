@@ -10,13 +10,12 @@ import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatSidenavModule } from '@angular/material/sidenav';
 import { BehaviorSubject } from 'rxjs';
 
 import { RegistrationRequestListItem } from '../../models/registration-request-item.model';
 import { RegistrationRequestParams } from '../../models/registration-request-param.model';
 import { RegistrationRequestService } from '../../services/registration-request.service';
-import { ApproveDrawerComponent } from '../approve/approve.component';
+import { ApproveLateralDrawerComponent } from '../approve-lateral-drawer/approve-lateral-drawer.component';
 import { RejectLateralDrawerComponent } from '../reject-lateral-drawer/reject-lateral-drawer.component';
 
 @Component({
@@ -28,8 +27,7 @@ import { RejectLateralDrawerComponent } from '../reject-lateral-drawer/reject-la
     MatIconModule,
     MatMenuModule,
     MatButtonModule,
-    MatSidenavModule,
-    ApproveDrawerComponent,
+    ApproveLateralDrawerComponent,
     RejectLateralDrawerComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -135,14 +133,25 @@ export class RegistrationRequestListComponent implements OnInit {
   }
 
   onApproveDrawer(request: RegistrationRequestListItem): void {
-    this.selectedRequest = request;
-    this.isDrawerApproveOpen = true;
-    setTimeout(() => {
-      const drawerElement = document.querySelector('.drawer-container__drawer');
-      if (drawerElement) {
-        (drawerElement as HTMLElement).focus();
-      }
-    });
+    this.lateralDrawerService.open(
+      ApproveLateralDrawerComponent,
+      { data: request },
+      {
+        title: 'Aprobar Solicitud de Registro',
+        footer: {
+          firstButton: {
+            text: 'Confirmar',
+            click: () => {},
+          },
+          secondButton: {
+            text: 'Cancelar',
+            click: () => {
+              this.lateralDrawerService.close();
+            },
+          },
+        },
+      },
+    );
   }
 
   closeDrawer(): void {
