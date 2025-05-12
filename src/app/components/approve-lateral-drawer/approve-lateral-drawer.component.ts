@@ -59,7 +59,7 @@ export class ApproveLateralDrawerComponent extends LateralDrawerContainer {
           duration: 3000,
         });
         this.closeDrawer();
-        this.emitClose();
+        this.emitSuccess();
       });
   }
 }

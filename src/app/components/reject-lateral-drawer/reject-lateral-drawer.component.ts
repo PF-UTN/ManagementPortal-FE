@@ -102,7 +102,7 @@ export class RejectLateralDrawerComponent
         },
         complete: () => {
           this.isLoading.set(false);
-          this.emitClose();
+          this.emitSuccess();
         },
       });
   }

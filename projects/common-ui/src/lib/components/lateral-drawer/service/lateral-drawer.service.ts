@@ -18,7 +18,7 @@ export class LateralDrawerService {
   private drawer: MatDrawer;
   private container: ViewContainerRef;
   private drawerComponent: LateralDrawerComponent;
-  private closeSubject: Subject<void> = new Subject<void>();
+  private successSubject: Subject<void> = new Subject<void>();
 
   config: LateralDrawerConfig;
 
@@ -55,16 +55,15 @@ export class LateralDrawerService {
       this.drawerComponent.config = config;
     }
 
-    componentRef.instance.closeEvent.subscribe(() => {
-      this.closeSubject.next();
-      this.closeSubject.complete();
-      this.drawer.close();
+    componentRef.instance.successEvent.subscribe(() => {
+      this.successSubject.next();
+      this.successSubject.complete();
     });
 
     this.drawer.open();
 
-    this.closeSubject = new Subject<void>();
-    return this.closeSubject.asObservable();
+    this.successSubject = new Subject<void>();
+    return this.successSubject.asObservable();
   }
 
   updateConfig(newConfig: Partial<LateralDrawerConfig>): void {
