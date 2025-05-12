@@ -27,8 +27,6 @@ import { RejectLateralDrawerComponent } from '../reject-lateral-drawer/reject-la
     MatIconModule,
     MatMenuModule,
     MatButtonModule,
-    ApproveLateralDrawerComponent,
-    RejectLateralDrawerComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './registration-request-list.component.html',
@@ -133,51 +131,51 @@ export class RegistrationRequestListComponent implements OnInit {
   }
 
   onApproveDrawer(request: RegistrationRequestListItem): void {
-    this.lateralDrawerService.open(
-      ApproveLateralDrawerComponent,
-      { data: request },
-      {
-        title: 'Aprobar Solicitud de Registro',
-        footer: {
-          firstButton: {
-            text: 'Confirmar',
-            click: () => {},
-          },
-          secondButton: {
-            text: 'Cancelar',
-            click: () => {
-              this.lateralDrawerService.close();
+    this.lateralDrawerService
+      .open(
+        ApproveLateralDrawerComponent,
+        { data: request },
+        {
+          title: 'Aprobar Solicitud de Registro',
+          footer: {
+            firstButton: {
+              text: 'Confirmar',
+              click: () => {},
+            },
+            secondButton: {
+              text: 'Cancelar',
+              click: () => {
+                this.lateralDrawerService.close();
+              },
             },
           },
         },
-      },
-    );
-  }
-
-  closeDrawer(): void {
-    this.isDrawerApproveOpen = false;
+      )
+      .subscribe(() => this.fetchData());
   }
 
   onRejectDrawer(request: RegistrationRequestListItem): void {
-    this.lateralDrawerService.open(
-      RejectLateralDrawerComponent,
-      { data: request },
-      {
-        title: 'Rechazar Solicitud de Registro',
-        footer: {
-          firstButton: {
-            text: 'Confirmar',
-            click: () => {},
-          },
-          secondButton: {
-            text: 'Cancelar',
-            click: () => {
-              this.lateralDrawerService.close();
+    this.lateralDrawerService
+      .open(
+        RejectLateralDrawerComponent,
+        { data: request },
+        {
+          title: 'Rechazar Solicitud de Registro',
+          footer: {
+            firstButton: {
+              text: 'Confirmar',
+              click: () => {},
+            },
+            secondButton: {
+              text: 'Cancelar',
+              click: () => {
+                this.lateralDrawerService.close();
+              },
             },
           },
         },
-      },
-    );
+      )
+      .subscribe(() => this.fetchData());
   }
 
   getRowClass = (row: RegistrationRequestListItem): string => {

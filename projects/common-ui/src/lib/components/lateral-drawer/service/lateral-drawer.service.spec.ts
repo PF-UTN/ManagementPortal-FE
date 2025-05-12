@@ -5,9 +5,9 @@ import { mockDeep } from 'jest-mock-extended';
 
 import { LateralDrawerService } from './lateral-drawer.service';
 import { LateralDrawerComponent } from '../lateral-drawer.component';
-import { LateralDrawerConfig } from '../model';
+import { LateralDrawerConfig, LateralDrawerContainer } from '../model';
 
-class DummyComponent {
+class DummyComponent extends LateralDrawerContainer {
   foo = 'bar';
 }
 
@@ -37,6 +37,25 @@ describe('LateralDrawerService', () => {
         },
       },
     };
+  });
+
+  it('should return an observable that emits when the drawer is closed', () => {
+    // Arrange
+    service.setDrawer(drawerComponent, container);
+    jest.spyOn(container, 'createComponent').mockReturnValue(componentRef);
+    jest.spyOn(container.injector, 'get').mockReturnValue(drawerComponent);
+
+    const closeSubjectSpy = jest.spyOn(
+      drawerComponent.closedStart,
+      'subscribe',
+    );
+
+    // Act
+    const closeObservable = service.open(DummyComponent, undefined, config);
+
+    // Assert
+    expect(closeObservable).toBeDefined();
+    expect(closeSubjectSpy).toHaveBeenCalled();
   });
 
   describe('open', () => {

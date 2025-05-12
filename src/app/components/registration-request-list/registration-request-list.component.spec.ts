@@ -129,16 +129,16 @@ describe('RegistrationRequestListComponent', () => {
   });
 
   describe('onApproveDrawer', () => {
-    it('should set selectedRequest and open the approve drawer', () => {
+    it('should open the approve drawer', () => {
       // Arrange
       const request = mockData[0];
+      const lateralDrawerOpenSpy = jest.spyOn(lateralDrawerService, 'open');
 
       // Act
       component.onApproveDrawer(request);
 
       // Assert
-      expect(component.selectedRequest).toBe(request);
-      expect(component.isDrawerApproveOpen).toBe(true);
+      expect(lateralDrawerOpenSpy).toHaveBeenCalled();
     });
   });
 
@@ -153,19 +153,6 @@ describe('RegistrationRequestListComponent', () => {
 
       // Assert
       expect(lateralDrawerOpenSpy).toHaveBeenCalled();
-    });
-  });
-
-  describe('closeDrawer', () => {
-    it('should close approve drawers', () => {
-      // Arrange
-      component.isDrawerApproveOpen = true;
-
-      // Act
-      component.closeDrawer();
-
-      // Assert
-      expect(component.isDrawerApproveOpen).toBe(false);
     });
   });
 

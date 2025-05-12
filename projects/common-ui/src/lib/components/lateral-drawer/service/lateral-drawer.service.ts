@@ -5,8 +5,10 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { MatDrawer } from '@angular/material/sidenav';
+import { Observable, Subject } from 'rxjs';
 
 import { LateralDrawerComponent } from '../lateral-drawer.component';
+import { LateralDrawerContainer } from '../model';
 import { LateralDrawerConfig } from '../model/lateral-drawer-config.model';
 
 @Injectable({
@@ -16,6 +18,7 @@ export class LateralDrawerService {
   private drawer: MatDrawer;
   private container: ViewContainerRef;
   private drawerComponent: LateralDrawerComponent;
+  private closeSubject: Subject<void> = new Subject<void>();
 
   config: LateralDrawerConfig;
 
@@ -24,11 +27,11 @@ export class LateralDrawerService {
     this.container = container;
   }
 
-  open<T extends object>(
+  open<T extends LateralDrawerContainer>(
     component: Type<T>,
-    data?: Partial<T>,
+    data?: Partial<object>,
     config?: LateralDrawerConfig,
-  ): void {
+  ): Observable<void> {
     if (!this.drawer || !this.container) {
       throw new Error(
         'Drawer or container is not set. Ensure LateralDrawerComponent is initialized.',
@@ -52,7 +55,16 @@ export class LateralDrawerService {
       this.drawerComponent.config = config;
     }
 
+    componentRef.instance.closeEvent.subscribe(() => {
+      this.closeSubject.next();
+      this.closeSubject.complete();
+      this.drawer.close();
+    });
+
     this.drawer.open();
+
+    this.closeSubject = new Subject<void>();
+    return this.closeSubject.asObservable();
   }
 
   updateConfig(newConfig: Partial<LateralDrawerConfig>): void {

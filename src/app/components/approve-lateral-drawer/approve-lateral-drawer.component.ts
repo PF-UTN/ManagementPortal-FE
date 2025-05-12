@@ -1,4 +1,4 @@
-import { LateralDrawerService } from '@Common-UI';
+import { LateralDrawerContainer, LateralDrawerService } from '@Common-UI';
 
 import { Component, effect, Input, signal } from '@angular/core';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
@@ -13,7 +13,7 @@ import { RegistrationRequestService } from '../../services/registration-request.
   standalone: true,
   imports: [MatSnackBarModule],
 })
-export class ApproveLateralDrawerComponent {
+export class ApproveLateralDrawerComponent extends LateralDrawerContainer {
   @Input() data: RegistrationRequestListItem;
 
   isLoading = signal(false);
@@ -23,6 +23,7 @@ export class ApproveLateralDrawerComponent {
     private readonly lateralDrawerService: LateralDrawerService,
     private readonly snackBar: MatSnackBar,
   ) {
+    super();
     effect(() => {
       const drawerConfig = {
         ...this.lateralDrawerService.config,
@@ -58,6 +59,7 @@ export class ApproveLateralDrawerComponent {
           duration: 3000,
         });
         this.closeDrawer();
+        this.emitClose();
       });
   }
 }

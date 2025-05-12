@@ -1,4 +1,4 @@
-import { LateralDrawerService } from '@Common-UI';
+import { LateralDrawerContainer, LateralDrawerService } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
 import { Component, Input, signal, OnInit, effect } from '@angular/core';
@@ -30,7 +30,10 @@ import { RegistrationRequestService } from '../../services/registration-request.
     MatSnackBarModule,
   ],
 })
-export class RejectLateralDrawerComponent implements OnInit {
+export class RejectLateralDrawerComponent
+  extends LateralDrawerContainer
+  implements OnInit
+{
   @Input() data: RegistrationRequestListItem;
 
   isLoading = signal(false);
@@ -43,6 +46,7 @@ export class RejectLateralDrawerComponent implements OnInit {
     private readonly lateralDrawerService: LateralDrawerService,
     private readonly snackBar: MatSnackBar,
   ) {
+    super();
     effect(() => {
       const drawerConfig = {
         ...this.lateralDrawerService.config,
@@ -98,6 +102,7 @@ export class RejectLateralDrawerComponent implements OnInit {
         },
         complete: () => {
           this.isLoading.set(false);
+          this.emitClose();
         },
       });
   }

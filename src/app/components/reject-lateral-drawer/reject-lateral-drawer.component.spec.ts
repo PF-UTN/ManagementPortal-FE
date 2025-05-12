@@ -13,10 +13,7 @@ import { of } from 'rxjs';
 
 import { RejectLateralDrawerComponent } from './reject-lateral-drawer.component';
 import { RegistrationRequestListItem } from '../../models/registration-request-item.model';
-import {
-  RegistrationRequestService,
-  RejectRegistrationRequestResponse,
-} from '../../services/registration-request.service';
+import { RegistrationRequestService } from '../../services/registration-request.service';
 
 describe('RejectLateralDrawerComponent', () => {
   let component: RejectLateralDrawerComponent;
@@ -118,7 +115,7 @@ describe('RejectLateralDrawerComponent', () => {
       // Arrange
       jest
         .spyOn(registrationRequestService, 'rejectRegistrationRequest')
-        .mockReturnValue(of(mockDeep<RejectRegistrationRequestResponse>()));
+        .mockReturnValue(of());
 
       // Act
       component.handleRejectClick();
@@ -131,7 +128,7 @@ describe('RejectLateralDrawerComponent', () => {
       // Arrange
       const rejectSpy = jest
         .spyOn(registrationRequestService, 'rejectRegistrationRequest')
-        .mockReturnValue(of(mockDeep<RejectRegistrationRequestResponse>()));
+        .mockReturnValue(of());
 
       // Act
       component.handleRejectClick();
