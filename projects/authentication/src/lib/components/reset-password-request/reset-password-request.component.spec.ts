@@ -14,7 +14,6 @@ describe('ResetPasswordRequestComponent', () => {
   let component: ResetPasswordRequestComponent;
   let fixture: ComponentFixture<ResetPasswordRequestComponent>;
   let authService: AuthService;
-  // let router: Router;
   let navBarService: NavBarService;
   const userData = mockUser;
 
@@ -36,7 +35,6 @@ describe('ResetPasswordRequestComponent', () => {
     component = fixture.componentInstance;
 
     authService = TestBed.inject(AuthService);
-    // router = TestBed.inject(Router);
     navBarService = TestBed.inject(NavBarService);
 
     fixture.detectChanges();
@@ -119,16 +117,37 @@ describe('ResetPasswordRequestComponent', () => {
       expect(component.countdown()).toBe(60);
     });
 
-    it('should set waitCountdown and emailSent to false initially', () => {
-      expect(component.waitCountdown()).toBeFalsy();
+    it('should set emailSent to false initially', () => {
+      // Arrange
+      // Act
+      // Assert
       expect(component.emailSent()).toBeFalsy();
     });
-
-    it('should reset countdown and flags after 60 seconds', () => {
-      jest.advanceTimersByTime(60000);
-
-      expect(component.countdown()).toBe(0);
+    it('should set waitCountdown to false initially', () => {
+      // Arrange
+      // Act
+      // Assert
       expect(component.waitCountdown()).toBeFalsy();
+    });
+    it('should reset countdown after 60 seconds', () => {
+      // Arrange
+      // Act
+      jest.advanceTimersByTime(60000);
+      // Assert
+      expect(component.countdown()).toBe(0);
+    });
+    it('should reset flag waitCountdown after 60 seconds', () => {
+      // Arrange
+      // Act
+      jest.advanceTimersByTime(60000);
+      // Assert
+      expect(component.waitCountdown()).toBeFalsy();
+    });
+    it('should reset flag emailSent after 60 seconds', () => {
+      // Arrange
+      // Act
+      jest.advanceTimersByTime(60000);
+      // Assert
       expect(component.emailSent()).toBeFalsy();
     });
   });
