@@ -1,0 +1,104 @@
+import { LateralDrawerService } from '@Common-UI';
+
+import { CommonModule } from '@angular/common';
+import { Component, Input, signal, OnInit, effect } from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
+
+import { RegistrationRequestListItem } from '../../models/registration-request-item.model';
+import { RegistrationRequestService } from '../../services/registration-request.service';
+
+@Component({
+  selector: 'mp-reject-drawer',
+  templateUrl: './reject-lateral-drawer.component.html',
+  styleUrls: ['./reject-lateral-drawer.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSnackBarModule,
+  ],
+})
+export class RejectLateralDrawerComponent implements OnInit {
+  @Input() data: RegistrationRequestListItem;
+
+  isLoading = signal(false);
+  isFormInvalid = signal(true);
+
+  form: FormGroup<{ rejectionReason: FormControl<string | null> }>;
+
+  constructor(
+    private readonly registrationRequestService: RegistrationRequestService,
+    private readonly lateralDrawerService: LateralDrawerService,
+    private readonly snackBar: MatSnackBar,
+  ) {
+    effect(() => {
+      const drawerConfig = {
+        ...this.lateralDrawerService.config,
+        footer: {
+          firstButton: {
+            click: () => this.handleRejectClick(),
+            text: 'Confirmar',
+            loading: this.isLoading(),
+            disabled: this.isFormInvalid(),
+          },
+          secondButton: {
+            click: () => this.closeDrawer(),
+            text: 'Cancelar',
+          },
+        },
+      };
+
+      this.lateralDrawerService.updateConfig(drawerConfig);
+    });
+  }
+
+  ngOnInit(): void {
+    this.initializeForm();
+  }
+
+  private initializeForm() {
+    this.form = new FormGroup({
+      rejectionReason: new FormControl<string | null>(null, {
+        validators: [Validators.required],
+      }),
+    });
+
+    this.form.valueChanges.subscribe(() => {
+      this.isFormInvalid.set(this.form.invalid);
+    });
+  }
+
+  closeDrawer(): void {
+    this.lateralDrawerService.close();
+  }
+
+  handleRejectClick(): void {
+    this.isLoading.set(true);
+
+    this.registrationRequestService
+      .rejectRegistrationRequest(this.data.id, this.form.value.rejectionReason!)
+      .subscribe({
+        next: () => {
+          this.snackBar.open('Solicitud rechazada con éxito.', 'Cerrar', {
+            duration: 3000,
+          });
+          this.closeDrawer();
+        },
+        complete: () => {
+          this.isLoading.set(false);
+        },
+      });
+  }
+}

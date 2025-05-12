@@ -1,4 +1,9 @@
-import { ColumnTypeEnum, TableColumn, TableComponent } from '@Common-UI';
+import {
+  ColumnTypeEnum,
+  LateralDrawerService,
+  TableColumn,
+  TableComponent,
+} from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
@@ -12,7 +17,7 @@ import { RegistrationRequestListItem } from '../../models/registration-request-i
 import { RegistrationRequestParams } from '../../models/registration-request-param.model';
 import { RegistrationRequestService } from '../../services/registration-request.service';
 import { ApproveDrawerComponent } from '../approve/approve.component';
-import { RejectDrawerComponent } from '../reject/reject.component';
+import { RejectLateralDrawerComponent } from '../reject-lateral-drawer/reject-lateral-drawer.component';
 
 @Component({
   selector: 'mp-registration-request-list',
@@ -25,7 +30,7 @@ import { RejectDrawerComponent } from '../reject/reject.component';
     MatButtonModule,
     MatSidenavModule,
     ApproveDrawerComponent,
-    RejectDrawerComponent,
+    RejectLateralDrawerComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './registration-request-list.component.html',
@@ -88,6 +93,7 @@ export class RegistrationRequestListComponent implements OnInit {
 
   constructor(
     private readonly registrationRequestService: RegistrationRequestService,
+    private readonly lateralDrawerService: LateralDrawerService,
   ) {}
 
   ngOnInit(): void {
@@ -141,18 +147,28 @@ export class RegistrationRequestListComponent implements OnInit {
 
   closeDrawer(): void {
     this.isDrawerApproveOpen = false;
-    this.isDrawerRejectOpen = false;
   }
 
   onRejectDrawer(request: RegistrationRequestListItem): void {
-    this.selectedRequest = request;
-    this.isDrawerRejectOpen = true;
-    setTimeout(() => {
-      const drawerElement = document.querySelector('.drawer-container__drawer');
-      if (drawerElement) {
-        (drawerElement as HTMLElement).focus();
-      }
-    });
+    this.lateralDrawerService.open(
+      RejectLateralDrawerComponent,
+      { data: request },
+      {
+        title: 'Rechazar Solicitud de Registro',
+        footer: {
+          firstButton: {
+            text: 'Confirmar',
+            click: () => {},
+          },
+          secondButton: {
+            text: 'Cancelar',
+            click: () => {
+              this.lateralDrawerService.close();
+            },
+          },
+        },
+      },
+    );
   }
 
   getRowClass = (row: RegistrationRequestListItem): string => {
