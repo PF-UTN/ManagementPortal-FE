@@ -1,3 +1,5 @@
+import { LateralDrawerService } from '@Common-UI';
+
 import { CommonModule } from '@angular/common';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
@@ -16,6 +18,7 @@ describe('RegistrationRequestListComponent', () => {
   let component: RegistrationRequestListComponent;
   let fixture: ComponentFixture<RegistrationRequestListComponent>;
   let service: DeepMockProxy<RegistrationRequestService>;
+  let lateralDrawerService: LateralDrawerService;
 
   const mockData: RegistrationRequestListItem[] = [
     {
@@ -60,11 +63,19 @@ describe('RegistrationRequestListComponent', () => {
         MatButtonModule,
         BrowserAnimationsModule,
       ],
-      providers: [{ provide: RegistrationRequestService, useValue: service }],
+      providers: [
+        { provide: RegistrationRequestService, useValue: service },
+        {
+          provide: LateralDrawerService,
+          useValue: mockDeep<LateralDrawerService>(),
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(RegistrationRequestListComponent);
     component = fixture.componentInstance;
+
+    lateralDrawerService = TestBed.inject(LateralDrawerService);
     fixture.detectChanges();
   });
 
@@ -120,45 +131,34 @@ describe('RegistrationRequestListComponent', () => {
   });
 
   describe('onApproveDrawer', () => {
-    it('should set selectedRequest and open the approve drawer', () => {
+    it('should open the approve drawer', () => {
       // Arrange
       const request = mockData[0];
+      const lateralDrawerOpenSpy = jest
+        .spyOn(lateralDrawerService, 'open')
+        .mockReturnValue(of());
 
       // Act
       component.onApproveDrawer(request);
 
       // Assert
-      expect(component.selectedRequest).toBe(request);
-      expect(component.isDrawerApproveOpen).toBe(true);
+      expect(lateralDrawerOpenSpy).toHaveBeenCalled();
     });
   });
 
   describe('onRejectDrawer', () => {
-    it('should set selectedRequest and open the reject drawer', () => {
+    it('should open the reject drawer', () => {
       // Arrange
       const request = mockData[1];
+      const lateralDrawerOpenSpy = jest
+        .spyOn(lateralDrawerService, 'open')
+        .mockReturnValue(of());
 
       // Act
       component.onRejectDrawer(request);
 
       // Assert
-      expect(component.selectedRequest).toBe(request);
-      expect(component.isDrawerRejectOpen).toBe(true);
-    });
-  });
-
-  describe('closeDrawer', () => {
-    it('should close both approve and reject drawers', () => {
-      // Arrange
-      component.isDrawerApproveOpen = true;
-      component.isDrawerRejectOpen = true;
-
-      // Act
-      component.closeDrawer();
-
-      // Assert
-      expect(component.isDrawerApproveOpen).toBe(false);
-      expect(component.isDrawerRejectOpen).toBe(false);
+      expect(lateralDrawerOpenSpy).toHaveBeenCalled();
     });
   });
 

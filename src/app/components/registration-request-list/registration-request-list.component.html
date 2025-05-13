@@ -9,19 +9,3 @@
   [pageIndex]="pageIndex"
   (pageChange)="handlePageChange($event)">
 </mp-table>
-
-<mp-approve-drawer
-  *ngIf="isDrawerApproveOpen"
-  [data]="selectedRequest"
-  (approveRequest)="fetchData()"
-  (close)="closeDrawer()"
-  >
-</mp-approve-drawer>
-
-<mp-reject-drawer
-  *ngIf="isDrawerRejectOpen"
-  [data]="selectedRequest"
-  (rejectRequest)="fetchData()"
-  (close)="closeDrawer()"
-  >
-</mp-reject-drawer>
