@@ -81,7 +81,8 @@ export class RegistrationRequestListComponent implements OnInit {
   isLoading: boolean = true;
   pageIndex: number = 0;
   pageSize: number = 10;
-  totalItems: number = 0;
+  itemsNumber: number = 0;
+
   isDrawerApproveOpen: boolean = false;
   isDrawerRejectOpen: boolean = false;
   selectedRequest: RegistrationRequestListItem;
@@ -108,7 +109,7 @@ export class RegistrationRequestListComponent implements OnInit {
       .subscribe({
         next: (response) => {
           this.dataSource$.next(response.results);
-          this.totalItems = response.total;
+          this.itemsNumber = response.total;
           this.isLoading = false;
         },
         error: (err) => {
@@ -124,10 +125,6 @@ export class RegistrationRequestListComponent implements OnInit {
     this.fetchData();
   }
 
-  onViewDetail(request: RegistrationRequestListItem): void {
-    console.log('Ver detalle de:', request);
-  }
-
   onApproveDrawer(request: RegistrationRequestListItem): void {
     this.selectedRequest = request;
     this.isDrawerApproveOpen = true;
@@ -139,11 +136,6 @@ export class RegistrationRequestListComponent implements OnInit {
     });
   }
 
-  closeDrawer(): void {
-    this.isDrawerApproveOpen = false;
-    this.isDrawerRejectOpen = false;
-  }
-
   onRejectDrawer(request: RegistrationRequestListItem): void {
     this.selectedRequest = request;
     this.isDrawerRejectOpen = true;
@@ -153,6 +145,11 @@ export class RegistrationRequestListComponent implements OnInit {
         (drawerElement as HTMLElement).focus();
       }
     });
+  }
+
+  closeDrawer(): void {
+    this.isDrawerApproveOpen = false;
+    this.isDrawerRejectOpen = false;
   }
 
   getRowClass = (row: RegistrationRequestListItem): string => {
