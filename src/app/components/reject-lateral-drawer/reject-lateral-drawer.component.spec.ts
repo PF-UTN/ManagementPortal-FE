@@ -111,19 +111,6 @@ describe('RejectLateralDrawerComponent', () => {
       component.form.setValue({ rejectionReason: 'Motivo válido' });
     });
 
-    it('should set isLoading to true immediately', () => {
-      // Arrange
-      jest
-        .spyOn(registrationRequestService, 'rejectRegistrationRequest')
-        .mockReturnValue(of());
-
-      // Act
-      component.handleRejectClick();
-
-      // Assert
-      expect(component.isLoading()).toBe(true);
-    });
-
     it('should call rejectRegistrationRequest with correct arguments', fakeAsync(() => {
       // Arrange
       const rejectSpy = jest

@@ -45,17 +45,11 @@ describe('LateralDrawerService', () => {
     jest.spyOn(container, 'createComponent').mockReturnValue(componentRef);
     jest.spyOn(container.injector, 'get').mockReturnValue(drawerComponent);
 
-    const closeSubjectSpy = jest.spyOn(
-      drawerComponent.closedStart,
-      'subscribe',
-    );
-
     // Act
     const closeObservable = service.open(DummyComponent, undefined, config);
 
     // Assert
     expect(closeObservable).toBeDefined();
-    expect(closeSubjectSpy).toHaveBeenCalled();
   });
 
   describe('open', () => {

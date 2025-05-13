@@ -1,6 +1,7 @@
 import { NavBarService } from '@Common';
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
 import { mockDeep } from 'jest-mock-extended';
 
@@ -12,7 +13,7 @@ describe('AppComponent', () => {
 
   beforeEach(async () => {
     TestBed.configureTestingModule({
-      imports: [AppComponent],
+      imports: [AppComponent, NoopAnimationsModule],
       providers: [
         { provide: NavBarService, useValue: mockDeep<NavBarService>() },
         { provide: ActivatedRoute, useValue: mockDeep<ActivatedRoute>() },

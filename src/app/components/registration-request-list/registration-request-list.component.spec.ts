@@ -132,7 +132,9 @@ describe('RegistrationRequestListComponent', () => {
     it('should open the approve drawer', () => {
       // Arrange
       const request = mockData[0];
-      const lateralDrawerOpenSpy = jest.spyOn(lateralDrawerService, 'open');
+      const lateralDrawerOpenSpy = jest
+        .spyOn(lateralDrawerService, 'open')
+        .mockReturnValue(of());
 
       // Act
       component.onApproveDrawer(request);
@@ -146,7 +148,9 @@ describe('RegistrationRequestListComponent', () => {
     it('should open the reject drawer', () => {
       // Arrange
       const request = mockData[1];
-      const lateralDrawerOpenSpy = jest.spyOn(lateralDrawerService, 'open');
+      const lateralDrawerOpenSpy = jest
+        .spyOn(lateralDrawerService, 'open')
+        .mockReturnValue(of());
 
       // Act
       component.onRejectDrawer(request);
