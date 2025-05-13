@@ -3,6 +3,9 @@
   [dataSource$]="dataSource$"
   [isLoading]="isLoading"
   noDataMessage="No hay solicitudes de registro disponibles"
-  [itemsNumber]="totalItems"
-  [getRowClass]="getRowClass">
+  [itemsNumber]="itemsNumber"
+  [getRowClass]="getRowClass"
+  [pageSize]="pageSize"
+  [pageIndex]="pageIndex"
+  (pageChange)="handlePageChange($event)">
 </mp-table>

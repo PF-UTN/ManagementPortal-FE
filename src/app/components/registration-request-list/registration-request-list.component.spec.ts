@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { mockDeep, DeepMockProxy } from 'jest-mock-extended';
 import { of, throwError } from 'rxjs';
 
@@ -60,6 +61,7 @@ describe('RegistrationRequestListComponent', () => {
         MatIconModule,
         MatMenuModule,
         MatButtonModule,
+        BrowserAnimationsModule,
       ],
       providers: [
         { provide: RegistrationRequestService, useValue: service },
@@ -81,7 +83,7 @@ describe('RegistrationRequestListComponent', () => {
     // Assert
     expect(component).toBeTruthy();
     expect(component.dataSource$.value).toEqual(mockData);
-    expect(component.totalItems).toBe(mockData.length);
+    expect(component.itemsNumber).toBe(mockData.length);
     expect(component.isLoading).toBe(false);
   });
 
@@ -92,7 +94,7 @@ describe('RegistrationRequestListComponent', () => {
 
       // Assert
       expect(component.dataSource$.value).toEqual(mockData);
-      expect(component.totalItems).toBe(mockData.length);
+      expect(component.itemsNumber).toBe(mockData.length);
       expect(component.isLoading).toBe(false);
     });
 
@@ -124,7 +126,7 @@ describe('RegistrationRequestListComponent', () => {
       expect(component.pageSize).toBe(20);
       expect(component.fetchData).toHaveBeenCalled();
       expect(component.dataSource$.value).toEqual(mockData);
-      expect(component.totalItems).toBe(mockData.length);
+      expect(component.itemsNumber).toBe(mockData.length);
     });
   });
 
