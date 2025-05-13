@@ -8,7 +8,8 @@
         <div class="drawer-content__header__icon">
           <span class="material-icons close-icon drawer-content__header__icon__close" 
             (click)="closeDrawer()"
-            tabindex="0">close</span>
+            (keydown.escape)="closeDrawer()"
+            tabindex="-1">close</span>
         </div>
       </div>
       <div class="drawer-content__body">
@@ -18,13 +19,15 @@
         <div class="row">
           <div *ngIf="config.footer.secondButton" class="col">
             <mp-button [disabled]="config.footer.secondButton.disabled ?? false" type="secondary"
-              (click)="config.footer.secondButton.click()">
+              (click)="config.footer.secondButton.click()"
+              tabindex="-1">
               {{ config.footer.secondButton.text }}
             </mp-button>
           </div>
           <div class="col">
             <mp-button [disabled]="config.footer.firstButton.disabled ?? false"
-              (click)="config.footer.firstButton.click()">
+              (click)="config.footer.firstButton.click()"
+              tabindex="-1">
               {{ config.footer.firstButton.text }}
             </mp-button>
           </div>
