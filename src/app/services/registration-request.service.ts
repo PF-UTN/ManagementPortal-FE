@@ -10,10 +10,6 @@ export interface SearchRegistrationRequestResponse {
   results: RegistrationRequestListItem[];
 }
 
-export interface RequestResponse {
-  message: string;
-}
-
 @Injectable({
   providedIn: 'root',
 })
@@ -30,21 +26,15 @@ export class RegistrationRequestService {
     return this.http.post<SearchRegistrationRequestResponse>(url, params);
   }
 
-  approveRegistrationRequest(
-    id: number,
-    note: string,
-  ): Observable<RequestResponse> {
+  approveRegistrationRequest(id: number, note: string): Observable<void> {
     const url = `${this.baseUrl}/${id}/approve`;
     const body = { note };
-    return this.http.post<RequestResponse>(url, body);
+    return this.http.post<void>(url, body);
   }
 
-  rejectRegistrationRequest(
-    id: number,
-    note: string,
-  ): Observable<RequestResponse> {
+  rejectRegistrationRequest(id: number, note: string): Observable<void> {
     const url = `${this.baseUrl}/${id}/reject`;
     const body = { note };
-    return this.http.post<RequestResponse>(url, body);
+    return this.http.post<void>(url, body);
   }
 }

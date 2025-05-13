@@ -1,18 +1,22 @@
-import { ColumnTypeEnum, TableColumn, TableComponent } from '@Common-UI';
+import {
+  ColumnTypeEnum,
+  LateralDrawerService,
+  TableColumn,
+  TableComponent,
+} from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-import { MatSidenavModule } from '@angular/material/sidenav';
 import { BehaviorSubject } from 'rxjs';
 
 import { RegistrationRequestListItem } from '../../models/registration-request-item.model';
 import { RegistrationRequestParams } from '../../models/registration-request-param.model';
 import { RegistrationRequestService } from '../../services/registration-request.service';
-import { ApproveDrawerComponent } from '../approve/approve.component';
-import { RejectDrawerComponent } from '../reject/reject.component';
+import { ApproveLateralDrawerComponent } from '../approve-lateral-drawer/approve-lateral-drawer.component';
+import { RejectLateralDrawerComponent } from '../reject-lateral-drawer/reject-lateral-drawer.component';
 
 @Component({
   selector: 'mp-registration-request-list',
@@ -23,9 +27,6 @@ import { RejectDrawerComponent } from '../reject/reject.component';
     MatIconModule,
     MatMenuModule,
     MatButtonModule,
-    MatSidenavModule,
-    ApproveDrawerComponent,
-    RejectDrawerComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './registration-request-list.component.html',
@@ -81,13 +82,15 @@ export class RegistrationRequestListComponent implements OnInit {
   isLoading: boolean = true;
   pageIndex: number = 0;
   pageSize: number = 10;
-  totalItems: number = 0;
+  itemsNumber: number = 0;
+
   isDrawerApproveOpen: boolean = false;
   isDrawerRejectOpen: boolean = false;
   selectedRequest: RegistrationRequestListItem;
 
   constructor(
     private readonly registrationRequestService: RegistrationRequestService,
+    private readonly lateralDrawerService: LateralDrawerService,
   ) {}
 
   ngOnInit(): void {
@@ -108,7 +111,7 @@ export class RegistrationRequestListComponent implements OnInit {
       .subscribe({
         next: (response) => {
           this.dataSource$.next(response.results);
-          this.totalItems = response.total;
+          this.itemsNumber = response.total;
           this.isLoading = false;
         },
         error: (err) => {
@@ -124,35 +127,57 @@ export class RegistrationRequestListComponent implements OnInit {
     this.fetchData();
   }
 
-  onViewDetail(request: RegistrationRequestListItem): void {
-    console.log('Ver detalle de:', request);
+  onApproveDrawer(request: RegistrationRequestListItem): void {
+    this.lateralDrawerService
+      .open(
+        ApproveLateralDrawerComponent,
+        { data: request },
+        {
+          title: 'Aprobar Solicitud de Registro',
+          footer: {
+            firstButton: {
+              text: 'Confirmar',
+              click: () => {},
+            },
+            secondButton: {
+              text: 'Cancelar',
+              click: () => {
+                this.lateralDrawerService.close();
+              },
+            },
+          },
+        },
+      )
+      .subscribe(() => this.fetchData());
   }
 
-  onApproveDrawer(request: RegistrationRequestListItem): void {
-    this.selectedRequest = request;
-    this.isDrawerApproveOpen = true;
-    setTimeout(() => {
-      const drawerElement = document.querySelector('.drawer-container__drawer');
-      if (drawerElement) {
-        (drawerElement as HTMLElement).focus();
-      }
-    });
+  onRejectDrawer(request: RegistrationRequestListItem): void {
+    this.lateralDrawerService
+      .open(
+        RejectLateralDrawerComponent,
+        { data: request },
+        {
+          title: 'Rechazar Solicitud de Registro',
+          footer: {
+            firstButton: {
+              text: 'Confirmar',
+              click: () => {},
+            },
+            secondButton: {
+              text: 'Cancelar',
+              click: () => {
+                this.lateralDrawerService.close();
+              },
+            },
+          },
+        },
+      )
+      .subscribe(() => this.fetchData());
   }
 
   closeDrawer(): void {
     this.isDrawerApproveOpen = false;
     this.isDrawerRejectOpen = false;
-  }
-
-  onRejectDrawer(request: RegistrationRequestListItem): void {
-    this.selectedRequest = request;
-    this.isDrawerRejectOpen = true;
-    setTimeout(() => {
-      const drawerElement = document.querySelector('.drawer-container__drawer');
-      if (drawerElement) {
-        (drawerElement as HTMLElement).focus();
-      }
-    });
   }
 
   getRowClass = (row: RegistrationRequestListItem): string => {
