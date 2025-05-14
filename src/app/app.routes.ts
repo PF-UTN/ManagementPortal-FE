@@ -3,8 +3,8 @@ import { RoleGuard, RolesEnum } from '@Common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { RegistrationRequestListComponent } from './components/registration-request-list/registration-request-list.component';
 import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
+import { RegistrationRequestListComponent } from '../../projects/registration-request/src/lib/component/registration-request-list/registration-request-list.component';
 
 export const routes: Routes = [
   {
