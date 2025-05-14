@@ -20,7 +20,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { Router, RouterModule } from '@angular/router';
-import { finalize } from 'rxjs';
 
 import { Client } from '../../../../../common/src/models/client.model';
 import { DocumentType } from '../../constants/documentType.enum';
@@ -32,7 +31,7 @@ const PASSWORD_REGEX =
 const PHONE_REGEX = /^[+]?[0-9]{1,4}?[-.\\s]?([0-9]{1,3}[-.\\s]?){1,4}$/;
 
 @Component({
-  selector: 'app-signup',
+  selector: 'mp-signup',
   standalone: true,
   imports: [
     CommonModule,
@@ -234,13 +233,13 @@ export class SignupComponent implements OnInit {
         documentNumber: this.signupForm.controls.documentNumber.value,
         companyName: this.signupForm.controls.companyName.value,
       };
-      this.authService
-        .signUpAsync(client)
-        .pipe(finalize(() => this.isSubmitting.set(false)))
-        .subscribe({
-          next: () => void this.router.navigate(['/login']),
-          error: () => {},
-        });
+      this.authService.signUpAsync(client).subscribe({
+        next: () => void this.router.navigate(['/login']),
+        error: () => {},
+        complete: () => {
+          this.isSubmitting.set(false);
+        },
+      });
     }
   }
 }

@@ -1,7 +1,12 @@
 import { AuthService, NavBarService } from '@Common';
 import { mockUser } from '@Common';
 
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+} from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
@@ -102,53 +107,56 @@ describe('ResetPasswordRequestComponent', () => {
   });
   describe('startCountdown', () => {
     beforeEach(() => {
-      jest.useFakeTimers();
-      component['startCountdown']();
+      localStorage.clear();
     });
 
     afterEach(() => {
-      jest.clearAllTimers();
+      localStorage.clear();
     });
 
-    it('should initialize countdown to 60', () => {
+    it('should initialize countdown to 60', fakeAsync(() => {
       // Arrange
+      component['startCountdown'](60);
       // Act
       // Assert
       expect(component.countdown()).toBe(60);
-    });
+      //Cleanup
+      tick(60000);
+    }));
 
-    it('should set emailSent to false initially', () => {
+    it('should count down to 0 after 60 seconds', fakeAsync(() => {
       // Arrange
+      component['startCountdown'](60);
+
       // Act
-      // Assert
-      expect(component.emailSent()).toBeFalsy();
-    });
-    it('should set waitCountdown to false initially', () => {
-      // Arrange
-      // Act
-      // Assert
-      expect(component.waitCountdown()).toBeFalsy();
-    });
-    it('should reset countdown after 60 seconds', () => {
-      // Arrange
-      // Act
-      jest.advanceTimersByTime(60000);
+      tick(60000); // Avanza 60 segundos
+
       // Assert
       expect(component.countdown()).toBe(0);
-    });
-    it('should reset flag waitCountdown after 60 seconds', () => {
+    }));
+
+    it('should reset flag waitCountdown after 60 seconds', fakeAsync(() => {
       // Arrange
+      component.waitCountdown.set(true);
+      component['startCountdown'](60);
+
       // Act
-      jest.advanceTimersByTime(60000);
+      tick(60000);
+
       // Assert
       expect(component.waitCountdown()).toBeFalsy();
-    });
-    it('should reset flag emailSent after 60 seconds', () => {
+    }));
+
+    it('should reset flag emailSent after 60 seconds', fakeAsync(() => {
       // Arrange
+      component.emailSent.set(true);
+      component['startCountdown'](60);
+
       // Act
-      jest.advanceTimersByTime(60000);
+      tick(60000);
+
       // Assert
       expect(component.emailSent()).toBeFalsy();
-    });
+    }));
   });
 });
