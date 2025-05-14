@@ -1,0 +1,28 @@
+<div class="drawer-container__content">
+  <div class="drawer-container__row">
+    <p><strong>Nombre | Razon Social</strong></p>
+    {{ data.user.fullNameOrBusinessName }}
+  </div>
+  <div class="drawer-container__row">
+    <p><strong>Email</strong></p>
+    <p>{{ data.user.email }}</p>
+  </div>
+  <div class="drawer-container__row">
+    <p><strong>Telefono</strong></p>
+    <p>{{ data.user.phone }}</p>
+  </div>
+  <div class="drawer-container__row">
+    <p><strong>Documento</strong></p>
+    <p>{{ data.user.documentType }} - {{ data.user.documentNumber }}</p>
+  </div>
+  <div [formGroup]="form" class="drawer-container__row">
+    <p><strong>Motivo de Rechazo</strong></p>
+    <mat-form-field appearance="fill" class="drawer-container__input">
+      <mat-label>Escribe el motivo</mat-label>
+      <textarea matInput formControlName="rejectionReason"></textarea>
+      <mat-error *ngIf="!form.controls.rejectionReason.value?.trim()">
+        Este campo es obligatorio
+      </mat-error>
+    </mat-form-field>
+  </div>
+</div>
