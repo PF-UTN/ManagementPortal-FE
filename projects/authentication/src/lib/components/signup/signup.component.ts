@@ -235,7 +235,6 @@ export class SignupComponent implements OnInit {
       };
       this.authService.signUpAsync(client).subscribe({
         next: () => void this.router.navigate(['/login']),
-        error: () => {},
         complete: () => {
           this.isSubmitting.set(false);
         },

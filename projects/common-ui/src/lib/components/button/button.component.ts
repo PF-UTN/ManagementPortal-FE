@@ -23,15 +23,9 @@ import { ButtonType } from '../../models/button-type.model';
 export class ButtonComponent {
   @Input() type: ButtonType = ButtonTypes.primary;
   @Input() disabled: boolean = false;
-  @Input() loading: Signal<boolean>;
+  @Input() loading: Signal<boolean> = signal(false);
 
   @Output() onClick = new EventEmitter<void>();
-
-  ngOnInit(): void {
-    if (!this.loading) {
-      this.loading = signal(false);
-    }
-  }
 
   clickEvent(): void {
     if (!this.disabled) {
