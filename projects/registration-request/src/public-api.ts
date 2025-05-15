@@ -1,6 +1,4 @@
 /*
  * Public API Surface of registration-request
  */
-
-export * from './lib/registration-request.service';
-export * from './lib/registration-request.component';
+export * from './lib/registration-request-routing.module';
