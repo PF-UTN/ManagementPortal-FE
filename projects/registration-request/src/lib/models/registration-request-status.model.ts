@@ -1,4 +1,4 @@
 export interface RegistrationRequestStatus {
-    id: number;
-    code: string;
+  id: number;
+  code: string;
 }

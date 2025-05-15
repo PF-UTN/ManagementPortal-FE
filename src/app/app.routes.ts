@@ -3,7 +3,6 @@ import { RoleGuard, RolesEnum } from '@Common';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { RegistrationRequestListComponent } from './components/registration-request-list/registration-request-list.component';
 import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
 
 export const routes: Routes = [
@@ -20,8 +19,10 @@ export const routes: Routes = [
   },
   {
     path: 'solicitudes-registro',
-    pathMatch: 'full',
-    component: RegistrationRequestListComponent,
+    loadChildren: () =>
+      import('@Registration-Request').then(
+        (m) => m.RegistrationRequestRoutingModule,
+      ),
     canActivate: [RoleGuard],
     data: { admittedRoles: [RolesEnum.Employee] },
   },
