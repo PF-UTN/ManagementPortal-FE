@@ -110,22 +110,6 @@ export class RegistrationRequestListComponent implements OnInit {
     this.fetchData();
   }
 
-  get noDataMessage(): string {
-    if (!this.selectedStatus || this.selectedStatus.length === 0) {
-      return 'No hay solicitudes de registro disponibles';
-    }
-    if (this.selectedStatus.length === 1) {
-      const estado = this.selectedStatus[0];
-      if (estado === 'Pending')
-        return 'No hay solicitudes de registro pendientes';
-      if (estado === 'Approved')
-        return 'No hay solicitudes de registro aprobadas';
-      if (estado === 'Rejected')
-        return 'No hay solicitudes de registro rechazadas';
-    }
-    return 'No hay solicitudes de registro disponibles para los estados seleccionados';
-  }
-
   fetchData(): void {
     this.isLoading = true;
     const params: RegistrationRequestParams = {
