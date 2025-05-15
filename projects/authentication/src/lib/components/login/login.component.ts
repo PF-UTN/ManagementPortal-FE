@@ -26,7 +26,7 @@ import { User } from '../../../../../common/src/models/user.model';
 import { customEmailValidator } from '../../validators/email.validator';
 
 @Component({
-  selector: 'app-login',
+  selector: 'mp-login',
   standalone: true,
   imports: [
     CommonModule,
@@ -103,8 +103,8 @@ export class LoginComponent implements OnInit {
           this.isSubmitting.set(false);
         },
         error: (error: HttpErrorResponse) => {
-          this.isSubmitting.set(false);
           this.errorMessage = error.error.message;
+          this.isSubmitting.set(false);
         },
       });
     }
