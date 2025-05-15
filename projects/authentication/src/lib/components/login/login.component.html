@@ -41,11 +41,11 @@
         </div>
         <p *ngIf="errorMessage" class="error-message d-flex justify-content-center align-items-center">{{ errorMessage }}</p>
         <div class="d-flex align-items-center justify-content-center">
-            <mp-button type="primary" [disabled]="loginForm.invalid || isSubmitting()"  (onClick)="onSubmit()" >{{ isSubmitting() ? 'Ingresando...' : 'Ingresar' }}</mp-button>
+            <mp-button type="primary" [disabled]="loginForm.invalid" [loading]="isSubmitting" (onClick)="onSubmit()" >Ingresar</mp-button>
         </div>
     </form>
     <div class="error-container">
-        <mp-subtitle><a href="/" class="text-decoration-none"> Olvidé mi contraseña</a></mp-subtitle>
+        <mp-subtitle><a href="/reset-password-request" class="text-decoration-none">  Olvidé mi contraseña</a></mp-subtitle>
     </div>
 </div>
 </div>

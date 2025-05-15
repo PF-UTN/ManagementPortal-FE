@@ -66,4 +66,10 @@ export class AuthService {
       userAccessibleRoles.includes(allowedRole),
     );
   }
+
+  resetPasswordAsync(email: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/reset-password/request`, {
+      email,
+    });
+  }
 }
