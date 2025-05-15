@@ -7,9 +7,12 @@ import {
 
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatSelectModule } from '@angular/material/select';
 import { BehaviorSubject } from 'rxjs';
 
 import { RegistrationRequestListItem } from '../../models/registration-request-item.model';
@@ -27,6 +30,10 @@ import { RejectLateralDrawerComponent } from '../reject-lateral-drawer/reject-la
     MatIconModule,
     MatMenuModule,
     MatButtonModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    FormsModule,
+    ReactiveFormsModule,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './registration-request-list.component.html',
@@ -83,6 +90,7 @@ export class RegistrationRequestListComponent implements OnInit {
   pageIndex: number = 0;
   pageSize: number = 10;
   itemsNumber: number = 0;
+  selectedStatus: string[] = [];
 
   isDrawerApproveOpen: boolean = false;
   isDrawerRejectOpen: boolean = false;
@@ -97,6 +105,27 @@ export class RegistrationRequestListComponent implements OnInit {
     this.fetchData();
   }
 
+  onStatusFilterChange(): void {
+    this.pageIndex = 0;
+    this.fetchData();
+  }
+
+  get noDataMessage(): string {
+    if (!this.selectedStatus || this.selectedStatus.length === 0) {
+      return 'No hay solicitudes de registro disponibles';
+    }
+    if (this.selectedStatus.length === 1) {
+      const estado = this.selectedStatus[0];
+      if (estado === 'Pending')
+        return 'No hay solicitudes de registro pendientes';
+      if (estado === 'Approved')
+        return 'No hay solicitudes de registro aprobadas';
+      if (estado === 'Rejected')
+        return 'No hay solicitudes de registro rechazadas';
+    }
+    return 'No hay solicitudes de registro disponibles para los estados seleccionados';
+  }
+
   fetchData(): void {
     this.isLoading = true;
     const params: RegistrationRequestParams = {
@@ -105,6 +134,10 @@ export class RegistrationRequestListComponent implements OnInit {
       searchText: '',
       filters: {},
     };
+
+    if (this.selectedStatus && this.selectedStatus.length > 0) {
+      params.filters = { status: this.selectedStatus };
+    }
 
     this.registrationRequestService
       .postSearchRegistrationRequest(params)
