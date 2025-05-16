@@ -7,11 +7,15 @@ import {
 
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatSelectModule } from '@angular/material/select';
 import { BehaviorSubject } from 'rxjs';
 
+import { ActionsRequest } from '../../constants/actions.enum';
 import { RegistrationRequestListItem } from '../../models/registration-request-item.model';
 import { RegistrationRequestParams } from '../../models/registration-request-param.model';
 import { RegistrationRequestService } from '../../services/registration-request.service';
@@ -27,6 +31,10 @@ import { RejectLateralDrawerComponent } from '../reject-lateral-drawer/reject-la
     MatIconModule,
     MatMenuModule,
     MatButtonModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    FormsModule,
+    ReactiveFormsModule,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './registration-request-list.component.html',
@@ -83,6 +91,9 @@ export class RegistrationRequestListComponent implements OnInit {
   pageIndex: number = 0;
   pageSize: number = 10;
   itemsNumber: number = 0;
+  selectedStatus: string[] = [];
+
+  actionsRequest = ActionsRequest;
 
   isDrawerApproveOpen: boolean = false;
   isDrawerRejectOpen: boolean = false;
@@ -97,6 +108,11 @@ export class RegistrationRequestListComponent implements OnInit {
     this.fetchData();
   }
 
+  onStatusFilterChange(): void {
+    this.pageIndex = 0;
+    this.fetchData();
+  }
+
   fetchData(): void {
     this.isLoading = true;
     const params: RegistrationRequestParams = {
@@ -105,6 +121,10 @@ export class RegistrationRequestListComponent implements OnInit {
       searchText: '',
       filters: {},
     };
+
+    if (this.selectedStatus && this.selectedStatus.length > 0) {
+      params.filters = { status: this.selectedStatus };
+    }
 
     this.registrationRequestService
       .postSearchRegistrationRequest(params)

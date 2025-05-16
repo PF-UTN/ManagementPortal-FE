@@ -179,4 +179,39 @@ describe('RegistrationRequestListComponent', () => {
       expect(rowClass).toBe('');
     });
   });
+
+  describe('onStatusFilterChange', () => {
+    it('should reset pageIndex and call fetchData on status filter change', () => {
+      // Arrange
+      jest.spyOn(component, 'fetchData');
+      component.pageIndex = 2;
+
+      // Act
+      component.onStatusFilterChange();
+
+      // Assert
+      expect(component.pageIndex).toBe(0);
+      expect(component.fetchData).toHaveBeenCalled();
+    });
+
+    describe('fetchData with filters', () => {
+      it('should send selectedStatus as filter in fetchData', () => {
+        // Arrange
+        component.selectedStatus = ['Pending', 'Approved'];
+        service.postSearchRegistrationRequest.mockReturnValue(
+          of({ total: 0, results: [] }),
+        );
+
+        // Act
+        component.fetchData();
+
+        // Assert
+        expect(service.postSearchRegistrationRequest).toHaveBeenCalledWith(
+          expect.objectContaining({
+            filters: { status: ['Pending', 'Approved'] },
+          }),
+        );
+      });
+    });
+  });
 });
