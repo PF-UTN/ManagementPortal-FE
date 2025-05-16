@@ -94,11 +94,6 @@ export class RegistrationRequestListComponent implements OnInit {
   selectedStatus: string[] = [];
 
   actionsRequest = ActionsRequest;
-  statusLabels: Record<string, string> = {
-    Pending: 'Pendiente',
-    Approved: 'Aprobado',
-    Rejected: 'Rechazado',
-  };
 
   isDrawerApproveOpen: boolean = false;
   isDrawerRejectOpen: boolean = false;

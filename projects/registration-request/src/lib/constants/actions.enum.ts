@@ -1,5 +1,5 @@
 export enum ActionsRequest {
-  Pending = 'Pending',
-  Approved = 'Approved',
-  Rejected = 'Rejected',
+  Pending = 'Pendiente',
+  Approved = 'Aprobado',
+  Rejected = 'Rechazado',
 }
