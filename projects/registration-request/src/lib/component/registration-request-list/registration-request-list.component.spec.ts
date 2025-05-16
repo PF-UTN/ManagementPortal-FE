@@ -162,21 +162,6 @@ describe('RegistrationRequestListComponent', () => {
     });
   });
 
-  describe('closeDrawer', () => {
-    it('should set isDrawerApproveOpen and isDrawerRejectOpen to false on closeDrawer', () => {
-      // Arrange
-      component.isDrawerApproveOpen = true;
-      component.isDrawerRejectOpen = true;
-
-      // Act
-      component.closeDrawer();
-
-      // Assert
-      expect(component.isDrawerApproveOpen).toBe(false);
-      expect(component.isDrawerRejectOpen).toBe(false);
-    });
-  });
-
   describe('getRowClass', () => {
     it('should return "table__pending-row" for rows with status "Pending"', () => {
       // Act

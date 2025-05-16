@@ -15,6 +15,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { BehaviorSubject } from 'rxjs';
 
+import { ActionsRequest } from '../../constants/actions.enum';
 import { RegistrationRequestListItem } from '../../models/registration-request-item.model';
 import { RegistrationRequestParams } from '../../models/registration-request-param.model';
 import { RegistrationRequestService } from '../../services/registration-request.service';
@@ -91,6 +92,13 @@ export class RegistrationRequestListComponent implements OnInit {
   pageSize: number = 10;
   itemsNumber: number = 0;
   selectedStatus: string[] = [];
+
+  actionsRequest = ActionsRequest;
+  statusLabels: Record<string, string> = {
+    Pending: 'Pendiente',
+    Approved: 'Aprobado',
+    Rejected: 'Rechazado',
+  };
 
   isDrawerApproveOpen: boolean = false;
   isDrawerRejectOpen: boolean = false;

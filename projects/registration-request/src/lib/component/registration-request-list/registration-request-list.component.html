@@ -1,9 +1,9 @@
 <mat-form-field appearance="outline">
   <mat-label>Filtrar por estado</mat-label>
   <mat-select [(ngModel)]="selectedStatus" (selectionChange)="onStatusFilterChange()" multiple>
-    <mat-option value="Pending">Pendiente</mat-option>
-    <mat-option value="Approved">Aprobado</mat-option>
-    <mat-option value="Rejected">Rechazado</mat-option>
+    <mat-option *ngFor="let option of actionsRequest | keyvalue" [value]="option.value">
+      {{ statusLabels[option.key] }}
+    </mat-option>
   </mat-select>
 </mat-form-field>
 
