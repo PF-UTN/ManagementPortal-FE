@@ -5,6 +5,7 @@ import {
   LoginComponent,
   SignupComponent,
   ResetPasswordRequestComponent,
+  ResetPasswordComponent,
 } from './components';
 
 const routes: Routes = [
@@ -12,6 +13,7 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
   { path: 'reset-password-request', component: ResetPasswordRequestComponent },
+  { path: 'resert-password', component: ResetPasswordComponent },
 ];
 
 @NgModule({
