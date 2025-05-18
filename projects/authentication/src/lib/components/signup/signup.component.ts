@@ -25,6 +25,7 @@ import { Client } from '../../../../../common/src/models/client.model';
 import { DocumentType } from '../../constants/documentType.enum';
 import { IvaCategory } from '../../constants/ivaCategory.enum';
 import { customEmailValidator } from '../../validators';
+import { matchPasswords } from '../../validators';
 
 const PASSWORD_REGEX =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,}$/;
@@ -54,20 +55,20 @@ const PHONE_REGEX = /^[+]?[0-9]{1,4}?[-.\\s]?([0-9]{1,3}[-.\\s]?){1,4}$/;
 })
 export class SignupComponent implements OnInit {
   signupForm: FormGroup<{
-    firstName: FormControl<string>;
-    lastName: FormControl<string>;
-    email: FormControl<string>;
-    password: FormControl<string>;
-    confirmPassword: FormControl<string>;
-    phone: FormControl<string>;
-    birthDate: FormControl<Date>;
-    town: FormControl<string>;
-    street: FormControl<string>;
-    streetNumber: FormControl<number>;
-    taxCategory: FormControl<number>;
-    documentType: FormControl<string>;
-    documentNumber: FormControl<string>;
-    companyName: FormControl<string>;
+    firstName: FormControl<string | null>;
+    lastName: FormControl<string | null>;
+    email: FormControl<string | null>;
+    password: FormControl<string | null>;
+    confirmPassword: FormControl<string | null>;
+    phone: FormControl<string | null>;
+    birthDate: FormControl<Date | null>;
+    town: FormControl<string | null>;
+    street: FormControl<string | null>;
+    streetNumber: FormControl<number | null>;
+    taxCategory: FormControl<number | null>;
+    documentType: FormControl<string | null>;
+    documentNumber: FormControl<string | null>;
+    companyName: FormControl<string | null>;
   }>;
 
   isSubmitting = signal(false);
@@ -90,53 +91,50 @@ export class SignupComponent implements OnInit {
   }
 
   private initForm() {
-    this.signupForm = this.fb.group(
+    this.signupForm = new FormGroup(
       {
-        firstName: [
-          '',
-          [
-            Validators.required,
-            Validators.minLength(2),
-            Validators.maxLength(50),
-          ],
-        ],
-        lastName: [
-          '',
-          [
-            Validators.required,
-            Validators.minLength(2),
-            Validators.maxLength(50),
-          ],
-        ],
-        email: ['', [Validators.required, customEmailValidator()]],
-        password: [
-          '',
-          [
-            Validators.required,
-            Validators.minLength(8),
-            Validators.pattern(PASSWORD_REGEX),
-            Validators.maxLength(255),
-          ],
-        ],
-        confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
-        phone: [
-          '',
-          [
-            Validators.required,
-            Validators.pattern(PHONE_REGEX),
-            Validators.maxLength(20),
-          ],
-        ],
-        birthDate: ['', Validators.required],
-        town: ['', Validators.required],
-        street: ['', Validators.required],
-        streetNumber: ['', Validators.required],
-        taxCategory: ['', Validators.required],
-        documentType: ['', Validators.required],
-        documentNumber: ['', Validators.required],
-        companyName: ['', Validators.required],
+        firstName: new FormControl<string | null>(null, [
+          Validators.required,
+          Validators.minLength(2),
+          Validators.maxLength(50),
+        ]),
+        lastName: new FormControl<string | null>(null, [
+          Validators.required,
+          Validators.minLength(2),
+          Validators.maxLength(50),
+        ]),
+        email: new FormControl<string | null>(null, [
+          Validators.required,
+          customEmailValidator(),
+        ]),
+        password: new FormControl<string | null>(null, [
+          Validators.required,
+          Validators.minLength(8),
+          Validators.pattern(PASSWORD_REGEX),
+          Validators.maxLength(255),
+        ]),
+        confirmPassword: new FormControl<string | null>(null, [
+          Validators.required,
+          Validators.minLength(8),
+        ]),
+        phone: new FormControl<string | null>(null, [
+          Validators.required,
+          Validators.pattern(PHONE_REGEX),
+          Validators.maxLength(20),
+        ]),
+        birthDate: new FormControl<Date | null>(null, Validators.required),
+        town: new FormControl<string | null>(null, Validators.required),
+        street: new FormControl<string | null>(null, Validators.required),
+        streetNumber: new FormControl<number | null>(null, Validators.required),
+        taxCategory: new FormControl<number | null>(null, Validators.required),
+        documentType: new FormControl<string | null>(null, Validators.required),
+        documentNumber: new FormControl<string | null>(
+          null,
+          Validators.required,
+        ),
+        companyName: new FormControl<string | null>(null, Validators.required),
       },
-      { validators: this.matchPasswords('password', 'confirmPassword') },
+      { validators: matchPasswords('password', 'confirmPassword') },
     );
 
     this.signupForm.get('documentType')?.valueChanges.subscribe(() => {
@@ -185,30 +183,30 @@ export class SignupComponent implements OnInit {
     }
   }
 
-  matchPasswords(passwordKey: string, confirmPasswordKey: string) {
-    return (formGroup: FormGroup) => {
-      const password = formGroup.get(passwordKey);
-      const confirmPassword = formGroup.get(confirmPasswordKey);
+  // matchPasswords(passwordKey: string, confirmPasswordKey: string) {
+  //   return (formGroup: FormGroup) => {
+  //     const password = formGroup.get(passwordKey);
+  //     const confirmPassword = formGroup.get(confirmPasswordKey);
 
-      if (!password || !confirmPassword) return null;
+  //     if (!password || !confirmPassword) return null;
 
-      if (!confirmPassword.value) return null;
+  //     if (!confirmPassword.value) return null;
 
-      const errors = confirmPassword.errors || {};
+  //     const errors = confirmPassword.errors || {};
 
-      if (password.value !== confirmPassword.value) {
-        confirmPassword.setErrors({ ...errors, mismatch: true });
-      } else {
-        if ('mismatch' in errors) {
-          delete errors['mismatch'];
-          const hasOtherErrors = Object.keys(errors).length > 0;
-          confirmPassword.setErrors(hasOtherErrors ? errors : null);
-        }
-      }
+  //     if (password.value !== confirmPassword.value) {
+  //       confirmPassword.setErrors({ ...errors, mismatch: true });
+  //     } else {
+  //       if ('mismatch' in errors) {
+  //         delete errors['mismatch'];
+  //         const hasOtherErrors = Object.keys(errors).length > 0;
+  //         confirmPassword.setErrors(hasOtherErrors ? errors : null);
+  //       }
+  //     }
 
-      return null;
-    };
-  }
+  //     return null;
+  //   };
+  // }
 
   toggleVisibility(signal: WritableSignal<boolean>): void {
     signal.set(!signal());
@@ -218,20 +216,20 @@ export class SignupComponent implements OnInit {
     if (this.signupForm.valid) {
       this.isSubmitting.set(true);
       const client: Client = {
-        firstName: this.signupForm.controls.firstName.value,
-        lastName: this.signupForm.controls.lastName.value,
-        email: this.signupForm.controls.email.value,
-        password: this.signupForm.controls.password.value,
-        confirmPassword: this.signupForm.controls.confirmPassword.value,
-        phone: this.signupForm.controls.phone.value,
-        birthDate: this.signupForm.controls.birthDate.value,
-        town: this.signupForm.controls.town.value,
-        street: this.signupForm.controls.street.value,
-        streetNumber: this.signupForm.controls.streetNumber.value,
-        taxCategory: this.signupForm.controls.taxCategory.value,
-        documentType: this.signupForm.controls.documentType.value,
-        documentNumber: this.signupForm.controls.documentNumber.value,
-        companyName: this.signupForm.controls.companyName.value,
+        firstName: this.signupForm.controls.firstName.value!,
+        lastName: this.signupForm.controls.lastName.value!,
+        email: this.signupForm.controls.email.value!,
+        password: this.signupForm.controls.password.value!,
+        confirmPassword: this.signupForm.controls.confirmPassword.value!,
+        phone: this.signupForm.controls.phone.value!,
+        birthDate: this.signupForm.controls.birthDate.value!,
+        town: this.signupForm.controls.town.value!,
+        street: this.signupForm.controls.street.value!,
+        streetNumber: this.signupForm.controls.streetNumber.value!,
+        taxCategory: this.signupForm.controls.taxCategory.value!,
+        documentType: this.signupForm.controls.documentType.value!,
+        documentNumber: this.signupForm.controls.documentNumber.value!,
+        companyName: this.signupForm.controls.companyName.value!,
       };
       this.authService.signUpAsync(client).subscribe({
         next: () => void this.router.navigate(['/login']),
