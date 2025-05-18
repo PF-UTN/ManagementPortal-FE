@@ -1,9 +1,5 @@
 import { AuthService, NavBarService } from '@Common';
-import {
-  ButtonComponent,
-  SubtitleComponent,
-  InfoButtonComponent,
-} from '@Common-UI';
+import { ButtonComponent, SubtitleComponent } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal, WritableSignal } from '@angular/core';
@@ -18,6 +14,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 
 import { PASSWORD_REGEX } from '../../constants';
@@ -36,7 +33,6 @@ import { matchPasswords } from '../../validators';
     MatTooltipModule,
     ReactiveFormsModule,
     MatButtonModule,
-    InfoButtonComponent,
   ],
   templateUrl: './reset-password.component.html',
   styleUrl: './reset-password.component.scss',
@@ -55,6 +51,7 @@ export class ResetPasswordComponent implements OnInit {
     private readonly authService: AuthService,
     private readonly router: Router,
     private readonly navBarService: NavBarService,
+    private route: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
@@ -84,5 +81,22 @@ export class ResetPasswordComponent implements OnInit {
     signal.set(!signal());
   }
 
-  onSubmit(): void {}
+  onSubmit(): void {
+    this.isSubmitting.set(true);
+    const password = this.resetPasswordForm.controls.password.value!;
+    const token = this.route.snapshot.paramMap.get('token');
+    console.log('Token:', token);
+
+    if (!token) {
+      this.isSubmitting.set(false);
+      return;
+    }
+
+    this.authService.resetPasswordAsync(token, password).subscribe({
+      next: () => void this.router.navigate(['/login']),
+      complete: () => {
+        this.isSubmitting.set(false);
+      },
+    });
+  }
 }

@@ -107,7 +107,7 @@ export class ResetPasswordRequestComponent implements OnInit {
   onSubmit() {
     this.isSubmitting.set(true);
     const email = this.resetPasswordRequestForm.controls.email.value!;
-    this.authService.resetPasswordAsync(email).subscribe(() => {
+    this.authService.resetPasswordRequestAsync(email).subscribe(() => {
       this.isSubmitting.set(false);
       this.emailSent.set(true);
       this.waitCountdown.set(true);
