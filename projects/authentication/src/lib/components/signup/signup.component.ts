@@ -19,16 +19,16 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { Router, RouterModule } from '@angular/router';
 
 import { Client } from '../../../../../common/src/models/client.model';
+import { PASSWORD_REGEX } from '../../constants';
 import { DocumentType } from '../../constants/documentType.enum';
 import { IvaCategory } from '../../constants/ivaCategory.enum';
 import { customEmailValidator } from '../../validators';
 import { matchPasswords } from '../../validators';
 
-const PASSWORD_REGEX =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,}$/;
 const PHONE_REGEX = /^[+]?[0-9]{1,4}?[-.\\s]?([0-9]{1,3}[-.\\s]?){1,4}$/;
 
 @Component({
@@ -49,6 +49,7 @@ const PHONE_REGEX = /^[+]?[0-9]{1,4}?[-.\\s]?([0-9]{1,3}[-.\\s]?){1,4}$/;
     MatSlideToggleModule,
     ButtonComponent,
     TitleComponent,
+    MatSnackBarModule,
   ],
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.scss'],
@@ -83,6 +84,7 @@ export class SignupComponent implements OnInit {
     protected authService: AuthService,
     private router: Router,
     private readonly navBarService: NavBarService,
+    private readonly snackBar: MatSnackBar,
   ) {}
 
   ngOnInit(): void {
@@ -183,31 +185,6 @@ export class SignupComponent implements OnInit {
     }
   }
 
-  // matchPasswords(passwordKey: string, confirmPasswordKey: string) {
-  //   return (formGroup: FormGroup) => {
-  //     const password = formGroup.get(passwordKey);
-  //     const confirmPassword = formGroup.get(confirmPasswordKey);
-
-  //     if (!password || !confirmPassword) return null;
-
-  //     if (!confirmPassword.value) return null;
-
-  //     const errors = confirmPassword.errors || {};
-
-  //     if (password.value !== confirmPassword.value) {
-  //       confirmPassword.setErrors({ ...errors, mismatch: true });
-  //     } else {
-  //       if ('mismatch' in errors) {
-  //         delete errors['mismatch'];
-  //         const hasOtherErrors = Object.keys(errors).length > 0;
-  //         confirmPassword.setErrors(hasOtherErrors ? errors : null);
-  //       }
-  //     }
-
-  //     return null;
-  //   };
-  // }
-
   toggleVisibility(signal: WritableSignal<boolean>): void {
     signal.set(!signal());
   }
@@ -232,7 +209,16 @@ export class SignupComponent implements OnInit {
         companyName: this.signupForm.controls.companyName.value!,
       };
       this.authService.signUpAsync(client).subscribe({
-        next: () => void this.router.navigate(['/login']),
+        next: () => {
+          void this.router.navigate(['/login']);
+          this.snackBar.open(
+            'Solicitud de registro enviada con éxito.',
+            'Cerrar',
+            {
+              duration: 3000,
+            },
+          );
+        },
         complete: () => {
           this.isSubmitting.set(false);
         },

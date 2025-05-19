@@ -13,6 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
@@ -33,6 +34,7 @@ import { matchPasswords } from '../../validators';
     MatTooltipModule,
     ReactiveFormsModule,
     MatButtonModule,
+    MatSnackBarModule,
   ],
   templateUrl: './reset-password.component.html',
   styleUrl: './reset-password.component.scss',
@@ -52,6 +54,7 @@ export class ResetPasswordComponent implements OnInit {
     private readonly router: Router,
     private readonly navBarService: NavBarService,
     private route: ActivatedRoute,
+    private readonly snackBar: MatSnackBar,
   ) {}
 
   ngOnInit(): void {
@@ -85,15 +88,23 @@ export class ResetPasswordComponent implements OnInit {
     this.isSubmitting.set(true);
     const password = this.resetPasswordForm.controls.password.value!;
     const token = this.route.snapshot.paramMap.get('token');
-    console.log('Token:', token);
 
     if (!token) {
       this.isSubmitting.set(false);
       return;
     }
-
     this.authService.resetPasswordAsync(token, password).subscribe({
-      next: () => void this.router.navigate(['/login']),
+      next: () => {
+        void this.router.navigate(['/login']);
+        this.snackBar.open('Contraseña restablecida con éxito.', 'Cerrar', {
+          duration: 3000,
+        });
+      },
+      error: () => {
+        this.snackBar.open('Error al restablecer la contraseña.', 'Cerrar', {
+          duration: 3000,
+        });
+      },
       complete: () => {
         this.isSubmitting.set(false);
       },

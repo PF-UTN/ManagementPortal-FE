@@ -2,7 +2,7 @@ import { AuthService, NavBarService, mockClient } from '@Common';
 
 import { HttpClient } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { DeepMockProxy, mockDeep } from 'jest-mock-extended';
 import { of } from 'rxjs';
@@ -25,7 +25,7 @@ describe('ResetPasswordComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ResetPasswordComponent, BrowserAnimationsModule],
+      imports: [ResetPasswordComponent, NoopAnimationsModule],
       providers: [
         { provide: NavBarService, useValue: mockDeep<NavBarService>() },
         { provide: AuthService, useValue: mockDeep<AuthService>() },
