@@ -1,13 +1,13 @@
 import { AuthService, mockClient, NavBarService } from '@Common';
 
-import { provideHttpClient } from '@angular/common/http';
+import { HttpErrorResponse, provideHttpClient } from '@angular/common/http';
 import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
 import { mockDeep } from 'jest-mock-extended';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 import { SignupComponent } from './signup.component';
 describe('SignupComponent', () => {
@@ -406,6 +406,28 @@ describe('SignupComponent', () => {
         component.onSubmit();
         // Assert
         expect(authServiceSpy).toHaveBeenCalledWith(clientData);
+      });
+
+      it('should show error message on failed signup', () => {
+        // Arrange
+        const errorMessage = 'Email is already in use';
+        const errorResponse = new HttpErrorResponse({
+          error: { message: errorMessage },
+          status: 400,
+          statusText: 'Bad Request',
+        });
+
+        jest
+          .spyOn(authService, 'signUpAsync')
+          .mockReturnValue(throwError(() => errorResponse));
+
+        component.signupForm.setValue(clientData);
+
+        // Act
+        component.onSubmit();
+
+        // Assert
+        expect(component.errorMessage).toBe(errorMessage);
       });
     });
     describe('Document Type Change Logic', () => {

@@ -28,6 +28,7 @@ import { DocumentType } from '../../constants/documentType.enum';
 import { IvaCategory } from '../../constants/ivaCategory.enum';
 import { customEmailValidator } from '../../validators';
 import { matchPasswords } from '../../validators';
+import { HttpErrorResponse } from '@angular/common/http';
 
 const PHONE_REGEX = /^[+]?[0-9]{1,4}?[-.\\s]?([0-9]{1,3}[-.\\s]?){1,4}$/;
 
@@ -78,6 +79,7 @@ export class SignupComponent implements OnInit {
   hideConfirmPassword = signal(true);
   documentTypes = Object.values(DocumentType);
   ivaCategories = Object.values(IvaCategory);
+  errorMessage: string | null;
 
   constructor(
     private fb: FormBuilder,
@@ -218,6 +220,10 @@ export class SignupComponent implements OnInit {
               duration: 3000,
             },
           );
+        },
+        error: (error: HttpErrorResponse) => {
+          this.errorMessage = error.error.message;
+          this.isSubmitting.set(false);
         },
         complete: () => {
           this.isSubmitting.set(false);
