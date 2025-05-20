@@ -93,7 +93,7 @@ describe('ResetPasswordRequestComponent', () => {
     it('should call resetPasswordAsync when email is valid', () => {
       // Arrange
       const authServiceSpy = jest
-        .spyOn(authService, 'resetPasswordAsync')
+        .spyOn(authService, 'resetPasswordRequestAsync')
         .mockReturnValue(of(undefined));
 
       component.resetPasswordRequestForm.controls.email.setValue(

@@ -67,9 +67,19 @@ export class AuthService {
     );
   }
 
-  resetPasswordAsync(email: string): Observable<void> {
+  resetPasswordRequestAsync(email: string): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/reset-password/request`, {
       email,
     });
+  }
+
+  resetPasswordAsync(token: string, password: string): Observable<void> {
+    return this.http.post<void>(
+      `${this.apiUrl}/reset-password`,
+      { password },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
   }
 }
