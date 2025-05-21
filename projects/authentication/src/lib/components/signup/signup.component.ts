@@ -27,8 +27,7 @@ import { Client } from '../../../../../common/src/models/client.model';
 import { PASSWORD_REGEX } from '../../constants';
 import { DocumentType } from '../../constants/documentType.enum';
 import { IvaCategory } from '../../constants/ivaCategory.enum';
-import { customEmailValidator } from '../../validators';
-import { matchPasswords } from '../../validators';
+import { customEmailValidator, matchPasswords } from '../../validators';
 
 const PHONE_REGEX = /^[+]?[0-9]{1,4}?[-.\\s]?([0-9]{1,3}[-.\\s]?){1,4}$/;
 
@@ -82,9 +81,9 @@ export class SignupComponent implements OnInit {
   errorMessage: string | null;
 
   constructor(
-    private fb: FormBuilder,
+    private readonly fb: FormBuilder,
     protected authService: AuthService,
-    private router: Router,
+    private readonly router: Router,
     private readonly navBarService: NavBarService,
     private readonly snackBar: MatSnackBar,
   ) {}
