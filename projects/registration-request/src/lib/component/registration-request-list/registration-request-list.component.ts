@@ -13,7 +13,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { switchMap, tap } from 'rxjs/operators';
 
 import { ActionsRequest } from '../../constants/actions.enum';
 import { RegistrationRequestListItem } from '../../models/registration-request-item.model';
@@ -99,35 +100,38 @@ export class RegistrationRequestListComponent implements OnInit {
   isDrawerRejectOpen: boolean = false;
   selectedRequest: RegistrationRequestListItem;
 
+  get fetchTriggerSubject() {
+    return this['fetchTrigger$'];
+  }
+
+  private fetchTrigger$ = new Subject<void>();
+
   constructor(
     private readonly registrationRequestService: RegistrationRequestService,
     private readonly lateralDrawerService: LateralDrawerService,
   ) {}
 
   ngOnInit(): void {
-    this.fetchData();
-  }
-
-  onStatusFilterChange(): void {
-    this.pageIndex = 0;
-    this.fetchData();
-  }
-
-  fetchData(): void {
-    this.isLoading = true;
-    const params: RegistrationRequestParams = {
-      page: this.pageIndex + 1,
-      pageSize: this.pageSize,
-      searchText: '',
-      filters: {},
-    };
-
-    if (this.selectedStatus && this.selectedStatus.length > 0) {
-      params.filters = { status: this.selectedStatus };
-    }
-
-    this.registrationRequestService
-      .postSearchRegistrationRequest(params)
+    this.fetchTrigger$
+      .pipe(
+        tap(() => {
+          this.isLoading = true;
+        }),
+        switchMap(() => {
+          const params: RegistrationRequestParams = {
+            page: this.pageIndex + 1,
+            pageSize: this.pageSize,
+            searchText: '',
+            filters: {},
+          };
+          if (this.selectedStatus && this.selectedStatus.length > 0) {
+            params.filters = { status: this.selectedStatus };
+          }
+          return this.registrationRequestService.postSearchRegistrationRequest(
+            params,
+          );
+        }),
+      )
       .subscribe({
         next: (response) => {
           this.dataSource$.next(response.results);
@@ -139,12 +143,18 @@ export class RegistrationRequestListComponent implements OnInit {
           this.isLoading = false;
         },
       });
+    this.fetchTrigger$.next();
+  }
+
+  onStatusFilterChange(): void {
+    this.pageIndex = 0;
+    this.fetchTrigger$.next();
   }
 
   handlePageChange(event: { pageIndex: number; pageSize: number }): void {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
-    this.fetchData();
+    this.fetchTrigger$.next();
   }
 
   onApproveDrawer(request: RegistrationRequestListItem): void {
@@ -168,7 +178,7 @@ export class RegistrationRequestListComponent implements OnInit {
           },
         },
       )
-      .subscribe(() => this.fetchData());
+      .subscribe(() => this.fetchTrigger$.next());
   }
 
   onRejectDrawer(request: RegistrationRequestListItem): void {
@@ -192,7 +202,7 @@ export class RegistrationRequestListComponent implements OnInit {
           },
         },
       )
-      .subscribe(() => this.fetchData());
+      .subscribe(() => this.fetchTrigger$.next());
   }
 
   closeDrawer(): void {
