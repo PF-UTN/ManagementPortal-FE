@@ -22,6 +22,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { Router, RouterModule } from '@angular/router';
+import { finalize } from 'rxjs';
 
 import { Client } from '../../../../../common/src/models/client.model';
 import { PASSWORD_REGEX } from '../../constants';
@@ -209,25 +210,28 @@ export class SignupComponent implements OnInit {
         documentNumber: this.signupForm.controls.documentNumber.value!,
         companyName: this.signupForm.controls.companyName.value!,
       };
-      this.authService.signUpAsync(client).subscribe({
-        next: () => {
-          void this.router.navigate(['/login']);
-          this.snackBar.open(
-            'Solicitud de registro enviada con éxito.',
-            'Cerrar',
-            {
-              duration: 3000,
-            },
-          );
-        },
-        error: (error: HttpErrorResponse) => {
-          this.errorMessage = error.error.message;
-          this.isSubmitting.set(false);
-        },
-        complete: () => {
-          this.isSubmitting.set(false);
-        },
-      });
+      this.authService
+        .signUpAsync(client)
+        .pipe(
+          finalize(() => {
+            this.isSubmitting.set(false);
+          }),
+        )
+        .subscribe({
+          next: () => {
+            void this.router.navigate(['/login']);
+            this.snackBar.open(
+              'Solicitud de registro enviada con éxito.',
+              'Cerrar',
+              {
+                duration: 3000,
+              },
+            );
+          },
+          error: (error: HttpErrorResponse) => {
+            this.errorMessage = error.error.message;
+          },
+        });
     }
   }
 }
