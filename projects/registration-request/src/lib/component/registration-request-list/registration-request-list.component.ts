@@ -14,7 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
 
 import { ActionsRequest } from '../../constants/actions.enum';
 import { RegistrationRequestListItem } from '../../models/registration-request-item.model';
@@ -100,11 +100,7 @@ export class RegistrationRequestListComponent implements OnInit {
   isDrawerRejectOpen: boolean = false;
   selectedRequest: RegistrationRequestListItem;
 
-  get fetchTriggerSubject() {
-    return this['fetchTrigger$'];
-  }
-
-  private fetchTrigger$ = new Subject<void>();
+  doSearchSubject$ = new Subject<void>();
 
   constructor(
     private readonly registrationRequestService: RegistrationRequestService,
@@ -112,8 +108,9 @@ export class RegistrationRequestListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.fetchTrigger$
+    this.doSearchSubject$
       .pipe(
+        debounceTime(500),
         tap(() => {
           this.isLoading = true;
         }),
@@ -143,18 +140,18 @@ export class RegistrationRequestListComponent implements OnInit {
           this.isLoading = false;
         },
       });
-    this.fetchTrigger$.next();
+    this.doSearchSubject$.next();
   }
 
   onStatusFilterChange(): void {
     this.pageIndex = 0;
-    this.fetchTrigger$.next();
+    this.doSearchSubject$.next();
   }
 
   handlePageChange(event: { pageIndex: number; pageSize: number }): void {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
-    this.fetchTrigger$.next();
+    this.doSearchSubject$.next();
   }
 
   onApproveDrawer(request: RegistrationRequestListItem): void {
@@ -178,7 +175,7 @@ export class RegistrationRequestListComponent implements OnInit {
           },
         },
       )
-      .subscribe(() => this.fetchTrigger$.next());
+      .subscribe(() => this.doSearchSubject$.next());
   }
 
   onRejectDrawer(request: RegistrationRequestListItem): void {
@@ -202,7 +199,7 @@ export class RegistrationRequestListComponent implements OnInit {
           },
         },
       )
-      .subscribe(() => this.fetchTrigger$.next());
+      .subscribe(() => this.doSearchSubject$.next());
   }
 
   closeDrawer(): void {

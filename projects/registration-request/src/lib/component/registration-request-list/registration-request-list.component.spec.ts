@@ -80,44 +80,48 @@ describe('RegistrationRequestListComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create the component', () => {
-    // Assert
-    expect(component).toBeTruthy();
-    expect(component.dataSource$.value).toEqual(mockData);
-    expect(component.itemsNumber).toBe(mockData.length);
-    expect(component.isLoading).toBe(false);
-  });
-
   describe('ngOnInit', () => {
-    it('should fetch data on init and update dataSource$ and itemsNumber', () => {
+    it('should fetch data on init and update dataSource$ and itemsNumber', fakeAsync(() => {
+      // Arrange
+      component.ngOnInit();
+
+      // Act
+      tick(1100);
+
       // Assert
       expect(component.dataSource$.value).toEqual(mockData);
       expect(component.itemsNumber).toBe(mockData.length);
       expect(component.isLoading).toBe(false);
-    });
+    }));
 
-    it('should handle errors when fetchRegistrationRequests fails', () => {
+    it('should handle errors when fetchRegistrationRequests fails', fakeAsync(() => {
       // Arrange
+      component.ngOnInit();
       service.postSearchRegistrationRequest.mockReturnValueOnce(
         throwError(() => new Error('Test error')),
       );
 
       // Act
-      component.fetchTriggerSubject.next();
+      component.doSearchSubject$.next();
+      tick(1100);
+      fixture.detectChanges();
 
       // Assert
       expect(component.isLoading).toBe(false);
-    });
+    }));
 
-    it('should send selectedStatus as filter', () => {
+    it('should send selectedStatus as filter', fakeAsync(() => {
       // Arrange
+      component.ngOnInit();
       component.selectedStatus = ['Pending', 'Approved'];
       service.postSearchRegistrationRequest.mockReturnValueOnce(
         of({ total: 0, results: [] }),
       );
 
       // Act
-      component.fetchTriggerSubject.next();
+      component.doSearchSubject$.next();
+      tick(1000);
+      fixture.detectChanges();
 
       // Assert
       expect(service.postSearchRegistrationRequest).toHaveBeenCalledWith(
@@ -125,7 +129,7 @@ describe('RegistrationRequestListComponent', () => {
           filters: { status: ['Pending', 'Approved'] },
         }),
       );
-    });
+    }));
   });
 
   describe('getRowClass', () => {
@@ -147,10 +151,10 @@ describe('RegistrationRequestListComponent', () => {
   });
 
   describe('onStatusFilterChange', () => {
-    it('should reset pageIndex and trigger fetchTrigger$', () => {
+    it('should reset pageIndex and trigger doSearchSubject$', () => {
       // Arrange
       component.pageIndex = 2;
-      const nextSpy = jest.spyOn(component.fetchTriggerSubject, 'next');
+      const nextSpy = jest.spyOn(component.doSearchSubject$, 'next');
 
       // Act
       component.onStatusFilterChange();
@@ -160,15 +164,17 @@ describe('RegistrationRequestListComponent', () => {
       expect(nextSpy).toHaveBeenCalled();
     });
 
-    it('should send selectedStatus as filter when changed', () => {
+    it('should send selectedStatus as filter when changed', fakeAsync(() => {
       // Arrange
+      component.ngOnInit();
       component.selectedStatus = ['Pending', 'Approved'];
       service.postSearchRegistrationRequest.mockReturnValueOnce(
         of({ total: 0, results: [] }),
       );
 
       // Act
-      component.fetchTriggerSubject.next();
+      component.doSearchSubject$.next();
+      tick(1000);
 
       // Assert
       expect(service.postSearchRegistrationRequest).toHaveBeenCalledWith(
@@ -176,14 +182,14 @@ describe('RegistrationRequestListComponent', () => {
           filters: { status: ['Pending', 'Approved'] },
         }),
       );
-    });
+    }));
   });
 
   describe('handlePageChange', () => {
-    it('should update pageIndex and pageSize and trigger fetchTrigger$', () => {
+    it('should update pageIndex and pageSize and trigger doSearchSubject$', () => {
       // Arrange
       const event = { pageIndex: 1, pageSize: 20 };
-      const nextSpy = jest.spyOn(component.fetchTriggerSubject, 'next');
+      const nextSpy = jest.spyOn(component.doSearchSubject$, 'next');
 
       // Act
       component.handlePageChange(event);
@@ -196,13 +202,13 @@ describe('RegistrationRequestListComponent', () => {
   });
 
   describe('onApproveDrawer', () => {
-    it('should open the approve drawer and trigger fetchTrigger$', fakeAsync(() => {
+    it('should open the approve drawer and trigger doSearchSubject$', fakeAsync(() => {
       // Arrange
       const request = mockData[0];
       const lateralDrawerOpenSpy = jest
         .spyOn(lateralDrawerService, 'open')
         .mockReturnValue(of(undefined));
-      const nextSpy = jest.spyOn(component.fetchTriggerSubject, 'next');
+      const nextSpy = jest.spyOn(component.doSearchSubject$, 'next');
 
       // Act
       component.onApproveDrawer(request);
@@ -215,13 +221,13 @@ describe('RegistrationRequestListComponent', () => {
   });
 
   describe('onRejectDrawer', () => {
-    it('should open the reject drawer and trigger fetchTrigger$', fakeAsync(() => {
+    it('should open the reject drawer and trigger doSearchSubject$', fakeAsync(() => {
       // Arrange
       const request = mockData[1];
       const lateralDrawerOpenSpy = jest
         .spyOn(lateralDrawerService, 'open')
         .mockReturnValue(of(undefined));
-      const nextSpy = jest.spyOn(component.fetchTriggerSubject, 'next');
+      const nextSpy = jest.spyOn(component.doSearchSubject$, 'next');
 
       // Act
       component.onRejectDrawer(request);
@@ -230,6 +236,27 @@ describe('RegistrationRequestListComponent', () => {
       // Assert
       expect(lateralDrawerOpenSpy).toHaveBeenCalled();
       expect(nextSpy).toHaveBeenCalled();
+    }));
+  });
+
+  describe('debounceTime in doSearchSubject$', () => {
+    it('should trigger the request only after the debounce time and only once for rapid consecutive triggers', fakeAsync(() => {
+      // Arrange
+      component.ngOnInit();
+      const spy = jest.spyOn(service, 'postSearchRegistrationRequest');
+
+      // Act
+      component.doSearchSubject$.next();
+      tick(300);
+      component.doSearchSubject$.next();
+      tick(300);
+      component.doSearchSubject$.next();
+      expect(spy).not.toHaveBeenCalled();
+      tick(1100);
+      fixture.detectChanges();
+
+      // Assert
+      expect(spy).toHaveBeenCalledTimes(1);
     }));
   });
 });
