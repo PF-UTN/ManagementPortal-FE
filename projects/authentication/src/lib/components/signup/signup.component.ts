@@ -2,6 +2,7 @@ import { AuthService, NavBarService } from '@Common';
 import { ButtonComponent, TitleComponent } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import {
   FormBuilder,
@@ -21,13 +22,13 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { Router, RouterModule } from '@angular/router';
+import { finalize } from 'rxjs';
 
 import { Client } from '../../../../../common/src/models/client.model';
 import { PASSWORD_REGEX } from '../../constants';
 import { DocumentType } from '../../constants/documentType.enum';
 import { IvaCategory } from '../../constants/ivaCategory.enum';
-import { customEmailValidator } from '../../validators';
-import { matchPasswords } from '../../validators';
+import { customEmailValidator, matchPasswords } from '../../validators';
 
 const PHONE_REGEX = /^[+]?[0-9]{1,4}?[-.\\s]?([0-9]{1,3}[-.\\s]?){1,4}$/;
 
@@ -78,11 +79,12 @@ export class SignupComponent implements OnInit {
   hideConfirmPassword = signal(true);
   documentTypes = Object.values(DocumentType);
   ivaCategories = Object.values(IvaCategory);
+  errorMessage: string | null;
 
   constructor(
-    private fb: FormBuilder,
+    private readonly fb: FormBuilder,
     protected authService: AuthService,
-    private router: Router,
+    private readonly router: Router,
     private readonly navBarService: NavBarService,
     private readonly snackBar: MatSnackBar,
   ) {}
@@ -208,21 +210,28 @@ export class SignupComponent implements OnInit {
         documentNumber: this.signupForm.controls.documentNumber.value!,
         companyName: this.signupForm.controls.companyName.value!,
       };
-      this.authService.signUpAsync(client).subscribe({
-        next: () => {
-          void this.router.navigate(['/login']);
-          this.snackBar.open(
-            'Solicitud de registro enviada con éxito.',
-            'Cerrar',
-            {
-              duration: 3000,
-            },
-          );
-        },
-        complete: () => {
-          this.isSubmitting.set(false);
-        },
-      });
+      this.authService
+        .signUpAsync(client)
+        .pipe(
+          finalize(() => {
+            this.isSubmitting.set(false);
+          }),
+        )
+        .subscribe({
+          next: () => {
+            void this.router.navigate(['/login']);
+            this.snackBar.open(
+              'Solicitud de registro enviada con éxito.',
+              'Cerrar',
+              {
+                duration: 3000,
+              },
+            );
+          },
+          error: (error: HttpErrorResponse) => {
+            this.errorMessage = error.error.message;
+          },
+        });
     }
   }
 }
