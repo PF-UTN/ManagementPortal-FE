@@ -7,11 +7,16 @@ import {
 
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-import { BehaviorSubject } from 'rxjs';
+import { MatSelectModule } from '@angular/material/select';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { debounceTime, switchMap, tap } from 'rxjs/operators';
 
+import { ActionsRequest } from '../../constants/actions.enum';
 import { RegistrationRequestListItem } from '../../models/registration-request-item.model';
 import { RegistrationRequestParams } from '../../models/registration-request-param.model';
 import { RegistrationRequestService } from '../../services/registration-request.service';
@@ -27,6 +32,10 @@ import { RejectLateralDrawerComponent } from '../reject-lateral-drawer/reject-la
     MatIconModule,
     MatMenuModule,
     MatButtonModule,
+    MatFormFieldModule,
+    MatSelectModule,
+    FormsModule,
+    ReactiveFormsModule,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './registration-request-list.component.html',
@@ -83,10 +92,15 @@ export class RegistrationRequestListComponent implements OnInit {
   pageIndex: number = 0;
   pageSize: number = 10;
   itemsNumber: number = 0;
+  selectedStatus: string[] = [];
+
+  actionsRequest = ActionsRequest;
 
   isDrawerApproveOpen: boolean = false;
   isDrawerRejectOpen: boolean = false;
   selectedRequest: RegistrationRequestListItem;
+
+  doSearchSubject$ = new Subject<void>();
 
   constructor(
     private readonly registrationRequestService: RegistrationRequestService,
@@ -94,20 +108,27 @@ export class RegistrationRequestListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.fetchData();
-  }
-
-  fetchData(): void {
-    this.isLoading = true;
-    const params: RegistrationRequestParams = {
-      page: this.pageIndex + 1,
-      pageSize: this.pageSize,
-      searchText: '',
-      filters: {},
-    };
-
-    this.registrationRequestService
-      .postSearchRegistrationRequest(params)
+    this.doSearchSubject$
+      .pipe(
+        debounceTime(500),
+        tap(() => {
+          this.isLoading = true;
+        }),
+        switchMap(() => {
+          const params: RegistrationRequestParams = {
+            page: this.pageIndex + 1,
+            pageSize: this.pageSize,
+            searchText: '',
+            filters: {},
+          };
+          if (this.selectedStatus && this.selectedStatus.length > 0) {
+            params.filters = { status: this.selectedStatus };
+          }
+          return this.registrationRequestService.postSearchRegistrationRequest(
+            params,
+          );
+        }),
+      )
       .subscribe({
         next: (response) => {
           this.dataSource$.next(response.results);
@@ -119,12 +140,18 @@ export class RegistrationRequestListComponent implements OnInit {
           this.isLoading = false;
         },
       });
+    this.doSearchSubject$.next();
+  }
+
+  onStatusFilterChange(): void {
+    this.pageIndex = 0;
+    this.doSearchSubject$.next();
   }
 
   handlePageChange(event: { pageIndex: number; pageSize: number }): void {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
-    this.fetchData();
+    this.doSearchSubject$.next();
   }
 
   onApproveDrawer(request: RegistrationRequestListItem): void {
@@ -148,7 +175,7 @@ export class RegistrationRequestListComponent implements OnInit {
           },
         },
       )
-      .subscribe(() => this.fetchData());
+      .subscribe(() => this.doSearchSubject$.next());
   }
 
   onRejectDrawer(request: RegistrationRequestListItem): void {
@@ -172,7 +199,7 @@ export class RegistrationRequestListComponent implements OnInit {
           },
         },
       )
-      .subscribe(() => this.fetchData());
+      .subscribe(() => this.doSearchSubject$.next());
   }
 
   closeDrawer(): void {

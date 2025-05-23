@@ -1,6 +1,7 @@
 import { LateralDrawerService } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
+import { fakeAsync, tick } from '@angular/core/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -79,87 +80,56 @@ describe('RegistrationRequestListComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create the component', () => {
-    // Assert
-    expect(component).toBeTruthy();
-    expect(component.dataSource$.value).toEqual(mockData);
-    expect(component.itemsNumber).toBe(mockData.length);
-    expect(component.isLoading).toBe(false);
-  });
+  describe('ngOnInit', () => {
+    it('should fetch data on init and update dataSource$ and itemsNumber', fakeAsync(() => {
+      // Arrange
+      component.ngOnInit();
 
-  describe('fetchData', () => {
-    it('should update dataSource$ and totalItems with mock data', () => {
       // Act
-      component.fetchData();
+      tick(1100);
 
       // Assert
       expect(component.dataSource$.value).toEqual(mockData);
       expect(component.itemsNumber).toBe(mockData.length);
       expect(component.isLoading).toBe(false);
-    });
+    }));
 
-    it('should handle errors when fetchRegistrationRequests fails', () => {
+    it('should handle errors when fetchRegistrationRequests fails', fakeAsync(() => {
       // Arrange
-      service.postSearchRegistrationRequest.mockReturnValue(
+      component.ngOnInit();
+      service.postSearchRegistrationRequest.mockReturnValueOnce(
         throwError(() => new Error('Test error')),
       );
 
       // Act
-      component.fetchData();
+      component.doSearchSubject$.next();
+      tick(1100);
+      fixture.detectChanges();
 
       // Assert
       expect(component.isLoading).toBe(false);
-    });
-  });
+    }));
 
-  describe('handlePageChange', () => {
-    it('should update pageIndex and pageSize and call fetchData', () => {
+    it('should send selectedStatus as filter', fakeAsync(() => {
       // Arrange
-      jest.spyOn(component, 'fetchData');
-      const event = { pageIndex: 1, pageSize: 20 };
+      component.ngOnInit();
+      component.selectedStatus = ['Pending', 'Approved'];
+      service.postSearchRegistrationRequest.mockReturnValueOnce(
+        of({ total: 0, results: [] }),
+      );
 
       // Act
-      component.handlePageChange(event);
+      component.doSearchSubject$.next();
+      tick(1000);
+      fixture.detectChanges();
 
       // Assert
-      expect(component.pageIndex).toBe(1);
-      expect(component.pageSize).toBe(20);
-      expect(component.fetchData).toHaveBeenCalled();
-      expect(component.dataSource$.value).toEqual(mockData);
-      expect(component.itemsNumber).toBe(mockData.length);
-    });
-  });
-
-  describe('onApproveDrawer', () => {
-    it('should open the approve drawer', () => {
-      // Arrange
-      const request = mockData[0];
-      const lateralDrawerOpenSpy = jest
-        .spyOn(lateralDrawerService, 'open')
-        .mockReturnValue(of());
-
-      // Act
-      component.onApproveDrawer(request);
-
-      // Assert
-      expect(lateralDrawerOpenSpy).toHaveBeenCalled();
-    });
-  });
-
-  describe('onRejectDrawer', () => {
-    it('should open the reject drawer', () => {
-      // Arrange
-      const request = mockData[1];
-      const lateralDrawerOpenSpy = jest
-        .spyOn(lateralDrawerService, 'open')
-        .mockReturnValue(of());
-
-      // Act
-      component.onRejectDrawer(request);
-
-      // Assert
-      expect(lateralDrawerOpenSpy).toHaveBeenCalled();
-    });
+      expect(service.postSearchRegistrationRequest).toHaveBeenCalledWith(
+        expect.objectContaining({
+          filters: { status: ['Pending', 'Approved'] },
+        }),
+      );
+    }));
   });
 
   describe('getRowClass', () => {
@@ -178,5 +148,115 @@ describe('RegistrationRequestListComponent', () => {
       // Assert
       expect(rowClass).toBe('');
     });
+  });
+
+  describe('onStatusFilterChange', () => {
+    it('should reset pageIndex and trigger doSearchSubject$', () => {
+      // Arrange
+      component.pageIndex = 2;
+      const nextSpy = jest.spyOn(component.doSearchSubject$, 'next');
+
+      // Act
+      component.onStatusFilterChange();
+
+      // Assert
+      expect(component.pageIndex).toBe(0);
+      expect(nextSpy).toHaveBeenCalled();
+    });
+
+    it('should send selectedStatus as filter when changed', fakeAsync(() => {
+      // Arrange
+      component.ngOnInit();
+      component.selectedStatus = ['Pending', 'Approved'];
+      service.postSearchRegistrationRequest.mockReturnValueOnce(
+        of({ total: 0, results: [] }),
+      );
+
+      // Act
+      component.doSearchSubject$.next();
+      tick(1000);
+
+      // Assert
+      expect(service.postSearchRegistrationRequest).toHaveBeenCalledWith(
+        expect.objectContaining({
+          filters: { status: ['Pending', 'Approved'] },
+        }),
+      );
+    }));
+  });
+
+  describe('handlePageChange', () => {
+    it('should update pageIndex and pageSize and trigger doSearchSubject$', () => {
+      // Arrange
+      const event = { pageIndex: 1, pageSize: 20 };
+      const nextSpy = jest.spyOn(component.doSearchSubject$, 'next');
+
+      // Act
+      component.handlePageChange(event);
+
+      // Assert
+      expect(component.pageIndex).toBe(1);
+      expect(component.pageSize).toBe(20);
+      expect(nextSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('onApproveDrawer', () => {
+    it('should open the approve drawer and trigger doSearchSubject$', fakeAsync(() => {
+      // Arrange
+      const request = mockData[0];
+      const lateralDrawerOpenSpy = jest
+        .spyOn(lateralDrawerService, 'open')
+        .mockReturnValue(of(undefined));
+      const nextSpy = jest.spyOn(component.doSearchSubject$, 'next');
+
+      // Act
+      component.onApproveDrawer(request);
+      tick();
+
+      // Assert
+      expect(lateralDrawerOpenSpy).toHaveBeenCalled();
+      expect(nextSpy).toHaveBeenCalled();
+    }));
+  });
+
+  describe('onRejectDrawer', () => {
+    it('should open the reject drawer and trigger doSearchSubject$', fakeAsync(() => {
+      // Arrange
+      const request = mockData[1];
+      const lateralDrawerOpenSpy = jest
+        .spyOn(lateralDrawerService, 'open')
+        .mockReturnValue(of(undefined));
+      const nextSpy = jest.spyOn(component.doSearchSubject$, 'next');
+
+      // Act
+      component.onRejectDrawer(request);
+      tick();
+
+      // Assert
+      expect(lateralDrawerOpenSpy).toHaveBeenCalled();
+      expect(nextSpy).toHaveBeenCalled();
+    }));
+  });
+
+  describe('debounceTime in doSearchSubject$', () => {
+    it('should trigger the request only after the debounce time and only once for rapid consecutive triggers', fakeAsync(() => {
+      // Arrange
+      component.ngOnInit();
+      const spy = jest.spyOn(service, 'postSearchRegistrationRequest');
+
+      // Act
+      component.doSearchSubject$.next();
+      tick(300);
+      component.doSearchSubject$.next();
+      tick(300);
+      component.doSearchSubject$.next();
+      expect(spy).not.toHaveBeenCalled();
+      tick(1100);
+      fixture.detectChanges();
+
+      // Assert
+      expect(spy).toHaveBeenCalledTimes(1);
+    }));
   });
 });
