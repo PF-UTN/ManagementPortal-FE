@@ -251,7 +251,7 @@
       </div>
       <p *ngIf="errorMessage" class="error-message d-flex justify-content-center align-items-center">{{ errorMessage }}</p>
       <div class=" w-100 form-group  button-container">
-        <mp-button type="primary" [loading]="isSubmitting" [disabled]="signupForm.invalid" (onClick)="onSubmit()">Registrar</mp-button>
+        <mp-button type="primary" [loading]="isSubmitting()" [disabled]="signupForm.invalid" (onClick)="onSubmit()">Registrar</mp-button>
       </div>
     </form>
   </div>
