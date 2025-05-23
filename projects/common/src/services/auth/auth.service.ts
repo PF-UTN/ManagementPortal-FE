@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
@@ -18,7 +19,10 @@ export class AuthService {
 
   private apiUrl = 'https://dev-management-portal-be.vercel.app/authentication';
 
-  constructor(private http: HttpClient) {
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+  ) {
     const token = localStorage.getItem('token');
 
     if (token) {
@@ -26,15 +30,9 @@ export class AuthService {
     }
   }
 
-  private setUserRole(token: string): void {
-    const decodedToken: TokenPayload = jwtDecode(token);
-    this.userRole = decodedToken.role;
-  }
-
-  private setToken(token: string): void {
-    localStorage.setItem('token', token);
-
-    this.setUserRole(token);
+  logOut() {
+    localStorage.removeItem('token');
+    this.router.navigate(['autenticacion/login']);
   }
 
   signUpAsync(client: Client): Observable<AuthResponse> {
@@ -81,5 +79,16 @@ export class AuthService {
         headers: { Authorization: `Bearer ${token}` },
       },
     );
+  }
+
+  private setUserRole(token: string): void {
+    const decodedToken: TokenPayload = jwtDecode(token);
+    this.userRole = decodedToken.role;
+  }
+
+  private setToken(token: string): void {
+    localStorage.setItem('token', token);
+
+    this.setUserRole(token);
   }
 }
