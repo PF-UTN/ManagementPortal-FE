@@ -91,6 +91,19 @@ describe('RejectLateralDrawerComponent', () => {
       // Assert
       expect(component.isFormInvalid()).toBe(true);
     });
+
+    it('should mark rejectionReason as invalid if more than 50 characters', () => {
+      // Arrange
+      const control = component.form.controls['rejectionReason'];
+      const longText = 'a'.repeat(51);
+
+      // Act
+      control.setValue(longText);
+
+      // Assert
+      expect(control.valid).toBeFalsy();
+      expect(control.errors?.['maxlength']).toBeTruthy();
+    });
   });
 
   describe('closeDrawer', () => {

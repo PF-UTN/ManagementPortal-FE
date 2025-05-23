@@ -1,12 +1,5 @@
 import { CommonModule } from '@angular/common';
-import {
-  Component,
-  Input,
-  Output,
-  EventEmitter,
-  Signal,
-  signal,
-} from '@angular/core';
+import { Component, Input, Output, EventEmitter, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
@@ -23,7 +16,7 @@ import { ButtonType } from '../../models/button-type.model';
 export class ButtonComponent {
   @Input() type: ButtonType = ButtonTypes.primary;
   @Input() disabled: boolean = false;
-  @Input() loading: Signal<boolean> = signal(false);
+  loading = input(false);
 
   @Output() onClick = new EventEmitter<void>();
 
