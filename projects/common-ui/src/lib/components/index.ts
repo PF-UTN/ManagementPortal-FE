@@ -1,6 +1,7 @@
 export * from './button/button.component';
 export * from './button/constants/button-types';
 export * from './lateral-drawer';
+export * from './modal';
 export * from './subtitle/subtitle.component';
 export * from './back-arrow/back-arrow.component';
 export * from './table/table.component';
