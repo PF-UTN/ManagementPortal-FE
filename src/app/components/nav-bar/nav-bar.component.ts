@@ -45,6 +45,7 @@ export class NavBarComponent implements OnInit {
 
     const dialogRef = this.dialog.open(ModalComponent, {
       data: config,
+      autoFocus: false,
     });
 
     dialogRef.afterClosed().subscribe((result) => {
