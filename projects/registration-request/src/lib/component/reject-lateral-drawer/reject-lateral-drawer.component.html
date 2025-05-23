@@ -1,6 +1,6 @@
 <div class="drawer-container__content">
   <div class="drawer-container__row">
-    <p><strong>Nombre | Razon Social</strong></p>
+    <p><strong>Nombre Completo | Razón Social</strong></p>
     {{ data.user.fullNameOrBusinessName }}
   </div>
   <div class="drawer-container__row">
@@ -19,7 +19,8 @@
     <p><strong>Motivo de Rechazo</strong></p>
     <mat-form-field appearance="fill" class="drawer-container__input">
       <mat-label>Escribe el motivo</mat-label>
-      <textarea matInput formControlName="rejectionReason"></textarea>
+      <textarea matInput formControlName="rejectionReason" maxlength="50"></textarea>
+      <mat-hint align="end">{{form.controls.rejectionReason.value?.length || 0}} / 50</mat-hint>
       <mat-error *ngIf="!form.controls.rejectionReason.value?.trim()">
         Este campo es obligatorio
       </mat-error>
