@@ -1,7 +1,9 @@
 import { AuthService, RolesEnum } from '@Common';
+import { ModalComponent, ModalConfig } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 
@@ -17,7 +19,10 @@ import { NavBarItem } from '../../models/nav-bar-item.model';
 export class NavBarComponent implements OnInit {
   items: NavBarItem[];
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private dialog: MatDialog,
+  ) {}
 
   ngOnInit(): void {
     this.items = [
@@ -28,5 +33,24 @@ export class NavBarComponent implements OnInit {
         shouldRender: this.authService.hasAccess([RolesEnum.Employee]),
       },
     ];
+  }
+
+  handleLogOutClick() {
+    const config: ModalConfig = {
+      title: 'Confirmar cierre de sesión',
+      message: '¿Estás seguro que deseas cerrar sesión?',
+      confirmText: 'Sí',
+      cancelText: 'No',
+    };
+
+    const dialogRef = this.dialog.open(ModalComponent, {
+      data: config,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.authService.logOut();
+      }
+    });
   }
 }
