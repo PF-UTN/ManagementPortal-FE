@@ -7,7 +7,7 @@ import { UnauthorizedComponent } from './components/unauthorized/unauthorized.co
 
 export const routes: Routes = [
   {
-    path: '',
+    path: 'autenticacion',
     loadChildren: () =>
       import('@Authentication').then((m) => m.AuthenticationRoutingModule),
   },
@@ -27,7 +27,6 @@ export const routes: Routes = [
     data: { admittedRoles: [RolesEnum.Employee] },
   },
   { path: 'unauthorized', pathMatch: 'full', component: UnauthorizedComponent },
-  { path: '*', redirectTo: 'inicio', pathMatch: 'full' },
 ];
 
 @NgModule({

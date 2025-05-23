@@ -90,7 +90,7 @@ describe('AuthInterceptor', () => {
       interceptor.intercept(request, next).subscribe({
         error: () => {
           // Assert
-          expect(router.navigate).toHaveBeenCalledWith(['/login']);
+          expect(router.navigate).toHaveBeenCalledWith(['autenticacion/login']);
           done();
         },
       });
