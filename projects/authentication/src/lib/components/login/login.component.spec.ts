@@ -272,7 +272,7 @@ describe('LoginComponent', () => {
       component.navigateToRegister();
 
       // Assert
-      expect(routerSpy).toHaveBeenCalledWith(['signup']);
+      expect(routerSpy).toHaveBeenCalledWith(['autenticacion/signup']);
     });
   });
 });

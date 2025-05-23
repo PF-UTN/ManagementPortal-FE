@@ -4,6 +4,8 @@ import {
   provideHttpClientTesting,
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
+import { mockDeep } from 'jest-mock-extended';
 import * as JwtDecodeModule from 'jwt-decode';
 
 import { AuthService } from './auth.service';
@@ -21,13 +23,28 @@ jest.mock('jwt-decode', () => ({
 describe('AuthService', () => {
   let service: AuthService;
   let httpMock: HttpTestingController;
+  let router: Router;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [AuthService, provideHttpClient(), provideHttpClientTesting()],
+      providers: [
+        AuthService,
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: Router, useValue: mockDeep<Router>() },
+      ],
     });
     service = TestBed.inject(AuthService);
+
     httpMock = TestBed.inject(HttpTestingController);
+    router = TestBed.inject(Router);
+
+    const localStorageMock = mockDeep<Storage>();
+
+    Object.defineProperty(window, 'localStorage', {
+      value: localStorageMock,
+      writable: true,
+    });
   });
 
   afterEach(() => {
@@ -38,6 +55,31 @@ describe('AuthService', () => {
 
   it('should be created', () => {
     expect(service).toBeTruthy();
+  });
+
+  describe('logOut', () => {
+    it('should remove token from localStorage', () => {
+      // Arrange
+      const removeItemSpy = jest.spyOn(localStorage, 'removeItem');
+      localStorage.setItem('token', 'mockToken');
+
+      // Act
+      service.logOut();
+
+      // Assert
+      expect(removeItemSpy).toHaveBeenCalledWith('token');
+    });
+
+    it('should navigate to login', () => {
+      // Arrange
+      const navigateSpy = jest.spyOn(router, 'navigate');
+
+      // Act
+      service.logOut();
+
+      // Assert
+      expect(navigateSpy).toHaveBeenCalledWith(['autenticacion/login']);
+    });
   });
 
   it('should perform a POST for signUpAsync()', () => {

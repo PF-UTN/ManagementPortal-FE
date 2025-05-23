@@ -31,11 +31,11 @@ describe('BackArrowComponent', () => {
     it('should navigate to backTo route if backTo is defined', () => {
       // Arrange
       const routerSpy = jest.spyOn(router, 'navigate');
-      component.backTo = 'login';
+      component.backTo = 'autenticacion/login';
       // Act
       component.goBack();
       // Assert
-      expect(routerSpy).toHaveBeenCalledWith(['login']);
+      expect(routerSpy).toHaveBeenCalledWith(['autenticacion/login']);
     });
 
     it('should call window.history.back if backTo is not defined', () => {

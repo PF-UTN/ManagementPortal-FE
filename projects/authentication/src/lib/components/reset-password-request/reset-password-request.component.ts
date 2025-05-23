@@ -1,9 +1,5 @@
 import { AuthService, NavBarService } from '@Common';
-import {
-  ButtonComponent,
-  SubtitleComponent,
-  BackArrowComponent,
-} from '@Common-UI';
+import { ButtonComponent, SubtitleComponent } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
@@ -35,7 +31,6 @@ const COUNTDOWN_DURATION = 60;
     MatIconModule,
     ReactiveFormsModule,
     MatButtonModule,
-    BackArrowComponent,
   ],
   templateUrl: './reset-password-request.component.html',
   styleUrl: './reset-password-request.component.scss',

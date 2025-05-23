@@ -1,14 +1,18 @@
 import { AuthService, RoleHierarchy, RolesEnum } from '@Common';
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { provideRouter } from '@angular/router';
 import { mockDeep } from 'jest-mock-extended';
+import { of } from 'rxjs';
 
 import { NavBarComponent } from './nav-bar.component';
 
 describe('NavBarComponent', () => {
   let component: NavBarComponent;
   let fixture: ComponentFixture<NavBarComponent>;
+  let authService: AuthService;
+  let dialog: MatDialog;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -16,10 +20,15 @@ describe('NavBarComponent', () => {
       providers: [
         provideRouter([]),
         { provide: AuthService, useValue: mockDeep(AuthService) },
+        { provide: MatDialog, useValue: mockDeep(MatDialog) },
       ],
     });
     fixture = TestBed.createComponent(NavBarComponent);
+
     component = fixture.componentInstance;
+    authService = TestBed.inject(AuthService);
+    dialog = TestBed.inject(MatDialog);
+
     fixture.detectChanges();
   });
 
@@ -102,5 +111,22 @@ describe('NavBarComponent', () => {
         shouldRender: false,
       },
     ]);
+  });
+
+  describe('handleLogOutClick', () => {
+    it('should call logOut if dialog is confirmed', () => {
+      // Arrange
+      const logOutSpy = jest.spyOn(authService, 'logOut');
+      const afterClosed$ = of(true);
+      (dialog.open as jest.Mock).mockReturnValue({
+        afterClosed: () => afterClosed$,
+      });
+
+      // Act
+      component.handleLogOutClick();
+
+      // Assert
+      expect(logOutSpy).toHaveBeenCalled();
+    });
   });
 });
