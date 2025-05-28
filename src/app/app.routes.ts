@@ -26,6 +26,12 @@ export const routes: Routes = [
     canActivate: [RoleGuard],
     data: { admittedRoles: [RolesEnum.Employee] },
   },
+  {
+    path: 'productos',
+    loadChildren: () => import('@Product').then((m) => m.ProductRoutingModule),
+    canActivate: [RoleGuard],
+    data: { admittedRoles: [RolesEnum.Employee] },
+  },
   { path: 'unauthorized', pathMatch: 'full', component: UnauthorizedComponent },
 ];
 
