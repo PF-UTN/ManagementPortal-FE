@@ -2,8 +2,10 @@ import { NavBarService } from '@Common';
 import { LateralDrawerComponent } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, Signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, computed, Signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { filter, map, startWith } from 'rxjs';
 
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 
@@ -20,12 +22,22 @@ import { NavBarComponent } from './components/nav-bar/nav-bar.component';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   isNavBarVisible: Signal<boolean>;
+  isIndexPage: Signal<boolean>;
 
-  constructor(private navBarService: NavBarService) {}
+  constructor(
+    private navBarService: NavBarService,
+    private router: Router,
+  ) {
+    const url$ = this.router.events.pipe(
+      filter((event) => event instanceof NavigationEnd),
+      map(() => this.router.url),
+      startWith(this.router.url),
+    );
+    const urlSignal = toSignal(url$, { initialValue: this.router.url });
+    this.isIndexPage = computed(() => urlSignal() === '/');
 
-  ngOnInit(): void {
     this.isNavBarVisible = this.navBarService.isNavBarVisible;
   }
 }
