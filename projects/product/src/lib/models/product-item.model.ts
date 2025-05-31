@@ -3,8 +3,8 @@ export interface ProductListItem {
   name: string;
   description: string;
   price: number;
-  category: string;
-  supplier: string;
+  categoryName: string;
+  supplierBusinessName: string;
   stock: number;
   enabled: boolean;
 }

@@ -29,8 +29,8 @@ export const routes: Routes = [
   {
     path: 'productos',
     loadChildren: () => import('@Product').then((m) => m.ProductRoutingModule),
-    canActivate: [RoleGuard],
-    data: { admittedRoles: [RolesEnum.Employee] },
+    // canActivate: [RoleGuard],
+    // data: { admittedRoles: [RolesEnum.Employee] },
   },
   { path: 'unauthorized', pathMatch: 'full', component: UnauthorizedComponent },
 ];

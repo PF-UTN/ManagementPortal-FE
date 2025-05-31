@@ -1,4 +1,4 @@
-export enum StatesProduct {
-  True = 'Activo',
-  False = 'Pausado',
-}
+export const StatesProduct = [
+  { label: 'Activo', value: true },
+  { label: 'Pausado', value: false },
+];

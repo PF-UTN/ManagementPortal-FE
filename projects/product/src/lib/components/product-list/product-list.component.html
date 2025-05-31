@@ -1,29 +1,30 @@
-<mat-form-field appearance="outline">
-  <mat-label>Filtrar por categoria</mat-label>
+<!-- <mat-form-field appearance="outline">
+  <mat-label>Filtrar por categoria</mat-label> -->
   <!-- <mat-select [(ngModel)]="selectedCategory" (selectionChange)="onStatusFilterChange()" multiple>
     <mat-option *ngFor="let option of actionsRequest | keyvalue" [value]="option.key">
       {{ option.value }}
     </mat-option>
   </mat-select> -->
-</mat-form-field>
+<!-- </mat-form-field> -->
 
-<mat-form-field appearance="outline">
-  <mat-label>Filtrar por proveedor</mat-label>
+<!-- <mat-form-field appearance="outline">
+  <mat-label>Filtrar por proveedor</mat-label> -->
   <!-- <mat-select [(ngModel)]="selectedCategory" (selectionChange)="onStatusFilterChange()" multiple>
     <mat-option *ngFor="let option of actionsRequest | keyvalue" [value]="option.key">
       {{ option.value }}
     </mat-option>
   </mat-select> -->
-</mat-form-field>
+<!-- </mat-form-field> -->
 
 <mat-form-field appearance="outline">
   <mat-label>Filtrar por estado</mat-label>
-  <mat-select [(ngModel)]="selectedEnabled" (selectionChange)="onStatusFilterChange()" multiple>
-    <mat-option *ngFor="let option of stateProduct | keyvalue" [value]="option.key">
-      {{ option.value }}
-    </mat-option>
-  </mat-select> 
+  <mat-select [(ngModel)]="selectedEnabled" (selectionChange)="onEnabledFilterChange()">
+  <mat-option *ngFor="let option of stateProduct" [value]="option.value">
+    {{ option.label }}
+  </mat-option>
+  </mat-select>
 </mat-form-field>
+
 
 <mp-table
   [columns]="columns"

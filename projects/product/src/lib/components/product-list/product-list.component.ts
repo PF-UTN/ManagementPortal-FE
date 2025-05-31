@@ -1,9 +1,4 @@
-import {
-  ColumnTypeEnum,
-  LateralDrawerService,
-  TableColumn,
-  TableComponent,
-} from '@Common-UI';
+import { ColumnTypeEnum, TableColumn, TableComponent } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
@@ -57,7 +52,7 @@ export class ProductListComponent implements OnInit {
       columnDef: 'supplier',
       header: 'Proveedor',
       type: ColumnTypeEnum.VALUE,
-      value: (element: ProductListItem) => element.supplier,
+      value: (element: ProductListItem) => element.supplierBusinessName,
     },
     {
       columnDef: 'stock',
@@ -69,7 +64,7 @@ export class ProductListComponent implements OnInit {
       columnDef: 'category',
       header: 'Categoría',
       type: ColumnTypeEnum.VALUE,
-      value: (element: ProductListItem) => element.category,
+      value: (element: ProductListItem) => element.categoryName,
     },
     {
       columnDef: 'price',
@@ -79,9 +74,33 @@ export class ProductListComponent implements OnInit {
     },
     {
       columnDef: 'enabled',
-      header: 'Pausado',
+      header: 'Estado',
       type: ColumnTypeEnum.VALUE,
-      value: (element: ProductListItem) => (element.enabled ? 'Sí' : 'No'),
+      value: (element: ProductListItem) =>
+        element.enabled ? 'Activo' : 'Pausado',
+    },
+    {
+      columnDef: 'actions',
+      header: 'Acciones',
+      type: ColumnTypeEnum.ACTIONS,
+      actions: [
+        {
+          description: 'Ver Detalle',
+          action: (element: ProductListItem) => this.onDetailDrawer(element),
+        },
+        {
+          description: 'Modificar',
+          action: (element: ProductListItem) => this.onModifyDrawer(element),
+        },
+        {
+          description: 'Pausar',
+          action: (element: ProductListItem) => this.onPauseDrawer(element),
+        },
+        {
+          description: 'Eliminar',
+          action: (element: ProductListItem) => this.onDeleteDrawer(element),
+        },
+      ],
     },
   ];
 
@@ -94,18 +113,18 @@ export class ProductListComponent implements OnInit {
   selectedEnabled: boolean | null = null;
   selectedSupplier: string[] = [];
   stateProduct = StatesProduct;
+
   doSearchSubject$ = new Subject<void>();
 
-  constructor(
-    private readonly productService: ProductService,
-    private readonly lateralDrawerService: LateralDrawerService,
-  ) {}
+  constructor(private readonly productService: ProductService) {}
 
   ngOnInit(): void {
     this.doSearchSubject$
       .pipe(
-        debounceTime(300),
-        tap(() => (this.isLoading = true)),
+        debounceTime(500),
+        tap(() => {
+          this.isLoading = true;
+        }),
         switchMap(() => {
           const params: ProductParams = {
             page: this.pageIndex + 1,
@@ -113,21 +132,6 @@ export class ProductListComponent implements OnInit {
             searchText: '',
             filters: {},
           };
-          if (this.selectedCategory && this.selectedCategory.length > 0) {
-            params.filters = { category: this.selectedCategory };
-          }
-          if (this.selectedSupplier && this.selectedSupplier.length > 0) {
-            params.filters = {
-              ...params.filters,
-              supplier: this.selectedSupplier,
-            };
-          }
-          if (this.selectedEnabled !== null) {
-            params.filters = {
-              ...params.filters,
-              enabled: this.selectedEnabled,
-            };
-          }
           return this.productService.postSearchProduct(params);
         }),
       )
@@ -144,7 +148,20 @@ export class ProductListComponent implements OnInit {
       });
     this.doSearchSubject$.next();
   }
-  onStatusFilterChange(): void {
+  onDetailDrawer(request: ProductListItem): void {
+    console.log('Ver detalle', request); //Provisorio hasta que se implemente el drawer
+  }
+  onModifyDrawer(request: ProductListItem): void {
+    console.log('Modificar', request); //Provisorio hasta que se implemente el drawer
+  }
+  onDeleteDrawer(request: ProductListItem): void {
+    console.log('Eliminar', request); //Provisorio hasta que se implemente el drawer
+  }
+  onPauseDrawer(request: ProductListItem): void {
+    console.log('Pausar', request); //Provisorio hasta que se implemente el drawer
+  }
+
+  onEnabledFilterChange(): void {
     this.pageIndex = 0;
     this.doSearchSubject$.next();
   }
