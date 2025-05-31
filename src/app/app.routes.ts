@@ -27,6 +27,7 @@ export const routes: Routes = [
     data: { admittedRoles: [RolesEnum.Employee] },
   },
   { path: 'unauthorized', pathMatch: 'full', component: UnauthorizedComponent },
+  { path: '**', pathMatch: 'full', redirectTo: 'inicio' },
 ];
 
 @NgModule({
