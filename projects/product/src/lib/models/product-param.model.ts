@@ -3,8 +3,8 @@ export interface ProductParams {
   pageSize: number;
   searchText?: string;
   filters?: {
-    category?: string[];
-    supplier?: string[];
+    categoryName?: string[];
+    supplierBusinessName?: string[];
     enabled?: boolean;
   };
 }

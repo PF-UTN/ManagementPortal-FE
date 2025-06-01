@@ -1,4 +1,9 @@
-import { ColumnTypeEnum, TableColumn, TableComponent } from '@Common-UI';
+import {
+  ColumnTypeEnum,
+  DropdownButtonComponent,
+  TableColumn,
+  TableComponent,
+} from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
@@ -29,6 +34,7 @@ import { ProductService } from '../../services/product.service';
     MatSelectModule,
     FormsModule,
     ReactiveFormsModule,
+    DropdownButtonComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './product-list.component.html',
@@ -132,6 +138,18 @@ export class ProductListComponent implements OnInit {
             searchText: '',
             filters: {},
           };
+          if (!params.filters) {
+            params.filters = {};
+          }
+          if (this.selectedEnabled !== null) {
+            params.filters = { enabled: this.selectedEnabled };
+          }
+          if (this.selectedCategory && this.selectedCategory.length > 0) {
+            params.filters.categoryName = this.selectedCategory;
+          }
+          if (this.selectedSupplier && this.selectedSupplier.length > 0) {
+            params.filters.supplierBusinessName = this.selectedSupplier;
+          }
           return this.productService.postSearchProduct(params);
         }),
       )
@@ -162,6 +180,14 @@ export class ProductListComponent implements OnInit {
   }
 
   onEnabledFilterChange(): void {
+    this.pageIndex = 0;
+    this.doSearchSubject$.next();
+  }
+  onCategoryFilterChange(): void {
+    this.pageIndex = 0;
+    this.doSearchSubject$.next();
+  }
+  onSupplierFilterChange(): void {
     this.pageIndex = 0;
     this.doSearchSubject$.next();
   }

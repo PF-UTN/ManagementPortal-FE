@@ -59,6 +59,12 @@ describe('NavBarComponent', () => {
           route: 'solicitudes-registro',
           shouldRender: true,
         },
+        {
+          title: 'Productos',
+          icon: 'inventory_2',
+          route: 'productos',
+          shouldRender: true,
+        },
       ]);
     });
 
@@ -82,6 +88,12 @@ describe('NavBarComponent', () => {
           title: 'Solicitudes de Registro',
           icon: 'app_registration',
           route: 'solicitudes-registro',
+          shouldRender: true,
+        },
+        {
+          title: 'Productos',
+          icon: 'inventory_2',
+          route: 'productos',
           shouldRender: true,
         },
       ]);
@@ -108,6 +120,12 @@ describe('NavBarComponent', () => {
         title: 'Solicitudes de Registro',
         icon: 'app_registration',
         route: 'solicitudes-registro',
+        shouldRender: false,
+      },
+      {
+        title: 'Productos',
+        icon: 'inventory_2',
+        route: 'productos',
         shouldRender: false,
       },
     ]);

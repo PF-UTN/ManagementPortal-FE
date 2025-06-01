@@ -14,7 +14,8 @@ export interface SearchProductResponse {
   providedIn: 'root',
 })
 export class ProductService {
-  private readonly baseUrl = 'http://localhost:3000/product';
+  private readonly baseUrl =
+    'https://dev-management-portal-be.vercel.app/product';
 
   constructor(private readonly http: HttpClient) {}
 

@@ -22,3 +22,12 @@ export const mockProductListItem: ProductListItem[] = [
     enabled: false,
   },
 ];
+
+export const mockProductListItemResponse = {
+  total: mockProductListItem.length,
+  results: mockProductListItem,
+};
+
+export const mockSuccessResponse = {
+  message: 'Operación realizada con éxito.',
+};
