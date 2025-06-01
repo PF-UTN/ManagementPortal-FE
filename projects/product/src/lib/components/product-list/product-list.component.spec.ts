@@ -100,6 +100,66 @@ describe('ProductListComponent', () => {
       // Assert
       expect(component.isLoading).toBe(false);
     }));
+    it('should send selectedCategory as filter', fakeAsync(() => {
+      // Arrange
+      component.ngOnInit();
+      component.selectedCategory = ['Category 1', 'Category 2'];
+      service.postSearchProduct.mockReturnValueOnce(
+        of({ total: 0, results: [] }),
+      );
+
+      // Act
+      component.doSearchSubject$.next();
+      tick(1000);
+      fixture.detectChanges();
+
+      // Assert
+      expect(service.postSearchProduct).toHaveBeenCalledWith(
+        expect.objectContaining({
+          filters: { categoryName: ['Category 1', 'Category 2'] },
+        }),
+      );
+    }));
+    it('should send selectedSupplier as filter', fakeAsync(() => {
+      // Arrange
+      component.ngOnInit();
+      component.selectedSupplier = ['Supplier 1', 'Supplier 2'];
+      service.postSearchProduct.mockReturnValueOnce(
+        of({ total: 0, results: [] }),
+      );
+
+      // Act
+      component.doSearchSubject$.next();
+      tick(1000);
+      fixture.detectChanges();
+
+      // Assert
+      expect(service.postSearchProduct).toHaveBeenCalledWith(
+        expect.objectContaining({
+          filters: { supplierBusinessName: ['Supplier 1', 'Supplier 2'] },
+        }),
+      );
+    }));
+    it('should send selectedEnabled as filter', fakeAsync(() => {
+      // Arrange
+      component.ngOnInit();
+      component.selectedEnabled = true;
+      service.postSearchProduct.mockReturnValueOnce(
+        of({ total: 0, results: [] }),
+      );
+
+      // Act
+      component.doSearchSubject$.next();
+      tick(1000);
+      fixture.detectChanges();
+
+      // Assert
+      expect(service.postSearchProduct).toHaveBeenCalledWith(
+        expect.objectContaining({
+          filters: { enabled: true },
+        }),
+      );
+    }));
   });
   describe('handlePageChange', () => {
     it('should update pageIndex doSearchSubject$', () => {
@@ -154,6 +214,82 @@ describe('ProductListComponent', () => {
 
       // Assert
       expect(spy).toHaveBeenCalledTimes(1);
+    }));
+  });
+  describe('onEnabledFilterChange', () => {
+    it('should reset pageIndex and trigger doSearchSubject$', () => {
+      // Arrange
+      component.pageIndex = 2;
+      const nextSpy = jest.spyOn(component.doSearchSubject$, 'next');
+
+      // Act
+      component.onEnabledFilterChange();
+
+      // Assert
+      expect(component.pageIndex).toBe(0);
+      expect(nextSpy).toHaveBeenCalled();
+    });
+
+    it('should send selectedEnabled as filter when changed', fakeAsync(() => {
+      // Arrange
+      component.ngOnInit();
+      component.selectedEnabled = true;
+      service.postSearchProduct.mockReturnValueOnce(
+        of({ total: 0, results: [] }),
+      );
+
+      // Act
+      component.doSearchSubject$.next();
+      tick(1000);
+
+      // Assert
+      expect(service.postSearchProduct).toHaveBeenCalledWith(
+        expect.objectContaining({
+          filters: { enabled: true },
+        }),
+      );
+    }));
+  });
+  describe('onCategoryFilterChange', () => {
+    it('should send selectedCategory as filter when changed', fakeAsync(() => {
+      // Arrange
+      component.ngOnInit();
+      component.selectedCategory = ['Category 1', 'Category 2'];
+      service.postSearchProduct.mockReturnValueOnce(
+        of({ total: 0, results: [] }),
+      );
+
+      // Act
+      component.doSearchSubject$.next();
+      tick(1000);
+
+      // Assert
+      expect(service.postSearchProduct).toHaveBeenCalledWith(
+        expect.objectContaining({
+          filters: { categoryName: ['Category 1', 'Category 2'] },
+        }),
+      );
+    }));
+  });
+  describe('onSupplierFilterChange', () => {
+    it('should send selectedCategory as filter when changed', fakeAsync(() => {
+      // Arrange
+      component.ngOnInit();
+      component.selectedSupplier = ['Supplier 1', 'Supplier 2'];
+      service.postSearchProduct.mockReturnValueOnce(
+        of({ total: 0, results: [] }),
+      );
+
+      // Act
+      component.doSearchSubject$.next();
+      tick(1000);
+
+      // Assert
+      expect(service.postSearchProduct).toHaveBeenCalledWith(
+        expect.objectContaining({
+          filters: { supplierBusinessName: ['Supplier 1', 'Supplier 2'] },
+        }),
+      );
     }));
   });
 });
