@@ -16,7 +16,6 @@ import { MatSelectModule } from '@angular/material/select';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 
-import { StatesProduct } from '../../constants/state.enum';
 import { ProductListItem } from '../../models/product-item.model';
 import { ProductParams } from '../../models/product-param.model';
 import { ProductService } from '../../services/product.service';
@@ -118,7 +117,6 @@ export class ProductListComponent implements OnInit {
   selectedCategory: string[] = [];
   selectedEnabled: boolean | null = null;
   selectedSupplier: string[] = [];
-  stateProduct = StatesProduct;
 
   doSearchSubject$ = new Subject<void>();
 
