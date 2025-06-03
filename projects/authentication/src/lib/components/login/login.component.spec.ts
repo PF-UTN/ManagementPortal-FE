@@ -62,6 +62,17 @@ describe('LoginComponent', () => {
       expect(navBarServiceSpy).toHaveBeenCalled();
     });
 
+    it('should call logOut on authService', () => {
+      // Arrange
+      const logOutSpy = jest.spyOn(authService, 'logOut');
+
+      // Act
+      component.ngOnInit();
+
+      // Assert
+      expect(logOutSpy).toHaveBeenCalled();
+    });
+
     it('should initialize form as invalid', () => {
       // Arrange
       // Act
