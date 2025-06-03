@@ -2,13 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { ProductListItem } from '../models/product-item.model';
 import { ProductParams } from '../models/product-param.model';
-
-export interface SearchProductResponse {
-  total: number;
-  results: ProductListItem[];
-}
+import { SearchProductResponse } from '../models/search-product-response.model';
 
 @Injectable({
   providedIn: 'root',

@@ -2,7 +2,7 @@ export interface ProductParams {
   page: number;
   pageSize: number;
   searchText?: string;
-  filters?: {
+  filters: {
     categoryName?: string[];
     supplierBusinessName?: string[];
     enabled?: boolean;

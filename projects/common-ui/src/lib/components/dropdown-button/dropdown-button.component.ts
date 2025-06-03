@@ -4,6 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 
 import { ButtonTypes } from './constants/button-types';
+import { DropdownItem } from './constants/dropdown-item';
 import { ButtonType } from '../../models/button-type.model';
 
 @Component({
@@ -15,5 +16,5 @@ import { ButtonType } from '../../models/button-type.model';
 })
 export class DropdownButtonComponent {
   @Input() type: ButtonType = ButtonTypes.primary;
-  @Input() items: { label: string; action?: () => void }[] = [];
+  @Input() items!: DropdownItem[];
 }

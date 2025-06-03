@@ -13,6 +13,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
+import { DropdownItem } from 'projects/common-ui/src/lib/components/dropdown-button/constants/dropdown-item'; /////////
 import { BehaviorSubject, Subject } from 'rxjs';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 
@@ -114,9 +115,23 @@ export class ProductListComponent implements OnInit {
   pageIndex: number = 0;
   pageSize: number = 10;
   itemsNumber: number = 0;
-  selectedCategory: string[] = [];
+  selectedCategories: string[] = [];
   selectedEnabled: boolean | null = null;
-  selectedSupplier: string[] = [];
+  selectedSuppliers: string[] = [];
+  dropdownItems: DropdownItem[] = [
+    {
+      label: 'Crear/Editar producto',
+      action: () => console.log('crear producto'),
+    }, //Accion Provisorio hasta que se implemente el drawer
+    {
+      label: 'Crear/Editar categoría',
+      action: () => console.log('crear categoria'),
+    }, //Accion Provisorio hasta que se implemente el drawer
+    {
+      label: 'Crear/Editar proveedor',
+      action: () => console.log('crear proveedor'),
+    }, //Accion Provisorio hasta que se implemente el drawer
+  ];
 
   doSearchSubject$ = new Subject<void>();
 
@@ -136,17 +151,14 @@ export class ProductListComponent implements OnInit {
             searchText: '',
             filters: {},
           };
-          if (!params.filters) {
-            params.filters = {};
-          }
           if (this.selectedEnabled !== null) {
             params.filters = { enabled: this.selectedEnabled };
           }
-          if (this.selectedCategory && this.selectedCategory.length > 0) {
-            params.filters.categoryName = this.selectedCategory;
+          if (this.selectedCategories.length > 0) {
+            params.filters.categoryName = this.selectedCategories;
           }
-          if (this.selectedSupplier && this.selectedSupplier.length > 0) {
-            params.filters.supplierBusinessName = this.selectedSupplier;
+          if (this.selectedSuppliers.length > 0) {
+            params.filters.supplierBusinessName = this.selectedSuppliers;
           }
           return this.productService.postSearchProduct(params);
         }),
@@ -164,15 +176,19 @@ export class ProductListComponent implements OnInit {
       });
     this.doSearchSubject$.next();
   }
+
   onDetailDrawer(request: ProductListItem): void {
     console.log('Ver detalle', request); //Provisorio hasta que se implemente el drawer
   }
+
   onModifyDrawer(request: ProductListItem): void {
     console.log('Modificar', request); //Provisorio hasta que se implemente el drawer
   }
+
   onDeleteDrawer(request: ProductListItem): void {
     console.log('Eliminar', request); //Provisorio hasta que se implemente el drawer
   }
+
   onPauseDrawer(request: ProductListItem): void {
     console.log('Pausar', request); //Provisorio hasta que se implemente el drawer
   }
@@ -181,14 +197,17 @@ export class ProductListComponent implements OnInit {
     this.pageIndex = 0;
     this.doSearchSubject$.next();
   }
+
   onCategoryFilterChange(): void {
     this.pageIndex = 0;
     this.doSearchSubject$.next();
   }
+
   onSupplierFilterChange(): void {
     this.pageIndex = 0;
     this.doSearchSubject$.next();
   }
+
   handlePageChange(event: { pageIndex: number; pageSize: number }): void {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;

@@ -56,30 +56,24 @@ describe('ProductListComponent', () => {
 
   describe('ngOnInit', () => {
     it('should fetch data on init and update dataSource$', fakeAsync(() => {
-      //Arrange
-      component.ngOnInit();
-
       //Act
+      component.ngOnInit();
       tick(1100);
 
       //Assert
       expect(component.dataSource$.value).toEqual(mockProductListItem);
     }));
     it('should fetch data on init and update itemsNumber', fakeAsync(() => {
-      //Arrange
-      component.ngOnInit();
-
       //Act
+      component.ngOnInit();
       tick(1100);
 
       //Assert
       expect(component.itemsNumber).toBe(mockProductListItem.length);
     }));
-    it('should fecht data on init and update isLoading', fakeAsync(() => {
-      //Arrange
-      component.ngOnInit();
-
+    it('should fetch data on init and update isLoading', fakeAsync(() => {
       //Act
+      component.ngOnInit();
       tick(1100);
 
       //Assert
@@ -87,12 +81,12 @@ describe('ProductListComponent', () => {
     }));
     it('should handle errors when fetch Products fails', fakeAsync(() => {
       // Arrange
-      component.ngOnInit();
       service.postSearchProduct.mockReturnValueOnce(
         throwError(() => new Error('Test error')),
       );
 
       // Act
+      component.ngOnInit();
       component.doSearchSubject$.next();
       tick(1100);
       fixture.detectChanges();
@@ -102,13 +96,13 @@ describe('ProductListComponent', () => {
     }));
     it('should send selectedCategory as filter', fakeAsync(() => {
       // Arrange
-      component.ngOnInit();
-      component.selectedCategory = ['Category 1', 'Category 2'];
+      component.selectedCategories = ['Category 1', 'Category 2'];
       service.postSearchProduct.mockReturnValueOnce(
         of({ total: 0, results: [] }),
       );
 
       // Act
+      component.ngOnInit();
       component.doSearchSubject$.next();
       tick(1000);
       fixture.detectChanges();
@@ -122,13 +116,13 @@ describe('ProductListComponent', () => {
     }));
     it('should send selectedSupplier as filter', fakeAsync(() => {
       // Arrange
-      component.ngOnInit();
-      component.selectedSupplier = ['Supplier 1', 'Supplier 2'];
+      component.selectedSuppliers = ['Supplier 1', 'Supplier 2'];
       service.postSearchProduct.mockReturnValueOnce(
         of({ total: 0, results: [] }),
       );
 
       // Act
+      component.ngOnInit();
       component.doSearchSubject$.next();
       tick(1000);
       fixture.detectChanges();
@@ -142,13 +136,13 @@ describe('ProductListComponent', () => {
     }));
     it('should send selectedEnabled as filter', fakeAsync(() => {
       // Arrange
-      component.ngOnInit();
       component.selectedEnabled = true;
       service.postSearchProduct.mockReturnValueOnce(
         of({ total: 0, results: [] }),
       );
 
       // Act
+      component.ngOnInit();
       component.doSearchSubject$.next();
       tick(1000);
       fixture.detectChanges();
@@ -254,7 +248,7 @@ describe('ProductListComponent', () => {
     it('should send selectedCategory as filter when changed', fakeAsync(() => {
       // Arrange
       component.ngOnInit();
-      component.selectedCategory = ['Category 1', 'Category 2'];
+      component.selectedCategories = ['Category 1', 'Category 2'];
       service.postSearchProduct.mockReturnValueOnce(
         of({ total: 0, results: [] }),
       );
@@ -275,7 +269,7 @@ describe('ProductListComponent', () => {
     it('should send selectedCategory as filter when changed', fakeAsync(() => {
       // Arrange
       component.ngOnInit();
-      component.selectedSupplier = ['Supplier 1', 'Supplier 2'];
+      component.selectedSuppliers = ['Supplier 1', 'Supplier 2'];
       service.postSearchProduct.mockReturnValueOnce(
         of({ total: 0, results: [] }),
       );

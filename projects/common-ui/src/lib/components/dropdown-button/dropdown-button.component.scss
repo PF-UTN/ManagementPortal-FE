@@ -17,11 +17,6 @@
     &:hover {
       background-color: $dusky-violet !important;
     }
-
-    &:disabled {
-      background-color: $lavender-gray !important;
-      cursor: not-allowed;
-    }
   }
 
   &__secondary {
@@ -31,11 +26,6 @@
 
     &:hover {
       background-color: $lavender-gray !important;
-    }
-
-    &:disabled {
-      background-color: $lavender-gray !important;
-      cursor: not-allowed;
     }
   }
 }

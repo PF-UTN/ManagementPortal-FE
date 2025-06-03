@@ -60,6 +60,7 @@ describe('ProductService', () => {
       const params: ProductParams = {
         page: 1,
         pageSize: 10,
+        filters: {},
       };
       const mockError = new ErrorEvent('Network error');
 
