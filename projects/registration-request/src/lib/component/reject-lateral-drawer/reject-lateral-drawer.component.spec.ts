@@ -137,5 +137,20 @@ describe('RejectLateralDrawerComponent', () => {
       // Assert
       expect(rejectSpy).toHaveBeenCalledWith(mockData.id, 'Motivo válido');
     }));
+
+    it('should not call rejectRegistrationRequest if already loading', () => {
+      // Arrange
+      component.isLoading.set(true);
+      const spy = jest.spyOn(
+        registrationRequestService,
+        'rejectRegistrationRequest',
+      );
+
+      // Act
+      component.handleRejectClick();
+
+      // Assert
+      expect(spy).not.toHaveBeenCalled();
+    });
   });
 });
