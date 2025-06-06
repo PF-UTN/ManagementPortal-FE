@@ -89,9 +89,6 @@ export class RejectLateralDrawerComponent
   }
 
   handleRejectClick(): void {
-    if (this.isFormInvalid() || this.isLoading()) {
-      return;
-    }
     this.isLoading.set(true);
 
     this.registrationRequestService
