@@ -6,3 +6,4 @@ export * from './subtitle/subtitle.component';
 export * from './back-arrow/back-arrow.component';
 export * from './table/table.component';
 export * from './title/title.component';
+export * from './dropdown-button/dropdown-button.component';
