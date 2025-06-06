@@ -55,7 +55,7 @@ export class RejectLateralDrawerComponent
             click: () => this.handleRejectClick(),
             text: 'Confirmar',
             loading: this.isLoading(),
-            disabled: this.isFormInvalid() || this.isLoading(),
+            disabled: this.isFormInvalid(),
           },
           secondButton: {
             click: () => this.closeDrawer(),
@@ -89,7 +89,7 @@ export class RejectLateralDrawerComponent
   }
 
   handleRejectClick(): void {
-    if (this.isLoading()) {
+    if (this.isFormInvalid() || this.isLoading()) {
       return;
     }
     this.isLoading.set(true);
