@@ -24,6 +24,9 @@
       <mat-error *ngIf="!form.controls.rejectionReason.value?.trim()">
         Este campo es obligatorio
       </mat-error>
+      <mat-error *ngIf="form.controls.rejectionReason.hasError('notBlank')">
+        El motivo no puede estar vacío o solo contener espacios
+      </mat-error>
     </mat-form-field>
   </div>
 </div>
