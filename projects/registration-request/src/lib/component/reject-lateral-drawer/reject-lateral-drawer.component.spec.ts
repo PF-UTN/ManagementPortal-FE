@@ -6,12 +6,14 @@ import {
   fakeAsync,
   tick,
 } from '@angular/core/testing';
+import { FormControl } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { mockDeep } from 'jest-mock-extended';
 import { of } from 'rxjs';
 
 import { RejectLateralDrawerComponent } from './reject-lateral-drawer.component';
+import { notBlankValidator } from './reject-lateral-drawer.component';
 import { RegistrationRequestListItem } from '../../models/registration-request-item.model';
 import { RegistrationRequestService } from '../../services/registration-request.service';
 describe('RejectLateralDrawerComponent', () => {
@@ -137,6 +139,52 @@ describe('RejectLateralDrawerComponent', () => {
       expect(rejectSpy).toHaveBeenCalledWith(mockData.id, 'Motivo válido');
     }));
 
+    it('should not call rejectRegistrationRequest if already loading', () => {
+      // Arrange
+      component.isLoading.set(true);
+      const spy = jest.spyOn(
+        registrationRequestService,
+        'rejectRegistrationRequest',
+      );
+
+      // Act
+      component.handleRejectClick();
+
+      // Assert
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('should not call rejectRegistrationRequest if form is invalid', () => {
+      // Arrange
+      component.isFormInvalid.set(true);
+      const spy = jest.spyOn(
+        registrationRequestService,
+        'rejectRegistrationRequest',
+      );
+
+      // Act
+      component.handleRejectClick();
+
+      // Assert
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('should not call rejectRegistrationRequest if already loading', () => {
+      // Arrange
+      component.isFormInvalid.set(false);
+      component.isLoading.set(true);
+      const spy = jest.spyOn(
+        registrationRequestService,
+        'rejectRegistrationRequest',
+      );
+
+      // Act
+      component.handleRejectClick();
+
+      // Assert
+      expect(spy).not.toHaveBeenCalled();
+    });
+
     it('should call rejectRegistrationRequest if form is valid and not loading', () => {
       // Arrange
       component.isFormInvalid.set(false);
@@ -151,6 +199,51 @@ describe('RejectLateralDrawerComponent', () => {
 
       // Assert
       expect(spy).toHaveBeenCalledWith(component.data.id, 'Motivo válido');
+    });
+
+    it('should not call rejectRegistrationRequest if rejectionReason is only spaces', () => {
+      // Arrange
+      component.form.controls.rejectionReason.setValue('   ');
+      component.isFormInvalid.set(component.form.invalid);
+      const spy = jest.spyOn(
+        registrationRequestService,
+        'rejectRegistrationRequest',
+      );
+
+      // Act
+      component.handleRejectClick();
+
+      // Assert
+      expect(spy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('notBlankValidator', () => {
+    it('should return error if value is only spaces', () => {
+      // Arrange
+      const control = new FormControl('    ');
+      // Act
+      const result = notBlankValidator(control);
+      // Assert
+      expect(result).toEqual({ notBlank: true });
+    });
+
+    it('should return error if value is empty string', () => {
+      // Arrange
+      const control = new FormControl('');
+      // Act
+      const result = notBlankValidator(control);
+      // Assert
+      expect(result).toEqual({ notBlank: true });
+    });
+
+    it('should return null if value is valid', () => {
+      // Arrange
+      const control = new FormControl('Motivo válido');
+      // Act
+      const result = notBlankValidator(control);
+      // Assert
+      expect(result).toBeNull();
     });
   });
 });
