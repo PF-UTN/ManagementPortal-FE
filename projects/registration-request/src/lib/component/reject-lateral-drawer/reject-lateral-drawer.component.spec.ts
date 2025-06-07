@@ -14,7 +14,6 @@ import { of } from 'rxjs';
 import { RejectLateralDrawerComponent } from './reject-lateral-drawer.component';
 import { RegistrationRequestListItem } from '../../models/registration-request-item.model';
 import { RegistrationRequestService } from '../../services/registration-request.service';
-
 describe('RejectLateralDrawerComponent', () => {
   let component: RejectLateralDrawerComponent;
   let fixture: ComponentFixture<RejectLateralDrawerComponent>;
@@ -137,5 +136,21 @@ describe('RejectLateralDrawerComponent', () => {
       // Assert
       expect(rejectSpy).toHaveBeenCalledWith(mockData.id, 'Motivo válido');
     }));
+
+    it('should call rejectRegistrationRequest if form is valid and not loading', () => {
+      // Arrange
+      component.isFormInvalid.set(false);
+      component.isLoading.set(false);
+      component.form.controls.rejectionReason.setValue('Motivo válido');
+      const spy = jest
+        .spyOn(registrationRequestService, 'rejectRegistrationRequest')
+        .mockReturnValue(of());
+
+      // Act
+      component.handleRejectClick();
+
+      // Assert
+      expect(spy).toHaveBeenCalledWith(component.data.id, 'Motivo válido');
+    });
   });
 });
