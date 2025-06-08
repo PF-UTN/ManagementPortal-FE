@@ -49,10 +49,6 @@ export class ApproveLateralDrawerComponent extends LateralDrawerContainer {
   }
 
   handleApproveClick(): void {
-    if (this.isLoading()) {
-      return;
-    }
-
     this.isLoading.set(true);
 
     this.registrationRequestService
