@@ -28,7 +28,7 @@
             <mp-button 
               [disabled]="config.footer.firstButton.disabled ?? false"
               [loading]="config.footer.firstButton.loading ?? false"
-              (click)="config.footer.firstButton.click()"
+              (onClick)="config.footer.firstButton.click()"
               tabindex="-1">
               {{ config.footer.firstButton.text }}
             </mp-button>
