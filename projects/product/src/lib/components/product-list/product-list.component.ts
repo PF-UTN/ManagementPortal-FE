@@ -1,6 +1,7 @@
 import {
   ColumnTypeEnum,
   DropdownButtonComponent,
+  LateralDrawerService,
   TableColumn,
   TableComponent,
 } from '@Common-UI';
@@ -13,6 +14,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { DropdownItem } from 'projects/common-ui/src/lib/components/dropdown-button/constants/dropdown-item'; /////////
 import { BehaviorSubject, Subject } from 'rxjs';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
@@ -20,7 +22,7 @@ import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { ProductListItem } from '../../models/product-item.model';
 import { ProductParams } from '../../models/product-param.model';
 import { ProductService } from '../../services/product.service';
-
+import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-lateral-drawer.component';
 @Component({
   selector: 'mp-product-list',
   standalone: true,
@@ -35,6 +37,7 @@ import { ProductService } from '../../services/product.service';
     FormsModule,
     ReactiveFormsModule,
     DropdownButtonComponent,
+    MatSnackBarModule,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './product-list.component.html',
@@ -135,7 +138,11 @@ export class ProductListComponent implements OnInit {
 
   doSearchSubject$ = new Subject<void>();
 
-  constructor(private readonly productService: ProductService) {}
+  constructor(
+    private readonly productService: ProductService,
+    private readonly lateralDrawerService: LateralDrawerService,
+    private readonly snackBar: MatSnackBar,
+  ) {}
 
   ngOnInit(): void {
     this.doSearchSubject$
@@ -178,7 +185,31 @@ export class ProductListComponent implements OnInit {
   }
 
   onDetailDrawer(request: ProductListItem): void {
-    console.log('Ver detalle', request); //Provisorio hasta que se implemente el drawer
+    this.productService.getProductById(request.id).subscribe({
+      next: (productDetail) => {
+        this.lateralDrawerService.open(
+          DetailLateralDrawerComponent,
+          { data: productDetail },
+          {
+            title: 'Detalle del Producto',
+            footer: {
+              firstButton: {
+                text: 'Cancelar',
+                click: () => {
+                  this.lateralDrawerService.close();
+                },
+              },
+            },
+          },
+        );
+        this.isLoading = false;
+      },
+      error: () => {
+        this.snackBar.open('Se ha producido un error inesperado', 'Cerrar', {
+          duration: 3000,
+        });
+      },
+    });
   }
 
   onModifyDrawer(request: ProductListItem): void {

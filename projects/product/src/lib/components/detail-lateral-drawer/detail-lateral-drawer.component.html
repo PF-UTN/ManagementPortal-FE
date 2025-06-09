@@ -1,0 +1,38 @@
+<div class="drawer-container__content">
+  <div class="drawer-container__row">
+    <strong>Nombre</strong>
+    <p>{{ data.name }}</p>
+  </div>
+  <div class="drawer-container__row">
+    <strong>Descripción</strong>
+    <p>{{ data.description }}</p>
+  </div>
+  <div class="drawer-container__row">
+    <strong>Categoría</strong>
+    <p>{{data.category.name}}</p>
+  </div>
+  <div class="drawer-container__row">
+    <strong>Precio</strong>
+    <p>${{ data.price }}</p>
+  </div>
+  <div class="drawer-container__row">
+    <strong>Stock</strong>
+    <li><strong>Disponible:</strong> {{ data.stock.quantityAvailable }}</li>
+    <li><strong>En pedido:</strong> {{ data.stock.quantityOrdered }}</li>
+    <li><strong>Reservado:</strong> {{ data.stock.quantityReserved }}</li>
+  </div>
+  <div class="drawer-container__row">
+    <strong>Peso</strong>
+    <p>{{ data.weight }} kg</p>
+  </div>
+  <div class="drawer-container__row">
+    <strong>Proveedor</strong>
+    <li><strong>Nombre del negocio:</strong> {{ data.supplier.businessName }}</li>
+    <li><strong>Email: </strong>{{ data.supplier.email }}</li>
+    <li><strong>Teléfono:</strong> {{ data.supplier.phone }}</li>
+  </div>
+   <div class="drawer-container__row">
+    <strong>Estado del producto:</strong>
+    <p>{{ data.enabled ? 'Activo' : 'En Pausa'}}</p>
+  </div>
+</div>

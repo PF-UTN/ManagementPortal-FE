@@ -1,3 +1,4 @@
+import { ProductDetail } from '../models/product-detail.model';
 import { ProductListItem } from '../models/product-item.model';
 
 export const mockProductListItem: ProductListItem[] = [
@@ -30,4 +31,23 @@ export const mockProductListItemResponse = {
 
 export const mockSuccessResponse = {
   message: 'Operación realizada con éxito.',
+};
+
+export const mockProductDetail: ProductDetail = {
+  name: 'Producto Test',
+  description: 'Descripción de prueba',
+  category: { name: 'Categoría Test' },
+  price: 100.5,
+  stock: {
+    quantityAvailable: 10,
+    quantityOrdered: 5,
+    quantityReserved: 2,
+  },
+  weight: 1.25,
+  supplier: {
+    businessName: 'Proveedor Test',
+    email: 'proveedor@test.com',
+    phone: '123456789',
+  },
+  enabled: true,
 };
