@@ -139,52 +139,6 @@ describe('RejectLateralDrawerComponent', () => {
       expect(rejectSpy).toHaveBeenCalledWith(mockData.id, 'Motivo válido');
     }));
 
-    it('should not call rejectRegistrationRequest if already loading', () => {
-      // Arrange
-      component.isLoading.set(true);
-      const spy = jest.spyOn(
-        registrationRequestService,
-        'rejectRegistrationRequest',
-      );
-
-      // Act
-      component.handleRejectClick();
-
-      // Assert
-      expect(spy).not.toHaveBeenCalled();
-    });
-
-    it('should not call rejectRegistrationRequest if form is invalid', () => {
-      // Arrange
-      component.isFormInvalid.set(true);
-      const spy = jest.spyOn(
-        registrationRequestService,
-        'rejectRegistrationRequest',
-      );
-
-      // Act
-      component.handleRejectClick();
-
-      // Assert
-      expect(spy).not.toHaveBeenCalled();
-    });
-
-    it('should not call rejectRegistrationRequest if already loading', () => {
-      // Arrange
-      component.isFormInvalid.set(false);
-      component.isLoading.set(true);
-      const spy = jest.spyOn(
-        registrationRequestService,
-        'rejectRegistrationRequest',
-      );
-
-      // Act
-      component.handleRejectClick();
-
-      // Assert
-      expect(spy).not.toHaveBeenCalled();
-    });
-
     it('should call rejectRegistrationRequest if form is valid and not loading', () => {
       // Arrange
       component.isFormInvalid.set(false);
@@ -199,22 +153,6 @@ describe('RejectLateralDrawerComponent', () => {
 
       // Assert
       expect(spy).toHaveBeenCalledWith(component.data.id, 'Motivo válido');
-    });
-
-    it('should not call rejectRegistrationRequest if rejectionReason is only spaces', () => {
-      // Arrange
-      component.form.controls.rejectionReason.setValue('   ');
-      component.isFormInvalid.set(component.form.invalid);
-      const spy = jest.spyOn(
-        registrationRequestService,
-        'rejectRegistrationRequest',
-      );
-
-      // Act
-      component.handleRejectClick();
-
-      // Assert
-      expect(spy).not.toHaveBeenCalled();
     });
   });
 

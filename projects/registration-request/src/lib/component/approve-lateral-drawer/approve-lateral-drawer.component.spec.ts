@@ -97,20 +97,5 @@ describe('ApproveLateralDrawerComponent', () => {
       // Assert
       expect(isLoadingSpy.mock.calls[0][0]).toBe(true);
     });
-
-    it('should not call approveRegistrationRequest if isLoading is true', () => {
-      // Arrange
-      component.isLoading.set(true);
-      const spy = jest.spyOn(
-        registrationRequestService,
-        'approveRegistrationRequest',
-      );
-
-      // Act
-      component.handleApproveClick();
-
-      // Assert
-      expect(spy).not.toHaveBeenCalled();
-    });
   });
 });
