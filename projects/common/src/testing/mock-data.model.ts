@@ -1,4 +1,5 @@
 import { Client } from '../models/client.model';
+import { Town } from '../models/town.model';
 import { User } from '../models/user.model';
 
 export const mockClient: Client = {
@@ -6,16 +7,24 @@ export const mockClient: Client = {
   lastName: 'Pérez',
   email: 'juan.perez@example.com',
   password: 'Password123*',
-  confirmPassword: 'Password123*',
   phone: '123456789',
   birthDate: new Date('1990-01-01'),
-  town: 'Rosario',
-  street: 'Calle Falsa',
-  streetNumber: 123,
-  taxCategory: 1,
-  documentType: 'CUIL',
   documentNumber: '20123456789',
+  documentType: 'CUIL',
   companyName: 'Mi Empresa',
+  taxCategoryId: 1,
+  address: {
+    street: 'Calle Falsa',
+    streetNumber: 123,
+    townId: 1,
+  },
+};
+
+export const mockTown: Town = {
+  id: 1,
+  name: 'Ciudad Ficticia',
+  zipCode: '12345',
+  provinceId: 1,
 };
 
 export const mockUser: User = {

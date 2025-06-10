@@ -3,14 +3,15 @@ export interface Client {
   lastName: string;
   email: string;
   password: string;
-  confirmPassword: string;
   phone: string;
   birthDate: Date;
-  town: string;
-  street: string;
-  streetNumber: number;
-  taxCategory: number;
-  documentType: string;
   documentNumber: string;
+  documentType: string;
   companyName: string;
+  taxCategoryId: number;
+  address: {
+    street: string;
+    streetNumber: number;
+    townId: number;
+  };
 }
