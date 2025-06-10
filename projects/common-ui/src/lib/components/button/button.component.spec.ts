@@ -1,30 +1,48 @@
+import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { By } from '@angular/platform-browser';
 
 import { ButtonComponent } from './button.component';
 
+@Component({
+  template: `<mp-button
+    [disabled]="isDisabled"
+    [loading]="isLoading"
+    (onClick)="clicked = true"
+    >Test</mp-button
+  >`,
+})
+class HostComponent {
+  isDisabled = false;
+  isLoading = false;
+  clicked = false;
+}
+
 describe('ButtonComponent', () => {
-  let component: ButtonComponent;
-  let fixture: ComponentFixture<ButtonComponent>;
+  let hostFixture: ComponentFixture<HostComponent>;
+  let host: HostComponent;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [MatButtonModule, ButtonComponent],
+      declarations: [HostComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ButtonComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
+    hostFixture = TestBed.createComponent(HostComponent);
+    host = hostFixture.componentInstance;
+    hostFixture.detectChanges();
   });
 
   describe('Template Rendering', () => {
     it('should have disabled attribute when disabled', () => {
       // Arrange
-      component.disabled = true;
-      fixture.detectChanges();
+      host.isDisabled = true;
+      hostFixture.detectChanges();
       // Act
-      const button = fixture.nativeElement.querySelector('button');
+      const button = hostFixture.debugElement.query(
+        By.css('button'),
+      ).nativeElement;
       // Assert
       expect(button.disabled).toBeTruthy();
     });
@@ -33,24 +51,46 @@ describe('ButtonComponent', () => {
   describe('onClick Method', () => {
     it('should emit clickEvent event when clicked', () => {
       // Arrange
-      jest.spyOn(component.onClick, 'emit');
-      const button = fixture.debugElement.query(By.css('button')).nativeElement;
+      host.isDisabled = false;
+      host.isLoading = false;
+      hostFixture.detectChanges();
+      const button = hostFixture.debugElement.query(
+        By.css('button'),
+      ).nativeElement;
       // Act
       button.click();
       // Assert
-      expect(component.onClick.emit).toHaveBeenCalled();
+      expect(host.clicked).toBe(true);
     });
 
-    it('should not emit clicked event when disabled', () => {
+    it('should not emit click event when disabled', () => {
       // Arrange
-      component.disabled = true;
-      fixture.detectChanges();
-      jest.spyOn(component.onClick, 'emit');
-      const button = fixture.debugElement.query(By.css('button')).nativeElement;
+      host.isDisabled = true;
+      host.isLoading = false;
+      hostFixture.detectChanges();
+      host.clicked = false;
+      const button = hostFixture.debugElement.query(
+        By.css('button'),
+      ).nativeElement;
       // Act
       button.click();
       // Assert
-      expect(component.onClick.emit).not.toHaveBeenCalled();
+      expect(host.clicked).toBe(false);
+    });
+
+    it('should not emit click event when loading', () => {
+      // Arrange
+      host.isDisabled = false;
+      host.isLoading = true;
+      hostFixture.detectChanges();
+      host.clicked = false;
+      const button = hostFixture.debugElement.query(
+        By.css('button'),
+      ).nativeElement;
+      // Act
+      button.click();
+      // Assert
+      expect(host.clicked).toBe(false);
     });
   });
 });
