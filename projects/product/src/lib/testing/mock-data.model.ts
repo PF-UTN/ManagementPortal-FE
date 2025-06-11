@@ -1,7 +1,7 @@
 import { ProductDetail } from '../models/product-detail.model';
 import { ProductListItem } from '../models/product-item.model';
 
-export const mockProductListItem: ProductListItem[] = [
+export const mockProductListItems: ProductListItem[] = [
   {
     id: 1,
     name: 'Product 1',
@@ -25,8 +25,8 @@ export const mockProductListItem: ProductListItem[] = [
 ];
 
 export const mockProductListItemResponse = {
-  total: mockProductListItem.length,
-  results: mockProductListItem,
+  total: mockProductListItems.length,
+  results: mockProductListItems,
 };
 
 export const mockSuccessResponse = {
@@ -49,5 +49,16 @@ export const mockProductDetail: ProductDetail = {
     email: 'proveedor@test.com',
     phone: '123456789',
   },
+  enabled: true,
+};
+
+export const mockProductListItem: ProductListItem = {
+  id: 1,
+  name: 'Product 1',
+  description: 'Description for Product 1',
+  categoryName: 'Category 1',
+  supplierBusinessName: 'Supplier 1',
+  price: 100,
+  stock: 50,
   enabled: true,
 };

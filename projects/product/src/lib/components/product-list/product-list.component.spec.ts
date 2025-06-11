@@ -1,3 +1,5 @@
+import { LateralDrawerService } from '@Common-UI';
+
 import { CommonModule } from '@angular/common';
 import {
   ComponentFixture,
@@ -15,12 +17,18 @@ import { of, throwError } from 'rxjs';
 
 import { ProductListComponent } from './product-list.component';
 import { ProductService } from '../../services/product.service';
-import { mockProductListItem } from '../../testing';
+import {
+  mockProductListItems,
+  mockProductListItem,
+  mockProductDetail,
+} from '../../testing';
+import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-lateral-drawer.component';
 
 describe('ProductListComponent', () => {
   let component: ProductListComponent;
   let fixture: ComponentFixture<ProductListComponent>;
   let service: DeepMockProxy<ProductService>;
+  let lateralDrawerService: DeepMockProxy<LateralDrawerService>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -38,6 +46,10 @@ describe('ProductListComponent', () => {
           provide: ProductService,
           useValue: mockDeep<ProductService>(),
         },
+        {
+          provide: LateralDrawerService,
+          useValue: mockDeep<LateralDrawerService>(),
+        },
       ],
     }).compileComponents();
 
@@ -45,8 +57,11 @@ describe('ProductListComponent', () => {
     component = fixture.componentInstance;
     fixture.detectChanges();
     service = TestBed.inject(ProductService) as DeepMockProxy<ProductService>;
+    lateralDrawerService = TestBed.inject(
+      LateralDrawerService,
+    ) as DeepMockProxy<LateralDrawerService>;
     service.postSearchProduct.mockReturnValue(
-      of({ total: mockProductListItem.length, results: mockProductListItem }),
+      of({ total: mockProductListItems.length, results: mockProductListItems }),
     );
   });
 
@@ -61,7 +76,7 @@ describe('ProductListComponent', () => {
       tick(1100);
 
       //Assert
-      expect(component.dataSource$.value).toEqual(mockProductListItem);
+      expect(component.dataSource$.value).toEqual(mockProductListItems);
     }));
     it('should fetch data on init and update itemsNumber', fakeAsync(() => {
       //Act
@@ -69,7 +84,7 @@ describe('ProductListComponent', () => {
       tick(1100);
 
       //Assert
-      expect(component.itemsNumber).toBe(mockProductListItem.length);
+      expect(component.itemsNumber).toBe(mockProductListItems.length);
     }));
     it('should fetch data on init and update isLoading', fakeAsync(() => {
       //Act
@@ -283,6 +298,34 @@ describe('ProductListComponent', () => {
         expect.objectContaining({
           filters: { supplierBusinessName: ['Supplier 1', 'Supplier 2'] },
         }),
+      );
+    }));
+  });
+  describe('onDetailDraawer', () => {
+    it('should open drawer with product detail data', fakeAsync(() => {
+      // Arrange
+      service.getProductById.mockReturnValueOnce(of(mockProductDetail));
+
+      // Act
+      component.onDetailDrawer(mockProductListItem);
+      tick(1100);
+
+      // Assert
+      expect(service.getProductById).toHaveBeenCalledWith(
+        mockProductListItem.id,
+      );
+      expect(lateralDrawerService.open).toHaveBeenCalledWith(
+        DetailLateralDrawerComponent,
+        { data: mockProductDetail },
+        {
+          title: 'Detalle del Producto',
+          footer: {
+            firstButton: {
+              text: 'Cancelar',
+              click: expect.any(Function),
+            },
+          },
+        },
       );
     }));
   });
