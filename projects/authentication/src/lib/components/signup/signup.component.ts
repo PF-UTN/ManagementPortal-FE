@@ -122,7 +122,8 @@ export class SignupComponent implements OnInit {
           debounceTime(300),
           startWith(''),
           map((value) => {
-            const query = typeof value === 'string' ? value : value?.name || '';
+            const query =
+              typeof value === 'string' ? value : (value?.name ?? '');
             return this.filterTowns(query);
           }),
         );
@@ -305,7 +306,7 @@ export class SignupComponent implements OnInit {
             );
           },
           error: (error: HttpErrorResponse) => {
-            const errMessage = error.error?.message || error.message;
+            const errMessage = error.error?.message ?? error.message;
             this.errorMessage = this.translateErrorMessage(errMessage);
           },
         });
