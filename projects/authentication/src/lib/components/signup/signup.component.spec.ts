@@ -348,6 +348,15 @@ describe('SignupComponent', () => {
         // Act & Assert
         expect(component.filterTowns(mockTown.name)).toEqual([mockTown]);
       });
+
+      it('should filter towns by zipCode', () => {
+        // Arrange
+        component.allTowns = [
+          { id: 1, name: 'Rosario', zipCode: '2000', provinceId: 1 },
+        ];
+        // Act & Assert
+        expect(component.filterTowns('2000')).toEqual(component.allTowns);
+      });
     });
 
     describe('preventNonNumericInput', () => {
@@ -417,11 +426,20 @@ describe('SignupComponent', () => {
 
     describe('Document Type field', () => {
       it('should translate document number error to Spanish', () => {
+        // Arrange
         const msg =
           'documentNumber must be longer than or equal to 7 characters';
+        // Act & Assert
         expect(component['translateErrorMessage'](msg)).toBe(
           'El número de documento debe tener al menos 7 caracteres',
         );
+      });
+
+      it('should return the original message if no translation is found', () => {
+        // Arrange
+        const msg = 'Error desconocido';
+        // Act & Assert
+        expect(component['translateErrorMessage'](msg)).toBe(msg);
       });
     });
     describe('Tax ID Type field validation', () => {
