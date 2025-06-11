@@ -9,7 +9,6 @@ import { RoleHierarchy } from '../../constants';
 import { AuthResponse } from '../../models/auth-response.model';
 import { Client } from '../../models/client.model';
 import { TokenPayload } from '../../models/token-payload.model';
-import { Town } from '../../models/town.model';
 import { User } from '../../models/user.model';
 
 @Injectable({
@@ -18,7 +17,7 @@ import { User } from '../../models/user.model';
 export class AuthService {
   userRole?: string;
 
-  private apiUrl = 'https://dev-management-portal-be.vercel.app';
+  private apiUrl = 'https://dev-management-portal-be.vercel.app/authentication';
 
   constructor(
     private http: HttpClient,
@@ -37,15 +36,12 @@ export class AuthService {
   }
 
   signUpAsync(client: Client): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(
-      `${this.apiUrl}/authentication/signup`,
-      client,
-    );
+    return this.http.post<AuthResponse>(`${this.apiUrl}/signup`, client);
   }
 
   logInAsync(credential: User): Observable<AuthResponse> {
     return this.http
-      .post<AuthResponse>(`${this.apiUrl}/authentication/signin`, credential)
+      .post<AuthResponse>(`${this.apiUrl}/signin`, credential)
       .pipe(
         tap((response) => {
           this.setToken(response.access_token);
@@ -70,28 +66,19 @@ export class AuthService {
   }
 
   resetPasswordRequestAsync(email: string): Observable<void> {
-    return this.http.post<void>(
-      `${this.apiUrl}/authentication/reset-password/request`,
-      {
-        email,
-      },
-    );
+    return this.http.post<void>(`${this.apiUrl}/reset-password/request`, {
+      email,
+    });
   }
 
   resetPasswordAsync(token: string, password: string): Observable<void> {
     return this.http.post<void>(
-      `${this.apiUrl}/authentication/reset-password`,
+      `${this.apiUrl}/reset-password`,
       { password },
       {
         headers: { Authorization: `Bearer ${token}` },
       },
     );
-  }
-
-  searchTowns(query: string): Observable<Town[]> {
-    return this.http.get<Town[]>(`${this.apiUrl}/towns`, {
-      params: { search: query },
-    });
   }
 
   private setUserRole(token: string): void {

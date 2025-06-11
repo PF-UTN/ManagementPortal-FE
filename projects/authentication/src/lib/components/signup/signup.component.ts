@@ -1,4 +1,4 @@
-import { AuthService, NavBarService } from '@Common';
+import { AuthService, TownService, NavBarService } from '@Common';
 import { ButtonComponent, TitleComponent } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
@@ -99,6 +99,7 @@ export class SignupComponent implements OnInit {
   constructor(
     private readonly fb: FormBuilder,
     protected authService: AuthService,
+    protected townService: TownService,
     private readonly router: Router,
     private readonly navBarService: NavBarService,
     private readonly snackBar: MatSnackBar,
@@ -107,8 +108,8 @@ export class SignupComponent implements OnInit {
   ngOnInit(): void {
     this.navBarService.hideNavBar();
     this.initForm();
-    this.authService
-      .searchTowns('')
+    this.townService
+      .searchTowns()
       .pipe(take(1))
       .subscribe((towns) => {
         this.allTowns = towns;
@@ -236,7 +237,7 @@ export class SignupComponent implements OnInit {
   }
 
   displayTown(town: Town): string {
-    return town ? `${town.name} (${town.zipCode})` : '';
+    return `${town.name} (${town.zipCode})`;
   }
 
   townValidator =

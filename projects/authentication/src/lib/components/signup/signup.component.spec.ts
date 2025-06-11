@@ -45,7 +45,6 @@ describe('SignupComponent', () => {
     });
 
     authService = TestBed.inject(AuthService);
-    jest.spyOn(authService, 'searchTowns').mockReturnValue(of([mockTown]));
 
     fixture = TestBed.createComponent(SignupComponent);
     component = fixture.componentInstance;
