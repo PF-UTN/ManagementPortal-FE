@@ -277,9 +277,40 @@ describe('SignupComponent', () => {
         // Arrange
         const validator = component.townValidator([mockTown]);
         const control = { value: mockTown } as AbstractControl;
-
         // Act & Assert
         expect(validator(control)).toBeNull();
+      });
+
+      it('should display town name and zipCode', () => {
+        // Arrange
+        const town = { id: 1, name: 'Rosario', zipCode: '2000', provinceId: 1 };
+        // Act & Assert
+        expect(component.displayTown(town)).toBe('Rosario (2000)');
+      });
+
+      it('should return empty array if no towns match the query', () => {
+        // Arrange
+        component.allTowns = [
+          { id: 1, name: 'Rosario', zipCode: '2000', provinceId: 1 },
+        ];
+        // Act & Assert
+        expect(component.filterTowns('NoExiste')).toEqual([]);
+      });
+
+      it('should return null in townValidator if value is null', () => {
+        // Arrange
+        const validator = component.townValidator([]);
+        const control = { value: null } as AbstractControl;
+        // Act & Assert
+        expect(validator(control)).toBeNull();
+      });
+
+      it('should return { invalidTown: true } in townValidator if value is not object', () => {
+        // Arrange
+        const validator = component.townValidator([]);
+        const control = { value: 'string' } as AbstractControl;
+        // Act & Assert
+        expect(validator(control)).toEqual({ invalidTown: true });
       });
     });
 
