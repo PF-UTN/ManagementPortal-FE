@@ -17,9 +17,11 @@
   </div>
   <div class="drawer-container__row">
     <strong>Stock</strong>
-    <li><strong>Disponible:</strong> {{ data.stock.quantityAvailable }}</li>
-    <li><strong>En pedido:</strong> {{ data.stock.quantityOrdered }}</li>
-    <li><strong>Reservado:</strong> {{ data.stock.quantityReserved }}</li>
+    <ul>
+      <li><strong>Disponible:</strong> {{ data.stock.quantityAvailable }}</li>
+      <li><strong>En pedido:</strong> {{ data.stock.quantityOrdered }}</li>
+      <li><strong>Reservado:</strong> {{ data.stock.quantityReserved }}</li>
+    </ul>
   </div>
   <div class="drawer-container__row">
     <strong>Peso</strong>
@@ -27,11 +29,13 @@
   </div>
   <div class="drawer-container__row">
     <strong>Proveedor</strong>
-    <li><strong>Nombre del negocio:</strong> {{ data.supplier.businessName }}</li>
-    <li><strong>Email: </strong>{{ data.supplier.email }}</li>
-    <li><strong>Teléfono:</strong> {{ data.supplier.phone }}</li>
+    <ul>
+      <li><strong>Nombre del negocio:</strong> {{ data.supplier.businessName }}</li>
+      <li><strong>Email: </strong>{{ data.supplier.email }}</li>
+      <li><strong>Teléfono:</strong> {{ data.supplier.phone }}</li>
+    </ul>
   </div>
-   <div class="drawer-container__row">
+  <div class="drawer-container__row">
     <strong>Estado del producto:</strong>
     <p>{{ data.enabled ? 'Activo' : 'En Pausa'}}</p>
   </div>
