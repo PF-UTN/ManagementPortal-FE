@@ -414,6 +414,16 @@ describe('SignupComponent', () => {
         expect(taxCategoryControl.hasError('required')).toBeFalsy();
       });
     });
+
+    describe('Document Type field', () => {
+      it('should translate document number error to Spanish', () => {
+        const msg =
+          'documentNumber must be longer than or equal to 7 characters';
+        expect(component['translateErrorMessage'](msg)).toBe(
+          'El número de documento debe tener al menos 7 caracteres',
+        );
+      });
+    });
     describe('Tax ID Type field validation', () => {
       it('should set documentType error if documentType control is empty', () => {
         const documentTypeControl = component.signupForm.controls.documentType;

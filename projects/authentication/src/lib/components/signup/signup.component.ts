@@ -129,6 +129,17 @@ export class SignupComponent implements OnInit {
       });
   }
 
+  private translateErrorMessage(message: string): string {
+    if (
+      message?.includes(
+        'documentNumber must be longer than or equal to 7 characters',
+      )
+    ) {
+      return 'El número de documento debe tener al menos 7 caracteres';
+    }
+    return message;
+  }
+
   private initForm() {
     this.signupForm = new FormGroup(
       {
@@ -294,7 +305,8 @@ export class SignupComponent implements OnInit {
             );
           },
           error: (error: HttpErrorResponse) => {
-            this.errorMessage = error.error.message;
+            const errMessage = error.error?.message || error.message;
+            this.errorMessage = this.translateErrorMessage(errMessage);
           },
         });
     }
