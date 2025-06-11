@@ -43,6 +43,7 @@ export class TableComponent<T> implements OnInit {
   @Input() columns: TableColumn<T>[] = [];
   @Input() dataSource$: Observable<T[]>;
   @Input() getRowClass: (row: T) => string = () => '';
+  @Input() isActionDisabled: (element: T) => boolean = () => false;
   @Input() noDataMessage: string = 'No hay datos disponibles';
   @Input() isLoading: boolean = false;
   @Input() itemsNumber: number = 0;

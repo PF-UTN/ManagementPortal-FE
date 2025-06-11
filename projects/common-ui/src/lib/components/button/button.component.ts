@@ -15,13 +15,13 @@ import { ButtonType } from '../../models/button-type.model';
 })
 export class ButtonComponent {
   @Input() type: ButtonType = ButtonTypes.primary;
-  @Input() disabled: boolean = false;
+  disabled = input(false);
   loading = input(false);
 
   @Output() onClick = new EventEmitter<void>();
 
   clickEvent(): void {
-    if (!this.disabled) {
+    if (!this.disabled() && !this.loading()) {
       this.onClick.emit();
     }
   }

@@ -6,15 +6,16 @@ import {
   fakeAsync,
   tick,
 } from '@angular/core/testing';
+import { FormControl } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { mockDeep } from 'jest-mock-extended';
 import { of } from 'rxjs';
 
 import { RejectLateralDrawerComponent } from './reject-lateral-drawer.component';
+import { notBlankValidator } from './reject-lateral-drawer.component';
 import { RegistrationRequestListItem } from '../../models/registration-request-item.model';
 import { RegistrationRequestService } from '../../services/registration-request.service';
-
 describe('RejectLateralDrawerComponent', () => {
   let component: RejectLateralDrawerComponent;
   let fixture: ComponentFixture<RejectLateralDrawerComponent>;
@@ -137,5 +138,50 @@ describe('RejectLateralDrawerComponent', () => {
       // Assert
       expect(rejectSpy).toHaveBeenCalledWith(mockData.id, 'Motivo válido');
     }));
+
+    it('should call rejectRegistrationRequest if form is valid and not loading', () => {
+      // Arrange
+      component.isFormInvalid.set(false);
+      component.isLoading.set(false);
+      component.form.controls.rejectionReason.setValue('Motivo válido');
+      const spy = jest
+        .spyOn(registrationRequestService, 'rejectRegistrationRequest')
+        .mockReturnValue(of());
+
+      // Act
+      component.handleRejectClick();
+
+      // Assert
+      expect(spy).toHaveBeenCalledWith(component.data.id, 'Motivo válido');
+    });
+  });
+
+  describe('notBlankValidator', () => {
+    it('should return error if value is only spaces', () => {
+      // Arrange
+      const control = new FormControl('    ');
+      // Act
+      const result = notBlankValidator(control);
+      // Assert
+      expect(result).toEqual({ notBlank: true });
+    });
+
+    it('should return error if value is empty string', () => {
+      // Arrange
+      const control = new FormControl('');
+      // Act
+      const result = notBlankValidator(control);
+      // Assert
+      expect(result).toEqual({ notBlank: true });
+    });
+
+    it('should return null if value is valid', () => {
+      // Arrange
+      const control = new FormControl('Motivo válido');
+      // Act
+      const result = notBlankValidator(control);
+      // Assert
+      expect(result).toBeNull();
+    });
   });
 });
