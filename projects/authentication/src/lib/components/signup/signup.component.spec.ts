@@ -389,7 +389,7 @@ describe('SignupComponent', () => {
         expect(result).toEqual([mockTown]);
       });
 
-      it('should filter towns when value is an object without name', () => {
+      it('should return all towns when value is an object without name', () => {
         // Arrange
         component.allTowns = [mockTown];
         const value = {} as { name?: string };
