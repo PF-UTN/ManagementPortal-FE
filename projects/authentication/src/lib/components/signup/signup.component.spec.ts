@@ -372,6 +372,7 @@ describe('SignupComponent', () => {
         component.allTowns = [
           { id: 1, name: 'Rosario', zipCode: '2000', provinceId: 1 },
         ];
+
         // Act & Assert
         expect(component.filterTowns('2000')).toEqual(component.allTowns);
       });
@@ -401,24 +402,36 @@ describe('SignupComponent', () => {
         // Assert
         expect(result).toEqual([mockTown]);
       });
+      it('should return all towns when value is undefined', () => {
+        // Arrange
+        component.allTowns = [mockTown];
+        const value = {} as { name?: string };
 
-      it('should emit filtered towns when town control value changes', (done) => {
+        // Act
+        const query = typeof value === 'string' ? value : (value?.name ?? '');
+        const result = component.filterTowns(query);
+
+        // Assert
+        expect(result).toEqual([mockTown]);
+      });
+
+      it('should emit filtered towns when town control value changes to a full object', (done) => {
         // Arrange
         component.allTowns = [mockTown];
         jest
           .spyOn(component['townService'], 'searchTowns')
           .mockReturnValue(of([mockTown]));
 
-        // Act
         component.ngOnInit();
+
+        // Act
+        component.signupForm.controls.town.setValue(mockTown);
 
         // Assert
         component.filteredTowns$!.subscribe((result) => {
           expect(result).toEqual([mockTown]);
           done();
         });
-
-        component.signupForm.controls.town.setValue(mockTown);
       });
 
       it('should emit filtered towns when town control value changes to a string', (done) => {
@@ -427,11 +440,33 @@ describe('SignupComponent', () => {
         jest
           .spyOn(component['townService'], 'searchTowns')
           .mockReturnValue(of([mockTown]));
+
         component.ngOnInit();
 
         // Act
         component.signupForm.controls.town.setValue(
           mockTown.name as unknown as typeof mockTown,
+        );
+
+        // Assert
+        component.filteredTowns$!.subscribe((result) => {
+          expect(result).toEqual([mockTown]);
+          done();
+        });
+      });
+
+      it('should emit all towns when town control value changes to null', (done) => {
+        // Arrange
+        component.allTowns = [mockTown];
+        jest
+          .spyOn(component['townService'], 'searchTowns')
+          .mockReturnValue(of([mockTown]));
+
+        component.ngOnInit();
+
+        // Act
+        component.signupForm.controls.town.setValue(
+          null as unknown as typeof mockTown,
         );
 
         // Assert
@@ -447,6 +482,7 @@ describe('SignupComponent', () => {
         jest
           .spyOn(component['townService'], 'searchTowns')
           .mockReturnValue(of([mockTown]));
+
         component.ngOnInit();
 
         // Act
