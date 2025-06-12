@@ -401,6 +401,63 @@ describe('SignupComponent', () => {
         // Assert
         expect(result).toEqual([mockTown]);
       });
+
+      it('should emit filtered towns when town control value changes', (done) => {
+        // Arrange
+        component.allTowns = [mockTown];
+        jest
+          .spyOn(component['townService'], 'searchTowns')
+          .mockReturnValue(of([mockTown]));
+
+        // Act
+        component.ngOnInit();
+
+        // Assert
+        component.filteredTowns$!.subscribe((result) => {
+          expect(result).toEqual([mockTown]);
+          done();
+        });
+
+        component.signupForm.controls.town.setValue(mockTown);
+      });
+
+      it('should emit filtered towns when town control value changes to a string', (done) => {
+        // Arrange
+        component.allTowns = [mockTown];
+        jest
+          .spyOn(component['townService'], 'searchTowns')
+          .mockReturnValue(of([mockTown]));
+        component.ngOnInit();
+
+        // Act
+        component.signupForm.controls.town.setValue(
+          mockTown.name as unknown as typeof mockTown,
+        );
+
+        // Assert
+        component.filteredTowns$!.subscribe((result) => {
+          expect(result).toEqual([mockTown]);
+          done();
+        });
+      });
+
+      it('should emit all towns when town control value changes to an object without name', (done) => {
+        // Arrange
+        component.allTowns = [mockTown];
+        jest
+          .spyOn(component['townService'], 'searchTowns')
+          .mockReturnValue(of([mockTown]));
+        component.ngOnInit();
+
+        // Act
+        component.signupForm.controls.town.setValue({} as typeof mockTown);
+
+        // Assert
+        component.filteredTowns$!.subscribe((result) => {
+          expect(result).toEqual([mockTown]);
+          done();
+        });
+      });
     });
 
     describe('preventNonNumericInput', () => {
