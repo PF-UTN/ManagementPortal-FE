@@ -45,12 +45,11 @@ describe('SignupComponent', () => {
     });
 
     authService = TestBed.inject(AuthService);
-
-    fixture = TestBed.createComponent(SignupComponent);
-    component = fixture.componentInstance;
-
     navBarService = TestBed.inject(NavBarService);
 
+    fixture = TestBed.createComponent(SignupComponent);
+
+    component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
@@ -62,10 +61,8 @@ describe('SignupComponent', () => {
     it('should hide navBar', () => {
       // Arrange
       const navBarServiceSpy = jest.spyOn(navBarService, 'hideNavBar');
-
       // Act
       component.ngOnInit();
-
       // Assert
       expect(navBarServiceSpy).toHaveBeenCalled();
     });
@@ -82,6 +79,22 @@ describe('SignupComponent', () => {
       // Act
       // Assert
       expect(component.signupForm.valid).toBeFalsy();
+    });
+
+    describe('Towns and validators initialization', () => {
+      it('should set allTowns and update town validators on ngOnInit', () => {
+        // Arrange
+        const towns = [mockTown];
+        jest
+          .spyOn(component['townService'], 'searchTowns')
+          .mockReturnValue(of(towns));
+        component['initForm']();
+        // Act
+        component.ngOnInit();
+        // Assert
+        expect(component.allTowns).toEqual(towns);
+        expect(component.signupForm.controls.town.validator).toBeDefined();
+      });
     });
 
     describe('Name field validation', () => {
@@ -336,7 +349,6 @@ describe('SignupComponent', () => {
       it('should return all towns if query is empty', () => {
         // Arrange
         component.allTowns = [mockTown];
-
         // Act & Assert
         expect(component.filterTowns('')).toEqual([mockTown]);
       });
@@ -344,9 +356,135 @@ describe('SignupComponent', () => {
       it('should filter towns by name', () => {
         // Arrange
         component.allTowns = [mockTown];
-
         // Act & Assert
         expect(component.filterTowns(mockTown.name)).toEqual([mockTown]);
+      });
+
+      it('should filter towns by zipCode', () => {
+        // Arrange
+        component.allTowns = [
+          { id: 1, name: 'Rosario', zipCode: '2000', provinceId: 1 },
+        ];
+        // Act & Assert
+        expect(component.filterTowns('2000')).toEqual(component.allTowns);
+      });
+
+      it('should filter towns when value is an object with name', () => {
+        // Arrange
+        component.allTowns = [mockTown];
+        const value = { name: mockTown.name };
+
+        // Act
+        const query = typeof value === 'string' ? value : (value?.name ?? '');
+        const result = component.filterTowns(query);
+
+        // Assert
+        expect(result).toEqual([mockTown]);
+      });
+
+      it('should return all towns when value is an object without name', () => {
+        // Arrange
+        component.allTowns = [mockTown];
+        const value = {} as { name?: string };
+
+        // Act
+        const query = typeof value === 'string' ? value : (value?.name ?? '');
+        const result = component.filterTowns(query);
+
+        // Assert
+        expect(result).toEqual([mockTown]);
+      });
+      it('should return all towns when value is undefined', () => {
+        // Arrange
+        component.allTowns = [mockTown];
+        const value = {} as { name?: string };
+
+        // Act
+        const query = typeof value === 'string' ? value : (value?.name ?? '');
+        const result = component.filterTowns(query);
+
+        // Assert
+        expect(result).toEqual([mockTown]);
+      });
+
+      it('should emit filtered towns when town control value changes to a full object', (done) => {
+        // Arrange
+        component.allTowns = [mockTown];
+        jest
+          .spyOn(component['townService'], 'searchTowns')
+          .mockReturnValue(of([mockTown]));
+
+        component.ngOnInit();
+
+        // Act
+        component.signupForm.controls.town.setValue(mockTown);
+
+        // Assert
+        component.filteredTowns$!.subscribe((result) => {
+          expect(result).toEqual([mockTown]);
+          done();
+        });
+      });
+
+      it('should emit filtered towns when town control value changes to a string', (done) => {
+        // Arrange
+        component.allTowns = [mockTown];
+        jest
+          .spyOn(component['townService'], 'searchTowns')
+          .mockReturnValue(of([mockTown]));
+
+        component.ngOnInit();
+
+        // Act
+        component.signupForm.controls.town.setValue(
+          mockTown.name as unknown as typeof mockTown,
+        );
+
+        // Assert
+        component.filteredTowns$!.subscribe((result) => {
+          expect(result).toEqual([mockTown]);
+          done();
+        });
+      });
+
+      it('should emit all towns when town control value changes to null', (done) => {
+        // Arrange
+        component.allTowns = [mockTown];
+        jest
+          .spyOn(component['townService'], 'searchTowns')
+          .mockReturnValue(of([mockTown]));
+
+        component.ngOnInit();
+
+        // Act
+        component.signupForm.controls.town.setValue(
+          null as unknown as typeof mockTown,
+        );
+
+        // Assert
+        component.filteredTowns$!.subscribe((result) => {
+          expect(result).toEqual([mockTown]);
+          done();
+        });
+      });
+
+      it('should emit all towns when town control value changes to an object without name', (done) => {
+        // Arrange
+        component.allTowns = [mockTown];
+        jest
+          .spyOn(component['townService'], 'searchTowns')
+          .mockReturnValue(of([mockTown]));
+
+        component.ngOnInit();
+
+        // Act
+        component.signupForm.controls.town.setValue({} as typeof mockTown);
+
+        // Assert
+        component.filteredTowns$!.subscribe((result) => {
+          expect(result).toEqual([mockTown]);
+          done();
+        });
       });
     });
 
@@ -397,6 +535,47 @@ describe('SignupComponent', () => {
         // Act & Assert
         expect(streetNumberControl.hasError('required')).toBeFalsy();
       });
+
+      it('should allow allowed keys', () => {
+        // Arrange
+        const allowedKeys: KeyboardEvent['key'][] = [
+          'Backspace',
+          'ArrowLeft',
+          'ArrowRight',
+          'Tab',
+        ];
+        for (const key of allowedKeys) {
+          const event = {
+            key,
+            preventDefault: jest.fn(),
+            ctrlKey: false,
+          } as unknown as KeyboardEvent;
+
+          // Act
+          component.preventNonNumericInput(event);
+
+          // Assert
+          expect(event.preventDefault).not.toHaveBeenCalled();
+        }
+      });
+
+      it('should allow Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X', () => {
+        // Arrange
+        const ctrlKeys: KeyboardEvent['key'][] = ['a', 'c', 'v', 'x'];
+        for (const key of ctrlKeys) {
+          const event = {
+            key,
+            preventDefault: jest.fn(),
+            ctrlKey: true,
+          } as unknown as KeyboardEvent;
+
+          // Act
+          component.preventNonNumericInput(event);
+
+          // Assert
+          expect(event.preventDefault).not.toHaveBeenCalled();
+        }
+      });
     });
     describe('Tax Category field validation', () => {
       it('should set taxCategory error if taxCategory control is empty', () => {
@@ -412,6 +591,25 @@ describe('SignupComponent', () => {
         taxCategoryControl.setValue(clientData.taxCategoryId);
         // Act & Assert
         expect(taxCategoryControl.hasError('required')).toBeFalsy();
+      });
+    });
+
+    describe('Document Type field', () => {
+      it('should translate document number error to Spanish', () => {
+        // Arrange
+        const msg =
+          'documentNumber must be longer than or equal to 7 characters';
+        // Act & Assert
+        expect(component['translateErrorMessage'](msg)).toBe(
+          'El número de documento debe tener al menos 7 caracteres',
+        );
+      });
+
+      it('should return the original message if no translation is found', () => {
+        // Arrange
+        const msg = 'Error desconocido';
+        // Act & Assert
+        expect(component['translateErrorMessage'](msg)).toBe(msg);
       });
     });
     describe('Tax ID Type field validation', () => {
@@ -659,6 +857,44 @@ describe('SignupComponent', () => {
 
         // Assert
         expect(testSignal()).toBe(true);
+      });
+
+      it('should use error.message if error.error.message is undefined', () => {
+        // Arrange
+        const errorMessage =
+          'Http failure response for (unknown url): 400 Bad Request';
+        const errorResponse = new HttpErrorResponse({
+          error: {},
+          status: 400,
+          statusText: 'Bad Request',
+        });
+
+        jest
+          .spyOn(authService, 'signUpAsync')
+          .mockReturnValue(throwError(() => errorResponse));
+
+        component.signupForm.setValue({
+          firstName: clientData.firstName,
+          lastName: clientData.lastName,
+          email: clientData.email,
+          password: clientData.password,
+          confirmPassword: clientData.password,
+          phone: clientData.phone,
+          birthDate: clientData.birthDate,
+          town: mockTown,
+          street: clientData.address.street,
+          streetNumber: clientData.address.streetNumber,
+          taxCategory: clientData.taxCategoryId,
+          documentType: clientData.documentType,
+          documentNumber: clientData.documentNumber,
+          companyName: clientData.companyName,
+        });
+
+        // Act
+        component.onSubmit();
+
+        // Assert
+        expect(component.errorMessage).toBe(errorMessage);
       });
     });
   });

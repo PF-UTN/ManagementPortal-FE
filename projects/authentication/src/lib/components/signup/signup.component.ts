@@ -122,11 +122,23 @@ export class SignupComponent implements OnInit {
           debounceTime(300),
           startWith(''),
           map((value) => {
-            const query = typeof value === 'string' ? value : value?.name || '';
+            const query =
+              typeof value === 'string' ? value : (value?.name ?? '');
             return this.filterTowns(query);
           }),
         );
       });
+  }
+
+  private translateErrorMessage(message: string): string {
+    if (
+      message?.includes(
+        'documentNumber must be longer than or equal to 7 characters',
+      )
+    ) {
+      return 'El número de documento debe tener al menos 7 caracteres';
+    }
+    return message;
   }
 
   private initForm() {
@@ -294,7 +306,8 @@ export class SignupComponent implements OnInit {
             );
           },
           error: (error: HttpErrorResponse) => {
-            this.errorMessage = error.error.message;
+            const errMessage = error.error?.message ?? error.message;
+            this.errorMessage = this.translateErrorMessage(errMessage);
           },
         });
     }
