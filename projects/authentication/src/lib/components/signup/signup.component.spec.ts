@@ -349,7 +349,6 @@ describe('SignupComponent', () => {
       it('should return all towns if query is empty', () => {
         // Arrange
         component.allTowns = [mockTown];
-
         // Act & Assert
         expect(component.filterTowns('')).toEqual([mockTown]);
       });
@@ -357,7 +356,6 @@ describe('SignupComponent', () => {
       it('should filter towns by name', () => {
         // Arrange
         component.allTowns = [mockTown];
-
         // Act & Assert
         expect(component.filterTowns(mockTown.name)).toEqual([mockTown]);
       });
@@ -367,7 +365,6 @@ describe('SignupComponent', () => {
         component.allTowns = [
           { id: 1, name: 'Rosario', zipCode: '2000', provinceId: 1 },
         ];
-
         // Act & Assert
         expect(component.filterTowns('2000')).toEqual(component.allTowns);
       });
