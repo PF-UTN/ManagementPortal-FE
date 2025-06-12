@@ -45,12 +45,11 @@ describe('SignupComponent', () => {
     });
 
     authService = TestBed.inject(AuthService);
-
-    fixture = TestBed.createComponent(SignupComponent);
-    component = fixture.componentInstance;
-
     navBarService = TestBed.inject(NavBarService);
 
+    fixture = TestBed.createComponent(SignupComponent);
+
+    component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
@@ -62,10 +61,8 @@ describe('SignupComponent', () => {
     it('should hide navBar', () => {
       // Arrange
       const navBarServiceSpy = jest.spyOn(navBarService, 'hideNavBar');
-
       // Act
       component.ngOnInit();
-
       // Assert
       expect(navBarServiceSpy).toHaveBeenCalled();
     });
@@ -92,10 +89,8 @@ describe('SignupComponent', () => {
           .spyOn(component['townService'], 'searchTowns')
           .mockReturnValue(of(towns));
         component['initForm']();
-
         // Act
         component.ngOnInit();
-
         // Assert
         expect(component.allTowns).toEqual(towns);
         expect(component.signupForm.controls.town.validator).toBeDefined();
