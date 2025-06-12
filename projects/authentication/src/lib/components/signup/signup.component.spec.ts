@@ -84,6 +84,24 @@ describe('SignupComponent', () => {
       expect(component.signupForm.valid).toBeFalsy();
     });
 
+    describe('Towns and validators initialization', () => {
+      it('should set allTowns and update town validators on ngOnInit', () => {
+        // Arrange
+        const towns = [mockTown];
+        jest
+          .spyOn(component['townService'], 'searchTowns')
+          .mockReturnValue(of(towns));
+        component['initForm']();
+
+        // Act
+        component.ngOnInit();
+
+        // Assert
+        expect(component.allTowns).toEqual(towns);
+        expect(component.signupForm.controls.town.validator).toBeDefined();
+      });
+    });
+
     describe('Name field validation', () => {
       it('should set name error if name control is empty', () => {
         const nameControl = component.signupForm.controls.firstName;
@@ -357,6 +375,32 @@ describe('SignupComponent', () => {
         // Act & Assert
         expect(component.filterTowns('2000')).toEqual(component.allTowns);
       });
+
+      it('should filter towns when value is an object with name', () => {
+        // Arrange
+        component.allTowns = [mockTown];
+        const value = { name: mockTown.name };
+
+        // Act
+        const query = typeof value === 'string' ? value : (value?.name ?? '');
+        const result = component.filterTowns(query);
+
+        // Assert
+        expect(result).toEqual([mockTown]);
+      });
+
+      it('should filter towns when value is an object without name', () => {
+        // Arrange
+        component.allTowns = [mockTown];
+        const value = {} as { name?: string };
+
+        // Act
+        const query = typeof value === 'string' ? value : (value?.name ?? '');
+        const result = component.filterTowns(query);
+
+        // Assert
+        expect(result).toEqual([mockTown]);
+      });
     });
 
     describe('preventNonNumericInput', () => {
@@ -405,6 +449,47 @@ describe('SignupComponent', () => {
         streetNumberControl.setValue(clientData.address.streetNumber);
         // Act & Assert
         expect(streetNumberControl.hasError('required')).toBeFalsy();
+      });
+
+      it('should allow allowed keys', () => {
+        // Arrange
+        const allowedKeys: KeyboardEvent['key'][] = [
+          'Backspace',
+          'ArrowLeft',
+          'ArrowRight',
+          'Tab',
+        ];
+        for (const key of allowedKeys) {
+          const event = {
+            key,
+            preventDefault: jest.fn(),
+            ctrlKey: false,
+          } as unknown as KeyboardEvent;
+
+          // Act
+          component.preventNonNumericInput(event);
+
+          // Assert
+          expect(event.preventDefault).not.toHaveBeenCalled();
+        }
+      });
+
+      it('should allow Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X', () => {
+        // Arrange
+        const ctrlKeys: KeyboardEvent['key'][] = ['a', 'c', 'v', 'x'];
+        for (const key of ctrlKeys) {
+          const event = {
+            key,
+            preventDefault: jest.fn(),
+            ctrlKey: true,
+          } as unknown as KeyboardEvent;
+
+          // Act
+          component.preventNonNumericInput(event);
+
+          // Assert
+          expect(event.preventDefault).not.toHaveBeenCalled();
+        }
       });
     });
     describe('Tax Category field validation', () => {
@@ -687,6 +772,44 @@ describe('SignupComponent', () => {
 
         // Assert
         expect(testSignal()).toBe(true);
+      });
+
+      it('should use error.message if error.error.message is undefined', () => {
+        // Arrange
+        const errorMessage =
+          'Http failure response for (unknown url): 400 Bad Request';
+        const errorResponse = new HttpErrorResponse({
+          error: {},
+          status: 400,
+          statusText: 'Bad Request',
+        });
+
+        jest
+          .spyOn(authService, 'signUpAsync')
+          .mockReturnValue(throwError(() => errorResponse));
+
+        component.signupForm.setValue({
+          firstName: clientData.firstName,
+          lastName: clientData.lastName,
+          email: clientData.email,
+          password: clientData.password,
+          confirmPassword: clientData.password,
+          phone: clientData.phone,
+          birthDate: clientData.birthDate,
+          town: mockTown,
+          street: clientData.address.street,
+          streetNumber: clientData.address.streetNumber,
+          taxCategory: clientData.taxCategoryId,
+          documentType: clientData.documentType,
+          documentNumber: clientData.documentNumber,
+          companyName: clientData.companyName,
+        });
+
+        // Act
+        component.onSubmit();
+
+        // Assert
+        expect(component.errorMessage).toBe(errorMessage);
       });
     });
   });
