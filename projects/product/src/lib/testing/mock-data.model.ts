@@ -1,6 +1,7 @@
+import { ProductDetail } from '../models/product-detail.model';
 import { ProductListItem } from '../models/product-item.model';
 
-export const mockProductListItem: ProductListItem[] = [
+export const mockProductListItems: ProductListItem[] = [
   {
     id: 1,
     name: 'Product 1',
@@ -10,6 +11,7 @@ export const mockProductListItem: ProductListItem[] = [
     price: 100,
     stock: 50,
     enabled: true,
+    weight: 20,
   },
   {
     id: 2,
@@ -20,14 +22,46 @@ export const mockProductListItem: ProductListItem[] = [
     supplierBusinessName: 'Supplier 2',
     stock: 30,
     enabled: false,
+    weight: 20,
   },
 ];
 
 export const mockProductListItemResponse = {
-  total: mockProductListItem.length,
-  results: mockProductListItem,
+  total: mockProductListItems.length,
+  results: mockProductListItems,
 };
 
 export const mockSuccessResponse = {
   message: 'Operación realizada con éxito.',
+};
+
+export const mockProductDetail: ProductDetail = {
+  name: 'Producto Test',
+  description: 'Descripción de prueba',
+  category: { name: 'Categoría Test' },
+  price: 100.5,
+  stock: {
+    quantityAvailable: 10,
+    quantityOrdered: 5,
+    quantityReserved: 2,
+  },
+  weight: 1.25,
+  supplier: {
+    businessName: 'Proveedor Test',
+    email: 'proveedor@test.com',
+    phone: '123456789',
+  },
+  enabled: true,
+};
+
+export const mockProductListItem: ProductListItem = {
+  id: 1,
+  name: 'Product 1',
+  description: 'Description for Product 1',
+  categoryName: 'Category 1',
+  supplierBusinessName: 'Supplier 1',
+  price: 100,
+  stock: 50,
+  enabled: true,
+  weight: 20,
 };

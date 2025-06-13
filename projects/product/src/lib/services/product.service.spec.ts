@@ -7,9 +7,13 @@ import { TestBed } from '@angular/core/testing';
 
 import { ProductParams } from '../models/product-param.model';
 import { ProductService } from '../services/product.service';
-import { mockProductListItemResponse } from '../testing/mock-data.model';
+import {
+  mockProductListItemResponse,
+  mockProductDetail,
+} from '../testing/mock-data.model';
 
-const baseUrl = 'https://dev-management-portal-be.vercel.app/product/search';
+const baseUrl = 'https://dev-management-portal-be.vercel.app/product';
+let productId: number;
 describe('ProductService', () => {
   let service: ProductService;
   let httpMock: HttpTestingController;
@@ -46,11 +50,13 @@ describe('ProductService', () => {
           enabled: true,
         },
       };
+      const url = `${baseUrl}/search`;
+
       // Act & Assert
       service.postSearchProduct(params).subscribe((response) => {
         expect(response).toEqual(mockProductListItemResponse);
       });
-      const req = httpMock.expectOne(baseUrl);
+      const req = httpMock.expectOne(url);
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(params);
       req.flush(mockProductListItemResponse);
@@ -63,6 +69,7 @@ describe('ProductService', () => {
         filters: {},
       };
       const mockError = new ErrorEvent('Network error');
+      const url = `${baseUrl}/search`;
 
       //Act & Assert
       service.postSearchProduct(params).subscribe({
@@ -73,9 +80,25 @@ describe('ProductService', () => {
           expect(error.error).toBe(mockError);
         },
       });
-      const req = httpMock.expectOne(baseUrl);
+      const req = httpMock.expectOne(url);
       expect(req.request.method).toBe('POST');
       req.error(mockError);
+    });
+  });
+
+  describe('getProductById', () => {
+    it('should send a GET request with the correct parameters and return data', () => {
+      //Arrange
+      productId = 1;
+      const url = `${baseUrl}/${productId}`;
+      //Act
+      service.getProductById(productId).subscribe((product) => {
+        //Assert
+        expect(product).toEqual(mockProductDetail);
+      });
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('GET');
+      req.flush(mockProductDetail);
     });
   });
 });
