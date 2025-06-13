@@ -6,5 +6,6 @@ export interface ProductListItem {
   categoryName: string;
   supplierBusinessName: string;
   stock: number;
+  weight: number;
   enabled: boolean;
 }

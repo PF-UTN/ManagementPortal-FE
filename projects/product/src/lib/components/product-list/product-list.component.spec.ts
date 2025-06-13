@@ -17,11 +17,7 @@ import { of, throwError } from 'rxjs';
 
 import { ProductListComponent } from './product-list.component';
 import { ProductService } from '../../services/product.service';
-import {
-  mockProductListItems,
-  mockProductListItem,
-  mockProductDetail,
-} from '../../testing';
+import { mockProductListItems, mockProductListItem } from '../../testing';
 import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-lateral-drawer.component';
 
 describe('ProductListComponent', () => {
@@ -302,31 +298,24 @@ describe('ProductListComponent', () => {
     }));
   });
   describe('onDetailDraawer', () => {
-    it('should open drawer with product detail data', fakeAsync(() => {
-      // Arrange
-      service.getProductById.mockReturnValueOnce(of(mockProductDetail));
-
+    it('should open drawer with productId and correct config', () => {
       // Act
       component.onDetailDrawer(mockProductListItem);
-      tick(1100);
 
       // Assert
-      expect(service.getProductById).toHaveBeenCalledWith(
-        mockProductListItem.id,
-      );
       expect(lateralDrawerService.open).toHaveBeenCalledWith(
         DetailLateralDrawerComponent,
-        { data: mockProductDetail },
-        {
+        { productId: mockProductListItem.id },
+        expect.objectContaining({
           title: 'Detalle del Producto',
-          footer: {
-            firstButton: {
+          footer: expect.objectContaining({
+            firstButton: expect.objectContaining({
               text: 'Cancelar',
               click: expect.any(Function),
-            },
-          },
-        },
+            }),
+          }),
+        }),
       );
-    }));
+    });
   });
 });

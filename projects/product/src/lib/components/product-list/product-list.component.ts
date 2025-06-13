@@ -52,24 +52,6 @@ export class ProductListComponent implements OnInit {
       value: (element: ProductListItem) => element.name,
     },
     {
-      columnDef: 'description',
-      header: 'Descripción',
-      type: ColumnTypeEnum.VALUE,
-      value: (element: ProductListItem) => element.description,
-    },
-    {
-      columnDef: 'supplier',
-      header: 'Proveedor',
-      type: ColumnTypeEnum.VALUE,
-      value: (element: ProductListItem) => element.supplierBusinessName,
-    },
-    {
-      columnDef: 'stock',
-      header: 'Stock',
-      type: ColumnTypeEnum.VALUE,
-      value: (element: ProductListItem) => element.stock.toString(),
-    },
-    {
       columnDef: 'category',
       header: 'Categoría',
       type: ColumnTypeEnum.VALUE,
@@ -80,6 +62,18 @@ export class ProductListComponent implements OnInit {
       header: 'Precio',
       type: ColumnTypeEnum.VALUE,
       value: (element: ProductListItem) => element.price.toFixed(2),
+    },
+    {
+      columnDef: 'stock',
+      header: 'Stock',
+      type: ColumnTypeEnum.VALUE,
+      value: (element: ProductListItem) => element.stock.toString(),
+    },
+    {
+      columnDef: 'peso',
+      header: 'Peso',
+      type: ColumnTypeEnum.VALUE,
+      value: (element: ProductListItem) => element.weight.toString(),
     },
     {
       columnDef: 'enabled',
@@ -185,31 +179,19 @@ export class ProductListComponent implements OnInit {
   }
 
   onDetailDrawer(request: ProductListItem): void {
-    this.productService.getProductById(request.id).subscribe({
-      next: (productDetail) => {
-        this.lateralDrawerService.open(
-          DetailLateralDrawerComponent,
-          { data: productDetail },
-          {
-            title: 'Detalle del Producto',
-            footer: {
-              firstButton: {
-                text: 'Cancelar',
-                click: () => {
-                  this.lateralDrawerService.close();
-                },
-              },
-            },
+    this.lateralDrawerService.open(
+      DetailLateralDrawerComponent,
+      { productId: request.id },
+      {
+        title: 'Detalle del Producto',
+        footer: {
+          firstButton: {
+            text: 'Cancelar',
+            click: () => this.lateralDrawerService.close(),
           },
-        );
-        this.isLoading = false;
+        },
       },
-      error: () => {
-        this.snackBar.open('Se ha producido un error inesperado', 'Cerrar', {
-          duration: 3000,
-        });
-      },
-    });
+    );
   }
 
   onModifyDrawer(request: ProductListItem): void {

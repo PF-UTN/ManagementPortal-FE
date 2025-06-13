@@ -11,6 +11,7 @@ export const mockProductListItems: ProductListItem[] = [
     price: 100,
     stock: 50,
     enabled: true,
+    weight: 20,
   },
   {
     id: 2,
@@ -21,6 +22,7 @@ export const mockProductListItems: ProductListItem[] = [
     supplierBusinessName: 'Supplier 2',
     stock: 30,
     enabled: false,
+    weight: 20,
   },
 ];
 
@@ -61,4 +63,5 @@ export const mockProductListItem: ProductListItem = {
   price: 100,
   stock: 50,
   enabled: true,
+  weight: 20,
 };
