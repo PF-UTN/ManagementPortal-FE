@@ -52,20 +52,39 @@ describe('DetailLateralDrawerComponent', () => {
   });
 
   it('should call productService.getProductById with the correct productId on ngOnInit', () => {
+    //Arrange
+    component.productId = mockProductListItem.id;
+
+    //Act
+    fixture.detectChanges();
+
+    // Assert
     expect(productService.getProductById).toHaveBeenCalledWith(
       mockProductListItem.id,
     );
   });
 
   it('should set the product detail data after loading', () => {
-    expect(component.data()).toEqual(mockProductDetail);
+    // Arrange
+    const expectedData = mockProductDetail;
+
+    // Act
+    const result = component.data();
+
+    // Assert
+    expect(result).toEqual(expectedData);
   });
 
   it('should set isLoading to false after product detail is loaded', () => {
-    expect(component.isLoading()).toBe(false);
+    // Act
+    const result = component.isLoading();
+
+    // Assert
+    expect(result).toBe(false);
   });
 
   it('should call lateralDrawerService.updateConfig during construction', () => {
+    // Assert
     expect(lateralDrawerService.updateConfig).toHaveBeenCalled();
   });
 

@@ -20,6 +20,7 @@ export class DetailLateralDrawerComponent
   productId!: number;
 
   data = signal<ProductDetail | null>(null);
+  error = signal<string | null>(null);
   isLoading = signal(true);
 
   constructor(
@@ -44,7 +45,6 @@ export class DetailLateralDrawerComponent
   }
   ngOnInit(): void {
     if (!this.productId) {
-      console.error('No se recibió productId');
       this.isLoading.set(false);
       return;
     }
@@ -54,8 +54,8 @@ export class DetailLateralDrawerComponent
         this.data.set(productDetail);
         this.isLoading.set(false);
       },
-      error: (err) => {
-        console.error('Error al obtener el producto:', err);
+      error: () => {
+        this.error.set('No se pudo obtener el detalle del producto.');
         this.isLoading.set(false);
       },
     });

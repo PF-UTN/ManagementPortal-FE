@@ -1,57 +1,66 @@
-<ng-container *ngIf="!isLoading(); else loading">
+<ng-container *ngIf="isLoading(); else loaded">
   <div class="drawer-container__content">
-    <div class="drawer-container__row">
-      <strong>Nombre</strong>
-      <p>{{ data()?.name }}</p>
-    </div>
-    <div class="drawer-container__row">
-      <strong>Descripción</strong>
-      <p>{{ data()?.description }}</p>
-    </div>
-    <div class="drawer-container__row">
-      <strong>Categoría</strong>
-      <p>{{ data()?.category?.name }}</p>
-    </div>
-    <div class="drawer-container__row">
-      <strong>Precio</strong>
-      <p>${{ data()?.price }}</p>
-    </div>
-    <div class="drawer-container__row">
-      <strong>Stock</strong>
-      <ul>
-        <li><strong>Disponible:</strong> {{ data()?.stock?.quantityAvailable }}</li>
-        <li><strong>En pedido:</strong> {{  data()?.stock?.quantityOrdered }}</li>
-        <li><strong>Reservado:</strong> {{  data()?.stock?.quantityReserved }}</li>
-      </ul>
-    </div>
-    <div class="drawer-container__row">
-      <strong>Peso</strong>
-      <p>{{ data()?.weight }} kg</p>
-    </div>
-    <div class="drawer-container__row">
-      <strong>Proveedor</strong>
-      <ul>
-        <li><strong>Nombre del negocio:</strong> {{ data()?.supplier?.businessName }}</li>
-        <li><strong>Email:</strong> {{ data()?.supplier?.email }}</li>
-        <li><strong>Teléfono:</strong> {{ data()?.supplier?.phone }}</li>
-      </ul>
-    </div>
-    <div class="drawer-container__row">
-      <strong>Estado del producto:</strong>
-      <p>{{ data()?.enabled ? 'Activo' : 'En Pausa' }}</p>
+    <div class="spinner-container">
+      <mat-progress-spinner 
+        mode="indeterminate"
+        diameter="50"
+        strokeWidth="6"
+        color="primary">
+      </mat-progress-spinner>
     </div>
   </div>
 </ng-container>
 
-<ng-template #loading>
-  <div class="drawer-container__content">
-    <div class="spinner-container">
-     <mat-progress-spinner 
-      mode="indeterminate"
-      diameter="50"
-      strokeWidth="6"
-      color="primary">
-    </mat-progress-spinner>
+<ng-template #loaded>
+  <ng-container *ngIf="!error(); else errorContent">
+    <div class="drawer-container__content">
+      <div class="drawer-container__row">
+        <strong>Nombre</strong>
+        <p>{{ data()?.name }}</p>
+      </div>
+      <div class="drawer-container__row">
+        <strong>Descripción</strong>
+        <p>{{ data()?.description }}</p>
+      </div>
+      <div class="drawer-container__row">
+        <strong>Categoría</strong>
+        <p>{{ data()?.category?.name }}</p>
+      </div>
+      <div class="drawer-container__row">
+        <strong>Precio</strong>
+        <p>${{ data()?.price }}</p>
+      </div>
+      <div class="drawer-container__row">
+        <strong>Stock</strong>
+        <ul>
+          <li><strong>Disponible:</strong> {{ data()?.stock?.quantityAvailable }}</li>
+          <li><strong>En pedido:</strong> {{ data()?.stock?.quantityOrdered }}</li>
+          <li><strong>Reservado:</strong> {{ data()?.stock?.quantityReserved }}</li>
+        </ul>
+      </div>
+      <div class="drawer-container__row">
+        <strong>Peso</strong>
+        <p>{{ data()?.weight }} kg</p>
+      </div>
+      <div class="drawer-container__row">
+        <strong>Proveedor</strong>
+        <ul>
+          <li><strong>Nombre del negocio:</strong> {{ data()?.supplier?.businessName }}</li>
+          <li><strong>Email:</strong> {{ data()?.supplier?.email }}</li>
+          <li><strong>Teléfono:</strong> {{ data()?.supplier?.phone }}</li>
+        </ul>
+      </div>
+      <div class="drawer-container__row">
+        <strong>Estado del producto:</strong>
+        <p>{{ data()?.enabled ? 'Activo' : 'En Pausa' }}</p>
+      </div>
     </div>
-  </div>
+  </ng-container>
+
+  <ng-template #errorContent>
+    <div class="drawer-container__content">
+      <p class="error-message">{{ error() }}</p>
+    </div>
+  </ng-template>
 </ng-template>
+

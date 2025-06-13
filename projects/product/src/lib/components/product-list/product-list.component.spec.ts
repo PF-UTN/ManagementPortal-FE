@@ -297,7 +297,7 @@ describe('ProductListComponent', () => {
       );
     }));
   });
-  describe('onDetailDraawer', () => {
+  describe('onDetailDrawer', () => {
     it('should open drawer with productId and correct config', () => {
       // Act
       component.onDetailDrawer(mockProductListItem);
