@@ -51,6 +51,10 @@
   align-items: center;
 }
 
+.phone-prefix {
+  margin-right: 8px;
+}
+
 @media (max-width: map-get($grid-breakpoints, 'md')) {
   .container {
     width: 100%;

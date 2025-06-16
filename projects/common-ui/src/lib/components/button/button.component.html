@@ -1,6 +1,6 @@
 <button class="button button__{{type}}" 
   mat-raised-button  
-  [disabled]="disabled || loading()"
+  [disabled]="disabled() || loading()"
   [attr.type]="type"
   (click)="clickEvent()">
   

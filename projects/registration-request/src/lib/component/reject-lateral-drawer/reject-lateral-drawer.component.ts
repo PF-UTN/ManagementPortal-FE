@@ -8,6 +8,8 @@ import {
   FormsModule,
   ReactiveFormsModule,
   Validators,
+  AbstractControl,
+  ValidationErrors,
 } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -75,7 +77,7 @@ export class RejectLateralDrawerComponent
   private initializeForm() {
     this.form = new FormGroup({
       rejectionReason: new FormControl<string | null>(null, {
-        validators: [Validators.required],
+        validators: [Validators.required, notBlankValidator],
       }),
     });
 
@@ -106,4 +108,14 @@ export class RejectLateralDrawerComponent
         },
       });
   }
+}
+
+export function notBlankValidator(
+  control: AbstractControl,
+): ValidationErrors | null {
+  const value = control.value;
+  if (typeof value === 'string' && value.trim().length === 0) {
+    return { notBlank: true };
+  }
+  return null;
 }
