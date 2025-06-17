@@ -1,5 +1,10 @@
 @import '../../../../../../src/styles/varibles';
 
+.mat-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
 .wrapper {
   display: flex;
   flex-direction: column;
@@ -35,6 +40,13 @@
     text-align: left;
     color: $white-color;
 
+    &__content {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
     &__row {
       background-color: $lavander-primary-dark;
     }
@@ -42,6 +54,8 @@
 
   &__cell {
     align-content: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &__paginator {

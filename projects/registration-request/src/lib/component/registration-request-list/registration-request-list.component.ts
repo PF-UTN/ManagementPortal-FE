@@ -61,6 +61,7 @@ export class RegistrationRequestListComponent implements OnInit {
       header: 'Estado',
       type: ColumnTypeEnum.VALUE,
       value: (element: RegistrationRequestListItem) => element.status,
+      width: '100px',
     },
     {
       columnDef: 'requestDate',
@@ -68,6 +69,7 @@ export class RegistrationRequestListComponent implements OnInit {
       type: ColumnTypeEnum.VALUE,
       value: (element: RegistrationRequestListItem) =>
         new Date(element.requestDate).toLocaleDateString(),
+      width: '150px',
     },
     {
       columnDef: 'actions',
@@ -85,6 +87,7 @@ export class RegistrationRequestListComponent implements OnInit {
             this.onRejectDrawer(element),
         },
       ],
+      width: '50px',
     },
   ];
   dataSource$ = new BehaviorSubject<RegistrationRequestListItem[]>([]);
