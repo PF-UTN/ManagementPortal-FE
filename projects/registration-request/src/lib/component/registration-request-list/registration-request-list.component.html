@@ -1,21 +1,23 @@
-<mat-form-field appearance="outline">
-  <mat-label>Filtrar por estado</mat-label>
-  <mat-select [(ngModel)]="selectedStatus" (selectionChange)="onStatusFilterChange()" multiple>
-    <mat-option *ngFor="let option of actionsRequest | keyvalue" [value]="option.key">
-      {{ option.value }}
-    </mat-option>
-  </mat-select>
-</mat-form-field>
-
-<mp-table
-  [columns]="columns"
-  [dataSource$]="dataSource$"
-  [isLoading]="isLoading"
-  noDataMessage="No existen solicitudes de registro disponibles" 
-  [itemsNumber]="itemsNumber"
-  [getRowClass]="getRowClass"
-  [pageSize]="pageSize"
-  [pageIndex]="pageIndex"
-  [isActionDisabled]="isActionDisabled"
-  (pageChange)="handlePageChange($event)">
-</mp-table>
+<div class="container-fluid">
+  <mat-form-field appearance="outline">
+    <mat-label>Filtrar por estado</mat-label>
+    <mat-select [(ngModel)]="selectedStatus" (selectionChange)="onStatusFilterChange()" multiple>
+      <mat-option *ngFor="let option of actionsRequest | keyvalue" [value]="option.key">
+        {{ option.value }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  
+  <mp-table
+    [columns]="columns"
+    [dataSource$]="dataSource$"
+    [isLoading]="isLoading"
+    noDataMessage="No existen solicitudes de registro disponibles" 
+    [itemsNumber]="itemsNumber"
+    [getRowClass]="getRowClass"
+    [pageSize]="pageSize"
+    [pageIndex]="pageIndex"
+    [isActionDisabled]="isActionDisabled"
+    (pageChange)="handlePageChange($event)">
+  </mp-table>
+</div>

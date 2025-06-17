@@ -1,54 +1,71 @@
-<div *ngIf="isLoading" class="loading-message">
-  Cargando...
-</div>
-
-<div *ngIf="!isLoading">
-  <div *ngIf="!tableDataSource.data?.length" class="no-data-message">
-    {{ noDataMessage }}
+<div class="wrapper">  
+  <div class="table__container" *ngIf="!isLoading" >
+    <table mat-table [dataSource]="tableDataSource">
+      <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDef">
+        <th class="table__container__header" mat-header-cell *matHeaderCellDef [style.width]="column.width">
+          <div class="table__container__header__content">
+            {{ column.header }}
+          </div>
+        </th>
+        <td mat-cell *matCellDef="let element" class="table__container__cell" [style.width]="column.width">
+            <ng-container [ngSwitch]="column.type">
+              <ng-container *ngSwitchCase="ROW_TYPES.VALUE">
+                <div class="value__item">
+                  {{ column?.value(element) }}
+                </div>
+              </ng-container>
+              <ng-container *ngSwitchCase="ROW_TYPES.MULTI_VALUE">
+                <div class="multi-value__container">
+                  <p *ngFor="let item of column?.multiValue(element)" class="multi-value__item">
+                    {{ item }}
+                  </p>
+                </div>
+              </ng-container>
+              <ng-container *ngSwitchCase="ROW_TYPES.ACTIONS">
+                <div class="actions__container">
+                  <button mat-icon-button [matMenuTriggerFor]="menu" [disabled]="isActionDisabled(element)" class="actions__container__item">
+                    <mat-icon>more_horiz</mat-icon>
+                  </button>
+                  <mat-menu #menu="matMenu">
+                    <div *ngFor="let item of column?.actions" class="actions__mat-menu__item">
+                      <ng-container *ngIf="item?.action">
+                        <button mat-menu-item (click)="item.action(element)">
+                          {{ item.description }}
+                        </button>
+                      </ng-container>
+                    </div>
+                  </mat-menu>
+                </div>
+              </ng-container>
+          </ng-container>
+        </td>
+      </ng-container>
+      
+      <tr mat-header-row *matHeaderRowDef="displayedColumns" class="table__container__header__row"></tr>
+      <div *ngIf="!isLoading">
+        <div *ngIf="tableDataSource.data.length">
+          <tr mat-row *matRowDef="let row; columns: displayedColumns" class="table__container__body-row"></tr>
+        </div>
+      </div>
+    </table>
+    
+    
+    <mat-paginator *ngIf="tableDataSource.data?.length" 
+      [length]="itemsNumber"
+      [pageSize]="pageSize"
+      [pageIndex]="pageIndex"
+      [pageSizeOptions]="[5, 10, 20, 50]" 
+      (page)="onPageChange($event)"
+      class="table__container__paginator">
+    </mat-paginator>
   </div>
-  <table *ngIf="tableDataSource.data?.length" class="table" mat-table [dataSource]="tableDataSource">
-    <ng-container *ngFor="let column of columns" [matColumnDef]="column.columnDef">
-      <th class="table__header" mat-header-cell *matHeaderCellDef>{{ column.header }}</th>
-      <td mat-cell *matCellDef="let element">
-          <ng-container [ngSwitch]="column.type">
-            <ng-container *ngSwitchCase="ROW_TYPES.VALUE">
-              {{ column?.value(element) }}
-            </ng-container>
-            <ng-container *ngSwitchCase="ROW_TYPES.MULTI_VALUE">
-              <div class="multi-value__container">
-                <p *ngFor="let item of column?.multiValue(element)" class="multi-value__item">
-                  {{ item }}
-                </p>
-              </div>
-            </ng-container>
-            <ng-container *ngSwitchCase="ROW_TYPES.ACTIONS">
-              <div class="actions__container">
-                <button mat-icon-button [matMenuTriggerFor]="menu" [disabled]="isActionDisabled(element)">
-                  <mat-icon>more_horiz</mat-icon>
-                </button>
-                <mat-menu #menu="matMenu">
-                  <div *ngFor="let item of column?.actions" class="actions__item">
-                    <ng-container *ngIf="item?.action">
-                      <button mat-menu-item (click)="item.action(element)">
-                        {{ item.description }}
-                      </button>
-                    </ng-container>
-                  </div>
-                </mat-menu>
-              </div>
-            </ng-container>
-        </ng-container>
-      </td>
-    </ng-container>
-    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-  </table>
-
-  <mat-paginator *ngIf="tableDataSource.data?.length" 
-    [length]="itemsNumber"
-    [pageSize]="pageSize"
-    [pageIndex]="pageIndex"
-    [pageSizeOptions]="[5, 10, 20, 50]" 
-    (page)="onPageChange($event)">
-  </mat-paginator>
+<div *ngIf="!isLoading && !tableDataSource.data.length" class="no-data-message">
+  <span class="material-symbols-outlined no-data-message__icon">
+    unknown_document
+  </span>
+  {{ noDataMessage }}
+</div>
+<div *ngIf="isLoading" class="loading-message">
+  <mp-loading class="loading-message__icon"/>
+</div>
 </div>
