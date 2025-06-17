@@ -79,11 +79,9 @@
   }
 
   &__item {
-    background: #f2f2fa;
     border-radius: 4px;
     padding: 0.2rem 0.5rem;
     font-size: 0.95em;
-    color: #555;
   }
 }
 
@@ -94,10 +92,10 @@
     gap: 0.25rem;
 
     &__item {
-      color: #666;
+      color: $black;
       &:hover {
-        color: #3f51b5;
-        background: #f0f0fa;
+        color: $hover-item-color;
+        background: $lavender-gray;
       }
     }
   }
