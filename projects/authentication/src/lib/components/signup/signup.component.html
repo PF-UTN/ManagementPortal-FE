@@ -160,8 +160,8 @@
       <mat-form-field class="w-100" appearance="outline">
         <mat-label>Ciudad</mat-label>
         <input type="text" matInput formControlName="town" [matAutocomplete]="auto"
-          placeholder="Buscar ciudad o código postal" [attr.autocomplete]="'off'" />
-        <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('town')?.reset()">
+          placeholder="Buscar ciudad o código postal" [attr.autocomplete]="'off'"/>
+        <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('town')?.setValue(null)">
           <mat-icon>close</mat-icon>
         </button>
         <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayTown.bind(this)">
