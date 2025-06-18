@@ -15,6 +15,6 @@ export class HomeComponent {
   constructor(public router: Router) {}
 
   get showBackArrow(): boolean {
-    return !this.router.url.endsWith('/login');
+    return !this.router.url.endsWith('/inicio-sesion');
   }
 }

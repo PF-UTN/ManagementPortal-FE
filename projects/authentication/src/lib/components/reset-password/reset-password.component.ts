@@ -95,7 +95,7 @@ export class ResetPasswordComponent implements OnInit {
     }
     this.authService.resetPasswordAsync(token, password).subscribe({
       next: () => {
-        void this.router.navigate(['autenticacion/login']);
+        void this.router.navigate(['autenticacion/inicio-sesion']);
         this.snackBar.open('Contraseña restablecida con éxito.', 'Cerrar', {
           duration: 3000,
         });

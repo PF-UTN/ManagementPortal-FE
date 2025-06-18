@@ -14,14 +14,14 @@ const routes: Routes = [
     path: '',
     component: HomeComponent,
     children: [
-      { path: '', redirectTo: 'login', pathMatch: 'full' },
-      { path: 'login', component: LoginComponent },
-      { path: 'signup', component: SignupComponent },
+      { path: '', redirectTo: 'inicio-sesion', pathMatch: 'full' },
+      { path: 'inicio-sesion', component: LoginComponent },
+      { path: 'registro', component: SignupComponent },
       {
-        path: 'reset-password-request',
+        path: 'solicitud-restablecimiento-clave',
         component: ResetPasswordRequestComponent,
       },
-      { path: 'reset-password/:token', component: ResetPasswordComponent },
+      { path: 'restablecimiento-clave/:token', component: ResetPasswordComponent },
     ],
   },
 ];

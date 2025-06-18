@@ -29,7 +29,7 @@ export class AuthInterceptor {
     return next.handle(authReq).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401) {
-          this.router.navigate(['autenticacion/login']);
+          this.router.navigate(['autenticacion/inicio-sesion']);
           localStorage.removeItem('token');
         }
         return throwError(() => error);

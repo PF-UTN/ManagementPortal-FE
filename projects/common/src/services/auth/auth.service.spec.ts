@@ -70,7 +70,7 @@ describe('AuthService', () => {
       expect(removeItemSpy).toHaveBeenCalledWith('token');
     });
 
-    it('should navigate to login', () => {
+    it('should navigate to inicio-sesion', () => {
       // Arrange
       const navigateSpy = jest.spyOn(router, 'navigate');
 
@@ -78,7 +78,7 @@ describe('AuthService', () => {
       service.logOut();
 
       // Assert
-      expect(navigateSpy).toHaveBeenCalledWith(['autenticacion/login']);
+      expect(navigateSpy).toHaveBeenCalledWith(['autenticacion/inicio-sesion']);
     });
   });
 

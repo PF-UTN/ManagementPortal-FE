@@ -32,7 +32,7 @@ export class AuthService {
 
   logOut() {
     localStorage.removeItem('token');
-    this.router.navigate(['autenticacion/login']);
+    this.router.navigate(['autenticacion/inicio-sesion']);
   }
 
   signUpAsync(client: Client): Observable<AuthResponse> {

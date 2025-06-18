@@ -126,7 +126,7 @@ describe('ResetPasswordComponent', () => {
         clientData.password,
       );
     });
-    it('should navigate to autenticacion/login after successful reset', () => {
+    it('should navigate to autenticacion/inicio-sesion after successful reset', () => {
       // Arrange
       const mockToken = 'mock-token';
       component.resetPasswordForm.controls.password.setValue(
@@ -138,7 +138,7 @@ describe('ResetPasswordComponent', () => {
       // Act
       component.onSubmit();
       // Assert
-      expect(navigateSpy).toHaveBeenCalledWith(['autenticacion/login']);
+      expect(navigateSpy).toHaveBeenCalledWith(['autenticacion/inicio-sesion']);
     });
   });
 });

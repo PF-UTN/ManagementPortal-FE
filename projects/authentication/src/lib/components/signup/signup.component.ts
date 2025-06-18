@@ -296,7 +296,7 @@ export class SignupComponent implements OnInit {
         )
         .subscribe({
           next: () => {
-            void this.router.navigate(['autenticacion/login']);
+            void this.router.navigate(['autenticacion/inicio-sesion']);
             this.snackBar.open(
               'Solicitud de registro enviada con éxito. Recibirás un email con los pasos a seguir.',
               'Cerrar',
