@@ -2,7 +2,12 @@ import { AuthService, mockClient, mockTown, NavBarService } from '@Common';
 
 import { HttpErrorResponse, provideHttpClient } from '@angular/common/http';
 import { signal } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick,
+} from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
@@ -286,6 +291,39 @@ describe('SignupComponent', () => {
         expect(errors).toBeTruthy();
         expect(errors!['required']).toBeTruthy();
       });
+
+      it('should call townService.searchTowns with the name if value is a Town object', fakeAsync(() => {
+        // arrange
+        const townServiceSpy = jest
+          .spyOn(component['townService'], 'searchTowns')
+          .mockReturnValue(of([]));
+        component.ngOnInit();
+
+        // act
+        component.filteredTowns$.subscribe();
+        component.signupForm.controls.town.setValue(mockTown);
+        tick(350);
+
+        // assert
+        const calls = townServiceSpy.mock.calls.map((call) => call[0]);
+        expect(calls).toContain(mockTown.name);
+      }));
+
+      it('should call townService.searchTowns with empty string if value is null', fakeAsync(() => {
+        // arrange
+        const townServiceSpy = jest
+          .spyOn(component['townService'], 'searchTowns')
+          .mockReturnValue(of([]));
+        component.ngOnInit();
+
+        // act
+        component.filteredTowns$.subscribe();
+        component.signupForm.controls.town.setValue(null);
+        tick(350);
+
+        // assert
+        expect(townServiceSpy).toHaveBeenCalledWith('');
+      }));
     });
   });
 

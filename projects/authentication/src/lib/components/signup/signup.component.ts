@@ -33,7 +33,7 @@ import { DocumentType } from '../../constants/documentType.enum';
 import { IvaCategory } from '../../constants/ivaCategory.enum';
 import { customEmailValidator, matchPasswords } from '../../validators';
 
-const PHONE_REGEX = /^[+]?[0-9]{1,4}?[-.\\s]?([0-9]{1,3}[-.\\s]?){1,4}$/;
+const PHONE_REGEX = /^[+]?\d{1,4}?[-.\s]?(\d{1,3}[-.\s]?){1,4}$/;
 
 @Component({
   selector: 'mp-signup',
@@ -211,7 +211,7 @@ export class SignupComponent implements OnInit {
       return;
     }
 
-    const isNumber = /^[0-9]$/.test(event.key);
+    const isNumber = /^\d$/.test(event.key);
     if (!isNumber) {
       event.preventDefault();
     }
