@@ -1,66 +1,81 @@
 <ng-container *ngIf="isLoading(); else loaded">
-  <div class="drawer-container__content">
-    <div class="spinner-container">
-      <mat-progress-spinner 
-        mode="indeterminate"
-        diameter="50"
-        strokeWidth="6"
-        color="primary">
-      </mat-progress-spinner>
-    </div>
-  </div>
+  <mp-loading></mp-loading>
 </ng-container>
 
 <ng-template #loaded>
   <ng-container *ngIf="!error(); else errorContent">
-    <div class="drawer-container__content">
-      <div class="drawer-container__row">
-        <strong>Nombre</strong>
-        <p>{{ data()?.name }}</p>
+    <ng-container *ngIf="data() as product">
+      <div class="container py-3">
+        <div class="row mb-3">
+          <div class="col-12">
+            <strong>Nombre</strong>
+            <p>{{ product.name }}</p>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-12">
+            <strong>Descripción</strong>
+            <p>{{ product.description }}</p>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-12">
+            <strong>Categoría</strong>
+            <p>{{ product.category.name }}</p>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-12">
+            <strong>Precio</strong>
+            <p>${{ product.price }}</p>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-12">
+            <strong>Stock</strong>
+            <ul>
+              <li><strong>Disponible:</strong> {{ product.stock.quantityAvailable }}</li>
+              <li><strong>En pedido:</strong> {{ product.stock.quantityOrdered }}</li>
+              <li><strong>Reservado:</strong> {{ product.stock.quantityReserved }}</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-12">
+            <strong>Peso</strong>
+            <p>{{ product.weight }} kg</p>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-12">
+            <strong>Proveedor</strong>
+            <ul>
+              <li><strong>Nombre del negocio:</strong> {{ product.supplier.businessName }}</li>
+              <li><strong>Email:</strong> {{ product.supplier.email }}</li>
+              <li><strong>Teléfono:</strong> {{ product.supplier.phone }}</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12">
+            <strong>Estado del producto:</strong>
+            <p>{{ product.enabled ? 'Activo' : 'En Pausa' }}</p>
+          </div>
+        </div>
       </div>
-      <div class="drawer-container__row">
-        <strong>Descripción</strong>
-        <p>{{ data()?.description }}</p>
-      </div>
-      <div class="drawer-container__row">
-        <strong>Categoría</strong>
-        <p>{{ data()?.category?.name }}</p>
-      </div>
-      <div class="drawer-container__row">
-        <strong>Precio</strong>
-        <p>${{ data()?.price }}</p>
-      </div>
-      <div class="drawer-container__row">
-        <strong>Stock</strong>
-        <ul>
-          <li><strong>Disponible:</strong> {{ data()?.stock?.quantityAvailable }}</li>
-          <li><strong>En pedido:</strong> {{ data()?.stock?.quantityOrdered }}</li>
-          <li><strong>Reservado:</strong> {{ data()?.stock?.quantityReserved }}</li>
-        </ul>
-      </div>
-      <div class="drawer-container__row">
-        <strong>Peso</strong>
-        <p>{{ data()?.weight }} kg</p>
-      </div>
-      <div class="drawer-container__row">
-        <strong>Proveedor</strong>
-        <ul>
-          <li><strong>Nombre del negocio:</strong> {{ data()?.supplier?.businessName }}</li>
-          <li><strong>Email:</strong> {{ data()?.supplier?.email }}</li>
-          <li><strong>Teléfono:</strong> {{ data()?.supplier?.phone }}</li>
-        </ul>
-      </div>
-      <div class="drawer-container__row">
-        <strong>Estado del producto:</strong>
-        <p>{{ data()?.enabled ? 'Activo' : 'En Pausa' }}</p>
-      </div>
-    </div>
+    </ng-container>
   </ng-container>
 
   <ng-template #errorContent>
-    <div class="drawer-container__content">
-      <p class="error-message">{{ error() }}</p>
+    <div class="container py-3">
+      <p class="text-danger">{{ error() }}</p>
     </div>
   </ng-template>
 </ng-template>
-

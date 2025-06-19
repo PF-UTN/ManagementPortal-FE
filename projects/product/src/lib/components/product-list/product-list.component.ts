@@ -183,7 +183,7 @@ export class ProductListComponent implements OnInit {
         title: 'Detalle del Producto',
         footer: {
           firstButton: {
-            text: 'Cancelar',
+            text: 'Cerrar',
             click: () => this.lateralDrawerService.close(),
           },
         },

@@ -87,14 +87,4 @@ describe('DetailLateralDrawerComponent', () => {
     // Assert
     expect(lateralDrawerService.updateConfig).toHaveBeenCalled();
   });
-
-  describe('closeDrawer', () => {
-    it('should call lateralDrawerService.close()', () => {
-      // Act
-      component.closeDrawer();
-
-      // Assert
-      expect(lateralDrawerService.close).toHaveBeenCalled();
-    });
-  });
 });

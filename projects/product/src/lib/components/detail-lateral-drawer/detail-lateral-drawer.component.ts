@@ -1,15 +1,18 @@
-import { LateralDrawerContainer, LateralDrawerService } from '@Common-UI';
+import {
+  LateralDrawerContainer,
+  LateralDrawerService,
+  LoadingComponent,
+} from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
-import { Component, effect, OnInit, signal } from '@angular/core';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Component, OnInit, signal } from '@angular/core';
 
 import { ProductDetail } from '../../models/product-detail.model';
 import { ProductService } from '../../services/product.service';
 @Component({
   selector: 'lib-detail-lateral-drawer',
   standalone: true,
-  imports: [CommonModule, MatProgressSpinnerModule],
+  imports: [CommonModule, LoadingComponent],
   templateUrl: './detail-lateral-drawer.component.html',
   styleUrl: './detail-lateral-drawer.component.scss',
 })
@@ -28,27 +31,11 @@ export class DetailLateralDrawerComponent
     private readonly productService: ProductService,
   ) {
     super();
-
-    effect(() => {
-      const drawerConfig = {
-        ...this.lateralDrawerService.config,
-        footer: {
-          firstButton: {
-            click: () => this.closeDrawer(),
-            text: 'Cancelar',
-          },
-        },
-      };
-
-      this.lateralDrawerService.updateConfig(drawerConfig);
-    });
   }
   ngOnInit(): void {
     if (!this.productId) {
-      this.isLoading.set(false);
-      return;
+      console.error('Se requiere un productId para abrir este drawer.');
     }
-
     this.productService.getProductById(this.productId).subscribe({
       next: (productDetail) => {
         this.data.set(productDetail);
@@ -59,9 +46,5 @@ export class DetailLateralDrawerComponent
         this.isLoading.set(false);
       },
     });
-  }
-
-  closeDrawer(): void {
-    this.lateralDrawerService.close();
   }
 }
