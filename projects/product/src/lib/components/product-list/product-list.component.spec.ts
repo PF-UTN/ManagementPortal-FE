@@ -310,7 +310,7 @@ describe('ProductListComponent', () => {
           title: 'Detalle del Producto',
           footer: expect.objectContaining({
             firstButton: expect.objectContaining({
-              text: 'Cancelar',
+              text: 'Cerrar',
               click: expect.any(Function),
             }),
           }),

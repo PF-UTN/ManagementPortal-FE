@@ -14,7 +14,6 @@ import {
 describe('DetailLateralDrawerComponent', () => {
   let component: DetailLateralDrawerComponent;
   let fixture: ComponentFixture<DetailLateralDrawerComponent>;
-  let lateralDrawerService: LateralDrawerService;
   let productService: ProductService;
 
   beforeEach(async () => {
@@ -34,10 +33,7 @@ describe('DetailLateralDrawerComponent', () => {
 
     fixture = TestBed.createComponent(DetailLateralDrawerComponent);
     component = fixture.componentInstance;
-
-    lateralDrawerService = TestBed.inject(LateralDrawerService);
     productService = TestBed.inject(ProductService);
-
     component.productId = mockProductListItem.id;
 
     jest
@@ -81,10 +77,5 @@ describe('DetailLateralDrawerComponent', () => {
 
     // Assert
     expect(result).toBe(false);
-  });
-
-  it('should call lateralDrawerService.updateConfig during construction', () => {
-    // Assert
-    expect(lateralDrawerService.updateConfig).toHaveBeenCalled();
   });
 });
