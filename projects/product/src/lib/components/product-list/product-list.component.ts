@@ -1,6 +1,7 @@
 import {
   ColumnTypeEnum,
   DropdownButtonComponent,
+  LateralDrawerService,
   TableColumn,
   TableComponent,
 } from '@Common-UI';
@@ -20,7 +21,7 @@ import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { ProductListItem } from '../../models/product-item.model';
 import { ProductParams } from '../../models/product-param.model';
 import { ProductService } from '../../services/product.service';
-
+import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-lateral-drawer.component';
 @Component({
   selector: 'mp-product-list',
   standalone: true,
@@ -49,24 +50,6 @@ export class ProductListComponent implements OnInit {
       value: (element: ProductListItem) => element.name,
     },
     {
-      columnDef: 'description',
-      header: 'Descripción',
-      type: ColumnTypeEnum.VALUE,
-      value: (element: ProductListItem) => element.description,
-    },
-    {
-      columnDef: 'supplier',
-      header: 'Proveedor',
-      type: ColumnTypeEnum.VALUE,
-      value: (element: ProductListItem) => element.supplierBusinessName,
-    },
-    {
-      columnDef: 'stock',
-      header: 'Stock',
-      type: ColumnTypeEnum.VALUE,
-      value: (element: ProductListItem) => element.stock.toString(),
-    },
-    {
       columnDef: 'category',
       header: 'Categoría',
       type: ColumnTypeEnum.VALUE,
@@ -77,6 +60,18 @@ export class ProductListComponent implements OnInit {
       header: 'Precio',
       type: ColumnTypeEnum.VALUE,
       value: (element: ProductListItem) => element.price.toFixed(2),
+    },
+    {
+      columnDef: 'stock',
+      header: 'Stock',
+      type: ColumnTypeEnum.VALUE,
+      value: (element: ProductListItem) => element.stock.toString(),
+    },
+    {
+      columnDef: 'peso',
+      header: 'Peso',
+      type: ColumnTypeEnum.VALUE,
+      value: (element: ProductListItem) => element.weight.toString(),
     },
     {
       columnDef: 'enabled',
@@ -135,7 +130,10 @@ export class ProductListComponent implements OnInit {
 
   doSearchSubject$ = new Subject<void>();
 
-  constructor(private readonly productService: ProductService) {}
+  constructor(
+    private readonly productService: ProductService,
+    private readonly lateralDrawerService: LateralDrawerService,
+  ) {}
 
   ngOnInit(): void {
     this.doSearchSubject$
@@ -178,7 +176,19 @@ export class ProductListComponent implements OnInit {
   }
 
   onDetailDrawer(request: ProductListItem): void {
-    console.log('Ver detalle', request); //Provisorio hasta que se implemente el drawer
+    this.lateralDrawerService.open(
+      DetailLateralDrawerComponent,
+      { productId: request.id },
+      {
+        title: 'Detalle del Producto',
+        footer: {
+          firstButton: {
+            text: 'Cerrar',
+            click: () => this.lateralDrawerService.close(),
+          },
+        },
+      },
+    );
   }
 
   onModifyDrawer(request: ProductListItem): void {
