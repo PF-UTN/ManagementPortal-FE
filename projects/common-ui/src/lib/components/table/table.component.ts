@@ -23,6 +23,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Observable } from 'rxjs';
 
 import { TableColumn } from '../../models/table-column.model';
+import { LoadingComponent } from '../loading/loading.component';
 
 @Component({
   selector: 'mp-table',
@@ -35,6 +36,7 @@ import { TableColumn } from '../../models/table-column.model';
     MatButtonModule,
     MatGridListModule,
     MatPaginatorModule,
+    LoadingComponent,
   ],
   templateUrl: './table.component.html',
   styleUrl: './table.component.scss',
@@ -70,10 +72,8 @@ export class TableComponent<T> implements OnInit {
 
   ngOnInit() {
     this.displayedColumns = this.columns.map((c) => c.columnDef);
-    this.dataSource$.subscribe({
-      next: (data) => {
-        this.tableDataSource.data = data || [];
-      },
+    this.dataSource$.subscribe((data) => {
+      this.tableDataSource.data = data || [];
     });
   }
 

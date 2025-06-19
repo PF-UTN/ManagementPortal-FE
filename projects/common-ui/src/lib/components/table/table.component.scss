@@ -1,14 +1,102 @@
 @import '../../../../../../src/styles/varibles';
 
-.table {
+.mat-table {
+  table-layout: fixed;
   width: 100%;
+}
 
-  &__header {
-    font-weight: bold;
-    background-color: $lavander-color;
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  min-width: 320px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.loading-message,
+.no-data-message {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  height: 400px;
+  font-size: 1.1rem;
+  padding: 3rem;
+  gap: 3rem;
+
+  &__icon {
+    font-size: 8rem;
+  }
+}
+
+.table__container {
+  &__body-row {
+    &:nth-child(even) td {
+      background: $lavander-light;
+    }
   }
 
-  &__pending-row {
-    background-color: $lavender-gray;
+  &__header {
+    text-align: left;
+    color: $white-color;
+
+    &__content {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    &__row {
+      background-color: $lavander-primary-dark;
+    }
+  }
+
+  &__cell {
+    align-content: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__paginator {
+    margin-top: 1rem;
+    background: transparent;
+    border-bottom: 3px solid $lavander-color;
+  }
+}
+
+.value {
+  &__item {
+    text-overflow: ellipsis;
+  }
+}
+
+.multi-value {
+  &__container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  &__item {
+    border-radius: 4px;
+    padding: 0.2rem 0.5rem;
+    font-size: 0.95em;
+  }
+}
+
+.actions {
+  &__container {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+
+    &__item {
+      color: $black;
+      &:hover {
+        color: $hover-item-color;
+        background: $lavender-gray;
+      }
+    }
   }
 }
