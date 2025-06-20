@@ -10,7 +10,7 @@ import { Observable, catchError, throwError } from 'rxjs';
 
 @Injectable()
 export class AuthInterceptor {
-  constructor(private router: Router) {}
+  constructor(private readonly router: Router) {}
 
   intercept(
     req: HttpRequest<unknown>,

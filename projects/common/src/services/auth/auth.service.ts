@@ -17,11 +17,11 @@ import { User } from '../../models/user.model';
 export class AuthService {
   userRole?: string;
 
-  private apiUrl = 'https://dev-management-portal-be.vercel.app/authentication';
+  private readonly apiUrl = 'https://dev-management-portal-be.vercel.app/authentication';
 
   constructor(
-    private http: HttpClient,
-    private router: Router,
+    private readonly http: HttpClient,
+    private readonly router: Router,
   ) {
     const token = localStorage.getItem('token');
 
