@@ -15,8 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { ActivatedRoute } from '@angular/router';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { PASSWORD_REGEX } from '../../constants';
 import { matchPasswords } from '../../validators';
@@ -53,7 +52,7 @@ export class ResetPasswordComponent implements OnInit {
     private readonly authService: AuthService,
     private readonly router: Router,
     private readonly navBarService: NavBarService,
-    private route: ActivatedRoute,
+    private readonly route: ActivatedRoute,
     private readonly snackBar: MatSnackBar,
   ) {}
 
@@ -95,7 +94,7 @@ export class ResetPasswordComponent implements OnInit {
     }
     this.authService.resetPasswordAsync(token, password).subscribe({
       next: () => {
-        void this.router.navigate(['autenticacion/login']);
+        void this.router.navigate(['autenticacion/inicio-sesion']);
         this.snackBar.open('Contraseña restablecida con éxito.', 'Cerrar', {
           duration: 3000,
         });

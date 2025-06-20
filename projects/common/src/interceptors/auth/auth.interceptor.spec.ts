@@ -72,7 +72,7 @@ describe('AuthInterceptor', () => {
       });
     });
 
-    it('should navigate to login on 401 error', (done) => {
+    it('should navigate to inicio-sesion on 401 error', (done) => {
       // Arrange
       const token = 'test-token';
       localStorage.setItem('token', token);
@@ -90,7 +90,7 @@ describe('AuthInterceptor', () => {
       interceptor.intercept(request, next).subscribe({
         error: () => {
           // Assert
-          expect(router.navigate).toHaveBeenCalledWith(['autenticacion/login']);
+          expect(router.navigate).toHaveBeenCalledWith(['autenticacion/inicio-sesion']);
           done();
         },
       });

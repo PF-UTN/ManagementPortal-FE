@@ -85,11 +85,11 @@ export class LoginComponent implements OnInit {
   }
 
   navigateToRegister(): void {
-    this.router.navigate(['autenticacion/signup']);
+    this.router.navigate(['autenticacion/registro']);
   }
 
   navigateToResetPassword(): void {
-    this.router.navigate(['autenticacion/reset-password-request']);
+    this.router.navigate(['autenticacion/solicitud-restablecimiento-clave']);
   }
 
   onSubmit(): void {

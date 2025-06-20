@@ -14,8 +14,8 @@ import { AuthService } from '../services';
 })
 export class RoleGuard implements CanActivate {
   constructor(
-    private authService: AuthService,
-    private router: Router,
+    private readonly authService: AuthService,
+    private readonly router: Router,
   ) {}
 
   canActivate(route: ActivatedRouteSnapshot): MaybeAsync<GuardResult> {
@@ -26,7 +26,7 @@ export class RoleGuard implements CanActivate {
     }
 
     if (!this.authService.userRole) {
-      return this.router.createUrlTree(['autenticacion/login']);
+      return this.router.createUrlTree(['autenticacion/inicio-sesion']);
     }
 
     const hasAccess = this.authService.hasAccess(allowedRoles);

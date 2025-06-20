@@ -10,7 +10,7 @@ import { Observable, catchError, throwError } from 'rxjs';
 
 @Injectable()
 export class AuthInterceptor {
-  constructor(private router: Router) {}
+  constructor(private readonly router: Router) {}
 
   intercept(
     req: HttpRequest<unknown>,
@@ -29,7 +29,7 @@ export class AuthInterceptor {
     return next.handle(authReq).pipe(
       catchError((error: HttpErrorResponse) => {
         if (error.status === 401) {
-          this.router.navigate(['autenticacion/login']);
+          this.router.navigate(['autenticacion/inicio-sesion']);
           localStorage.removeItem('token');
         }
         return throwError(() => error);

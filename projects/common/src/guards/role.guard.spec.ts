@@ -45,7 +45,7 @@ describe('RoleGuard', () => {
       expect(result).toBe(true);
     });
 
-    it('should redirect to login if userRole is not set', () => {
+    it('should redirect to inicio-sesion if userRole is not set', () => {
       // Arrange
       routeSnapshot.data = { admittedRoles: ['admin'] };
 
