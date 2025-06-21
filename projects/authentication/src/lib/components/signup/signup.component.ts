@@ -11,8 +11,6 @@ import {
   Validators,
   FormsModule,
   ReactiveFormsModule,
-  AbstractControl,
-  ValidationErrors,
 } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -26,7 +24,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 import { Router, RouterModule } from '@angular/router';
 import { Observable, finalize } from 'rxjs';
-import { debounceTime, map, startWith, take } from 'rxjs/operators';
+import { debounceTime, map, startWith, switchMap } from 'rxjs/operators';
 
 import { Client } from '../../../../../common/src/models/client.model';
 import { Town } from '../../../../../common/src/models/town.model';
@@ -35,7 +33,7 @@ import { DocumentType } from '../../constants/documentType.enum';
 import { IvaCategory } from '../../constants/ivaCategory.enum';
 import { customEmailValidator, matchPasswords } from '../../validators';
 
-const PHONE_REGEX = /^[+]?[0-9]{1,4}?[-.\\s]?([0-9]{1,3}[-.\\s]?){1,4}$/;
+const PHONE_REGEX = /^[+]?\d{1,4}?[-.\s]?(\d{1,3}[-.\s]?){1,4}$/;
 
 @Component({
   selector: 'mp-signup',
@@ -86,7 +84,6 @@ export class SignupComponent implements OnInit {
     { id: 4, name: IvaCategory.ConsumidorFinal },
   ];
 
-  allTowns: Town[] = [];
   filteredTowns$: Observable<Town[]>;
 
   isSubmitting = signal(false);
@@ -108,26 +105,12 @@ export class SignupComponent implements OnInit {
   ngOnInit(): void {
     this.navBarService.hideNavBar();
     this.initForm();
-    this.townService
-      .searchTowns()
-      .pipe(take(1))
-      .subscribe((towns) => {
-        this.allTowns = towns;
-        this.signupForm.controls.town.setValidators([
-          Validators.required,
-          this.townValidator(this.allTowns),
-        ]);
-        this.signupForm.controls.town.updateValueAndValidity();
-        this.filteredTowns$ = this.signupForm.controls.town.valueChanges.pipe(
-          debounceTime(300),
-          startWith(''),
-          map((value) => {
-            const query =
-              typeof value === 'string' ? value : (value?.name ?? '');
-            return this.filterTowns(query);
-          }),
-        );
-      });
+    this.filteredTowns$ = this.signupForm.controls.town.valueChanges.pipe(
+      debounceTime(300),
+      startWith(''),
+      map((value) => (typeof value === 'string' ? value : (value?.name ?? ''))),
+      switchMap((query) => this.townService.searchTowns(query)),
+    );
   }
 
   private translateErrorMessage(message: string): string {
@@ -228,7 +211,7 @@ export class SignupComponent implements OnInit {
       return;
     }
 
-    const isNumber = /^[0-9]$/.test(event.key);
+    const isNumber = /^\d$/.test(event.key);
     if (!isNumber) {
       event.preventDefault();
     }
@@ -238,33 +221,9 @@ export class SignupComponent implements OnInit {
     signal.set(!signal());
   }
 
-  filterTowns(query: string): Town[] {
-    if (!query) return this.allTowns;
-    const lower = query.toLowerCase();
-    return this.allTowns.filter(
-      (t) =>
-        t.name.toLowerCase().includes(lower) ||
-        t.zipCode.toLowerCase().includes(lower),
-    );
+  displayTown(town: Town | null): string {
+    return town ? `${town.name} (${town.zipCode})` : '';
   }
-
-  displayTown(town: Town): string {
-    return `${town.name} (${town.zipCode})`;
-  }
-
-  townValidator =
-    (allTowns: Town[]) =>
-    (control: AbstractControl): ValidationErrors | null => {
-      const value = control.value;
-      if (!value) return null;
-      if (
-        typeof value === 'object' &&
-        allTowns.some((t) => t.id === value.id)
-      ) {
-        return null;
-      }
-      return { invalidTown: true } as ValidationErrors;
-    };
 
   onSubmit(): void {
     if (this.signupForm.valid) {

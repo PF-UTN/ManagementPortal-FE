@@ -2,8 +2,13 @@ import { AuthService, mockClient, mockTown, NavBarService } from '@Common';
 
 import { HttpErrorResponse, provideHttpClient } from '@angular/common/http';
 import { signal } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ReactiveFormsModule, AbstractControl } from '@angular/forms';
+import {
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick,
+} from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
 import { mockDeep } from 'jest-mock-extended';
@@ -79,22 +84,6 @@ describe('SignupComponent', () => {
       // Act
       // Assert
       expect(component.signupForm.valid).toBeFalsy();
-    });
-
-    describe('Towns and validators initialization', () => {
-      it('should set allTowns and update town validators on ngOnInit', () => {
-        // Arrange
-        const towns = [mockTown];
-        jest
-          .spyOn(component['townService'], 'searchTowns')
-          .mockReturnValue(of(towns));
-        component['initForm']();
-        // Act
-        component.ngOnInit();
-        // Assert
-        expect(component.allTowns).toEqual(towns);
-        expect(component.signupForm.controls.town.validator).toBeDefined();
-      });
     });
 
     describe('Name field validation', () => {
@@ -277,23 +266,6 @@ describe('SignupComponent', () => {
         expect(townControl.hasError('required')).toBeFalsy();
       });
 
-      it('should return invalidTown error if town is not in the list', () => {
-        // Arrange
-        const validator = component.townValidator([mockTown]);
-        const control = { value: { id: 9999 } } as AbstractControl;
-
-        // Act & Assert
-        expect(validator(control)).toEqual({ invalidTown: true });
-      });
-
-      it('should return null if town is in the list', () => {
-        // Arrange
-        const validator = component.townValidator([mockTown]);
-        const control = { value: mockTown } as AbstractControl;
-        // Act & Assert
-        expect(validator(control)).toBeNull();
-      });
-
       it('should display town name and zipCode', () => {
         // Arrange
         const town = { id: 1, name: 'Rosario', zipCode: '2000', provinceId: 1 };
@@ -301,213 +273,137 @@ describe('SignupComponent', () => {
         expect(component.displayTown(town)).toBe('Rosario (2000)');
       });
 
-      it('should return empty array if no towns match the query', () => {
+      it('should return empty string in displayTown if town is null', () => {
         // Arrange
-        component.allTowns = [
-          { id: 1, name: 'Rosario', zipCode: '2000', provinceId: 1 },
-        ];
         // Act & Assert
-        expect(component.filterTowns('NoExiste')).toEqual([]);
+        expect(component.displayTown(null)).toBe('');
       });
 
-      it('should return null in townValidator if value is null', () => {
+      it('should require town field', () => {
         // Arrange
-        const validator = component.townValidator([]);
-        const control = { value: null } as AbstractControl;
-        // Act & Assert
-        expect(validator(control)).toBeNull();
-      });
-
-      it('should return { invalidTown: true } in townValidator if value is not object', () => {
-        // Arrange
-        const validator = component.townValidator([]);
-        const control = { value: 'string' } as AbstractControl;
-        // Act & Assert
-        expect(validator(control)).toEqual({ invalidTown: true });
-      });
-    });
-
-    describe('Street field validation', () => {
-      it('should set street error if street control is empty', () => {
-        const streetControl = component.signupForm.controls.street;
-        // Arrange
-        streetControl.setValue('');
-        // Act & Assert
-        expect(streetControl.hasError('required')).toBeTruthy();
-      });
-
-      it('should not set street error if street control is valid', () => {
-        const streetControl = component.signupForm.controls.street;
-        // Arrange
-        streetControl.setValue(clientData.address.street);
-        // Act & Assert
-        expect(streetControl.hasError('required')).toBeFalsy();
-      });
-    });
-
-    describe('filterTowns', () => {
-      it('should return all towns if query is empty', () => {
-        // Arrange
-        component.allTowns = [mockTown];
-        // Act & Assert
-        expect(component.filterTowns('')).toEqual([mockTown]);
-      });
-
-      it('should filter towns by name', () => {
-        // Arrange
-        component.allTowns = [mockTown];
-        // Act & Assert
-        expect(component.filterTowns(mockTown.name)).toEqual([mockTown]);
-      });
-
-      it('should filter towns by zipCode', () => {
-        // Arrange
-        component.allTowns = [
-          { id: 1, name: 'Rosario', zipCode: '2000', provinceId: 1 },
-        ];
-        // Act & Assert
-        expect(component.filterTowns('2000')).toEqual(component.allTowns);
-      });
-
-      it('should filter towns when value is an object with name', () => {
-        // Arrange
-        component.allTowns = [mockTown];
-        const value = { name: mockTown.name };
+        component.ngOnInit();
+        component.signupForm.controls.town.setValue(null);
 
         // Act
-        const query = typeof value === 'string' ? value : (value?.name ?? '');
-        const result = component.filterTowns(query);
+        const errors = component.signupForm.controls.town.errors;
 
         // Assert
-        expect(result).toEqual([mockTown]);
+        expect(errors).toBeTruthy();
+        expect(errors!['required']).toBeTruthy();
       });
 
-      it('should return all towns when value is an object without name', () => {
-        // Arrange
-        component.allTowns = [mockTown];
-        const value = {} as { name?: string };
-
-        // Act
-        const query = typeof value === 'string' ? value : (value?.name ?? '');
-        const result = component.filterTowns(query);
-
-        // Assert
-        expect(result).toEqual([mockTown]);
-      });
-      it('should return all towns when value is undefined', () => {
-        // Arrange
-        component.allTowns = [mockTown];
-        const value = {} as { name?: string };
-
-        // Act
-        const query = typeof value === 'string' ? value : (value?.name ?? '');
-        const result = component.filterTowns(query);
-
-        // Assert
-        expect(result).toEqual([mockTown]);
-      });
-
-      it('should emit filtered towns when town control value changes to a full object', (done) => {
-        // Arrange
-        component.allTowns = [mockTown];
-        jest
+      it('should call townService.searchTowns with the name if value is a Town object', fakeAsync(() => {
+        // arrange
+        const townServiceSpy = jest
           .spyOn(component['townService'], 'searchTowns')
-          .mockReturnValue(of([mockTown]));
-
+          .mockReturnValue(of([]));
         component.ngOnInit();
 
-        // Act
+        // act
+        component.filteredTowns$.subscribe();
         component.signupForm.controls.town.setValue(mockTown);
+        tick(350);
 
-        // Assert
-        component.filteredTowns$!.subscribe((result) => {
-          expect(result).toEqual([mockTown]);
-          done();
-        });
-      });
+        // assert
+        const calls = townServiceSpy.mock.calls.map((call) => call[0]);
+        expect(calls).toContain(mockTown.name);
+      }));
 
-      it('should emit filtered towns when town control value changes to a string', (done) => {
-        // Arrange
-        component.allTowns = [mockTown];
-        jest
+      it('should call townService.searchTowns with empty string if value is null', fakeAsync(() => {
+        // arrange
+        const townServiceSpy = jest
           .spyOn(component['townService'], 'searchTowns')
-          .mockReturnValue(of([mockTown]));
-
+          .mockReturnValue(of([]));
         component.ngOnInit();
 
-        // Act
-        component.signupForm.controls.town.setValue(
-          mockTown.name as unknown as typeof mockTown,
-        );
+        // act
+        component.filteredTowns$.subscribe();
+        component.signupForm.controls.town.setValue(null);
+        tick(350);
 
-        // Assert
-        component.filteredTowns$!.subscribe((result) => {
-          expect(result).toEqual([mockTown]);
-          done();
-        });
-      });
+        // assert
+        expect(townServiceSpy).toHaveBeenCalledWith('');
+      }));
+    });
+  });
 
-      it('should emit all towns when town control value changes to null', (done) => {
-        // Arrange
-        component.allTowns = [mockTown];
-        jest
-          .spyOn(component['townService'], 'searchTowns')
-          .mockReturnValue(of([mockTown]));
-
-        component.ngOnInit();
-
-        // Act
-        component.signupForm.controls.town.setValue(
-          null as unknown as typeof mockTown,
-        );
-
-        // Assert
-        component.filteredTowns$!.subscribe((result) => {
-          expect(result).toEqual([mockTown]);
-          done();
-        });
-      });
-
-      it('should emit all towns when town control value changes to an object without name', (done) => {
-        // Arrange
-        component.allTowns = [mockTown];
-        jest
-          .spyOn(component['townService'], 'searchTowns')
-          .mockReturnValue(of([mockTown]));
-
-        component.ngOnInit();
-
-        // Act
-        component.signupForm.controls.town.setValue({} as typeof mockTown);
-
-        // Assert
-        component.filteredTowns$!.subscribe((result) => {
-          expect(result).toEqual([mockTown]);
-          done();
-        });
-      });
+  describe('Street field validation', () => {
+    it('should set street error if street control is empty', () => {
+      const streetControl = component.signupForm.controls.street;
+      // Arrange
+      streetControl.setValue('');
+      // Act & Assert
+      expect(streetControl.hasError('required')).toBeTruthy();
     });
 
-    describe('preventNonNumericInput', () => {
-      it('should prevent non-numeric input', () => {
-        // Arrange
+    it('should not set street error if street control is valid', () => {
+      const streetControl = component.signupForm.controls.street;
+      // Arrange
+      streetControl.setValue(clientData.address.street);
+      // Act & Assert
+      expect(streetControl.hasError('required')).toBeFalsy();
+    });
+  });
+
+  describe('preventNonNumericInput', () => {
+    it('should prevent non-numeric input', () => {
+      // Arrange
+      const event = {
+        key: 'a',
+        preventDefault: jest.fn(),
+        ctrlKey: false,
+      } as unknown as KeyboardEvent;
+
+      // Act
+      component.preventNonNumericInput(event);
+
+      // Assert
+      expect(event.preventDefault).toHaveBeenCalled();
+    });
+
+    it('should allow numeric input', () => {
+      // Arrange
+      const event = {
+        key: '1',
+        preventDefault: jest.fn(),
+        ctrlKey: false,
+      } as unknown as KeyboardEvent;
+
+      // Act
+      component.preventNonNumericInput(event);
+
+      // Assert
+      expect(event.preventDefault).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('Street Number field validation', () => {
+    it('should set streetNumber error if streetNumber control is empty', () => {
+      const streetNumberControl = component.signupForm.controls.streetNumber;
+      // Arrange
+      // Act & Assert
+      expect(streetNumberControl.hasError('required')).toBeTruthy();
+    });
+
+    it('should not set streetNumber error if streetNumber control is valid', () => {
+      const streetNumberControl = component.signupForm.controls.streetNumber;
+      // Arrange
+      streetNumberControl.setValue(clientData.address.streetNumber);
+      // Act & Assert
+      expect(streetNumberControl.hasError('required')).toBeFalsy();
+    });
+
+    it('should allow allowed keys', () => {
+      // Arrange
+      const allowedKeys: KeyboardEvent['key'][] = [
+        'Backspace',
+        'ArrowLeft',
+        'ArrowRight',
+        'Tab',
+      ];
+      for (const key of allowedKeys) {
         const event = {
-          key: 'a',
-          preventDefault: jest.fn(),
-          ctrlKey: false,
-        } as unknown as KeyboardEvent;
-
-        // Act
-        component.preventNonNumericInput(event);
-
-        // Assert
-        expect(event.preventDefault).toHaveBeenCalled();
-      });
-
-      it('should allow numeric input', () => {
-        // Arrange
-        const event = {
-          key: '1',
+          key,
           preventDefault: jest.fn(),
           ctrlKey: false,
         } as unknown as KeyboardEvent;
@@ -517,385 +413,384 @@ describe('SignupComponent', () => {
 
         // Assert
         expect(event.preventDefault).not.toHaveBeenCalled();
-      });
+      }
     });
 
-    describe('Street Number field validation', () => {
-      it('should set streetNumber error if streetNumber control is empty', () => {
-        const streetNumberControl = component.signupForm.controls.streetNumber;
-        // Arrange
-        // Act & Assert
-        expect(streetNumberControl.hasError('required')).toBeTruthy();
-      });
+    it('should allow Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X', () => {
+      // Arrange
+      const ctrlKeys: KeyboardEvent['key'][] = ['a', 'c', 'v', 'x'];
+      for (const key of ctrlKeys) {
+        const event = {
+          key,
+          preventDefault: jest.fn(),
+          ctrlKey: true,
+        } as unknown as KeyboardEvent;
 
-      it('should not set streetNumber error if streetNumber control is valid', () => {
-        const streetNumberControl = component.signupForm.controls.streetNumber;
-        // Arrange
-        streetNumberControl.setValue(clientData.address.streetNumber);
-        // Act & Assert
-        expect(streetNumberControl.hasError('required')).toBeFalsy();
-      });
+        // Act
+        component.preventNonNumericInput(event);
 
-      it('should allow allowed keys', () => {
-        // Arrange
-        const allowedKeys: KeyboardEvent['key'][] = [
-          'Backspace',
-          'ArrowLeft',
-          'ArrowRight',
-          'Tab',
-        ];
-        for (const key of allowedKeys) {
-          const event = {
-            key,
-            preventDefault: jest.fn(),
-            ctrlKey: false,
-          } as unknown as KeyboardEvent;
-
-          // Act
-          component.preventNonNumericInput(event);
-
-          // Assert
-          expect(event.preventDefault).not.toHaveBeenCalled();
-        }
-      });
-
-      it('should allow Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X', () => {
-        // Arrange
-        const ctrlKeys: KeyboardEvent['key'][] = ['a', 'c', 'v', 'x'];
-        for (const key of ctrlKeys) {
-          const event = {
-            key,
-            preventDefault: jest.fn(),
-            ctrlKey: true,
-          } as unknown as KeyboardEvent;
-
-          // Act
-          component.preventNonNumericInput(event);
-
-          // Assert
-          expect(event.preventDefault).not.toHaveBeenCalled();
-        }
-      });
+        // Assert
+        expect(event.preventDefault).not.toHaveBeenCalled();
+      }
     });
-    describe('Tax Category field validation', () => {
-      it('should set taxCategory error if taxCategory control is empty', () => {
-        const taxCategoryControl = component.signupForm.controls.taxCategory;
-        // Arrange
-        // Act & Assert
-        expect(taxCategoryControl.hasError('required')).toBeTruthy();
-      });
-
-      it('should not set taxCategory error if taxCategory control is valid', () => {
-        const taxCategoryControl = component.signupForm.controls.taxCategory;
-        // Arrange
-        taxCategoryControl.setValue(clientData.taxCategoryId);
-        // Act & Assert
-        expect(taxCategoryControl.hasError('required')).toBeFalsy();
-      });
+  });
+  describe('Tax Category field validation', () => {
+    it('should set taxCategory error if taxCategory control is empty', () => {
+      const taxCategoryControl = component.signupForm.controls.taxCategory;
+      // Arrange
+      // Act & Assert
+      expect(taxCategoryControl.hasError('required')).toBeTruthy();
     });
 
-    describe('Document Type field', () => {
-      it('should translate document number error to Spanish', () => {
-        // Arrange
-        const msg =
-          'documentNumber must be longer than or equal to 7 characters';
-        // Act & Assert
-        expect(component['translateErrorMessage'](msg)).toBe(
-          'El número de documento debe tener al menos 7 caracteres',
-        );
-      });
+    it('should not set taxCategory error if taxCategory control is valid', () => {
+      const taxCategoryControl = component.signupForm.controls.taxCategory;
+      // Arrange
+      taxCategoryControl.setValue(clientData.taxCategoryId);
+      // Act & Assert
+      expect(taxCategoryControl.hasError('required')).toBeFalsy();
+    });
+  });
 
-      it('should return the original message if no translation is found', () => {
-        // Arrange
-        const msg = 'Error desconocido';
-        // Act & Assert
-        expect(component['translateErrorMessage'](msg)).toBe(msg);
-      });
-    });
-    describe('Tax ID Type field validation', () => {
-      it('should set documentType error if documentType control is empty', () => {
-        const documentTypeControl = component.signupForm.controls.documentType;
-        // Arrange
-        // Act & Assert
-        expect(documentTypeControl.hasError('required')).toBeTruthy();
-      });
-      it('should not set documentType error if documentType control is valid', () => {
-        const documentTypeControl = component.signupForm.controls.documentType;
-        // Arrange
-        documentTypeControl.setValue(clientData.documentType);
-        // Act & Assert
-        expect(documentTypeControl.hasError('required')).toBeFalsy();
-      });
-    });
-    describe('Tax field validation', () => {
-      it('should set tax error if tax control is empty', () => {
-        const taxControl = component.signupForm.controls.documentNumber;
-        // Arrange
-        taxControl.setValue(clientInvalidData.documentNumber);
-        // Act & Assert
-        expect(taxControl.hasError('required')).toBeTruthy();
-      });
-      it('should not set tax error if tax control is valid', () => {
-        const taxControl = component.signupForm.controls.documentNumber;
-        // Arrange
-        taxControl.setValue(clientData.documentNumber);
-        // Act & Assert
-        expect(taxControl.hasError('required')).toBeFalsy();
-      });
-    });
-    describe('CompanyName field validation', () => {
-      it('should set companyName error if companyName control is empty', () => {
-        const companyNameControl = component.signupForm.controls.companyName;
-        // Arrange
-        companyNameControl.setValue('');
-        // Act & Assert
-        expect(companyNameControl.hasError('required')).toBeTruthy();
-      });
-      it('should not set companyName error if companyName control is valid', () => {
-        const companyNameControl = component.signupForm.controls.companyName;
-        // Arrange
-        companyNameControl.setValue(clientData.companyName);
-        // Act & Assert
-        expect(companyNameControl.hasError('required')).toBeFalsy();
-      });
+  describe('Document Type field', () => {
+    it('should translate document number error to Spanish', () => {
+      // Arrange
+      const msg = 'documentNumber must be longer than or equal to 7 characters';
+      // Act & Assert
+      expect(component['translateErrorMessage'](msg)).toBe(
+        'El número de documento debe tener al menos 7 caracteres',
+      );
     });
 
-    describe('Form submission', () => {
-      it('should be valid if all fields are filled correctly', () => {
-        const clientData = mockClient;
-        // Arrange
-        component.signupForm.controls.firstName.setValue(clientData.firstName);
-        component.signupForm.controls.lastName.setValue(clientData.lastName);
-        component.signupForm.controls.email.setValue(clientData.email);
-        component.signupForm.controls.password.setValue(clientData.password);
-        component.signupForm.controls.confirmPassword.setValue(
-          clientData.password,
-        );
-        component.signupForm.controls.phone.setValue(clientData.phone);
-        component.signupForm.controls.birthDate.setValue(clientData.birthDate);
-        component.signupForm.controls.town.setValue(mockTown);
-        component.signupForm.controls.street.setValue(
-          clientData.address.street,
-        );
-        component.signupForm.controls.streetNumber.setValue(
-          clientData.address.streetNumber,
-        );
-        component.signupForm.controls.taxCategory.setValue(
-          clientData.taxCategoryId,
-        );
-        component.signupForm.controls.documentType.setValue(
-          clientData.documentType,
-        );
-        component.signupForm.controls.documentNumber.setValue(
-          clientData.documentNumber,
-        );
-        component.signupForm.controls.companyName.setValue(
-          clientData.companyName,
-        );
-        fixture.detectChanges();
-
-        // Act & Assert
-        expect(component.signupForm.valid).toBeTruthy();
-      });
+    it('should return the original message if no translation is found', () => {
+      // Arrange
+      const msg = 'Error desconocido';
+      // Act & Assert
+      expect(component['translateErrorMessage'](msg)).toBe(msg);
     });
-    describe('onSubmit Method', () => {
-      it('should call the signup method with the correct client data', () => {
-        // Arrange
-        const clientData = mockClient;
-        const authServiceSpy = jest
-          .spyOn(authService, 'signUpAsync')
-          .mockReturnValue(of({ access_token: 'mockToken' }));
-        component.signupForm.setValue({
-          firstName: clientData.firstName,
-          lastName: clientData.lastName,
-          email: clientData.email,
-          password: clientData.password,
-          confirmPassword: clientData.password,
-          phone: clientData.phone,
-          birthDate: clientData.birthDate,
-          town: mockTown,
-          street: clientData.address.street,
-          streetNumber: clientData.address.streetNumber,
-          taxCategory: clientData.taxCategoryId,
-          documentType: clientData.documentType,
-          documentNumber: clientData.documentNumber,
-          companyName: clientData.companyName,
-        });
-        fixture.detectChanges();
-        // Act
-        component.onSubmit();
-        // Assert
-        expect(authServiceSpy).toHaveBeenCalledWith(clientData);
-      });
-
-      it('should show error message on failed signup', () => {
-        // Arrange
-        const errorMessage = 'Email is already in use';
-        const errorResponse = new HttpErrorResponse({
-          error: { message: errorMessage },
-          status: 400,
-          statusText: 'Bad Request',
-        });
-
-        jest
-          .spyOn(authService, 'signUpAsync')
-          .mockReturnValue(throwError(() => errorResponse));
-
-        component.signupForm.setValue({
-          firstName: clientData.firstName,
-          lastName: clientData.lastName,
-          email: clientData.email,
-          password: clientData.password,
-          confirmPassword: clientData.password,
-          phone: clientData.phone,
-          birthDate: clientData.birthDate,
-          town: mockTown,
-          street: clientData.address.street,
-          streetNumber: clientData.address.streetNumber,
-          taxCategory: clientData.taxCategoryId,
-          documentType: clientData.documentType,
-          documentNumber: clientData.documentNumber,
-          companyName: clientData.companyName,
-        });
-
-        // Act
-        component.onSubmit();
-
-        // Assert
-        expect(component.errorMessage).toBe(errorMessage);
-      });
-
-      it('should not call signup if form is invalid', () => {
-        // Arrange
-        const authServiceSpy = jest.spyOn(authService, 'signUpAsync');
-        component.signupForm.reset();
-
-        // Act
-        component.onSubmit();
-
-        // Assert
-        expect(authServiceSpy).not.toHaveBeenCalled();
-      });
+  });
+  describe('Tax ID Type field validation', () => {
+    it('should set documentType error if documentType control is empty', () => {
+      const documentTypeControl = component.signupForm.controls.documentType;
+      // Arrange
+      // Act & Assert
+      expect(documentTypeControl.hasError('required')).toBeTruthy();
     });
-    describe('Document Type Change Logic', () => {
-      it('should set maxDocumentLength to 8 when documentType is DNI', () => {
-        // Arrange
-        const documentTypeControl = component.signupForm.controls.documentType;
-
-        // Act
-        documentTypeControl.setValue('DNI');
-
-        // Assert
-        expect(component.maxDocumentLength).toBe(8);
-      });
-
-      it('should add maxLength(8) validator when documentType is DNI', () => {
-        // Arrange
-        const documentTypeControl = component.signupForm.controls.documentType;
-        const documentNumberControl =
-          component.signupForm.controls.documentNumber;
-
-        // Act
-        documentTypeControl.setValue('DNI');
-        documentNumberControl.setValue('123456789');
-
-        // Assert
-        expect(documentNumberControl.valid).toBe(false);
-      });
-      it('should set maxDocumentLength to 1 when documentType is CUIT', () => {
-        // Arrange
-        const documentTypeControl = component.signupForm.controls.documentType;
-
-        // Act
-        documentTypeControl.setValue('CUIT');
-
-        // Assert
-        expect(component.maxDocumentLength).toBe(11);
-      });
-      it('should add maxLength(11) validator when documentType is CUIT', () => {
-        // Arrange
-        const documentTypeControl = component.signupForm.controls.documentType;
-        const documentNumberControl =
-          component.signupForm.controls.documentNumber;
-
-        // Act
-        documentTypeControl.setValue('CUIT');
-        documentNumberControl.setValue('123456789101');
-
-        // Assert
-        expect(documentNumberControl.valid).toBe(false);
-      });
-      it('should set maxDocumentLength to null when documentType is unknown', () => {
-        // Arrange
-        const documentTypeControl = component.signupForm.controls.documentType;
-
-        // Act
-        documentTypeControl.setValue('');
-
-        // Assert
-        expect(component.maxDocumentLength).toBeNull();
-      });
+    it('should not set documentType error if documentType control is valid', () => {
+      const documentTypeControl = component.signupForm.controls.documentType;
+      // Arrange
+      documentTypeControl.setValue(clientData.documentType);
+      // Act & Assert
+      expect(documentTypeControl.hasError('required')).toBeFalsy();
     });
-    describe('toggleVisibility', () => {
-      it('should toggle signal from true to false', () => {
-        // Arrange
-        const testSignal = signal(true);
+  });
+  describe('Tax field validation', () => {
+    it('should set tax error if tax control is empty', () => {
+      const taxControl = component.signupForm.controls.documentNumber;
+      // Arrange
+      taxControl.setValue(clientInvalidData.documentNumber);
+      // Act & Assert
+      expect(taxControl.hasError('required')).toBeTruthy();
+    });
+    it('should not set tax error if tax control is valid', () => {
+      const taxControl = component.signupForm.controls.documentNumber;
+      // Arrange
+      taxControl.setValue(clientData.documentNumber);
+      // Act & Assert
+      expect(taxControl.hasError('required')).toBeFalsy();
+    });
+  });
+  describe('CompanyName field validation', () => {
+    it('should set companyName as required', () => {
+      // Arrange
+      const companyNameControl = component.signupForm.controls.companyName;
+      companyNameControl.setValue('');
+      // Act & Assert
+      expect(companyNameControl.hasError('required')).toBeTruthy();
+    });
+    it('should set companyName error if companyName control is empty', () => {
+      const companyNameControl = component.signupForm.controls.companyName;
+      // Arrange
+      companyNameControl.setValue('');
+      // Act & Assert
+      expect(companyNameControl.hasError('required')).toBeTruthy();
+    });
+    it('should not set companyName error if companyName control is valid', () => {
+      const companyNameControl = component.signupForm.controls.companyName;
+      // Arrange
+      companyNameControl.setValue(clientData.companyName);
+      // Act & Assert
+      expect(companyNameControl.hasError('required')).toBeFalsy();
+    });
+  });
 
-        // Act
-        component.toggleVisibility(testSignal);
+  describe('Form submission', () => {
+    it('should be valid if all fields are filled correctly', () => {
+      const clientData = mockClient;
+      // Arrange
+      component.signupForm.controls.firstName.setValue(clientData.firstName);
+      component.signupForm.controls.lastName.setValue(clientData.lastName);
+      component.signupForm.controls.email.setValue(clientData.email);
+      component.signupForm.controls.password.setValue(clientData.password);
+      component.signupForm.controls.confirmPassword.setValue(
+        clientData.password,
+      );
+      component.signupForm.controls.phone.setValue(clientData.phone);
+      component.signupForm.controls.birthDate.setValue(clientData.birthDate);
+      component.signupForm.controls.town.setValue(mockTown);
+      component.signupForm.controls.street.setValue(clientData.address.street);
+      component.signupForm.controls.streetNumber.setValue(
+        clientData.address.streetNumber,
+      );
+      component.signupForm.controls.taxCategory.setValue(
+        clientData.taxCategoryId,
+      );
+      component.signupForm.controls.documentType.setValue(
+        clientData.documentType,
+      );
+      component.signupForm.controls.documentNumber.setValue(
+        clientData.documentNumber,
+      );
+      component.signupForm.controls.companyName.setValue(
+        clientData.companyName,
+      );
+      fixture.detectChanges();
 
-        // Assert
-        expect(testSignal()).toBe(false);
+      // Act & Assert
+      expect(component.signupForm.valid).toBeTruthy();
+    });
+  });
+  describe('onSubmit Method', () => {
+    it('should call the signup method with the correct client data', () => {
+      // Arrange
+      const clientData = mockClient;
+      const authServiceSpy = jest
+        .spyOn(authService, 'signUpAsync')
+        .mockReturnValue(of({ access_token: 'mockToken' }));
+      component.signupForm.setValue({
+        firstName: clientData.firstName,
+        lastName: clientData.lastName,
+        email: clientData.email,
+        password: clientData.password,
+        confirmPassword: clientData.password,
+        phone: clientData.phone,
+        birthDate: clientData.birthDate,
+        town: mockTown,
+        street: clientData.address.street,
+        streetNumber: clientData.address.streetNumber,
+        taxCategory: clientData.taxCategoryId,
+        documentType: clientData.documentType,
+        documentNumber: clientData.documentNumber,
+        companyName: clientData.companyName,
+      });
+      fixture.detectChanges();
+      // Act
+      component.onSubmit();
+      // Assert
+      expect(authServiceSpy).toHaveBeenCalledWith(clientData);
+    });
+
+    it('should show error message on failed signup', () => {
+      // Arrange
+      const errorMessage = 'Email is already in use';
+      const errorResponse = new HttpErrorResponse({
+        error: { message: errorMessage },
+        status: 400,
+        statusText: 'Bad Request',
       });
 
-      it('should toggle signal from false to true', () => {
-        // Arrange
-        const testSignal = signal(false);
+      jest
+        .spyOn(authService, 'signUpAsync')
+        .mockReturnValue(throwError(() => errorResponse));
 
-        // Act
-        component.toggleVisibility(testSignal);
-
-        // Assert
-        expect(testSignal()).toBe(true);
+      component.signupForm.setValue({
+        firstName: clientData.firstName,
+        lastName: clientData.lastName,
+        email: clientData.email,
+        password: clientData.password,
+        confirmPassword: clientData.password,
+        phone: clientData.phone,
+        birthDate: clientData.birthDate,
+        town: mockTown,
+        street: clientData.address.street,
+        streetNumber: clientData.address.streetNumber,
+        taxCategory: clientData.taxCategoryId,
+        documentType: clientData.documentType,
+        documentNumber: clientData.documentNumber,
+        companyName: clientData.companyName,
       });
 
-      it('should use error.message if error.error.message is undefined', () => {
-        // Arrange
-        const errorMessage =
-          'Http failure response for (unknown url): 400 Bad Request';
-        const errorResponse = new HttpErrorResponse({
-          error: {},
-          status: 400,
-          statusText: 'Bad Request',
-        });
+      // Act
+      component.onSubmit();
 
-        jest
-          .spyOn(authService, 'signUpAsync')
-          .mockReturnValue(throwError(() => errorResponse));
+      // Assert
+      expect(component.errorMessage).toBe(errorMessage);
+    });
 
-        component.signupForm.setValue({
-          firstName: clientData.firstName,
-          lastName: clientData.lastName,
-          email: clientData.email,
-          password: clientData.password,
-          confirmPassword: clientData.password,
-          phone: clientData.phone,
-          birthDate: clientData.birthDate,
-          town: mockTown,
-          street: clientData.address.street,
-          streetNumber: clientData.address.streetNumber,
-          taxCategory: clientData.taxCategoryId,
-          documentType: clientData.documentType,
-          documentNumber: clientData.documentNumber,
-          companyName: clientData.companyName,
-        });
+    it('should not call signup if form is invalid', () => {
+      // Arrange
+      const authServiceSpy = jest.spyOn(authService, 'signUpAsync');
+      component.signupForm.reset();
 
-        // Act
-        component.onSubmit();
+      // Act
+      component.onSubmit();
 
-        // Assert
-        expect(component.errorMessage).toBe(errorMessage);
+      // Assert
+      expect(authServiceSpy).not.toHaveBeenCalled();
+    });
+
+    it('should set a default error message if backend error is empty', () => {
+      const errorResponse = new HttpErrorResponse({
+        error: {},
+        status: 400,
+        statusText: 'Bad Request',
       });
+
+      jest
+        .spyOn(authService, 'signUpAsync')
+        .mockReturnValue(throwError(() => errorResponse));
+
+      component.signupForm.setValue({
+        firstName: mockClient.firstName,
+        lastName: mockClient.lastName,
+        email: mockClient.email,
+        password: mockClient.password,
+        confirmPassword: mockClient.password,
+        phone: mockClient.phone,
+        birthDate: mockClient.birthDate,
+        town: mockTown,
+        street: mockClient.address.street,
+        streetNumber: mockClient.address.streetNumber,
+        taxCategory: mockClient.taxCategoryId,
+        documentType: mockClient.documentType,
+        documentNumber: mockClient.documentNumber,
+        companyName: mockClient.companyName,
+      });
+
+      component.onSubmit();
+
+      expect(component.errorMessage).toBe(
+        'Http failure response for (unknown url): 400 Bad Request',
+      );
+    });
+  });
+  describe('Document Type Change Logic', () => {
+    it('should set maxDocumentLength to 8 when documentType is DNI', () => {
+      // Arrange
+      const documentTypeControl = component.signupForm.controls.documentType;
+
+      // Act
+      documentTypeControl.setValue('DNI');
+
+      // Assert
+      expect(component.maxDocumentLength).toBe(8);
+    });
+
+    it('should add maxLength(8) validator when documentType is DNI', () => {
+      // Arrange
+      const documentTypeControl = component.signupForm.controls.documentType;
+      const documentNumberControl =
+        component.signupForm.controls.documentNumber;
+
+      // Act
+      documentTypeControl.setValue('DNI');
+      documentNumberControl.setValue('123456789');
+
+      // Assert
+      expect(documentNumberControl.valid).toBe(false);
+    });
+    it('should set maxDocumentLength to 1 when documentType is CUIT', () => {
+      // Arrange
+      const documentTypeControl = component.signupForm.controls.documentType;
+
+      // Act
+      documentTypeControl.setValue('CUIT');
+
+      // Assert
+      expect(component.maxDocumentLength).toBe(11);
+    });
+    it('should add maxLength(11) validator when documentType is CUIT', () => {
+      // Arrange
+      const documentTypeControl = component.signupForm.controls.documentType;
+      const documentNumberControl =
+        component.signupForm.controls.documentNumber;
+
+      // Act
+      documentTypeControl.setValue('CUIT');
+      documentNumberControl.setValue('123456789101');
+
+      // Assert
+      expect(documentNumberControl.valid).toBe(false);
+    });
+    it('should set maxDocumentLength to null when documentType is unknown', () => {
+      // Arrange
+      const documentTypeControl = component.signupForm.controls.documentType;
+
+      // Act
+      documentTypeControl.setValue('');
+
+      // Assert
+      expect(component.maxDocumentLength).toBeNull();
+    });
+  });
+  describe('toggleVisibility', () => {
+    it('should toggle signal from true to false', () => {
+      // Arrange
+      const testSignal = signal(true);
+
+      // Act
+      component.toggleVisibility(testSignal);
+
+      // Assert
+      expect(testSignal()).toBe(false);
+    });
+
+    it('should toggle signal from false to true', () => {
+      // Arrange
+      const testSignal = signal(false);
+
+      // Act
+      component.toggleVisibility(testSignal);
+
+      // Assert
+      expect(testSignal()).toBe(true);
+    });
+
+    it('should use error.message if error.error.message is undefined', () => {
+      // Arrange
+      const errorMessage =
+        'Http failure response for (unknown url): 400 Bad Request';
+      const errorResponse = new HttpErrorResponse({
+        error: {},
+        status: 400,
+        statusText: 'Bad Request',
+      });
+
+      jest
+        .spyOn(authService, 'signUpAsync')
+        .mockReturnValue(throwError(() => errorResponse));
+
+      component.signupForm.setValue({
+        firstName: clientData.firstName,
+        lastName: clientData.lastName,
+        email: clientData.email,
+        password: clientData.password,
+        confirmPassword: clientData.password,
+        phone: clientData.phone,
+        birthDate: clientData.birthDate,
+        town: mockTown,
+        street: clientData.address.street,
+        streetNumber: clientData.address.streetNumber,
+        taxCategory: clientData.taxCategoryId,
+        documentType: clientData.documentType,
+        documentNumber: clientData.documentNumber,
+        companyName: clientData.companyName,
+      });
+
+      // Act
+      component.onSubmit();
+
+      // Assert
+      expect(component.errorMessage).toBe(errorMessage);
     });
   });
 });
