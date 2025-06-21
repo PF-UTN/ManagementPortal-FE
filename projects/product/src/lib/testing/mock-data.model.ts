@@ -1,3 +1,6 @@
+import { ProductCategoryResponse } from '../models/product-category-response.model';
+import { ProductCreate } from '../models/product-create-param.model';
+import { ProductResponse } from '../models/product-create-response.model';
 import { ProductDetail } from '../models/product-detail.model';
 import { ProductListItem } from '../models/product-item.model';
 
@@ -34,6 +37,39 @@ export const mockProductListItemResponse = {
 export const mockSuccessResponse = {
   message: 'Operación realizada con éxito.',
 };
+
+export const mockProductCreate: ProductCreate = {
+  name: 'Test Product',
+  description: 'A test product',
+  price: 100,
+  enabled: true,
+  weight: 1,
+  categoryId: 1,
+  supplierId: 1,
+  stock: {
+    quantityOrdered: 10,
+    quantityAvailable: 5,
+    quantityReserved: 2,
+  },
+};
+
+export const mockProductResponse: ProductResponse = {
+  id: 1,
+  name: 'Test Product',
+  description: 'A test product',
+  price: '100',
+  enabled: true,
+  weight: '1',
+  categoryId: 1,
+  supplierId: 1,
+  category: { name: 'Category 1', description: 'Category desc' },
+  supplier: { businessName: 'Supplier 1' },
+};
+
+export const mockProductCategories: ProductCategoryResponse[] = [
+  { id: 1, name: 'Category 1', description: 'Category desc' },
+  { id: 2, name: 'Category 2', description: 'Another desc' },
+];
 
 export const mockProductDetail: ProductDetail = {
   name: 'Producto Test',
