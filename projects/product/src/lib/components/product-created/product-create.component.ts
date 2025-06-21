@@ -56,11 +56,11 @@ export class ProductCreateComponent {
   filteredSuppliers$: Observable<SupplierResponse[]> = of([]);
 
   constructor(
-    private fb: FormBuilder,
-    private productService: ProductService,
-    private supplierService: SupplierService,
-    private snackBar: MatSnackBar,
-    private router: Router,
+    private readonly fb: FormBuilder,
+    private readonly productService: ProductService,
+    private readonly supplierService: SupplierService,
+    private readonly snackBar: MatSnackBar,
+    private readonly router: Router,
   ) {
     this.productForm = this.fb.group({
       name: ['', Validators.required],
@@ -173,11 +173,11 @@ export class ProductCreateComponent {
   }
 
   displayCategory(category: ProductCategoryResponse): string {
-    return category && category.name ? category.name : '';
+    return category?.name ?? '';
   }
 
   displaySupplier(supplier: SupplierResponse): string {
-    return supplier && supplier.businessName ? supplier.businessName : '';
+    return supplier?.businessName ?? '';
   }
 
   onSubmit() {

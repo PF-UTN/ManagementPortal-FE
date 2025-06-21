@@ -117,7 +117,9 @@ export class ProductListComponent implements OnInit {
   dropdownItems: DropdownItem[] = [
     {
       label: 'Crear/Editar producto',
-      action: () => this.router.navigate(['/productos/crear']),
+      action: () => {
+        this.router.navigate(['/productos/crear']);
+      },
     },
     {
       label: 'Crear/Editar categoría',
