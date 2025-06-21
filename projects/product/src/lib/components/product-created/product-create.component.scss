@@ -1,0 +1,12 @@
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';
+@import '../../../../../../src/styles/varibles';
+
+.input-suffix {
+  margin-right: 15px;
+}
+
+.span {
+  color: $cyan-blue;
+  font-weight: 500;
+}

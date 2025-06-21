@@ -1,0 +1,216 @@
+<mp-title>Nuevo Producto</mp-title>
+<hr>
+
+<div class="container">
+    <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+        <div class="row mb-3 align-items-start">
+            <div class="col-2 d-flex align-items-start pt-2">
+                <mp-subtitle>Detalle de producto</mp-subtitle>
+            </div>
+            <div class="col-10">
+                <mat-form-field class="w-100 mb-2" appearance="outline">
+                    <mat-label>Nombre del producto</mat-label>
+                    <input matInput formControlName="name" />
+                    <mat-error
+                        *ngIf="productForm.get('name')?.hasError('required') && productForm.get('name')?.touched">
+                        El nombre es requerido
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field class="w-100 mb-2" appearance="outline">
+                    <mat-label>Descripción</mat-label>
+                    <textarea matInput formControlName="description"></textarea>
+                    <mat-error
+                        *ngIf="productForm.get('description')?.hasError('required') && productForm.get('description')?.touched">
+                        La descripción es requerida
+                    </mat-error>
+                </mat-form-field>
+                <div class="row">
+                    <div class="col-6">
+                        <mat-form-field class="w-100 mb-2" appearance="outline">
+                            <span matTextPrefix>$ &nbsp;</span>
+                            <mat-label>Precio</mat-label>
+                            <input matInput type="number" formControlName="price" min="1" />
+                            <mat-error
+                                *ngIf="productForm.get('price')?.hasError('required') && productForm.get('price')?.touched">
+                                El precio es requerido
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-6">
+                        <mat-form-field class="w-100 mb-2" appearance="outline">
+                            <mat-label>Peso</mat-label>
+                            <input matInput type="number" formControlName="weight" min="1" />
+                            <span matSuffix class="input-suffix">kg</span>
+                            <mat-error
+                                *ngIf="productForm.get('weight')?.hasError('required') && productForm.get('weight')?.touched">
+                                El peso es requerido
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 d-flex justify-content-end">
+                        <mat-slide-toggle color="primary">
+                            Producto habilitado
+                        </mat-slide-toggle>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+            </div>
+        </div>
+        <div class="row mb-3 align-items-start">
+            <div class="col-2 d-flex align-items-start pt-2">
+                <mp-subtitle>Categoría de Producto</mp-subtitle>
+            </div>
+            <div class="col-10">
+                <mat-form-field class="w-100" appearance="outline">
+                    <mat-label>Categoría de Producto</mat-label>
+                    <input type="text" matInput formControlName="category" [matAutocomplete]="autoCategory"
+                        placeholder="Seleccionar categoría" [attr.autocomplete]="'off'" />
+                    <button type="button" mat-icon-button matSuffix aria-label="Clear"
+                        (click)="productForm.get('supplier')?.reset()">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                    <mat-autocomplete #autoCategory="matAutocomplete" [displayWith]="displayCategory.bind(this)"
+                        (optionSelected)="onCategorySelected($event)">
+                        <mat-option *ngFor="let cat of filteredCategories$ | async" [value]="cat">
+                            {{ cat.name }}
+                        </mat-option>
+                        <mat-option class="create-category-option" [disabled]="false">
+                            <span class="span">+ Crear nueva categoría</span>
+                        </mat-option>
+                    </mat-autocomplete>
+                    <mat-error
+                        *ngIf="productForm.get('category')?.hasError('required') && productForm.get('category')?.touched">
+                        La categoría es requerida
+                    </mat-error>
+                    <mat-error
+                        *ngIf="productForm.get('category')?.hasError('invalidCategory') && productForm.get('category')?.touched">
+                        Debe seleccionar una categoría de la lista.
+                    </mat-error>
+                </mat-form-field>
+                <div *ngIf="productForm.get('category')?.value as selectedCategory">
+                    <mat-form-field class="w-100 mb-2" appearance="outline">
+                        <mat-label>Descripción de la categoría</mat-label>
+                        <input matInput [value]="selectedCategory?.description" disabled />
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+            </div>
+        </div>
+        <div class="row mb-3 align-items-start">
+            <div class="col-2 d-flex align-items-start pt-2">
+                <mp-subtitle>Proveedor</mp-subtitle>
+            </div>
+            <div class="col-10">
+                <mat-form-field class="w-100" appearance="outline">
+                    <mat-label>Proveedor</mat-label>
+                    <input type="text" matInput formControlName="supplier" [matAutocomplete]="autoSupplier"
+                        placeholder="Seleccionar proveedor" [attr.autocomplete]="'off'" />
+                    <button type="button" matSuffix mat-icon-button aria-label="Clear"
+                        (click)="productForm.get('supplier')?.reset()">
+                        <mat-icon aria-hidden="false" fontIcon="close"></mat-icon>
+                    </button>
+                    <mat-autocomplete #autoSupplier="matAutocomplete" [displayWith]="displaySupplier.bind(this)"
+                        (optionSelected)="onSupplierSelected($event)">
+                        <mat-option *ngFor="let sup of filteredSuppliers$ | async" [value]="sup">
+                            {{ sup.businessName }}
+                        </mat-option>
+                        <mat-option class="create-supplier-option" [disabled]="false">
+                            <span class="span">+ Crear nuevo proveedor</span>
+                        </mat-option>
+                    </mat-autocomplete>
+                    <mat-error
+                        *ngIf="productForm.get('supplier')?.hasError('required') && productForm.get('supplier')?.touched">
+                        El proveedor es requerido
+                    </mat-error>
+                    <mat-error
+                        *ngIf="productForm.get('supplier')?.hasError('invalidSupplier') && productForm.get('supplier')?.touched">
+                        Debe seleccionar un proveedor de la lista.
+                    </mat-error>
+                </mat-form-field>
+                <div *ngIf="productForm.get('supplier')?.value as selectedSupplier">
+                    <div class="row">
+                        <div class="col-4">
+                            <mat-form-field class="w-100 mb-2" appearance="outline">
+                                <mat-label>Número de documento</mat-label>
+                                <input matInput [value]="selectedSupplier?.documentNumber" disabled />
+                            </mat-form-field>
+                        </div>
+                        <div class="col-4">
+                            <mat-form-field class="w-100 mb-2" appearance="outline">
+                                <mat-label>Email</mat-label>
+                                <input matInput [value]="selectedSupplier?.email" disabled />
+                            </mat-form-field>
+                        </div>
+                        <div class="col-4">
+                            <mat-form-field class="w-100 mb-2" appearance="outline">
+                                <mat-label>Teléfono</mat-label>
+                                <input matInput [value]="selectedSupplier?.phone" disabled />
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+            </div>
+        </div>
+        <div class="row mb-3 align-items-start">
+            <div class="col-2 d-flex align-items-start pt-2">
+                <mp-subtitle>Stock</mp-subtitle>
+            </div>
+            <div class="col-10">
+                <div formGroupName="stock">
+                    <div class="row">
+                        <div class="col-4">
+                            <mat-form-field class="w-100 mb-2" appearance="outline">
+                                <mat-label>Pedidos</mat-label>
+                                <input matInput type="number" formControlName="quantityOrdered" min="0" />
+                                <mat-error
+                                    *ngIf="productForm.get('stock.quantityOrdered')?.hasError('required') && productForm.get('stock.quantityOrdered')?.touched">
+                                    Pedidos es requerido
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-4">
+                            <mat-form-field class="w-100 mb-2" appearance="outline">
+                                <mat-label>Disponibles</mat-label>
+                                <input matInput type="number" formControlName="quantityAvailable" min="0" />
+                                <mat-error
+                                    *ngIf="productForm.get('stock.quantityAvailable')?.hasError('required') && productForm.get('stock.quantityAvailable')?.touched">
+                                    Disponibles es requerido
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-4">
+                            <mat-form-field class="w-100 mb-2" appearance="outline">
+                                <mat-label>Reservados</mat-label>
+                                <input matInput type="number" formControlName="quantityReserved" min="0" />
+                                <mat-error
+                                    *ngIf="productForm.get('stock.quantityReserved')?.hasError('required') && productForm.get('stock.quantityReserved')?.touched">
+                                    Reservados es requerido
+                                </mat-error>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-2"></div>
+            <div class="col-10 d-flex justify-content-end">
+                <mp-button type="primary" [loading]="isSubmitting()" [disabled]="productForm.invalid">
+                    Guardar
+                </mp-button>
+            </div>
+        </div>
+    </form>
+</div>
