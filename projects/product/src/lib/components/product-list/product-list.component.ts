@@ -14,11 +14,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
-import { DropdownItem } from 'projects/common-ui/src/lib/components/dropdown-button/constants/dropdown-item'; /////////
-import { CreateEditSupplierLateralDrawerComponent } from 'projects/supplier/src/lib/components/create-edit-lateral-drawer/create-edit-supplier-lateral-drawer.component';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 
+import { DropdownItem } from '../../../../../common-ui/src/lib/components/dropdown-button/constants/dropdown-item';
+import { CreateEditSupplierLateralDrawerComponent } from '../../../../../supplier/src/lib/components/create-edit-lateral-drawer/create-edit-supplier-lateral-drawer.component';
 import { ProductListItem } from '../../models/product-item.model';
 import { ProductParams } from '../../models/product-param.model';
 import { ProductService } from '../../services/product.service';

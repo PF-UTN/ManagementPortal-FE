@@ -1,3 +1,5 @@
+import { SupplierCreateUpdateResponse } from '../../../supplier/src/lib/models/supplier-create-update-response.model';
+import { Supplier } from '../../../supplier/src/lib/models/supplier.model';
 import { Client } from '../models/client.model';
 import { Town } from '../models/town.model';
 import { User } from '../models/user.model';
@@ -38,3 +40,26 @@ export const mockInvalidUser: User = {
 };
 
 export const mockAuthResponse = { access_token: 'mockJWTToken' };
+
+export const mockSupplier: Supplier = {
+  businessName: 'Test',
+  documentType: 'CUIT',
+  documentNumber: '12345678901',
+  email: 'test@test.com',
+  phone: '123456789',
+  address: {
+    street: 'Main',
+    streetNumber: 123,
+    townId: 1,
+  },
+};
+
+export const mockSupplierCreateUpdateResponse: SupplierCreateUpdateResponse = {
+  id: 1,
+  businessName: 'Proveedor Ejemplo S.A.',
+  documentType: 'CUIT',
+  documentNumber: '20123456789',
+  email: 'proveedor@ejemplo.com',
+  phone: '+541112345678',
+  addressId: 100,
+};

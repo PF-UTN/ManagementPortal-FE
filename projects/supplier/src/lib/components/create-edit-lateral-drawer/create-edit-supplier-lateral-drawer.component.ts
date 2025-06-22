@@ -16,11 +16,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { customEmailValidator } from 'projects/authentication/src/lib/validators';
-import { Town } from 'projects/common/src/models/town.model';
 import { debounceTime, map, Observable, startWith, switchMap } from 'rxjs';
 
 import { DocumentType } from '../../../../../authentication/src/lib/constants/documentType.enum';
+import { customEmailValidator } from '../../../../../authentication/src/lib/validators/email.validator';
+import { Town } from '../../../../../common/src/models/town.model';
 import { Supplier } from '../../models/supplier.model';
 import { SupplierService } from '../../services/supplier.service';
 

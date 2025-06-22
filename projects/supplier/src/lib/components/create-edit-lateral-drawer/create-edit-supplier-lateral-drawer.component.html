@@ -19,9 +19,7 @@
       </mat-error>
     </mat-form-field>
   </div>
-
-  <div class="row g-3 mb-4">
-    <div class="col-6">
+    <div class="mb-4">
       <mat-form-field class="w-100" appearance="outline">
         <mat-label>Tipo de Documento</mat-label>
         <mat-select formControlName="documentType">
@@ -35,7 +33,7 @@
       </mat-form-field>
     </div>
 
-    <div class="col-6">
+    <div class="mb-4">
       <mat-form-field class="w-100" appearance="outline">
         <mat-label>Número Documento</mat-label>
         <input type="text" matInput formControlName="documentNumber" [attr.maxLength]="maxDocumentLength || null"
@@ -49,7 +47,6 @@
         </mat-error>
       </mat-form-field>
     </div>
-  </div>
 
   <div class="mb-4">
     <mat-form-field class="w-100" appearance="outline">
@@ -84,7 +81,7 @@
   </div>
 
   <div class="row g-3 mb-4">
-    <div class="col-8">
+    <div class="col-7">
       <mat-form-field class="w-100" appearance="outline">
         <mat-label>Calle</mat-label>
         <input matInput formControlName="street" type="text" />
@@ -98,7 +95,7 @@
       </mat-form-field>
     </div>
 
-    <div class="col-4">
+    <div class="col-5">
       <mat-form-field class="w-100" appearance="outline">
         <mat-label>Número</mat-label>
         <input matInput formControlName="streetNumber" type="number" />
