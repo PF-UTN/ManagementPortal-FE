@@ -1,0 +1,139 @@
+<form [formGroup]="supplierForm" class="form" (keydown.enter)="onSubmit()">
+
+  <div class="form-group">
+    <mat-form-field class="w-100" appearance="outline">
+      <mat-label>Razón Social</mat-label>
+      <input matInput formControlName="businessName" type="text" />
+      <button type="button" matSuffix mat-icon-button aria-label="Clear"
+        (click)="supplierForm.get('businessName')?.reset()">
+        <mat-icon>close</mat-icon>
+      </button>
+      <mat-error
+        *ngIf="supplierForm.get('businessName')?.hasError('required') && supplierForm.get('businessName')?.touched">
+        Razón Social es requerido.
+      </mat-error>
+      <mat-error
+        *ngIf="supplierForm.get('businessName')?.hasError('maxlength') && supplierForm.get('businessName')?.touched">
+        El valor no puede superar los 50 caracteres.
+      </mat-error>
+      <mat-error
+        *ngIf="supplierForm.get('businessName')?.hasError('minlength') && supplierForm.get('businessName')?.touched">
+        Debe tener al menos 2 caracteres.
+      </mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="form-group">
+    <mat-form-field class="w-100" appearance="outline">
+      <mat-label>Tipo de Documento</mat-label>
+      <mat-select type="text" formControlName="documentType">
+        <mat-option *ngFor="let type of documentTypes" [value]="type">
+          {{ type }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="
+                supplierForm.get('documentType')?.hasError('required') &&
+                supplierForm.get('documentType')?.touched
+              ">Tipo de Documento es requerido
+      </mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="form-group">
+    <mat-form-field class="w-100" appearance="outline">
+        <mat-label>Número Documento</mat-label>
+        <input type="text" matInput formControlName="documentNumber" [attr.maxLength]="maxDocumentLength || null"
+          (keydown)="preventNonNumericInput($event)" />
+        <button type="button" matSuffix mat-icon-button aria-label="Clear"
+          (click)="supplierForm.get('documentNumber')?.reset()">
+          <mat-icon>close</mat-icon>
+        </button>
+        <mat-error *ngIf="
+                supplierForm.get('documentNumber')?.hasError('required') &&
+                supplierForm.get('documentNumber')?.touched
+              ">Número Documento es requerido</mat-error>
+      </mat-form-field>
+  </div>
+
+  <div class="form-group">
+    <mat-form-field class="w-100" appearance="outline">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" type="email" />
+      <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="supplierForm.get('email')?.reset()">
+        <mat-icon>close</mat-icon>
+      </button>
+        <mat-error *ngIf="
+                supplierForm.get('email')?.hasError('required') &&
+                supplierForm.get('email')?.touched
+              ">Email es requerido</mat-error>
+        <mat-error *ngIf="supplierForm.get('email')?.hasError('invalidEmail')">Email no válido</mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="form-group">
+    <mat-form-field class="w-100" appearance="outline">
+      <mat-label>Teléfono</mat-label>
+      <input matInput formControlName="phone" type="text" />
+      <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="supplierForm.get('phone')?.reset()">
+        <mat-icon>close</mat-icon>
+      </button>
+      <mat-error *ngIf="
+                supplierForm.get('phone')?.hasError('required') &&
+                supplierForm.get('phone')?.touched
+              ">Teléfono es requerido</mat-error>
+        <mat-error *ngIf="supplierForm.get('phone')?.hasError('pattern')">Teléfono no válido</mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="form-group">
+    <mat-form-field class="w-100" appearance="outline">
+      <mat-label>Calle</mat-label>
+      <input matInput formControlName="street" type="text" />
+      <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="supplierForm.get('street')?.reset()">
+        <mat-icon>close</mat-icon>
+      </button>
+      <mat-error *ngIf="
+                supplierForm.get('street')?.hasError('required') &&
+                supplierForm.get('street')?.touched
+              ">Calle es requerido</mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="form-group">
+    <mat-form-field class="w-100" appearance="outline">
+      <mat-label>Número de Calle</mat-label>
+      <input matInput formControlName="streetNumber" type="number" />
+      <button type="button" matSuffix mat-icon-button aria-label="Clear"
+        (click)="supplierForm.get('streetNumber')?.reset()">
+        <mat-icon>close</mat-icon>
+      </button>
+      <mat-error *ngIf="
+                supplierForm.get('streetNumber')?.hasError('required') &&
+                supplierForm.get('streetNumber')?.touched
+              ">Número de Calle es requerido</mat-error>
+    </mat-form-field>
+  </div>
+
+      <div class="form-group">
+      <mat-form-field class="w-100" appearance="outline">
+        <mat-label>Ciudad</mat-label>
+        <input type="text" matInput formControlName="town" [matAutocomplete]="auto"
+          placeholder="Buscar ciudad o código postal" [attr.autocomplete]="'off'"/>
+        <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="supplierForm.get('town')?.setValue(null)">
+          <mat-icon>close</mat-icon>
+        </button>
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayTown.bind(this)">
+          <mat-option *ngFor="let town of filteredTowns$ | async" [value]="town">
+            {{ town.name }} ({{ town.zipCode }})
+          </mat-option>
+        </mat-autocomplete>
+        <mat-error *ngIf="supplierForm.get('town')?.hasError('required') && supplierForm.get('town')?.touched">
+          Ciudad es requerido
+        </mat-error>
+        <mat-error *ngIf="supplierForm.get('town')?.hasError('invalidTown') && supplierForm.get('town')?.touched">
+          Debe seleccionar una ciudad de la lista.
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+</form>

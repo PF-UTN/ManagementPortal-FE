@@ -15,6 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { DropdownItem } from 'projects/common-ui/src/lib/components/dropdown-button/constants/dropdown-item'; /////////
+import { CreateEditSupplierLateralDrawerComponent } from 'projects/supplier/src/lib/components/create-edit-lateral-drawer/create-edit-supplier-lateral-drawer.component';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 
@@ -124,7 +125,7 @@ export class ProductListComponent implements OnInit {
     }, //Accion Provisorio hasta que se implemente el drawer
     {
       label: 'Crear/Editar proveedor',
-      action: () => console.log('crear proveedor'),
+      action: () => this.onCreateUpdateSupplierDrawer(),
     }, //Accion Provisorio hasta que se implemente el drawer
   ];
 
@@ -189,6 +190,30 @@ export class ProductListComponent implements OnInit {
         },
       },
     );
+  }
+
+  onCreateUpdateSupplierDrawer(): void {
+    this.lateralDrawerService
+      .open(
+        CreateEditSupplierLateralDrawerComponent,
+        {},
+        {
+          title: 'Crear / Editar Proveedor',
+          footer: {
+            firstButton: {
+              text: 'Confirmar',
+              click: () => {},
+            },
+            secondButton: {
+              text: 'Cancelar',
+              click: () => {
+                this.lateralDrawerService.close();
+              },
+            },
+          },
+        },
+      )
+      .subscribe(() => this.doSearchSubject$.next());
   }
 
   onModifyDrawer(request: ProductListItem): void {
