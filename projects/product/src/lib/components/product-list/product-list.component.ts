@@ -19,7 +19,6 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 
-import { DropdownItem } from '../../../../../common-ui/src/lib/components/dropdown-button/constants/dropdown-item';
 import { CreateEditSupplierLateralDrawerComponent } from '../../../../../supplier/src/lib/components/create-edit-lateral-drawer/create-edit-supplier-lateral-drawer.component';
 import { ProductListItem } from '../../models/product-item.model';
 import { ProductParams } from '../../models/product-param.model';
