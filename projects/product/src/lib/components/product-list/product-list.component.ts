@@ -4,6 +4,7 @@ import {
   LateralDrawerService,
   TableColumn,
   TableComponent,
+  DropdownItem,
 } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
@@ -14,6 +15,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
+import { Router } from '@angular/router';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 
@@ -117,8 +119,10 @@ export class ProductListComponent implements OnInit {
   dropdownItems: DropdownItem[] = [
     {
       label: 'Crear/Editar producto',
-      action: () => console.log('crear producto'),
-    }, //Accion Provisorio hasta que se implemente el drawer
+      action: () => {
+        this.router.navigate(['/productos/crear']);
+      },
+    },
     {
       label: 'Crear/Editar categoría',
       action: () => console.log('crear categoria'),
@@ -134,6 +138,7 @@ export class ProductListComponent implements OnInit {
   constructor(
     private readonly productService: ProductService,
     private readonly lateralDrawerService: LateralDrawerService,
+    private readonly router: Router,
   ) {}
 
   ngOnInit(): void {
