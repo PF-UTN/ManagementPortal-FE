@@ -4,6 +4,7 @@ import {
   LateralDrawerService,
   TableColumn,
   TableComponent,
+  DropdownItem,
 } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
@@ -15,7 +16,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { Router } from '@angular/router';
-import { DropdownItem } from 'projects/common-ui/src/lib/components/dropdown-button/constants/dropdown-item'; /////////
 import { BehaviorSubject, Subject } from 'rxjs';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 
