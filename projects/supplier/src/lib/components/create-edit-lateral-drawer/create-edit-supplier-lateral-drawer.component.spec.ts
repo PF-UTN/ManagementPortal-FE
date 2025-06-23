@@ -130,7 +130,7 @@ describe('CreateEditSupplierLateralDrawerComponent', () => {
   it('should prevent non-numeric input', () => {
     //Arrange
     const event = {
-      key: 'a',
+      key: 'b',
       preventDefault: jest.fn(),
       ctrlKey: false,
     } as Partial<KeyboardEvent> as KeyboardEvent;
