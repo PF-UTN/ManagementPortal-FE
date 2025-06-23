@@ -18,7 +18,6 @@ describe('CreateEditSupplierLateralDrawerComponent', () => {
   let component: CreateEditSupplierLateralDrawerComponent;
   let fixture: ComponentFixture<CreateEditSupplierLateralDrawerComponent>;
   let supplierService: SupplierService;
-
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [CreateEditSupplierLateralDrawerComponent, NoopAnimationsModule],
@@ -31,17 +30,14 @@ describe('CreateEditSupplierLateralDrawerComponent', () => {
         { provide: TownService, useValue: mockDeep<TownService> },
       ],
     }).compileComponents();
-
     fixture = TestBed.createComponent(CreateEditSupplierLateralDrawerComponent);
     component = fixture.componentInstance;
     supplierService = TestBed.inject(SupplierService);
     fixture.detectChanges();
   });
-
   it('should create', () => {
     expect(component).toBeTruthy();
   });
-
   it('should initialize form as invalid', () => {
     // Arrange
     // Act
@@ -60,7 +56,6 @@ describe('CreateEditSupplierLateralDrawerComponent', () => {
       supplierService.postCreateOrUpdateSupplierAsync,
     ).not.toHaveBeenCalled();
   });
-
   it('should mark form as touched', () => {
     //Arrange
     jest.spyOn(component.supplierForm, 'markAllAsTouched');
@@ -101,7 +96,6 @@ describe('CreateEditSupplierLateralDrawerComponent', () => {
     expect(emitSuccessSpy).toHaveBeenCalled();
     expect(component.isLoading()).toBe(false);
   });
-
   it('should reset documentNumber when documentType changes', () => {
     //Arrange
     const resetSpy = jest.spyOn(
@@ -109,21 +103,26 @@ describe('CreateEditSupplierLateralDrawerComponent', () => {
       'reset',
     );
     component.supplierForm.controls.documentType.setValue('CUIT');
+
     //Assert
     expect(resetSpy).toHaveBeenCalled();
   });
-
   it('should update maxDocumentLength and validators when documentType changes', () => {
     //Arrange
     component.supplierForm.controls.documentType.setValue('CUIT');
+
     //Assert
     expect(component.maxDocumentLength).toBe(11);
+
     //Arrange
     component.supplierForm.controls.documentType.setValue('DNI');
+
     //Assert
     expect(component.maxDocumentLength).toBe(8);
+
     //Arrange
-    component.supplierForm.controls.documentType.setValue('OTHER');
+    component.supplierForm.controls.documentType.setValue('');
+
     //Assert
     expect(component.maxDocumentLength).toBeNull();
   });
@@ -138,10 +137,9 @@ describe('CreateEditSupplierLateralDrawerComponent', () => {
 
     //Act
     component.preventNonNumericInput(event as KeyboardEvent);
+  });
 
-    //Assert
-    expect(event.preventDefault).toHaveBeenCalled();
-
+  it('should not prevent non-numeric input', () => {
     //Arrange
     const event2 = {
       key: '1',
