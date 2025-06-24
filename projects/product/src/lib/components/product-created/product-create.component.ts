@@ -15,6 +15,7 @@ import {
   MatAutocompleteModule,
   MatAutocompleteSelectedEvent,
 } from '@angular/material/autocomplete';
+import { MatButtonModule, MatIconButton } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -47,6 +48,8 @@ import { SupplierService } from '../../services/supplier.service';
     MatAutocompleteModule,
     TitleComponent,
     MatSlideToggleModule,
+    MatIconButton,
+    MatButtonModule,
   ],
 })
 export class ProductCreateComponent {
@@ -216,6 +219,10 @@ export class ProductCreateComponent {
 
   displaySupplier(supplier: SupplierResponse): string {
     return supplier?.businessName ?? '';
+  }
+
+  goBack() {
+    this.router.navigate(['/productos']);
   }
 
   onSubmit() {
