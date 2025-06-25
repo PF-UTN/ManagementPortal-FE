@@ -164,7 +164,7 @@ export class CreateUpdateSupplierLateralDrawerComponent
     );
   }
 
-  private checkSupplierExists() {
+  checkSupplierExists() {
     const documentType = this.supplierForm.controls.documentType?.value;
     const documentNumber = this.supplierForm.controls.documentNumber?.value;
 

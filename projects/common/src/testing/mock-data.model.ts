@@ -1,5 +1,9 @@
-import { SupplierCreateUpdateResponse } from '../../../supplier/src/lib/models/supplier-create-update-response.model';
-import { Supplier } from '../../../supplier/src/lib/models/supplier.model';
+import {
+  SupplierDetail,
+  SupplierCreateUpdateResponse,
+  Supplier,
+} from '@Supplier';
+
 import { Client } from '../models/client.model';
 import { Town } from '../models/town.model';
 import { User } from '../models/user.model';
@@ -62,4 +66,24 @@ export const mockSupplierCreateUpdateResponse: SupplierCreateUpdateResponse = {
   email: 'proveedor@ejemplo.com',
   phone: '+541112345678',
   addressId: 100,
+};
+
+export const mockSupplierWithTown: SupplierDetail = {
+  id: 1000,
+  businessName: 'Test',
+  documentType: 'CUIT',
+  documentNumber: '12345678901',
+  email: 'test@test.com',
+  phone: '123456789',
+  address: {
+    street: 'Main',
+    streetNumber: 123,
+    townId: 1,
+    town: {
+      id: 1,
+      name: 'Buenos Aires',
+      zipCode: '3000',
+      provinceId: 2,
+    },
+  },
 };

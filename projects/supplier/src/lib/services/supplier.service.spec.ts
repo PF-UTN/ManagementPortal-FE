@@ -31,7 +31,7 @@ describe('SupplierService', () => {
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
-  describe('postCreateUpdateSupplier', () => {
+  describe('postCreateUpdateSupplierAsync', () => {
     it('should send a POST request to create or update a supplier', () => {
       // Act & Assert
       service
@@ -43,6 +43,29 @@ describe('SupplierService', () => {
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(mockSupplier);
       req.flush(mockSupplierCreateUpdateResponse);
+    });
+  });
+
+  describe('getSupplierByDocumentAsync', () => {
+    it('should send a GET request to obtain a supplier data', () => {
+      // Arrange
+      const documentType = mockSupplier.documentType;
+      const documentNumber = mockSupplier.documentNumber;
+      const expectedUrlWithParams = `${service['baseUrl']}/search?documentType=${documentType}&documentNumber=${documentNumber}`;
+      //Act
+      service
+        .getSupplierByDocumentAsync(documentType, documentNumber)
+        .subscribe((response) => {
+          // Assert
+          expect(response).toEqual(mockSupplier);
+        });
+
+      // Act
+      const req = httpMock.expectOne(expectedUrlWithParams);
+
+      // Assert
+      expect(req.request.method).toBe('GET');
+      req.flush(mockSupplier);
     });
   });
 });

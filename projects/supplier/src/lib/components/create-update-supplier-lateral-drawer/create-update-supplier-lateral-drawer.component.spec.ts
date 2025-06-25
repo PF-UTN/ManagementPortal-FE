@@ -1,6 +1,7 @@
 import {
   mockSupplier,
   mockSupplierCreateUpdateResponse,
+  mockSupplierWithTown,
   mockTown,
   TownService,
 } from '@Common';
@@ -100,6 +101,36 @@ describe('CreateEditSupplierLateralDrawerComponent', () => {
     expect(closeSpy).toHaveBeenCalled();
     expect(emitSuccessSpy).toHaveBeenCalled();
     expect(component.isLoading()).toBe(false);
+  });
+  it('should call getSupplierByDocumentAsync and patch form values when supplier exists', () => {
+    // Arrange
+    component.supplierForm.controls.documentType.setValue(
+      mockSupplierWithTown.documentType,
+    );
+    component.supplierForm.controls.documentNumber.setValue(
+      mockSupplierWithTown.documentNumber,
+    );
+    const patchSpy = jest.spyOn(component.supplierForm, 'patchValue');
+    jest
+      .spyOn(supplierService, 'getSupplierByDocumentAsync')
+      .mockReturnValue(of(mockSupplierWithTown));
+
+    //Act
+    component.checkSupplierExists();
+
+    //Assert
+    expect(supplierService.getSupplierByDocumentAsync).toHaveBeenCalledWith(
+      mockSupplier.documentType,
+      mockSupplier.documentNumber,
+    );
+    expect(patchSpy).toHaveBeenCalledWith({
+      businessName: mockSupplierWithTown.businessName,
+      email: mockSupplierWithTown.email,
+      phone: mockSupplierWithTown.phone,
+      street: mockSupplierWithTown.address.street,
+      streetNumber: mockSupplierWithTown.address.streetNumber,
+      town: mockSupplierWithTown.address.town,
+    });
   });
   it('should reset documentNumber when documentType changes', () => {
     //Arrange
