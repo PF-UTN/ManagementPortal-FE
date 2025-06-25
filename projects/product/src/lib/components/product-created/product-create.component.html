@@ -76,7 +76,7 @@
                     <input type="text" matInput formControlName="category" [matAutocomplete]="autoCategory"
                         placeholder="Seleccionar categoría" [attr.autocomplete]="'off'" />
                     <button type="button" mat-icon-button matSuffix aria-label="Clear"
-                        (click)="productForm.get('supplier')?.reset()">
+                        (click)="productForm.get('category')?.reset()">
                         <mat-icon>close</mat-icon>
                     </button>
                     <mat-autocomplete #autoCategory="matAutocomplete" [displayWith]="displayCategory.bind(this)"
