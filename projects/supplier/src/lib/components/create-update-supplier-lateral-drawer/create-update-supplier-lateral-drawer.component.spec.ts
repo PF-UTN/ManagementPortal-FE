@@ -11,16 +11,19 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { mockDeep } from 'jest-mock-extended';
 import { of } from 'rxjs';
 
-import { CreateEditSupplierLateralDrawerComponent } from './create-edit-supplier-lateral-drawer.component';
+import { CreateUpdateSupplierLateralDrawerComponent } from './create-update-supplier-lateral-drawer.component';
 import { SupplierService } from '../../services/supplier.service';
 
 describe('CreateEditSupplierLateralDrawerComponent', () => {
-  let component: CreateEditSupplierLateralDrawerComponent;
-  let fixture: ComponentFixture<CreateEditSupplierLateralDrawerComponent>;
+  let component: CreateUpdateSupplierLateralDrawerComponent;
+  let fixture: ComponentFixture<CreateUpdateSupplierLateralDrawerComponent>;
   let supplierService: SupplierService;
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CreateEditSupplierLateralDrawerComponent, NoopAnimationsModule],
+      imports: [
+        CreateUpdateSupplierLateralDrawerComponent,
+        NoopAnimationsModule,
+      ],
       providers: [
         { provide: SupplierService, useValue: mockDeep<SupplierService>() },
         {
@@ -30,7 +33,9 @@ describe('CreateEditSupplierLateralDrawerComponent', () => {
         { provide: TownService, useValue: mockDeep<TownService> },
       ],
     }).compileComponents();
-    fixture = TestBed.createComponent(CreateEditSupplierLateralDrawerComponent);
+    fixture = TestBed.createComponent(
+      CreateUpdateSupplierLateralDrawerComponent,
+    );
     component = fixture.componentInstance;
     supplierService = TestBed.inject(SupplierService);
     fixture.detectChanges();

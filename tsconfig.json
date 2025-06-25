@@ -9,7 +9,7 @@
       "@Home": ["projects/home/src/public-api"],
       "@Registration-Request": ["projects/registration-request/src/public-api"],
       "@Product": ["projects/product/src/public-api"],
-      "supplier": ["./dist/supplier"]
+      "@Supplier": ["projects/supplier/src/public-api"]
     },
     "outDir": "./dist/out-tsc",
     "strict": true,

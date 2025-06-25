@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { SupplierCreateUpdateResponse } from '../models/supplier-create-update-response.model';
+import { SupplierDetail } from '../models/supplier.detail.model';
 import { Supplier } from '../models/supplier.model';
 
 @Injectable({
@@ -20,6 +21,15 @@ export class SupplierService {
     return this.http.post<SupplierCreateUpdateResponse>(
       `${this.baseUrl}/`,
       supplier,
+    );
+  }
+
+  getSupplierByDocumentAsync(
+    documentType: string,
+    documentNumber: string,
+  ): Observable<SupplierDetail> {
+    return this.http.get<SupplierDetail>(
+      `${this.baseUrl}/search?documentType=${documentType}&documentNumber=${documentNumber}`,
     );
   }
 }

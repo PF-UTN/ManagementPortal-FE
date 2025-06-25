@@ -6,6 +6,7 @@ import {
   TableComponent,
   DropdownItem,
 } from '@Common-UI';
+import { CreateUpdateSupplierLateralDrawerComponent } from '@Supplier';
 
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
@@ -19,7 +20,6 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 
-import { CreateEditSupplierLateralDrawerComponent } from '../../../../../supplier/src/lib/components/create-edit-lateral-drawer/create-edit-supplier-lateral-drawer.component';
 import { ProductListItem } from '../../models/product-item.model';
 import { ProductParams } from '../../models/product-param.model';
 import { ProductService } from '../../services/product.service';
@@ -199,7 +199,7 @@ export class ProductListComponent implements OnInit {
   onCreateUpdateSupplierDrawer(): void {
     this.lateralDrawerService
       .open(
-        CreateEditSupplierLateralDrawerComponent,
+        CreateUpdateSupplierLateralDrawerComponent,
         {},
         {
           title: 'Crear / Editar Proveedor',

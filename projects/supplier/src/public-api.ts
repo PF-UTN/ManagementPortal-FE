@@ -2,5 +2,5 @@
  * Public API Surface of supplier
  */
 
-export * from './lib/supplier.service';
-export * from './lib/supplier.component';
+export * from './lib/services/supplier.service';
+export * from './lib/components/create-update-supplier-lateral-drawer/create-update-supplier-lateral-drawer.component';

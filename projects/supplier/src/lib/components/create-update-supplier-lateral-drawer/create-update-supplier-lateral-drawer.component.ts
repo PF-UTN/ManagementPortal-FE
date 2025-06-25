@@ -1,4 +1,5 @@
-import { TownService } from '@Common';
+import { DocumentType, customEmailValidator } from '@Authentication';
+import { TownService, Town } from '@Common';
 import { LateralDrawerContainer, LateralDrawerService } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
@@ -16,18 +17,16 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { debounceTime, map, Observable, startWith, switchMap } from 'rxjs';
 
-import { DocumentType } from '../../../../../authentication/src/lib/constants/documentType.enum';
-import { customEmailValidator } from '../../../../../authentication/src/lib/validators/email.validator';
-import { Town } from '../../../../../common/src/models/town.model';
 import { Supplier } from '../../models/supplier.model';
 import { SupplierService } from '../../services/supplier.service';
 
 const PHONE_REGEX = /^[+]?\d{1,4}?[-.\s]?(\d{1,3}[-.\s]?){1,4}$/;
 
 @Component({
-  selector: 'lib-create-edit-supplier-lateral-drawer',
+  selector: 'mp-create-update-supplier-lateral-drawer',
   standalone: true,
   imports: [
     CommonModule,
@@ -40,10 +39,10 @@ const PHONE_REGEX = /^[+]?\d{1,4}?[-.\s]?(\d{1,3}[-.\s]?){1,4}$/;
     MatButtonModule,
     MatAutocompleteModule,
   ],
-  templateUrl: './create-edit-supplier-lateral-drawer.component.html',
-  styleUrl: './create-edit-supplier-lateral-drawer.component.scss',
+  templateUrl: './create-update-supplier-lateral-drawer.component.html',
+  styleUrl: './create-update-supplier-lateral-drawer.component.scss',
 })
-export class CreateEditSupplierLateralDrawerComponent
+export class CreateUpdateSupplierLateralDrawerComponent
   extends LateralDrawerContainer
   implements OnInit
 {
@@ -68,6 +67,7 @@ export class CreateEditSupplierLateralDrawerComponent
     private readonly lateralDrawerService: LateralDrawerService,
     private readonly fb: FormBuilder,
     private readonly supplierService: SupplierService,
+    private readonly snackBar: MatSnackBar,
     protected townService: TownService,
   ) {
     super();
@@ -170,25 +170,24 @@ export class CreateEditSupplierLateralDrawerComponent
 
     if (!documentType || !documentNumber) return;
 
-    // this.supplierService.getByDocument(documentType, documentNumber).subscribe({
-    //   next: (supplier) => {
-    //     if (supplier) {
-    //       // Autocompletá los datos
-    //       this.supplierForm.patchValue({
-    //         businessName: supplier.businessName,
-    //         email: supplier.email,
-    //         phone: supplier.phone,
-    //         street: supplier.street,
-    //         streetNumber: supplier.streetNumber,
-    //         townId: supplier.townId,
-    //       });
-    //     }
-    //   },
-    //   error: () => {
-    //     // No hacer nada si no existe
-    //   },
-    // });
+    this.supplierService
+      .getSupplierByDocumentAsync(documentType, documentNumber)
+      .subscribe({
+        next: (supplier) => {
+          if (supplier) {
+            this.supplierForm.patchValue({
+              businessName: supplier.businessName,
+              email: supplier.email,
+              phone: supplier.phone,
+              street: supplier.address.street,
+              streetNumber: supplier.address.streetNumber,
+              town: supplier.address.town,
+            });
+          }
+        },
+      });
   }
+
   closeDrawer(): void {
     this.lateralDrawerService.close();
   }
@@ -232,6 +231,13 @@ export class CreateEditSupplierLateralDrawerComponent
     this.supplierService.postCreateOrUpdateSupplierAsync(supplier).subscribe({
       next: () => {
         this.isLoading.set(false);
+        this.snackBar.open(
+          'Proveedor creado/modificado correctamente',
+          'Cerrar',
+          {
+            duration: 3000,
+          },
+        );
         this.closeDrawer();
         this.emitSuccess();
       },
