@@ -4,7 +4,7 @@
       <mat-label>Razón Social</mat-label>
       <input matInput formControlName="businessName" type="text" />
       <button type="button" matSuffix mat-icon-button aria-label="Clear"
-        (click)="supplierForm.get('businessName')?.reset()">
+        (click)="supplierForm.controls.businessName.reset()">
         <mat-icon>close</mat-icon>
       </button>
       <mat-error
@@ -41,7 +41,7 @@
       <input type="text" matInput formControlName="documentNumber" [attr.maxLength]="maxDocumentLength || null"
         (keydown)="preventNonNumericInput($event)" />
       <button type="button" matSuffix mat-icon-button aria-label="Clear"
-        (click)="supplierForm.get('documentNumber')?.reset()">
+        (click)="supplierForm.controls.documentType.reset()">
         <mat-icon>close</mat-icon>
       </button>
       <mat-error
@@ -54,7 +54,8 @@
     <mat-form-field class="w-100" appearance="outline">
       <mat-label>Email</mat-label>
       <input matInput formControlName="email" type="email" />
-      <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="supplierForm.get('email')?.reset()">
+      <button type="button" matSuffix mat-icon-button aria-label="Clear" 
+       (click)="supplierForm.controls.email.reset()">
         <mat-icon>close</mat-icon>
       </button>
       <mat-error *ngIf="supplierForm.get('email')?.hasError('required') && supplierForm.get('email')?.touched">
@@ -69,7 +70,8 @@
     <mat-form-field class="w-100" appearance="outline">
       <mat-label>Teléfono</mat-label>
       <input matInput formControlName="phone" type="text" />
-      <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="supplierForm.get('phone')?.reset()">
+      <button type="button" matSuffix mat-icon-button aria-label="Clear" 
+       (click)="supplierForm.controls.phone.reset()">
         <mat-icon>close</mat-icon>
       </button>
       <mat-error *ngIf="supplierForm.get('phone')?.hasError('required') && supplierForm.get('phone')?.touched">
@@ -86,7 +88,7 @@
         <mat-label>Calle</mat-label>
         <input matInput formControlName="street" type="text" />
         <button type="button" matSuffix mat-icon-button aria-label="Clear"
-          (click)="supplierForm.get('street')?.reset()">
+          (click)="supplierForm.controls.street.reset()">
           <mat-icon>close</mat-icon>
         </button>
         <mat-error *ngIf="supplierForm.get('street')?.hasError('required') && supplierForm.get('street')?.touched">
@@ -99,7 +101,7 @@
         <mat-label>Número</mat-label>
         <input matInput formControlName="streetNumber" type="number" />
         <button type="button" matSuffix mat-icon-button aria-label="Clear"
-          (click)="supplierForm.get('streetNumber')?.reset()">
+          (click)="supplierForm.controls.streetNumber.reset()">
           <mat-icon>close</mat-icon>
         </button>
         <mat-error
@@ -115,7 +117,7 @@
       <input type="text" matInput formControlName="town" [matAutocomplete]="auto"
         placeholder="Buscar ciudad o código postal" [attr.autocomplete]="'off'" />
       <button type="button" matSuffix mat-icon-button aria-label="Clear"
-        (click)="supplierForm.get('town')?.setValue(null)">
+        (click)="supplierForm.controls.businessName.setValue(null)">
         <mat-icon>close</mat-icon>
       </button>
       <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayTown.bind(this)">
