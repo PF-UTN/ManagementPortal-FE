@@ -8,7 +8,7 @@ export const mockClient: Client = {
   email: 'juan.perez@example.com',
   password: 'Password123*',
   phone: '123456789',
-  birthDate: new Date('1990-01-01'),
+  birthdate: new Date('1990-01-01'),
   documentNumber: '20123456789',
   documentType: 'CUIL',
   companyName: 'Mi Empresa',
