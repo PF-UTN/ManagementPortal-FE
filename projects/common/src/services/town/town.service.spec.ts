@@ -39,18 +39,23 @@ describe('TownService', () => {
   it('should search towns', () => {
     // Arrange
     const mockTowns = [mockTown];
+    const requestBody = { searchText: 'Ciudad', page: 1, pageSize: 1 };
 
     // Act
-    service.searchTowns('Ciudad').subscribe((towns) => {
-      expect(towns.length).toBe(1);
-      expect(towns).toEqual(mockTowns);
+    service.searchTowns(requestBody).subscribe((response) => {
+      expect(response.results.length).toBe(1);
+      expect(response.results).toEqual(mockTowns);
     });
 
     // Assert
     const req = httpMock.expectOne(
-      (req) => req.method === 'GET' && req.url.includes('towns'),
+      (req) => req.method === 'POST' && req.url.includes('towns'),
     );
-    expect(req.request.params.get('search')).toBe('Ciudad');
-    req.flush(mockTowns);
+
+    expect(req.request.body.searchText).toBe('Ciudad');
+    expect(req.request.body.page).toBe(1);
+    expect(req.request.body.pageSize).toBe(1);
+
+    req.flush({ total: 1, results: mockTowns });
   });
 });
