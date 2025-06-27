@@ -1,0 +1,57 @@
+<form [formGroup]="productCategoryForm" class="container-fluid p-3" (keydown.enter)="onSubmit()">
+  <div class="mb-4">
+    <mat-form-field class="w-100" appearance="outline">
+      <mat-label>Nombre</mat-label>
+      <input matInput type="text" formControlName="name" [matAutocomplete]="autoCategory" [attr.autocomplete]="'off'"
+        [disabled]="!productCategoryForm.controls.name.enabled" />
+      <button type="button" matSuffix mat-icon-button aria-label="Clear"
+        (click)="productCategoryForm.controls.name.reset()">
+        <mat-icon>close</mat-icon>
+      </button>
+
+      <mat-autocomplete #autoCategory="matAutocomplete" [displayWith]="displayCategory.bind(this)"
+        (optionSelected)="onCategorySelected($event)">
+        <mat-option *ngFor="let cat of filteredCategories$ | async" [value]="cat">
+          {{ cat.name }}
+        </mat-option>
+      </mat-autocomplete>
+
+      <mat-error
+        *ngIf="productCategoryForm.controls.name.hasError('required') && productCategoryForm.controls.name.touched">
+        Nombre es requerido.
+      </mat-error>
+      <mat-error
+        *ngIf="productCategoryForm.controls.name.hasError('maxlength') && productCategoryForm.controls.name.touched">
+        El valor no puede superar los 255 caracteres.
+      </mat-error>
+      <mat-error
+        *ngIf="productCategoryForm.controls.name.hasError('minlength') && productCategoryForm.controls.name.touched">
+        Debe tener al menos 2 caracteres.
+      </mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="mb-4">
+    <mat-form-field class="w-100" appearance="outline">
+      <mat-label>Descripción</mat-label>
+      <input matInput formControlName="description" type="text" />
+      <button type="button" matSuffix mat-icon-button aria-label="Clear"
+        (click)="productCategoryForm.controls.description.reset()">
+        <mat-icon>close</mat-icon>
+      </button>
+
+      <mat-error
+        *ngIf="productCategoryForm.controls.description.hasError('required') && productCategoryForm.controls.description.touched">
+        Descripción es requerida.
+      </mat-error>
+      <mat-error
+        *ngIf="productCategoryForm.controls.description.hasError('maxlength') && productCategoryForm.controls.description.touched">
+        El valor no puede superar los 255 caracteres.
+      </mat-error>
+      <mat-error
+        *ngIf="productCategoryForm.controls.description.hasError('minlength') && productCategoryForm.controls.description.touched">
+        Debe tener al menos 2 caracteres.
+      </mat-error>
+    </mat-form-field>
+  </div>
+</form>

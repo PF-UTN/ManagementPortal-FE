@@ -23,6 +23,8 @@ import { ProductListItem } from '../../models/product-item.model';
 import { ProductParams } from '../../models/product-param.model';
 import { ProductService } from '../../services/product.service';
 import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-lateral-drawer.component';
+import { CreateUpdateProductCategoryLateralDrawerComponent } from './../../../../../product-category/src/lib/components/create-update-product-category-lateral-drawer/create-update-product-category-lateral-drawer.component';
+
 @Component({
   selector: 'mp-product-list',
   standalone: true,
@@ -123,8 +125,8 @@ export class ProductListComponent implements OnInit {
     },
     {
       label: 'Crear/Editar categoría',
-      action: () => console.log('crear categoria'),
-    }, //Accion Provisorio hasta que se implemente el drawer
+      action: () => this.onCreateUpdateProductCategoryDrawer(),
+    },
     {
       label: 'Crear/Editar proveedor',
       action: () => console.log('crear proveedor'),
@@ -189,6 +191,28 @@ export class ProductListComponent implements OnInit {
           firstButton: {
             text: 'Cerrar',
             click: () => this.lateralDrawerService.close(),
+          },
+        },
+      },
+    );
+  }
+
+  onCreateUpdateProductCategoryDrawer(): void {
+    this.lateralDrawerService.open(
+      CreateUpdateProductCategoryLateralDrawerComponent,
+      {},
+      {
+        title: 'Crear / Editar Categoría',
+        footer: {
+          firstButton: {
+            text: 'Confirmar',
+            click: () => {},
+          },
+          secondButton: {
+            text: 'Cancelar',
+            click: () => {
+              this.lateralDrawerService.close();
+            },
           },
         },
       },
