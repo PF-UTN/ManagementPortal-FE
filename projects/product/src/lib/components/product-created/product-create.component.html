@@ -17,7 +17,7 @@
                     <mat-label>Nombre del producto</mat-label>
                     <input matInput formControlName="name" />
                     <mat-error
-                        *ngIf="productForm.get('name')?.hasError('required') && productForm.get('name')?.touched">
+                        *ngIf="productForm.controls.name?.hasError('required') && productForm.controls.name?.touched">
                         El nombre es requerido
                     </mat-error>
                 </mat-form-field>
@@ -25,7 +25,7 @@
                     <mat-label>Descripción</mat-label>
                     <textarea matInput formControlName="description"></textarea>
                     <mat-error
-                        *ngIf="productForm.get('description')?.hasError('required') && productForm.get('description')?.touched">
+                        *ngIf="productForm.controls.description?.hasError('required') && productForm.controls.description?.touched">
                         La descripción es requerida
                     </mat-error>
                 </mat-form-field>
@@ -36,7 +36,7 @@
                             <mat-label>Precio</mat-label>
                             <input matInput type="number" formControlName="price" min="1" />
                             <mat-error
-                                *ngIf="productForm.get('price')?.hasError('required') && productForm.get('price')?.touched">
+                                *ngIf="productForm.controls.price?.hasError('required') && productForm.controls.price?.touched">
                                 El precio es requerido
                             </mat-error>
                         </mat-form-field>
@@ -47,7 +47,7 @@
                             <input matInput type="number" formControlName="weight" min="1" />
                             <span matSuffix class="input-suffix">kg</span>
                             <mat-error
-                                *ngIf="productForm.get('weight')?.hasError('required') && productForm.get('weight')?.touched">
+                                *ngIf="productForm.controls.weight?.hasError('required') && productForm.controls.weight?.touched">
                                 El peso es requerido
                             </mat-error>
                         </mat-form-field>
@@ -76,7 +76,7 @@
                     <input type="text" matInput formControlName="category" [matAutocomplete]="autoCategory"
                         placeholder="Seleccionar categoría" [attr.autocomplete]="'off'" />
                     <button type="button" mat-icon-button matSuffix aria-label="Clear"
-                        (click)="productForm.get('category')?.reset()">
+                        (click)="productForm.controls.category.reset()">
                         <mat-icon>close</mat-icon>
                     </button>
                     <mat-autocomplete #autoCategory="matAutocomplete" [displayWith]="displayCategory.bind(this)"
@@ -89,15 +89,15 @@
                         </mat-option>
                     </mat-autocomplete>
                     <mat-error
-                        *ngIf="productForm.get('category')?.hasError('required') && productForm.get('category')?.touched">
+                        *ngIf="productForm.controls.category?.hasError('required') && productForm.controls.category?.touched">
                         La categoría es requerida
                     </mat-error>
                     <mat-error
-                        *ngIf="productForm.get('category')?.hasError('invalidCategory') && productForm.get('category')?.touched">
+                        *ngIf="productForm.controls.category?.hasError('invalidCategory') && productForm.controls.category?.touched">
                         Debe seleccionar una categoría de la lista.
                     </mat-error>
                 </mat-form-field>
-                <div *ngIf="productForm.get('category')?.value as selectedCategory">
+                <div *ngIf="productForm.controls.category?.value as selectedCategory">
                     <mat-form-field class="w-100 mb-2" appearance="outline">
                         <mat-label>Descripción de la categoría</mat-label>
                         <input matInput [value]="selectedCategory?.description" disabled />
@@ -119,7 +119,7 @@
                     <input type="text" matInput formControlName="supplier" [matAutocomplete]="autoSupplier"
                         placeholder="Seleccionar proveedor" [attr.autocomplete]="'off'" />
                     <button type="button" matSuffix mat-icon-button aria-label="Clear"
-                        (click)="productForm.get('supplier')?.reset()">
+                        (click)="productForm.controls.supplier.reset()">
                         <mat-icon aria-hidden="false" fontIcon="close"></mat-icon>
                     </button>
                     <mat-autocomplete #autoSupplier="matAutocomplete" [displayWith]="displaySupplier.bind(this)"
@@ -132,15 +132,15 @@
                         </mat-option>
                     </mat-autocomplete>
                     <mat-error
-                        *ngIf="productForm.get('supplier')?.hasError('required') && productForm.get('supplier')?.touched">
+                        *ngIf="productForm.controls.supplier?.hasError('required') && productForm.controls.supplier?.touched">
                         El proveedor es requerido
                     </mat-error>
                     <mat-error
-                        *ngIf="productForm.get('supplier')?.hasError('invalidSupplier') && productForm.get('supplier')?.touched">
+                        *ngIf="productForm.controls.supplier?.hasError('invalidSupplier') && productForm.controls.supplier?.touched">
                         Debe seleccionar un proveedor de la lista.
                     </mat-error>
                 </mat-form-field>
-                <div *ngIf="productForm.get('supplier')?.value as selectedSupplier">
+                <div *ngIf="productForm.controls.supplier?.value as selectedSupplier">
                     <div class="row">
                         <div class="col-4">
                             <mat-form-field class="w-100 mb-2" appearance="outline">
@@ -180,7 +180,7 @@
                                 <mat-label>Pedidos</mat-label>
                                 <input matInput type="number" formControlName="quantityOrdered" min="0" />
                                 <mat-error
-                                    *ngIf="productForm.get('stock.quantityOrdered')?.hasError('required') && productForm.get('stock.quantityOrdered')?.touched">
+                                    *ngIf="productForm.controls.stock.controls.quantityOrdered?.hasError('required') && productForm.controls.stock.controls.quantityOrdered?.touched">
                                     Pedidos es requerido
                                 </mat-error>
                             </mat-form-field>
@@ -190,7 +190,7 @@
                                 <mat-label>Disponibles</mat-label>
                                 <input matInput type="number" formControlName="quantityAvailable" min="0" />
                                 <mat-error
-                                    *ngIf="productForm.get('stock.quantityAvailable')?.hasError('required') && productForm.get('stock.quantityAvailable')?.touched">
+                                    *ngIf="productForm.controls.stock.controls.quantityAvailable?.hasError('required') && productForm.controls.stock.controls.quantityAvailable?.touched">
                                     Disponibles es requerido
                                 </mat-error>
                             </mat-form-field>
@@ -200,7 +200,7 @@
                                 <mat-label>Reservados</mat-label>
                                 <input matInput type="number" formControlName="quantityReserved" min="0" />
                                 <mat-error
-                                    *ngIf="productForm.get('stock.quantityReserved')?.hasError('required') && productForm.get('stock.quantityReserved')?.touched">
+                                    *ngIf="productForm.controls.stock.controls.quantityReserved?.hasError('required') && productForm.controls.stock.controls.quantityReserved?.touched">
                                     Reservados es requerido
                                 </mat-error>
                             </mat-form-field>
