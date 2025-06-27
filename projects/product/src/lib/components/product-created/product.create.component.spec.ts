@@ -421,6 +421,13 @@ describe('ProductCreateComponent', () => {
       // assert
       expect(component.showBackArrow).toBe(false);
     });
+
+    it('should navigate to /productos', () => {
+      // act
+      component.goBack();
+      // assert
+      expect(routerMock.navigate).toHaveBeenCalledWith(['/productos']);
+    });
     it('should return true if url does not end with /productos', () => {
       // act
       routerMock.url = '/productos/crear';
