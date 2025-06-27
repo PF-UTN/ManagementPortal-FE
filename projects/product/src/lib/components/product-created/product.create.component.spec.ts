@@ -5,6 +5,7 @@ import {
   tick,
 } from '@angular/core/testing';
 import { ReactiveFormsModule, AbstractControl } from '@angular/forms';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
@@ -291,6 +292,109 @@ describe('ProductCreateComponent', () => {
       const result = validator(control);
       // assert
       expect(result).toEqual({ invalidSupplier: true });
+    });
+  });
+
+  describe('filterCategories', () => {
+    it('should filter categories by name (case insensitive)', () => {
+      component.categories = [
+        { id: 1, name: 'Alimentos', description: '' },
+        { id: 2, name: 'Juguetes', description: '' },
+        { id: 3, name: 'Accesorios', description: '' },
+      ];
+      const result = component['filterCategories']('ali');
+      expect(result.length).toBe(1);
+      expect(result[0].name).toBe('Alimentos');
+    });
+
+    it('should return empty array if no match', () => {
+      component.categories = [{ id: 1, name: 'Alimentos', description: '' }];
+      const result = component['filterCategories']('zzz');
+      expect(result.length).toBe(0);
+    });
+  });
+
+  describe('filterSuppliers', () => {
+    it('should filter suppliers by businessName (case insensitive)', () => {
+      component.suppliers = [
+        {
+          id: 1,
+          businessName: 'Proveedor Uno',
+          documentType: '',
+          documentNumber: '',
+          email: '',
+          phone: '',
+          addressId: 1,
+        },
+        {
+          id: 2,
+          businessName: 'Proveedor Dos',
+          documentType: '',
+          documentNumber: '',
+          email: '',
+          phone: '',
+          addressId: 2,
+        },
+      ];
+      const result = component['filterSuppliers']('uno');
+      expect(result.length).toBe(1);
+      expect(result[0].businessName).toBe('Proveedor Uno');
+    });
+
+    it('should return empty array if no match', () => {
+      component.suppliers = [
+        {
+          id: 1,
+          businessName: 'Proveedor Uno',
+          documentType: '',
+          documentNumber: '',
+          email: '',
+          phone: '',
+          addressId: 1,
+        },
+      ];
+      const result = component['filterSuppliers']('zzz');
+      expect(result.length).toBe(0);
+    });
+  });
+
+  describe('onCategorySelected', () => {
+    it('debería setear el categoryId en el form', () => {
+      const category: ProductCategoryResponse = {
+        id: 123,
+        name: 'Alimentos',
+        description: '',
+      };
+      const event = {
+        option: { value: category },
+      } as MatAutocompleteSelectedEvent;
+
+      component.productForm.patchValue({ categoryId: null });
+      component.onCategorySelected(event);
+
+      expect(component.productForm.controls.categoryId.value).toBe(123);
+    });
+  });
+
+  describe('onSupplierSelected', () => {
+    it('debería setear el supplierId en el form', () => {
+      const supplier: SupplierResponse = {
+        id: 456,
+        businessName: 'Proveedor Uno',
+        documentType: '',
+        documentNumber: '',
+        email: '',
+        phone: '',
+        addressId: 1,
+      };
+      const event = {
+        option: { value: supplier },
+      } as MatAutocompleteSelectedEvent;
+
+      component.productForm.patchValue({ supplierId: null });
+      component.onSupplierSelected(event);
+
+      expect(component.productForm.controls.supplierId.value).toBe(456);
     });
   });
 
