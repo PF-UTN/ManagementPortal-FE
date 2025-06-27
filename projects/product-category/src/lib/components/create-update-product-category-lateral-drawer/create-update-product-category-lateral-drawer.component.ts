@@ -49,8 +49,15 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
   implements OnInit
 {
   isLoading = signal(false);
+  isCreating = signal(false);
+  isUpdating = signal(false);
+  isCategorySelected = signal(false);
 
-  private readonly NEW_CATEGORY_ID = -1;
+  public readonly NEW_CATEGORY_OPTION: ProductCategoryResponse = {
+    id: -1,
+    name: 'Crear nueva categoría',
+    description: '',
+  };
 
   productCategoryForm: FormGroup<{
     name: FormControl<string | ProductCategoryResponse | null>;
@@ -90,7 +97,7 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
   ngOnInit(): void {
     this.initForm();
     this.initCategories();
-    this.setupDocumentWatcher();
+    this.productCategoryForm.controls.description.disable();
   }
 
   private initForm() {
@@ -113,7 +120,7 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
       this.categories = categories;
       this.productCategoryForm.controls.name.setValidators([
         Validators.required,
-        this.categoryObjectValidator(this.categories),
+        //this.categoryObjectValidator(this.categories),
       ]);
       this.productCategoryForm.controls.name.updateValueAndValidity();
 
@@ -128,35 +135,34 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
     });
   }
 
-  private setupDocumentWatcher() {
-    this.productCategoryForm.controls.name?.valueChanges.subscribe(() =>
-      this.checkSupplierExists(),
-    );
-  }
-
-  checkSupplierExists() {
-    const name = this.productCategoryForm.controls.name?.value;
-
-    if (!name) return;
-  }
-
   onCategorySelected(event: MatAutocompleteSelectedEvent) {
-    const category = event.option.value as ProductCategoryResponse;
+    this.isCategorySelected.set(true);
+    const selected = event.option.value;
 
-    if (category.id === this.NEW_CATEGORY_ID) {
-      // Crear nueva categoría
+    if (selected === this.NEW_CATEGORY_OPTION) {
+      // Crear nueva categoría: habilitar ambos
+      this.isCreating.set(true);
+      this.isUpdating.set(false);
+
       this.productCategoryForm.patchValue({
         name: '',
         description: '',
       });
+
       this.productCategoryForm.controls.name.enable();
       this.productCategoryForm.controls.description.enable();
+      this.productCategoryForm.controls.name.reset();
     } else {
-      // Categoría existente
+      const category = selected as ProductCategoryResponse;
+      // Categoría existente: deshabilitar nombre, habilitar descripción
+      this.isCreating.set(false);
+      this.isUpdating.set(true);
+
       this.productCategoryForm.patchValue({
         name: category,
         description: category.description,
       });
+
       this.productCategoryForm.controls.name.disable();
       this.productCategoryForm.controls.description.enable();
     }
@@ -169,14 +175,7 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
       cat.name.toLowerCase().includes(filterValue),
     );
 
-    return [
-      ...filtered,
-      {
-        id: this.NEW_CATEGORY_ID,
-        name: 'Crear nueva categoría',
-        description: '',
-      },
-    ];
+    return filtered;
   }
 
   displayCategory(category: ProductCategoryResponse | string): string {
@@ -189,6 +188,9 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
       if (!value) {
         return { required: true };
       }
+
+      if (typeof value === 'string') return null;
+
       const exists = categories.some((cat) => cat.id === value.id);
       return exists ? null : { invalidCategory: true };
     };

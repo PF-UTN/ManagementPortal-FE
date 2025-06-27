@@ -2,9 +2,8 @@
   <div class="mb-4">
     <mat-form-field class="w-100" appearance="outline">
       <mat-label>Nombre</mat-label>
-      <input matInput type="text" formControlName="name" [matAutocomplete]="autoCategory" [attr.autocomplete]="'off'"
-        [disabled]="!productCategoryForm.controls.name.enabled" />
-      <button type="button" matSuffix mat-icon-button aria-label="Clear"
+      <input matInput type="text" formControlName="name" [matAutocomplete]="autoCategory" [attr.autocomplete]="'off'" />
+      <button type="button" matSuffix mat-icon-button aria-label="Clear" [disabled]="isUpdating()"
         (click)="productCategoryForm.controls.name.reset()">
         <mat-icon>close</mat-icon>
       </button>
@@ -13,6 +12,9 @@
         (optionSelected)="onCategorySelected($event)">
         <mat-option *ngFor="let cat of filteredCategories$ | async" [value]="cat">
           {{ cat.name }}
+        </mat-option>
+        <mat-option class="create-category-option" [disabled]="false" [value]="NEW_CATEGORY_OPTION">
+          <span class="span">+ Crear nueva categoría</span>
         </mat-option>
       </mat-autocomplete>
 
@@ -34,7 +36,7 @@
   <div class="mb-4">
     <mat-form-field class="w-100" appearance="outline">
       <mat-label>Descripción</mat-label>
-      <input matInput formControlName="description" type="text" />
+      <textarea matInput formControlName="description" type="text"></textarea>
       <button type="button" matSuffix mat-icon-button aria-label="Clear"
         (click)="productCategoryForm.controls.description.reset()">
         <mat-icon>close</mat-icon>
