@@ -98,7 +98,15 @@ export class CreateUpdateSupplierLateralDrawerComponent
       debounceTime(300),
       startWith(''),
       map((value) => (typeof value === 'string' ? value : (value?.name ?? ''))),
-      switchMap((query) => this.townService.searchTowns(query)),
+      switchMap((query) =>
+        this.townService
+          .searchTowns({
+            searchText: query,
+            page: 1,
+            pageSize: 5,
+          })
+          .pipe(map((response) => response.results)),
+      ),
     );
   }
 

@@ -143,17 +143,14 @@
     <div class="form-group">
       <mat-form-field class="w-100" appearance="outline">
         <mat-label>Fecha de Nacimiento</mat-label>
-        <input matInput [matDatepicker]="picker" formControlName="birthDate" readonly />
+        <input matInput [matDatepicker]="picker" formControlName="birthdate" readonly />
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
         <button type="button" matSuffix mat-icon-button aria-label="Clear"
-          (click)="signupForm.get('birthDate')?.reset()">
+          (click)="signupForm.controls.birthdate.reset()">
           <mat-icon>close</mat-icon>
         </button>
-        <mat-error *ngIf="
-                signupForm.get('birthDate')?.hasError('required') &&
-                signupForm.get('birthDate')?.touched
-              ">Fecha de Nacimiento es requerida</mat-error>
+        <mat-error *ngIf="signupForm.controls.birthdate.hasError('required') && signupForm.controls.birthdate.touched">Fecha de Nacimiento es requerida</mat-error>
       </mat-form-field>
     </div>
     <div class="form-group">
