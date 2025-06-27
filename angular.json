@@ -64,11 +64,13 @@
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true,
+              "sourceMap": true
+            },
+            "local": {
               "fileReplacements": [
                 {
                   "replace": "projects/common/src/environments/environment.ts",
-                  "with": "projects/common/src/environments/environment.development.ts"
+                  "with": "projects/common/src/environments/environment.local.ts"
                 }
               ]
             }

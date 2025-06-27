@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 import { RoleHierarchy } from '../../constants';
+import { environment } from '../../environments/environment';
 import { AuthResponse } from '../../models/auth-response.model';
 import { Client } from '../../models/client.model';
 import { TokenPayload } from '../../models/token-payload.model';
@@ -17,7 +18,7 @@ import { User } from '../../models/user.model';
 export class AuthService {
   userRole?: string;
 
-  private readonly apiUrl = 'https://dev-management-portal-be.vercel.app/authentication';
+  private readonly apiUrl = environment.apiBaseUrl + '/authentication';
 
   constructor(
     private readonly http: HttpClient,

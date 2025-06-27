@@ -1,3 +1,5 @@
+import { environment } from '@Common';
+
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -13,8 +15,7 @@ import { SearchProductResponse } from '../models/search-product-response.model';
   providedIn: 'root',
 })
 export class ProductService {
-  private readonly baseUrl =
-    'https://dev-management-portal-be.vercel.app/product';
+  private readonly baseUrl = environment.apiBaseUrl + '/product';
   constructor(private readonly http: HttpClient) {}
 
   postSearchProduct(params: ProductParams): Observable<SearchProductResponse> {
