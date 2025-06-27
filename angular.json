@@ -72,7 +72,10 @@
                   "replace": "projects/common/src/environments/environment.ts",
                   "with": "projects/common/src/environments/environment.local.ts"
                 }
-              ]
+              ],
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
             }
           },
           "defaultConfiguration": "development"
@@ -85,6 +88,9 @@
             },
             "development": {
               "buildTarget": "ManagementPortal-FE:build:development"
+            },
+            "local": {
+              "buildTarget": "ManagementPortal-FE:build:local"
             }
           },
           "defaultConfiguration": "development"
