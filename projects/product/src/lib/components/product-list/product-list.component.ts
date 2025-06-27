@@ -6,6 +6,7 @@ import {
   TableComponent,
   DropdownItem,
 } from '@Common-UI';
+import { CreateUpdateSupplierLateralDrawerComponent } from '@Supplier';
 
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
@@ -127,7 +128,7 @@ export class ProductListComponent implements OnInit {
     }, //Accion Provisorio hasta que se implemente el drawer
     {
       label: 'Crear/Editar proveedor',
-      action: () => console.log('crear proveedor'),
+      action: () => this.onCreateUpdateSupplierDrawer(),
     }, //Accion Provisorio hasta que se implemente el drawer
   ];
 
@@ -193,6 +194,30 @@ export class ProductListComponent implements OnInit {
         },
       },
     );
+  }
+
+  onCreateUpdateSupplierDrawer(): void {
+    this.lateralDrawerService
+      .open(
+        CreateUpdateSupplierLateralDrawerComponent,
+        {},
+        {
+          title: 'Crear / Editar Proveedor',
+          footer: {
+            firstButton: {
+              text: 'Confirmar',
+              click: () => {},
+            },
+            secondButton: {
+              text: 'Cancelar',
+              click: () => {
+                this.lateralDrawerService.close();
+              },
+            },
+          },
+        },
+      )
+      .subscribe(() => this.doSearchSubject$.next());
   }
 
   onModifyDrawer(request: ProductListItem): void {
