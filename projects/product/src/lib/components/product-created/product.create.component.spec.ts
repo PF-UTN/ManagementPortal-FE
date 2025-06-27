@@ -297,25 +297,32 @@ describe('ProductCreateComponent', () => {
 
   describe('filterCategories', () => {
     it('should filter categories by name (case insensitive)', () => {
+      // arrange
       component.categories = [
         { id: 1, name: 'Alimentos', description: '' },
         { id: 2, name: 'Juguetes', description: '' },
         { id: 3, name: 'Accesorios', description: '' },
       ];
+      // act
       const result = component['filterCategories']('ali');
+      // assert
       expect(result.length).toBe(1);
       expect(result[0].name).toBe('Alimentos');
     });
 
     it('should return empty array if no match', () => {
+      // arrange
       component.categories = [{ id: 1, name: 'Alimentos', description: '' }];
+      // act
       const result = component['filterCategories']('zzz');
+      // assert
       expect(result.length).toBe(0);
     });
   });
 
   describe('filterSuppliers', () => {
     it('should filter suppliers by businessName (case insensitive)', () => {
+      // arrange
       component.suppliers = [
         {
           id: 1,
@@ -336,12 +343,15 @@ describe('ProductCreateComponent', () => {
           addressId: 2,
         },
       ];
+      // act
       const result = component['filterSuppliers']('uno');
+      // assert
       expect(result.length).toBe(1);
       expect(result[0].businessName).toBe('Proveedor Uno');
     });
 
     it('should return empty array if no match', () => {
+      // arrange
       component.suppliers = [
         {
           id: 1,
@@ -353,13 +363,16 @@ describe('ProductCreateComponent', () => {
           addressId: 1,
         },
       ];
+      // act
       const result = component['filterSuppliers']('zzz');
+      // assert
       expect(result.length).toBe(0);
     });
   });
 
   describe('onCategorySelected', () => {
     it('debería setear el categoryId en el form', () => {
+      // arrange
       const category: ProductCategoryResponse = {
         id: 123,
         name: 'Alimentos',
@@ -370,14 +383,16 @@ describe('ProductCreateComponent', () => {
       } as MatAutocompleteSelectedEvent;
 
       component.productForm.patchValue({ categoryId: null });
+      // act
       component.onCategorySelected(event);
-
+      // assert
       expect(component.productForm.controls.categoryId.value).toBe(123);
     });
   });
 
   describe('onSupplierSelected', () => {
     it('debería setear el supplierId en el form', () => {
+      // arrange
       const supplier: SupplierResponse = {
         id: 456,
         businessName: 'Proveedor Uno',
@@ -392,8 +407,9 @@ describe('ProductCreateComponent', () => {
       } as MatAutocompleteSelectedEvent;
 
       component.productForm.patchValue({ supplierId: null });
+      // act
       component.onSupplierSelected(event);
-
+      // assert
       expect(component.productForm.controls.supplierId.value).toBe(456);
     });
   });
