@@ -1,5 +1,5 @@
 import { AuthService, TownService, NavBarService } from '@Common';
-import { ButtonComponent, TitleComponent } from '@Common-UI';
+import { ButtonComponent, InputComponent, TitleComponent } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -55,6 +55,7 @@ const PHONE_REGEX = /^[+]?\d{1,4}?[-.\s]?(\d{1,3}[-.\s]?){1,4}$/;
     TitleComponent,
     MatSnackBarModule,
     MatAutocompleteModule,
+    InputComponent,
   ],
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.scss'],
