@@ -1,0 +1,84 @@
+<mat-form-field class="mp-input" [appearance]="appearance()">
+  <mat-label *ngIf="label">{{ label }}</mat-label>
+
+  <ng-container *ngIf="!textarea()">
+    <input
+      *ngIf="!matAutocomplete"
+      matInput
+      [type]="inputType"
+      [readonly]="readonly()"
+      [placeholder]="placeholder()"
+      [formControl]="control"
+      (input)="onInput($event)"
+      (change)="change.emit($event)"
+      (blur)="blur.emit($event); onTouched()"
+    />
+    <input
+      *ngIf="matAutocomplete"
+      matInput
+      [type]="inputType"
+      [readonly]="readonly()"
+      [placeholder]="placeholder()"
+      [formControl]="control"
+      (input)="onInput($event)"
+      (change)="change.emit($event)"
+      (blur)="blur.emit($event); onTouched()"
+      [matAutocomplete]="matAutocomplete"
+    />
+  </ng-container>
+
+  <ng-container *ngIf="textarea()">
+    <textarea
+      matInput
+      [readonly]="readonly()"
+      [placeholder]="placeholder()"
+      [rows]="rows()"
+      [formControl]="control"
+      (input)="onInput($event)"
+      (change)="change.emit($event)"
+      (blur)="blur.emit($event); onTouched()"
+    ></textarea>
+  </ng-container>
+
+  <button
+    *ngIf="icon && iconPosition() === 'prefix'"
+    matPrefix
+    mat-icon-button
+    type="button"
+    (click)="iconAction && iconAction()"
+    aria-label="icon action"
+    tabindex="-1"
+  >
+    <mat-icon>{{ icon }}</mat-icon>
+  </button>
+
+  <button
+    *ngIf="icon && iconPosition() === 'suffix'"
+    matSuffix
+    mat-icon-button
+    type="button"
+    (click)="iconAction && iconAction()"
+    aria-label="icon action"
+    tabindex="-1"
+  >
+    <mat-icon>{{ icon }}</mat-icon>
+  </button>
+
+  <button
+    *ngIf="type() === 'password' && showPasswordToggle()"
+    matSuffix
+    mat-icon-button
+    type="button"
+    (click)="togglePasswordVisibility()"
+    [attr.aria-label]="hidePassword ? 'Mostrar contraseña' : 'Ocultar contraseña'"
+    tabindex="-1"
+  >
+    <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+  </button>
+
+  <mat-hint *ngIf="hint">{{ hint }}</mat-hint>
+  
+  <mat-error *ngIf="control && control.invalid && (control.dirty || control.touched) && errorKeys.length">
+    {{ getErrorMessage(errorKeys[0]) }}
+  </mat-error>
+</mat-form-field>
