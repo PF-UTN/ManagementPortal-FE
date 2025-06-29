@@ -1,0 +1,136 @@
+<form [formGroup]="supplierForm" class="container-fluid p-3" (keydown.enter)="onSubmit()">
+  <div class="mb-4">
+    <mat-form-field class="w-100" appearance="outline">
+      <mat-label>Razón Social</mat-label>
+      <input matInput formControlName="businessName" type="text" />
+      <button type="button" matSuffix mat-icon-button aria-label="Clear"
+        (click)="supplierForm.controls.businessName.reset()">
+        <mat-icon>close</mat-icon>
+      </button>
+      <mat-error
+        *ngIf="supplierForm.controls.businessName?.hasError('required') && supplierForm.controls.businessName?.touched">
+        Razón Social es requerido.
+      </mat-error>
+      <mat-error
+        *ngIf="supplierForm.controls.businessName?.hasError('maxlength') && supplierForm.controls.businessName?.touched">
+        El valor no puede superar los 50 caracteres.
+      </mat-error>
+      <mat-error
+        *ngIf="supplierForm.controls.businessName?.hasError('minlength') && supplierForm.controls.businessName?.touched">
+        Debe tener al menos 2 caracteres.
+      </mat-error>
+    </mat-form-field>
+  </div>
+  <div class="mb-4">
+    <mat-form-field class="w-100" appearance="outline">
+      <mat-label>Tipo de Documento</mat-label>
+      <mat-select formControlName="documentType">
+        <mat-option *ngFor="let type of documentTypes" [value]="type">
+          {{ type }}
+        </mat-option>
+      </mat-select>
+      <mat-error
+        *ngIf="supplierForm.controls.documentType?.hasError('required') && supplierForm.controls.documentType?.touched">
+        Tipo de Documento es requerido
+      </mat-error>
+    </mat-form-field>
+  </div>
+  <div class="mb-4">
+    <mat-form-field class="w-100" appearance="outline">
+      <mat-label>Número Documento</mat-label>
+      <input type="text" matInput formControlName="documentNumber" [attr.maxLength]="maxDocumentLength || null"
+        (keydown)="preventNonNumericInput($event)" />
+      <button type="button" matSuffix mat-icon-button aria-label="Clear"
+        (click)="supplierForm.controls.documentNumber.reset()">
+        <mat-icon>close</mat-icon>
+      </button>
+      <mat-error
+        *ngIf="supplierForm.controls.documentNumber?.hasError('required') && supplierForm.controls.documentNumber?.touched">
+        Número Documento es requerido
+      </mat-error>
+    </mat-form-field>
+  </div>
+  <div class="mb-4">
+    <mat-form-field class="w-100" appearance="outline">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" type="email" />
+      <button type="button" matSuffix mat-icon-button aria-label="Clear" 
+       (click)="supplierForm.controls.email.reset()">
+        <mat-icon>close</mat-icon>
+      </button>
+      <mat-error *ngIf="supplierForm.controls.email?.hasError('required') && supplierForm.controls.email?.touched">
+        Email es requerido
+      </mat-error>
+      <mat-error *ngIf="supplierForm.controls.email?.hasError('invalidEmail')">
+        Email no válido
+      </mat-error>
+    </mat-form-field>
+  </div>
+  <div class="mb-4">
+    <mat-form-field class="w-100" appearance="outline">
+      <mat-label>Teléfono</mat-label>
+      <input matInput formControlName="phone" type="text" />
+      <button type="button" matSuffix mat-icon-button aria-label="Clear" 
+       (click)="supplierForm.controls.phone.reset()">
+        <mat-icon>close</mat-icon>
+      </button>
+      <mat-error *ngIf="supplierForm.controls.phone?.hasError('required') && supplierForm.controls.phone?.touched">
+        Teléfono es requerido
+      </mat-error>
+      <mat-error *ngIf="supplierForm.controls.phone?.hasError('pattern')">
+        Teléfono no válido
+      </mat-error>
+    </mat-form-field>
+  </div>
+  <div class="row g-3 mb-4">
+    <div class="col-7">
+      <mat-form-field class="w-100" appearance="outline">
+        <mat-label>Calle</mat-label>
+        <input matInput formControlName="street" type="text" />
+        <button type="button" matSuffix mat-icon-button aria-label="Clear"
+          (click)="supplierForm.controls.street.reset()">
+          <mat-icon>close</mat-icon>
+        </button>
+        <mat-error *ngIf="supplierForm.controls.street?.hasError('required') && supplierForm.controls.street?.touched">
+          Calle es requerido
+        </mat-error>
+      </mat-form-field>
+    </div>
+    <div class="col-5">
+      <mat-form-field class="w-100" appearance="outline">
+        <mat-label>Número</mat-label>
+        <input matInput formControlName="streetNumber" type="number" />
+        <button type="button" matSuffix mat-icon-button aria-label="Clear"
+          (click)="supplierForm.controls.streetNumber.reset()">
+          <mat-icon>close</mat-icon>
+        </button>
+        <mat-error
+          *ngIf="supplierForm.controls.streetNumber?.hasError('required') && supplierForm.controls.streetNumber?.touched">
+          Número requerido
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </div>
+  <div class="mb-4">
+    <mat-form-field class="w-100" appearance="outline">
+      <mat-label>Ciudad</mat-label>
+      <input type="text" matInput formControlName="town" [matAutocomplete]="auto"
+        placeholder="Buscar ciudad o código postal" [attr.autocomplete]="'off'" />
+      <button type="button" matSuffix mat-icon-button aria-label="Clear"
+        (click)="supplierForm.controls.town.setValue(null)">
+        <mat-icon>close</mat-icon>
+      </button>
+      <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayTown.bind(this)">
+        <mat-option *ngFor="let town of filteredTowns$ | async" [value]="town">
+          {{ town.name }} ({{ town.zipCode }})
+        </mat-option>
+      </mat-autocomplete>
+      <mat-error *ngIf="supplierForm.controls.town?.hasError('required') && supplierForm.controls.town?.touched">
+        Ciudad es requerido
+      </mat-error>
+      <mat-error *ngIf="supplierForm.controls.town?.hasError('invalidTown') && supplierForm.controls.town?.touched">
+        Debe seleccionar una ciudad de la lista.
+      </mat-error>
+    </mat-form-field>
+  </div>
+</form>

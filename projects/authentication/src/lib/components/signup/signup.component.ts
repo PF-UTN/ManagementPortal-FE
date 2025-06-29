@@ -1,5 +1,5 @@
 import { AuthService, TownService, NavBarService } from '@Common';
-import { ButtonComponent, TitleComponent } from '@Common-UI';
+import { ButtonComponent, InputComponent, TitleComponent } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -55,6 +55,7 @@ const PHONE_REGEX = /^[+]?\d{1,4}?[-.\s]?(\d{1,3}[-.\s]?){1,4}$/;
     TitleComponent,
     MatSnackBarModule,
     MatAutocompleteModule,
+    InputComponent,
   ],
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.scss'],
@@ -67,7 +68,7 @@ export class SignupComponent implements OnInit {
     password: FormControl<string | null>;
     confirmPassword: FormControl<string | null>;
     phone: FormControl<string | null>;
-    birthDate: FormControl<Date | null>;
+    birthdate: FormControl<Date | null>;
     town: FormControl<Town | null>;
     street: FormControl<string | null>;
     streetNumber: FormControl<number | null>;
@@ -109,7 +110,15 @@ export class SignupComponent implements OnInit {
       debounceTime(300),
       startWith(''),
       map((value) => (typeof value === 'string' ? value : (value?.name ?? ''))),
-      switchMap((query) => this.townService.searchTowns(query)),
+      switchMap((query) =>
+        this.townService
+          .searchTowns({
+            searchText: query,
+            page: 1,
+            pageSize: 5,
+          })
+          .pipe(map((response) => response.results)),
+      ),
     );
   }
 
@@ -156,7 +165,7 @@ export class SignupComponent implements OnInit {
           Validators.pattern(PHONE_REGEX),
           Validators.maxLength(20),
         ]),
-        birthDate: new FormControl<Date | null>(null, Validators.required),
+        birthdate: new FormControl<Date | null>(null, Validators.required),
         town: new FormControl<Town | null>(null, Validators.required),
         street: new FormControl<string | null>(null, Validators.required),
         streetNumber: new FormControl<number | null>(null, Validators.required),
@@ -235,7 +244,7 @@ export class SignupComponent implements OnInit {
         email: this.signupForm.controls.email.value!,
         password: this.signupForm.controls.password.value!,
         phone: this.signupForm.controls.phone.value!,
-        birthDate: this.signupForm.controls.birthDate.value!,
+        birthdate: this.signupForm.controls.birthdate.value!,
         taxCategoryId: this.signupForm.controls.taxCategory.value!,
         documentType: this.signupForm.controls.documentType.value!,
         documentNumber: this.signupForm.controls.documentNumber.value!,

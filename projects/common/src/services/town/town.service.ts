@@ -4,18 +4,24 @@ import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 import { Town } from '../../models/town.model';
+import { TownListItem } from '../../models/town-item.model';
+import { TownParams } from '../../models/town-param.model';
+
+export interface SearchTownsResponse {
+  total: number;
+  results: TownListItem[];
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class TownService {
-  private apiUrl = environment.apiBaseUrl + '/';
+  private baseUrl = environment.apiBaseUrl + '/towns';
 
   constructor(private http: HttpClient) {}
 
-  searchTowns(searchText: string = ''): Observable<Town[]> {
-    return this.http.get<Town[]>(`${this.apiUrl}towns`, {
-      params: { search: searchText },
-    });
+  searchTowns(params: TownParams): Observable<SearchTownsResponse> {
+    const url = `${this.baseUrl}/search`;
+    return this.http.post<SearchTownsResponse>(url, params);
   }
 }
