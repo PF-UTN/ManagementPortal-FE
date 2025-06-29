@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ProductCategoryResponse } from 'projects/product/src/lib/models/product-category-response.model';
 import { Observable } from 'rxjs';
 
-import { ProductCategory } from '../models/product-category.model';
+import { ProductCategoryRequest } from '../models/product-category-request.model';
+import { ProductCategoryResponse } from '../models/product-category-response.model';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +15,7 @@ export class ProductCategoryService {
   constructor(private readonly http: HttpClient) {}
 
   postCreateOrUpdateProductCategoryAsync(
-    productCategory: ProductCategory,
+    productCategory: ProductCategoryRequest,
   ): Observable<ProductCategoryResponse> {
     return this.http.post<ProductCategoryResponse>(
       `${this.baseUrl}/`,

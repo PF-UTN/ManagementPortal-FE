@@ -23,8 +23,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { map, Observable, of, startWith } from 'rxjs';
 
-import { ProductCategory } from '../../models/product-category.model';
 import { ProductCategoryService } from '../../services/product-category.service';
+import { ProductCategoryRequest } from './../../models/product-category-request.model';
 import { ProductCategoryResponse } from './../../models/product-category-response.model';
 
 @Component({
@@ -49,9 +49,10 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
   implements OnInit
 {
   isLoading = signal(false);
-  isCreating = signal(false);
   isUpdating = signal(false);
-  isCategorySelected = signal(false);
+  isCreating = signal(false);
+
+  id: number | null = null;
 
   public readonly NEW_CATEGORY_OPTION: ProductCategoryResponse = {
     id: -1,
@@ -75,12 +76,20 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
   ) {
     super();
     effect(() => {
+      const isUpdate = this.isUpdating();
+      const isCreate = this.isCreating();
+
       const drawerConfig = {
         ...this.lateralDrawerService.config,
+        title: isUpdate
+          ? 'Editar categoría'
+          : isCreate
+            ? 'Nueva categoría'
+            : 'Gestionar categoría',
         footer: {
           firstButton: {
             click: () => this.onSubmit(),
-            text: 'Confirmar',
+            text: isUpdate ? 'Modificar' : isCreate ? 'Crear' : 'Confirmar',
             loading: this.isLoading(),
           },
           secondButton: {
@@ -120,7 +129,6 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
       this.categories = categories;
       this.productCategoryForm.controls.name.setValidators([
         Validators.required,
-        //this.categoryObjectValidator(this.categories),
       ]);
       this.productCategoryForm.controls.name.updateValueAndValidity();
 
@@ -136,14 +144,11 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
   }
 
   onCategorySelected(event: MatAutocompleteSelectedEvent) {
-    this.isCategorySelected.set(true);
     const selected = event.option.value;
 
     if (selected === this.NEW_CATEGORY_OPTION) {
-      // Crear nueva categoría: habilitar ambos
       this.isCreating.set(true);
       this.isUpdating.set(false);
-
       this.productCategoryForm.patchValue({
         name: '',
         description: '',
@@ -154,10 +159,9 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
       this.productCategoryForm.controls.name.reset();
     } else {
       const category = selected as ProductCategoryResponse;
-      // Categoría existente: deshabilitar nombre, habilitar descripción
       this.isCreating.set(false);
       this.isUpdating.set(true);
-
+      this.id = category.id;
       this.productCategoryForm.patchValue({
         name: category,
         description: category.description,
@@ -208,7 +212,8 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
 
     const nameControlValue = this.productCategoryForm.controls.name.value;
 
-    const productCategory: ProductCategory = {
+    const productCategory: ProductCategoryRequest = {
+      id: this.id ?? null,
       name:
         typeof nameControlValue === 'string'
           ? nameControlValue
@@ -222,7 +227,11 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
         next: () => {
           this.isLoading.set(false);
           this.snackBar.open(
-            'Categoría de producto creada/modificada correctamente',
+            this.isCreating()
+              ? 'Categoría de producto creada correctamente'
+              : this.isUpdating()
+                ? 'Categoría de producto modificada correctamente'
+                : 'Categoría de producto gestionada correctamente',
             'Cerrar',
             {
               duration: 3000,

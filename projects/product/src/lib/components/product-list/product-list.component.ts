@@ -202,7 +202,7 @@ export class ProductListComponent implements OnInit {
       CreateUpdateProductCategoryLateralDrawerComponent,
       {},
       {
-        title: 'Crear / Editar Categoría',
+        title: 'Gestionar Categoría',
         footer: {
           firstButton: {
             text: 'Confirmar',
