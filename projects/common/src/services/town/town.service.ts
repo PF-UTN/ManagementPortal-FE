@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../environments/environment';
-import { Town } from '../../models/town.model';
 import { TownListItem } from '../../models/town-item.model';
 import { TownParams } from '../../models/town-param.model';
 
