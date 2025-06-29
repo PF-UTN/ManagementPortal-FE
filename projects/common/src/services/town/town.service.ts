@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
+import { environment } from '../../environments/environment';
 import { TownListItem } from '../../models/town-item.model';
 import { TownParams } from '../../models/town-param.model';
 
@@ -14,7 +15,7 @@ export interface SearchTownsResponse {
   providedIn: 'root',
 })
 export class TownService {
-  private baseUrl = 'https://dev-management-portal-be.vercel.app/towns';
+  private baseUrl = environment.apiBaseUrl + '/towns';
 
   constructor(private http: HttpClient) {}
 

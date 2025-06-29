@@ -1,3 +1,5 @@
+import { environment } from '@Common';
+
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -14,8 +16,7 @@ export interface SearchRegistrationRequestResponse {
   providedIn: 'root',
 })
 export class RegistrationRequestService {
-  private readonly baseUrl =
-    'https://dev-management-portal-be.vercel.app/registration-request';
+  private readonly baseUrl = environment.apiBaseUrl + '/registration-request';
 
   constructor(private readonly http: HttpClient) {}
 
