@@ -132,7 +132,9 @@ export class ProductListComponent implements OnInit {
     },
     {
       label: 'Ver como cliente',
-      action: () => this.router.navigate(['/productos/cliente']),
+      action: () => {
+        void this.router.navigate(['/productos/cliente']);
+      },
     },
   ];
 

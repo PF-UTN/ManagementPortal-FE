@@ -129,6 +129,16 @@ export class ProductListClientComponent {
     });
   }
 
+  onAddToCartKeyDown() {
+    console.log('Add to cart key down event triggered');
+  }
+
+  onCardKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Enter' && this.selectedProductId !== undefined) {
+      this.openProductDrawer(this.selectedProductId);
+    }
+  }
+
   onInputChange(event: Event) {
     const value = (event.target as HTMLInputElement).value;
     this.onSearchChange(value);

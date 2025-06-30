@@ -51,7 +51,7 @@
               <p>Probá cambiando los filtros o el texto de búsqueda</p>
           </div>
           <div class="main-container__grid" *ngIf="products.length > 0">
-              <mat-card class="main-container__card mx-2" [ngClass]="{'main-container__card--disabled': item.stock === 0}" appearance="outlined"
+              <mat-card (keydown)="onCardKeyDown($event)" class="main-container__card mx-2" [ngClass]="{'main-container__card--disabled': item.stock === 0}" appearance="outlined"
                   *ngFor="let item of products" (click)="openProductDrawer(item.id)">
                   <img class="p-2" mat-card-image src="https://material.angular.dev/assets/img/examples/shiba2.jpg"
                       alt="Photo of a Shiba Inu">
@@ -78,7 +78,7 @@
                   </mat-card-content>
                   <mat-card-actions>
                       <ng-container *ngIf="item.stock > 0 && !stockError[item.id.toString()]; else noStock">
-                          <mp-button class="w-100" (click)="$event.stopPropagation()">Agregar al carrito</mp-button>
+                          <mp-button class="w-100" (keydown)="onAddToCartKeyDown()" (click)="$event.stopPropagation()">Agregar al carrito</mp-button>
                       </ng-container>
                       <ng-template #noStock>
                           <div class="text-secondary small mt-1 text-center w-100">Sin disponibilidad</div>

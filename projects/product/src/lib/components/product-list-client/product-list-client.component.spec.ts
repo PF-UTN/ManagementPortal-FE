@@ -10,6 +10,7 @@ import { of, throwError } from 'rxjs';
 
 import { ProductListClientComponent } from './product-list-client.component';
 import { ProductService } from '../../services/product.service';
+import { mockProductListItem } from '../../testing/mock-data.model';
 import {
   mockProductListItems,
   mockProductCategories,
@@ -24,8 +25,10 @@ describe('ProductListClientComponent', () => {
 
   beforeEach(async () => {
     productService = {
-      getCategories: jest.fn(),
-      postSearchProduct: jest.fn(),
+      getCategories: jest.fn().mockReturnValue(of(mockProductCategories)),
+      postSearchProduct: jest
+        .fn()
+        .mockReturnValue(of({ results: [], total: 0 })),
       createProduct: jest.fn(),
       getProductById: jest.fn(),
     } as unknown as jest.Mocked<ProductService>;
@@ -48,6 +51,119 @@ describe('ProductListClientComponent', () => {
 
     fixture = TestBed.createComponent(ProductListClientComponent);
     component = fixture.componentInstance;
+  });
+
+  it('should call fetchProducts on ngOnInit', () => {
+    // Arrange
+    const spy = jest.spyOn(component, 'fetchProducts');
+
+    // Act
+    component.ngOnInit();
+
+    // Assert
+    expect(spy).toHaveBeenCalled();
+  });
+
+  it('should emit on filterChange$ when onFilterChange is called', () => {
+    // Arrange
+    const spy = jest.spyOn(component['filterChange$'], 'next');
+
+    // Act
+    component.onFilterChange();
+
+    // Assert
+    expect(spy).toHaveBeenCalled();
+  });
+
+  describe('fetchProducts', () => {
+    it('should set filters.categoryName when selectedCategories is not empty', () => {
+      // Arrange
+      component.categories = [
+        { id: 1, name: 'Gatos', description: '' },
+        { id: 2, name: 'Perros', description: '' },
+      ];
+      component.selectedCategories = ['1'];
+      jest
+        .spyOn(productService, 'postSearchProduct')
+        .mockReturnValue(of({ results: [], total: 0 }));
+
+      // Act
+      component.fetchProducts();
+
+      // Assert
+      expect(productService.postSearchProduct).toHaveBeenCalledWith(
+        expect.objectContaining({
+          filters: { categoryName: ['Gatos'] },
+        }),
+      );
+    });
+
+    it('should not set filters.categoryName when selectedCategories is empty', () => {
+      // Arrange
+      component.categories = [
+        { id: 1, name: 'Gatos', description: '' },
+        { id: 2, name: 'Perros', description: '' },
+      ];
+      component.selectedCategories = [];
+      jest
+        .spyOn(productService, 'postSearchProduct')
+        .mockReturnValue(of({ results: [], total: 0 }));
+
+      // Act
+      component.fetchProducts();
+
+      // Assert
+      expect(productService.postSearchProduct).toHaveBeenCalledWith(
+        expect.objectContaining({
+          filters: {},
+        }),
+      );
+    });
+
+    it('should set filters.categoryName with multiple selected categories', () => {
+      // Arrange
+      component.categories = [
+        { id: 1, name: 'Gatos', description: '' },
+        { id: 2, name: 'Perros', description: '' },
+        { id: 3, name: 'Aves', description: '' },
+      ];
+      component.selectedCategories = ['1', '3'];
+      jest
+        .spyOn(productService, 'postSearchProduct')
+        .mockReturnValue(of({ results: [], total: 0 }));
+
+      // Act
+      component.fetchProducts();
+
+      // Assert
+      expect(productService.postSearchProduct).toHaveBeenCalledWith(
+        expect.objectContaining({
+          filters: { categoryName: ['Gatos', 'Aves'] },
+        }),
+      );
+    });
+    it('should set filters.categoryName with multiple selected categories', () => {
+      // Arrange
+      component.categories = [
+        { id: 1, name: 'Gatos', description: '' },
+        { id: 2, name: 'Perros', description: '' },
+        { id: 3, name: 'Aves', description: '' },
+      ];
+      component.selectedCategories = ['1', '3'];
+      jest
+        .spyOn(productService, 'postSearchProduct')
+        .mockReturnValue(of({ results: [], total: 0 }));
+
+      // Act
+      component.fetchProducts();
+
+      // Assert
+      expect(productService.postSearchProduct).toHaveBeenCalledWith(
+        expect.objectContaining({
+          filters: { categoryName: ['Gatos', 'Aves'] },
+        }),
+      );
+    });
   });
 
   describe('Initialization', () => {
@@ -283,6 +399,140 @@ describe('ProductListClientComponent', () => {
           }),
         }),
       );
+    });
+
+    it('should close the drawer when footer firstButton click is called', () => {
+      // Arrange
+      const closeSpy = jest.spyOn(lateralDrawerService, 'close');
+
+      // Act
+      component.openProductDrawer(1);
+      const config = (lateralDrawerService.open as jest.Mock).mock.calls[0][2];
+      config.footer.firstButton.click();
+
+      // Assert
+      expect(closeSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('Quantity and Stock', () => {
+    it('should initialize quantity to 1 and increment', () => {
+      // Arrange
+      component.products = [{ ...mockProductListItem, id: 1, stock: 5 }];
+      component.quantities = {};
+
+      // Act
+      component.increment('1');
+
+      // Assert
+      expect(component.quantities['1']).toBe(2);
+      expect(component.stockError['1']).toBe(false);
+    });
+
+    it('should set stockError to true if increment exceeds stock', () => {
+      // Arrange
+      component.products = [{ ...mockProductListItem, id: 1, stock: 1 }];
+      component.quantities = { '1': 1 };
+
+      // Act
+      component.increment('1');
+
+      // Assert
+      expect(component.stockError['1']).toBe(true);
+    });
+
+    it('should set stockError to false if increment does not exceed stock', () => {
+      // Arrange
+      component.products = [{ ...mockProductListItem, id: 1, stock: 3 }];
+      component.quantities = { '1': 2 };
+
+      // Act
+      component.increment('1');
+
+      // Assert
+      expect(component.stockError['1']).toBe(false);
+    });
+
+    it('should initialize quantity to 1 and not decrement below 1', () => {
+      // Arrange
+      component.products = [{ ...mockProductListItem, id: 1, stock: 5 }];
+      component.quantities = {};
+
+      // Act
+      component.decrement('1');
+
+      // Assert
+      expect(component.quantities['1']).toBe(1);
+    });
+
+    it('should decrement quantity if greater than 1', () => {
+      // Arrange
+      component.products = [{ ...mockProductListItem, id: 1, stock: 5 }];
+      component.quantities = { '1': 3 };
+
+      // Act
+      component.decrement('1');
+
+      // Assert
+      expect(component.quantities['1']).toBe(2);
+    });
+
+    it('should set stockError correctly after decrement', () => {
+      // Arrange
+      component.products = [{ ...mockProductListItem, id: 1, stock: 1 }];
+      component.quantities = { '1': 3 };
+
+      // Act
+      component.decrement('1');
+
+      // Assert
+      expect(component.stockError['1']).toBe(true);
+
+      // Act again
+      component.decrement('1');
+
+      // Assert
+      expect(component.stockError['1']).toBe(false);
+    });
+  });
+  describe('Keyboard events', () => {
+    it('should call openProductDrawer with selectedProductId on Enter key', () => {
+      // Arrange
+      component.selectedProductId = 123;
+      const spy = jest.spyOn(component, 'openProductDrawer');
+      const event = new KeyboardEvent('keydown', { key: 'Enter' });
+
+      // Act
+      component.onCardKeyDown(event);
+
+      // Assert
+      expect(spy).toHaveBeenCalledWith(123);
+    });
+
+    it('should not call openProductDrawer if selectedProductId is undefined', () => {
+      // Arrange
+      component.selectedProductId = undefined;
+      const spy = jest.spyOn(component, 'openProductDrawer');
+      const event = new KeyboardEvent('keydown', { key: 'Enter' });
+
+      // Act
+      component.onCardKeyDown(event);
+
+      // Assert
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('should not call openProductDrawer on other keys', () => {
+      // Arrange
+      component.selectedProductId = 123;
+      const spy = jest.spyOn(component, 'openProductDrawer');
+      const event = new KeyboardEvent('keydown', { key: 'Escape' });
+
+      // Act
+      component.onCardKeyDown(event);
+
+      // Assert
+      expect(spy).not.toHaveBeenCalled();
     });
   });
 });
