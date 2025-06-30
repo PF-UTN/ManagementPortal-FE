@@ -117,7 +117,7 @@ export class ProductListComponent implements OnInit {
   selectedSuppliers: string[] = [];
   dropdownItems: DropdownItem[] = [
     {
-      label: 'Crear/Editar producto',
+      label: 'Crear nuevo producto',
       action: () => {
         this.router.navigate(['/productos/crear']);
       },
@@ -129,7 +129,11 @@ export class ProductListComponent implements OnInit {
     {
       label: 'Crear/Editar proveedor',
       action: () => this.onCreateUpdateSupplierDrawer(),
-    }, //Accion Provisorio hasta que se implemente el drawer
+    },
+    {
+      label: 'Ver como cliente',
+      action: () => this.router.navigate(['/productos/cliente']),
+    },
   ];
 
   doSearchSubject$ = new Subject<void>();
