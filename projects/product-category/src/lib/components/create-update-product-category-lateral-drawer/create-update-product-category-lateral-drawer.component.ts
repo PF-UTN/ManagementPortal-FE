@@ -1,4 +1,8 @@
-import { LateralDrawerContainer, LateralDrawerService } from '@Common-UI';
+import {
+  LateralDrawerContainer,
+  LateralDrawerService,
+  LoadingComponent,
+} from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
 import { Component, effect, OnInit, signal } from '@angular/core';
@@ -40,6 +44,7 @@ import { ProductCategoryResponse } from './../../models/product-category-respons
     MatIconButton,
     MatButtonModule,
     MatAutocompleteModule,
+    LoadingComponent,
   ],
   templateUrl: './create-update-product-category-lateral-drawer.component.html',
   styleUrl: './create-update-product-category-lateral-drawer.component.scss',
@@ -48,6 +53,7 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
   extends LateralDrawerContainer
   implements OnInit
 {
+  isLoadingCategories = signal(false);
   isLoading = signal(false);
   isUpdating = signal(false);
   isCreating = signal(false);
@@ -125,10 +131,12 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
   }
 
   private initCategories() {
+    this.isLoadingCategories.set(true);
     this.productCategoryService.getCategoriesAsync().subscribe((categories) => {
       this.categories = categories;
       this.productCategoryForm.controls.name.setValidators([
         Validators.required,
+        this.categoryObjectValidator(this.categories),
       ]);
       this.productCategoryForm.controls.name.updateValueAndValidity();
 
@@ -140,6 +148,7 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
             name ? this.filterCategories(name) : this.categories.slice(),
           ),
         );
+      this.isLoadingCategories.set(false);
     });
   }
 
@@ -193,9 +202,18 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
         return { required: true };
       }
 
-      if (typeof value === 'string') return null;
+      if (this.isCreating()) {
+        return null;
+      }
 
-      const exists = categories.some((cat) => cat.id === value.id);
+      if (typeof value === 'string') {
+        const exists = categories.some(
+          (cat) => cat.name.toLowerCase() === value.toLowerCase(),
+        );
+        return exists ? null : { invalidCategory: true };
+      }
+
+      const exists = categories.some((cat) => cat.id === value?.id);
       return exists ? null : { invalidCategory: true };
     };
   }
