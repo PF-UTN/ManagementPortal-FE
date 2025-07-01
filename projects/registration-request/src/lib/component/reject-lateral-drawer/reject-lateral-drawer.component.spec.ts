@@ -30,6 +30,12 @@ describe('RejectLateralDrawerComponent', () => {
       phone: '123456789',
       documentType: 'DNI',
       documentNumber: '12345678',
+      taxCategory: 'Responsible Inscripto',
+      address: {
+        streetAddress: '123 Main St',
+        town: 'Springfield',
+        zipCode: '12345',
+      },
     },
     status: 'Pending',
     requestDate: '2025-03-28T00:00:00Z',
