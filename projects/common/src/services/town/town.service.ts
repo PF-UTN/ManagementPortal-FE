@@ -2,19 +2,25 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { Town } from '../../models/town.model';
+import { environment } from '../../environments/environment';
+import { TownListItem } from '../../models/town-item.model';
+import { TownParams } from '../../models/town-param.model';
+
+export interface SearchTownsResponse {
+  total: number;
+  results: TownListItem[];
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class TownService {
-  private apiUrl = 'https://dev-management-portal-be.vercel.app/';
+  private baseUrl = environment.apiBaseUrl + '/towns';
 
   constructor(private http: HttpClient) {}
 
-  searchTowns(searchText: string = ''): Observable<Town[]> {
-    return this.http.get<Town[]>(`${this.apiUrl}towns`, {
-      params: { search: searchText },
-    });
+  searchTowns(params: TownParams): Observable<SearchTownsResponse> {
+    const url = `${this.baseUrl}/search`;
+    return this.http.post<SearchTownsResponse>(url, params);
   }
 }

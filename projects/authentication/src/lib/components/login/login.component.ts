@@ -1,5 +1,10 @@
 import { AuthService, NavBarService } from '@Common';
-import { ButtonComponent, SubtitleComponent, TitleComponent } from '@Common-UI';
+import {
+  ButtonComponent,
+  InputComponent,
+  SubtitleComponent,
+  TitleComponent,
+} from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -11,14 +16,6 @@ import {
   ReactiveFormsModule,
   FormControl,
 } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { Router, RouterModule } from '@angular/router';
 
 import { User } from '../../../../../common/src/models/user.model';
@@ -31,18 +28,11 @@ import { customEmailValidator } from '../../validators/email.validator';
     CommonModule,
     ReactiveFormsModule,
     RouterModule,
-    MatNativeDateModule,
-    MatDatepickerModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatIconModule,
     FormsModule,
-    MatSelectModule,
-    MatSlideToggleModule,
     ButtonComponent,
     TitleComponent,
     SubtitleComponent,
+    InputComponent,
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',

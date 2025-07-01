@@ -15,6 +15,7 @@ import { mockDeep } from 'jest-mock-extended';
 import { of, throwError } from 'rxjs';
 
 import { SignupComponent } from './signup.component';
+
 describe('SignupComponent', () => {
   let component: SignupComponent;
   let fixture: ComponentFixture<SignupComponent>;
@@ -244,7 +245,7 @@ describe('SignupComponent', () => {
     });
     describe('Birthdate field validation', () => {
       it('should set birthdate error if birthdate control is empty', () => {
-        const birthdateControl = component.signupForm.controls.birthDate;
+        const birthdateControl = component.signupForm.controls.birthdate;
         // Arrange
         // Act & Assert
         expect(birthdateControl.hasError('required')).toBeTruthy();
@@ -293,36 +294,46 @@ describe('SignupComponent', () => {
       });
 
       it('should call townService.searchTowns with the name if value is a Town object', fakeAsync(() => {
-        // arrange
+        // Arrange
         const townServiceSpy = jest
           .spyOn(component['townService'], 'searchTowns')
-          .mockReturnValue(of([]));
+          .mockReturnValue(of({ total: 0, results: [] }));
+
         component.ngOnInit();
 
-        // act
+        // Act
         component.filteredTowns$.subscribe();
         component.signupForm.controls.town.setValue(mockTown);
         tick(350);
 
-        // assert
+        // Assert
         const calls = townServiceSpy.mock.calls.map((call) => call[0]);
-        expect(calls).toContain(mockTown.name);
+        expect(calls).toContainEqual({
+          searchText: mockTown.name,
+          page: 1,
+          pageSize: 5,
+        });
       }));
 
       it('should call townService.searchTowns with empty string if value is null', fakeAsync(() => {
-        // arrange
+        // Arrange
         const townServiceSpy = jest
           .spyOn(component['townService'], 'searchTowns')
-          .mockReturnValue(of([]));
+          .mockReturnValue(of({ total: 0, results: [] }));
+
         component.ngOnInit();
 
-        // act
+        // Act
         component.filteredTowns$.subscribe();
         component.signupForm.controls.town.setValue(null);
         tick(350);
 
-        // assert
-        expect(townServiceSpy).toHaveBeenCalledWith('');
+        // Assert
+        expect(townServiceSpy).toHaveBeenCalledWith({
+          searchText: '',
+          page: 1,
+          pageSize: 5,
+        });
       }));
     });
   });
@@ -535,7 +546,7 @@ describe('SignupComponent', () => {
         clientData.password,
       );
       component.signupForm.controls.phone.setValue(clientData.phone);
-      component.signupForm.controls.birthDate.setValue(clientData.birthDate);
+      component.signupForm.controls.birthdate.setValue(clientData.birthdate);
       component.signupForm.controls.town.setValue(mockTown);
       component.signupForm.controls.street.setValue(clientData.address.street);
       component.signupForm.controls.streetNumber.setValue(
@@ -573,7 +584,7 @@ describe('SignupComponent', () => {
         password: clientData.password,
         confirmPassword: clientData.password,
         phone: clientData.phone,
-        birthDate: clientData.birthDate,
+        birthdate: clientData.birthdate,
         town: mockTown,
         street: clientData.address.street,
         streetNumber: clientData.address.streetNumber,
@@ -609,7 +620,7 @@ describe('SignupComponent', () => {
         password: clientData.password,
         confirmPassword: clientData.password,
         phone: clientData.phone,
-        birthDate: clientData.birthDate,
+        birthdate: clientData.birthdate,
         town: mockTown,
         street: clientData.address.street,
         streetNumber: clientData.address.streetNumber,
@@ -656,7 +667,7 @@ describe('SignupComponent', () => {
         password: mockClient.password,
         confirmPassword: mockClient.password,
         phone: mockClient.phone,
-        birthDate: mockClient.birthDate,
+        birthdate: mockClient.birthdate,
         town: mockTown,
         street: mockClient.address.street,
         streetNumber: mockClient.address.streetNumber,
@@ -776,7 +787,7 @@ describe('SignupComponent', () => {
         password: clientData.password,
         confirmPassword: clientData.password,
         phone: clientData.phone,
-        birthDate: clientData.birthDate,
+        birthdate: clientData.birthdate,
         town: mockTown,
         street: clientData.address.street,
         streetNumber: clientData.address.streetNumber,

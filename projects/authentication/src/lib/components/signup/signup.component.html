@@ -7,105 +7,52 @@
   </div>
   <form [formGroup]="signupForm" class="form" (keydown.enter)="onSubmit()">
     <div class="form-group">
-      <mat-form-field class="w-100" appearance="outline">
-        <mat-label>Nombre</mat-label>
-        <input matInput type="text" formControlName="firstName" />
-        <button type="button" matSuffix mat-icon-button aria-label="Clear"
-          (click)="signupForm.get('firstName')?.reset()">
-          <mat-icon>close</mat-icon>
-        </button>
-        <mat-error *ngIf="
-                signupForm.get('firstName')?.hasError('required') &&
-                signupForm.get('firstName')?.touched
-              ">Nombre es requerido</mat-error>
-        <mat-error *ngIf="signupForm.get('firstName')?.hasError('maxlength') && signupForm.get('firstName')?.touched">
-          El valor no puede superar los 50 caracteres.
-        </mat-error>
-        <mat-error *ngIf="signupForm.get('firstName')?.hasError('minlength') && signupForm.get('firstName')?.touched">
-          Debe tener al menos 2 caracteres.
-        </mat-error>
-      </mat-form-field>
+      <mp-input
+        label="Nombre"
+        formControlName="firstName"
+        [icon]="'close'"
+        type="text">
+      </mp-input>
     </div>
     <div class="form-group">
-      <mat-form-field class="w-100" appearance="outline">
-        <mat-label>Apellido</mat-label>
-        <input matInput type="text" formControlName="lastName" />
-        <button type="button" matSuffix mat-icon-button aria-label="Clear"
-          (click)="signupForm.get('lastName')?.reset()">
-          <mat-icon>close</mat-icon>
-        </button>
-        <mat-error *ngIf="
-                signupForm.get('lastName')?.hasError('required') &&
-                signupForm.get('lastName')?.touched
-              ">Apellido es requerido</mat-error>
-        <mat-error *ngIf="signupForm.get('lastName')?.hasError('maxlength') && signupForm.get('lastName')?.touched">
-          El valor no puede superar los 50 caracteres.
-        </mat-error>
-        <mat-error *ngIf="signupForm.get('lastName')?.hasError('minlength') && signupForm.get('lastName')?.touched">
-          Debe tener al menos 2 caracteres.
-        </mat-error>
-      </mat-form-field>
+      <mp-input
+        label="Apellido"
+        formControlName="lastName"
+        [icon]="'close'"
+        type="text"
+      ></mp-input>
     </div>
     <div class="form-group">
-      <mat-form-field class="w-100" appearance="outline">
-        <mat-label>Email</mat-label>
-        <input type="email" matInput formControlName="email" placeholder="Ej. pat@example.com" />
-        <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('email')?.reset()">
-          <mat-icon>close</mat-icon>
-        </button>
-        <mat-error *ngIf="
-                signupForm.get('email')?.hasError('required') &&
-                signupForm.get('email')?.touched
-              ">Email es requerido</mat-error>
-        <mat-error *ngIf="signupForm.get('email')?.hasError('invalidEmail')">Email no válido</mat-error>
-      </mat-form-field>
+      <mp-input
+        label="Email"
+        formControlName="email"
+        [icon]="'close'"
+        [iconAction]="signupForm.controls.email.reset"
+        type="email"
+        placeholder="Ej. pat@example.com"
+      ></mp-input>
     </div>
     <div class="form-group">
-      <mat-form-field class="w-100" appearance="outline">
-        <mat-label>Contraseña</mat-label>
-        <input matInput [type]="hidePassword() ? 'password' : 'text'" formControlName="password" />
-        <button type="button" mat-icon-button matSuffix (click)="toggleVisibility(hidePassword)" [attr.aria-label]="
-                hidePassword() ? 'Mostrar contraseña' : 'Ocultar contraseña'
-              " [attr.aria-pressed]="!hidePassword()">
-          <mat-icon>{{
-            hidePassword() ? "visibility_off" : "visibility"
-            }}</mat-icon>
-        </button>
-        <mat-error *ngIf="
-                signupForm.get('password')?.hasError('required') &&
-                signupForm.get('password')?.touched
-              ">Contraseña es requerida</mat-error>
-        <mat-error *ngIf="signupForm.get('password')?.hasError('pattern')">Debe contener al menos
-          8 caracteres, una letra mayúscula, una
-          minúscula, un número y un caracter especial</mat-error>
-        <mat-error *ngIf="signupForm.get('password')?.hasError('maxlength') && signupForm.get('password')?.touched &&
-          !signupForm.get('password')?.hasError('pattern')">
-          No puede tener más de 255 caracteres.
-        </mat-error>
-      </mat-form-field>
+      <mp-input
+        label="Contraseña"
+        formControlName="password"
+        [errorMessages]="{
+          pattern: 'Debe contener al menos 8 caracteres, una letra mayúscula, una minúscula, un número y un caracter especial',
+        }"
+        type="password"
+        [showPasswordToggle]="true"
+      ></mp-input>
     </div>
     <div class="form-group">
-      <mat-form-field class="w-100" appearance="outline">
-        <mat-label>Confirmar Contraseña</mat-label>
-        <input matInput [type]="hideConfirmPassword() ? 'password' : 'text'" formControlName="confirmPassword" />
-        <button type="button" mat-icon-button matSuffix (click)="toggleVisibility(hideConfirmPassword)"
-          [attr.aria-label]="
-                hideConfirmPassword() ? 'Mostrar contraseña' : 'Ocultar contraseña'
-              " [attr.aria-pressed]="!hideConfirmPassword()">
-          <mat-icon>{{
-            hideConfirmPassword() ? "visibility_off" : "visibility"
-            }}</mat-icon>
-        </button>
-        <mat-error *ngIf="
-                signupForm.get('confirmPassword')?.hasError('required') &&
-                signupForm.get('confirmPassword')?.touched
-              ">
-          Confirmar Contraseña es requerida
-        </mat-error>
-        <mat-error *ngIf="signupForm.get('confirmPassword')?.hasError('mismatch')">
-          Las contraseñas no coinciden
-        </mat-error>
-      </mat-form-field>
+      <mp-input
+        label="Confirmar Contraseña"
+        formControlName="confirmPassword"
+        [errorMessages]="{
+          mismatch: 'Las contraseñas no coinciden'
+        }"
+        type="password"
+        [showPasswordToggle]="true"
+      ></mp-input>
     </div>
     <div class="form-group">
       <mat-form-field class="w-100" appearance="outline">
@@ -116,7 +63,7 @@
           </mat-option>
         </mat-select>
         <button type="button" matSuffix mat-icon-button aria-label="Clear"
-          (click)="signupForm.get('documentType')?.reset()">
+          (click)="signupForm.controls.documentType.reset()">
           <mat-icon>close</mat-icon>
         </button>
         <mat-error *ngIf="
@@ -126,98 +73,72 @@
       </mat-form-field>
     </div>
     <div class="form-group">
-      <mat-form-field class="w-100" appearance="outline">
-        <mat-label>Número Documento</mat-label>
-        <input type="text" matInput formControlName="documentNumber" [attr.maxLength]="maxDocumentLength || null"
-          (keydown)="preventNonNumericInput($event)" />
-        <button type="button" matSuffix mat-icon-button aria-label="Clear"
-          (click)="signupForm.get('documentNumber')?.reset()">
-          <mat-icon>close</mat-icon>
-        </button>
-        <mat-error *ngIf="
-                signupForm.get('documentNumber')?.hasError('required') &&
-                signupForm.get('documentNumber')?.touched
-              ">Número Documento es requerido</mat-error>
-      </mat-form-field>
+      <mp-input
+        label="Número Documento"
+        formControlName="documentNumber"
+        [icon]="'close'"
+        type="text"
+        (keydown)="preventNonNumericInput($event)"
+      ></mp-input>
     </div>
     <div class="form-group">
       <mat-form-field class="w-100" appearance="outline">
         <mat-label>Fecha de Nacimiento</mat-label>
-        <input matInput [matDatepicker]="picker" formControlName="birthDate" readonly />
+        <input matInput [matDatepicker]="picker" formControlName="birthdate" readonly />
         <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
         <mat-datepicker #picker></mat-datepicker>
         <button type="button" matSuffix mat-icon-button aria-label="Clear"
-          (click)="signupForm.get('birthDate')?.reset()">
+          (click)="signupForm.controls.birthdate.reset()">
           <mat-icon>close</mat-icon>
         </button>
-        <mat-error *ngIf="
-                signupForm.get('birthDate')?.hasError('required') &&
-                signupForm.get('birthDate')?.touched
-              ">Fecha de Nacimiento es requerida</mat-error>
+        <mat-error *ngIf="signupForm.controls.birthdate.hasError('required') && signupForm.controls.birthdate.touched">Fecha de Nacimiento es requerida</mat-error>
       </mat-form-field>
     </div>
     <div class="form-group">
-      <mat-form-field class="w-100" appearance="outline">
-        <mat-label>Ciudad</mat-label>
-        <input type="text" matInput formControlName="town" [matAutocomplete]="auto"
-          placeholder="Buscar ciudad o código postal" [attr.autocomplete]="'off'"/>
-        <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('town')?.setValue(null)">
-          <mat-icon>close</mat-icon>
-        </button>
-        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayTown.bind(this)">
-          <mat-option *ngFor="let town of filteredTowns$ | async" [value]="town">
-            {{ town.name }} ({{ town.zipCode }})
-          </mat-option>
-        </mat-autocomplete>
-        <mat-error *ngIf="signupForm.get('town')?.hasError('required') && signupForm.get('town')?.touched">
-          Ciudad es requerido
-        </mat-error>
-        <mat-error *ngIf="signupForm.get('town')?.hasError('invalidTown') && signupForm.get('town')?.touched">
-          Debe seleccionar una ciudad de la lista.
-        </mat-error>
-      </mat-form-field>
+      <mp-input
+        label="Ciudad"
+        formControlName="town"
+        [icon]="'close'"
+        [errorMessages]="{
+          invalidTown: 'Debe seleccionar una ciudad de la lista.'
+        }"
+        type="text"
+        placeholder="Buscar ciudad o código postal"
+        [matAutocomplete]="auto"
+      ></mp-input>
+      <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayTown.bind(this)">
+        <mat-option *ngFor="let town of filteredTowns$ | async" [value]="town">
+          {{ town.name }} ({{ town.zipCode }})
+        </mat-option>
+      </mat-autocomplete>
     </div>
     <div class="form-group">
-      <mat-form-field class="w-100" appearance="outline">
-        <mat-label>Calle</mat-label>
-        <input type="text" matInput formControlName="street" />
-        <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('street')?.reset()">
-          <mat-icon>close</mat-icon>
-        </button>
-        <mat-error *ngIf="
-                signupForm.get('street')?.hasError('required') &&
-                signupForm.get('street')?.touched
-              ">Calle es requerido</mat-error>
-      </mat-form-field>
+      <mp-input
+        label="Calle"
+        formControlName="street"
+        [icon]="'close'"
+        type="text"
+      ></mp-input>
     </div>
     <div class="form-group">
-      <mat-form-field class="w-100" appearance="outline">
-        <mat-label>Número de Calle</mat-label>
-        <input type="number" matInput formControlName="streetNumber" />
-        <button type="button" matSuffix mat-icon-button aria-label="Clear"
-          (click)="signupForm.get('streetNumber')?.reset()">
-          <mat-icon>close</mat-icon>
-        </button>
-        <mat-error *ngIf="
-                signupForm.get('streetNumber')?.hasError('required') &&
-                signupForm.get('streetNumber')?.touched
-              ">Número de Calle es requerido</mat-error>
-      </mat-form-field>
+      <mp-input
+        label="Número de Calle"
+        formControlName="streetNumber"
+        [icon]="'close'"
+        type="number"
+      ></mp-input>
     </div>
     <div class="form-group">
-      <mat-form-field class="w-100" appearance="outline" (keydown)="preventNonNumericInput($event)">
-        <mat-label>Teléfono</mat-label>
+      <mp-input
+        label="Teléfono"
+        formControlName="phone"
+        [icon]="'close'"
+        type="text"
+        [placeholder]="'555-555-1234'"
+        (keydown)="preventNonNumericInput($event)"
+      >
         <span matTextPrefix class="phone-prefix">+54</span>
-        <input type="text" matInput formControlName="phone" placeholder="555-555-1234" />
-        <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('phone')?.reset()">
-          <mat-icon>close</mat-icon>
-        </button>
-        <mat-error *ngIf="
-                signupForm.get('phone')?.hasError('required') &&
-                signupForm.get('phone')?.touched
-              ">Teléfono es requerido</mat-error>
-        <mat-error *ngIf="signupForm.get('phone')?.hasError('pattern')">Teléfono no válido</mat-error>
-      </mat-form-field>
+      </mp-input>
     </div>
     <div class="form-group">
       <mat-form-field class="w-100" appearance="outline">
@@ -240,21 +161,15 @@
       </mat-form-field>
     </div>
     <div class="form-group">
-      <mat-form-field class="w-100" appearance="outline">
-        <mat-label>Nombre de Compañia</mat-label>
-        <input type="text" matInput formControlName="companyName" />
-        <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('company')?.reset()">
-          <mat-icon>close</mat-icon>
-        </button>
-        <mat-error *ngIf="
-                signupForm.get('companyName')?.hasError('required') &&
-                signupForm.get('companyName')?.touched
-              ">Nombre de Compañia es requerido</mat-error>
-      </mat-form-field>
+      <mp-input
+        label="Nombre de Compañia"
+        formControlName="companyName"
+        [icon]="'close'"
+        type="text"
+      ></mp-input>
     </div>
-    <p *ngIf="errorMessage" class="error-message d-flex justify-content-center align-items-center">{{ errorMessage }}
-    </p>
-    <div class=" w-100 form-group  button-container">
+    <p *ngIf="errorMessage" class="error-message d-flex justify-content-center align-items-center">{{ errorMessage }}</p>
+    <div class="w-100 form-group button-container">
       <mp-button type="primary" [loading]="isSubmitting()" [disabled]="signupForm.invalid"
         (onClick)="onSubmit()">Registrar</mp-button>
     </div>
