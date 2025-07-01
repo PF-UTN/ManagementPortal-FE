@@ -249,7 +249,7 @@ export class ProductListComponent implements OnInit {
   }
 
   onDeleteDrawer(request: ProductListItem): void {
-    console.log('Eliminar', request); //Provisorio hasta que se implemente el drawer
+    console.log('Eliminar', request); //Provisorio hasta que se implemente el lateral drawer
   }
 
   onPauseDrawer(request: ProductListItem): void {
