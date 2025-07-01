@@ -15,6 +15,7 @@ import { mockDeep } from 'jest-mock-extended';
 import { of, throwError } from 'rxjs';
 
 import { SignupComponent } from './signup.component';
+
 describe('SignupComponent', () => {
   let component: SignupComponent;
   let fixture: ComponentFixture<SignupComponent>;
