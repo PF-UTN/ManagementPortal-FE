@@ -230,8 +230,16 @@ export class SignupComponent implements OnInit {
     signal.set(!signal());
   }
 
-  displayTown(town: Town | null): string {
-    return town ? `${town.name} (${town.zipCode})` : '';
+  displayTown(town: Town | string | null): string {
+    if (typeof town === 'string') {
+      return town;
+    }
+
+    if (town) {
+      return `${town.name} (${town.zipCode})`;
+    }
+
+    return '';
   }
 
   onSubmit(): void {
