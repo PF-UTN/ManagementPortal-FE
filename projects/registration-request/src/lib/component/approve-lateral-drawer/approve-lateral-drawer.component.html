@@ -15,4 +15,16 @@
     <strong>Documento</strong>
     <p>{{ data.user.documentType }} - {{ data.user.documentNumber }}</p>
   </div>
+  <div class="drawer-container__row">
+    <strong>Categoría de IVA</strong>
+    <p>{{ data.user.taxCategory }}</p>
+  </div>
+  <div class="drawer-container__row">
+    <strong>Ciudad</strong>
+    <p>{{ data.user.address.town }} ({{ data.user.address.zipCode }})</p>
+  </div>
+  <div class="drawer-container__row">
+    <strong>Dirección</strong>
+    <p>{{ data.user.address.streetAddress }}</p>
+  </div>
 </div>
