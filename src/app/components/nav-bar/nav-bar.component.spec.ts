@@ -54,6 +54,12 @@ describe('NavBarComponent', () => {
       //Assert
       expect(component.items).toEqual([
         {
+          title: 'Inicio',
+          icon: 'home',
+          route: 'inicio',
+          shouldRender: true,
+        },
+        {
           title: 'Solicitudes de Registro',
           icon: 'app_registration',
           route: 'solicitudes-registro',
@@ -84,6 +90,12 @@ describe('NavBarComponent', () => {
 
       //Assert
       expect(component.items).toEqual([
+        {
+          title: 'Inicio',
+          icon: 'home',
+          route: 'inicio',
+          shouldRender: true,
+        },
         {
           title: 'Solicitudes de Registro',
           icon: 'app_registration',
@@ -116,6 +128,12 @@ describe('NavBarComponent', () => {
 
     //Assert
     expect(component.items).toEqual([
+      {
+        title: 'Inicio',
+        icon: 'home',
+        route: 'inicio',
+        shouldRender: true,
+      },
       {
         title: 'Solicitudes de Registro',
         icon: 'app_registration',

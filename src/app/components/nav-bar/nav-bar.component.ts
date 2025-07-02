@@ -3,21 +3,22 @@ import { ModalComponent, ModalConfig } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
 
 import { NavBarItem } from '../../models/nav-bar-item.model';
-
 @Component({
   selector: 'mp-nav-bar',
   templateUrl: './nav-bar.component.html',
   styleUrls: ['./nav-bar.component.scss'],
   standalone: true,
-  imports: [CommonModule, MatIconModule, RouterModule],
+  imports: [CommonModule, MatIconModule, RouterModule, MatButtonModule],
 })
 export class NavBarComponent implements OnInit {
   items: NavBarItem[];
+  isOpen = true;
 
   constructor(
     private authService: AuthService,
@@ -26,6 +27,12 @@ export class NavBarComponent implements OnInit {
 
   ngOnInit(): void {
     this.items = [
+      {
+        title: 'Inicio',
+        icon: 'home',
+        route: 'inicio',
+        shouldRender: true,
+      },
       {
         title: 'Solicitudes de Registro',
         icon: 'app_registration',
@@ -59,5 +66,9 @@ export class NavBarComponent implements OnInit {
         this.authService.logOut();
       }
     });
+  }
+
+  toggleNavBar() {
+    this.isOpen = !this.isOpen;
   }
 }
