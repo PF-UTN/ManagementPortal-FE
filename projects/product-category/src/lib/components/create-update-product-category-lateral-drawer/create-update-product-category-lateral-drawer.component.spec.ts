@@ -120,7 +120,7 @@ describe('CreateUpdateProductCategoryLateralDrawerComponent', () => {
       } as unknown as MatAutocompleteSelectedEvent;
       component.isCreating.set(false);
       component.isUpdating.set(true);
-      component.id = mockProductCategory.id;
+      component.idCategory = mockProductCategory.id;
       jest
         .spyOn(
           mockProductCategoryService,
@@ -219,7 +219,7 @@ describe('CreateUpdateProductCategoryLateralDrawerComponent', () => {
       component.onCategorySelected(event);
 
       // Assert
-      expect(component.id).toEqual(mockProductCategory.id);
+      expect(component.idCategory).toEqual(mockProductCategory.id);
       expect(component.productCategoryForm.controls.name.value).toEqual(
         mockProductCategory,
       );
