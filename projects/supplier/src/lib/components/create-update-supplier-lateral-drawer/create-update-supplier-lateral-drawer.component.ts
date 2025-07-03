@@ -1,14 +1,21 @@
 import { DocumentType, customEmailValidator } from '@Authentication';
 import { TownService, Town } from '@Common';
-import { LateralDrawerContainer, LateralDrawerService } from '@Common-UI';
+import {
+  InputComponent,
+  LateralDrawerContainer,
+  LateralDrawerService,
+} from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
 import { Component, effect, OnInit, signal } from '@angular/core';
 import {
+  AbstractControl,
   FormBuilder,
   FormControl,
   FormGroup,
   ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -38,6 +45,7 @@ const PHONE_REGEX = /^[+]?\d{1,4}?[-.\s]?(\d{1,3}[-.\s]?){1,4}$/;
     MatIconButton,
     MatButtonModule,
     MatAutocompleteModule,
+    InputComponent,
   ],
   templateUrl: './create-update-supplier-lateral-drawer.component.html',
   styleUrl: './create-update-supplier-lateral-drawer.component.scss',
@@ -47,6 +55,9 @@ export class CreateUpdateSupplierLateralDrawerComponent
   implements OnInit
 {
   isLoading = signal(false);
+  isDocumentCompleted = signal(false);
+  isCreating = signal(false);
+  isUpdating = signal(false);
   maxDocumentLength: number | null;
 
   supplierForm: FormGroup<{
@@ -72,12 +83,20 @@ export class CreateUpdateSupplierLateralDrawerComponent
   ) {
     super();
     effect(() => {
+      const isCreating = this.isCreating();
+      const isUpdating = this.isUpdating();
+
       const drawerConfig = {
         ...this.lateralDrawerService.config,
+        title: isCreating
+          ? 'Crear Proveedor'
+          : isUpdating
+            ? 'Editar Proveedor'
+            : 'Gestionar Proveedor',
         footer: {
           firstButton: {
             click: () => this.onSubmit(),
-            text: 'Confirmar',
+            text: isCreating ? 'Crear' : isUpdating ? 'Modificar' : 'Confirmar',
             loading: this.isLoading(),
           },
           secondButton: {
@@ -93,6 +112,7 @@ export class CreateUpdateSupplierLateralDrawerComponent
 
   ngOnInit(): void {
     this.initForm();
+    this.disableSupplierFields();
     this.setupDocumentWatcher();
     this.filteredTowns$ = this.supplierForm.controls.town.valueChanges.pipe(
       debounceTime(300),
@@ -130,7 +150,10 @@ export class CreateUpdateSupplierLateralDrawerComponent
       ]),
       street: new FormControl<string | null>(null, Validators.required),
       streetNumber: new FormControl<number | null>(null, Validators.required),
-      town: new FormControl<Town | null>(null, Validators.required),
+      town: new FormControl<Town | null>(null, [
+        Validators.required,
+        this.townListValidator(),
+      ]),
     });
     this.supplierForm.get('documentType')?.valueChanges.subscribe(() => {
       this.supplierForm.get('documentNumber')?.reset();
@@ -163,6 +186,15 @@ export class CreateUpdateSupplierLateralDrawerComponent
     });
   }
 
+  private disableSupplierFields() {
+    this.supplierForm.controls.businessName.disable();
+    this.supplierForm.controls.email.disable();
+    this.supplierForm.controls.phone.disable();
+    this.supplierForm.controls.street.disable();
+    this.supplierForm.controls.streetNumber.disable();
+    this.supplierForm.controls.town.disable();
+  }
+
   private setupDocumentWatcher() {
     this.supplierForm.controls.documentType?.valueChanges.subscribe(() =>
       this.checkSupplierExists(),
@@ -171,18 +203,41 @@ export class CreateUpdateSupplierLateralDrawerComponent
       this.checkSupplierExists(),
     );
   }
-
+  townListValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      if (!value || typeof value !== 'object' || !('id' in value)) {
+        return { invalidTown: true };
+      }
+      return null;
+    };
+  }
   checkSupplierExists() {
-    const documentType = this.supplierForm.controls.documentType?.value;
-    const documentNumber = this.supplierForm.controls.documentNumber?.value;
+    const documentType = this.supplierForm.controls.documentType.value;
+    const documentNumber = this.supplierForm.controls.documentNumber.value;
 
     if (!documentType || !documentNumber) return;
+
+    switch (documentType) {
+      case DocumentType.CUIT:
+        if (documentNumber.length < 11) return;
+        break;
+      case DocumentType.CUIL:
+        if (documentNumber.length < 11) return;
+        break;
+      case DocumentType.DNI:
+        if (documentNumber.length < 8) return;
+        break;
+      default:
+        break;
+    }
 
     this.supplierService
       .getSupplierByDocumentAsync(documentType, documentNumber)
       .subscribe({
         next: (supplier) => {
           if (supplier) {
+            this.isUpdating.set(true);
             this.supplierForm.patchValue({
               businessName: supplier.businessName,
               email: supplier.email,
@@ -191,15 +246,40 @@ export class CreateUpdateSupplierLateralDrawerComponent
               streetNumber: supplier.address.streetNumber,
               town: supplier.address.town,
             });
+            this.enableSupplierFields();
+            this.supplierForm.markAsPristine();
+            this.isDocumentCompleted.set(true);
+          } else {
+            this.isCreating.set(true);
+            this.enableSupplierFields();
+            this.supplierForm.patchValue({
+              businessName: null,
+              email: null,
+              phone: null,
+              street: null,
+              streetNumber: null,
+              town: null,
+            });
           }
+        },
+        error: () => {
+          this.isCreating.set(true);
+          this.enableSupplierFields();
+          this.isDocumentCompleted.set(true);
         },
       });
   }
-
   closeDrawer(): void {
     this.lateralDrawerService.close();
   }
-
+  private enableSupplierFields() {
+    this.supplierForm.controls.businessName.enable();
+    this.supplierForm.controls.email.enable();
+    this.supplierForm.controls.phone.enable();
+    this.supplierForm.controls.street.enable();
+    this.supplierForm.controls.streetNumber.enable();
+    this.supplierForm.controls.town.enable();
+  }
   preventNonNumericInput(event: KeyboardEvent): void {
     const allowedKeys = ['Backspace', 'ArrowLeft', 'ArrowRight', 'Tab'];
     if (
