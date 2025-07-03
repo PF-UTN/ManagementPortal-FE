@@ -1,6 +1,10 @@
 import { DocumentType, customEmailValidator } from '@Authentication';
 import { TownService, Town } from '@Common';
-import { LateralDrawerContainer, LateralDrawerService } from '@Common-UI';
+import {
+  InputComponent,
+  LateralDrawerContainer,
+  LateralDrawerService,
+} from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
 import { Component, effect, OnInit, signal } from '@angular/core';
@@ -41,6 +45,7 @@ const PHONE_REGEX = /^[+]?\d{1,4}?[-.\s]?(\d{1,3}[-.\s]?){1,4}$/;
     MatIconButton,
     MatButtonModule,
     MatAutocompleteModule,
+    InputComponent,
   ],
   templateUrl: './create-update-supplier-lateral-drawer.component.html',
   styleUrl: './create-update-supplier-lateral-drawer.component.scss',
