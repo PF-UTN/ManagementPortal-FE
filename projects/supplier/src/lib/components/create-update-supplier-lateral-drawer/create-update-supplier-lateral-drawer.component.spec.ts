@@ -143,6 +143,39 @@ describe('CreateEditSupplierLateralDrawerComponent', () => {
     //Assert
     expect(resetSpy).toHaveBeenCalled();
   });
+  it('should not call getSupplierByDocument when documentNumber have not enough characters (CUIT)', () => {
+    // Arrange
+    component.supplierForm.controls.documentType.setValue('CUIT');
+    component.supplierForm.controls.documentNumber.setValue('123456');
+
+    // Act
+    component.checkSupplierExists();
+
+    // Assert
+    expect(supplierService.getSupplierByDocumentAsync).not.toHaveBeenCalled();
+  });
+  it('should not call getSupplierByDocument when documentNumber have not enough characters (CUIL)', () => {
+    // Arrange
+    component.supplierForm.controls.documentType.setValue('CUIL');
+    component.supplierForm.controls.documentNumber.setValue('123456');
+
+    // Act
+    component.checkSupplierExists();
+
+    // Assert
+    expect(supplierService.getSupplierByDocumentAsync).not.toHaveBeenCalled();
+  });
+  it('should not call getSupplierByDocument when documentNumber have not enough characters (DNI)', () => {
+    // Arrange
+    component.supplierForm.controls.documentType.setValue('DNI');
+    component.supplierForm.controls.documentNumber.setValue('1236');
+
+    // Act
+    component.checkSupplierExists();
+
+    // Assert
+    expect(supplierService.getSupplierByDocumentAsync).not.toHaveBeenCalled();
+  });
   it('should update maxDocumentLength and validators when documentType changes', () => {
     //Arrange
     component.supplierForm.controls.documentType.setValue('CUIT');
@@ -194,5 +227,43 @@ describe('CreateEditSupplierLateralDrawerComponent', () => {
     //Assert
     expect(component.displayTown(null)).toBe('');
     expect(component.displayTown(mockTown)).toBe('Ciudad Ficticia (12345)');
+  });
+  it('should set isUpdating to true and isCreating to false when supplier exists', () => {
+    // Arrange
+    component.supplierForm.controls.documentType.setValue(
+      mockSupplierWithTown.documentType,
+    );
+    component.supplierForm.controls.documentNumber.setValue(
+      mockSupplierWithTown.documentNumber,
+    );
+    jest
+      .spyOn(supplierService, 'getSupplierByDocumentAsync')
+      .mockReturnValue(of(mockSupplierWithTown));
+
+    // Act
+    component.checkSupplierExists();
+
+    // Assert
+    expect(component.isUpdating()).toBe(true);
+    expect(component.isCreating()).toBe(false);
+  });
+
+  it('should set isDocumentCompleted to true when supplier exists', () => {
+    // Arrange
+    component.supplierForm.controls.documentType.setValue(
+      mockSupplierWithTown.documentType,
+    );
+    component.supplierForm.controls.documentNumber.setValue(
+      mockSupplierWithTown.documentNumber,
+    );
+    jest
+      .spyOn(supplierService, 'getSupplierByDocumentAsync')
+      .mockReturnValue(of(mockSupplierWithTown));
+
+    // Act
+    component.checkSupplierExists();
+
+    // Assert
+    expect(component.isDocumentCompleted()).toBe(true);
   });
 });
