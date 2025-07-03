@@ -6,6 +6,7 @@ import {
   TableComponent,
   DropdownItem,
 } from '@Common-UI';
+import { CreateUpdateProductCategoryLateralDrawerComponent } from '@Product-Category';
 import { CreateUpdateSupplierLateralDrawerComponent } from '@Supplier';
 
 import { CommonModule } from '@angular/common';
@@ -24,7 +25,6 @@ import { ProductListItem } from '../../models/product-item.model';
 import { ProductParams } from '../../models/product-param.model';
 import { ProductService } from '../../services/product.service';
 import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-lateral-drawer.component';
-import { CreateUpdateProductCategoryLateralDrawerComponent } from './../../../../../product-category/src/lib/components/create-update-product-category-lateral-drawer/create-update-product-category-lateral-drawer.component';
 
 @Component({
   selector: 'mp-product-list',

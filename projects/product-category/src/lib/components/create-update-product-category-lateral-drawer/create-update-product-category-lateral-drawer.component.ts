@@ -1,4 +1,5 @@
 import {
+  InputComponent,
   LateralDrawerContainer,
   LateralDrawerService,
   LoadingComponent,
@@ -19,7 +20,7 @@ import {
   MatAutocompleteModule,
   MatAutocompleteSelectedEvent,
 } from '@angular/material/autocomplete';
-import { MatButtonModule, MatIconButton } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -41,10 +42,10 @@ import { ProductCategoryResponse } from './../../models/product-category-respons
     MatIconModule,
     MatInputModule,
     MatSelectModule,
-    MatIconButton,
     MatButtonModule,
     MatAutocompleteModule,
     LoadingComponent,
+    InputComponent,
   ],
   templateUrl: './create-update-product-category-lateral-drawer.component.html',
   styleUrl: './create-update-product-category-lateral-drawer.component.scss',
@@ -58,7 +59,7 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
   isUpdating = signal(false);
   isCreating = signal(false);
 
-  id: number | null = null;
+  idCategory: number | null = null;
 
   public readonly NEW_CATEGORY_OPTION: ProductCategoryResponse = {
     id: -1,
@@ -71,7 +72,7 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
     description: FormControl<string | null>;
   }>;
 
-  categories: ProductCategoryResponse[] = [];
+  categories: ProductCategoryResponse[];
   filteredCategories$: Observable<ProductCategoryResponse[]> = of([]);
 
   constructor(
@@ -136,6 +137,8 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
       this.categories = categories;
       this.productCategoryForm.controls.name.setValidators([
         Validators.required,
+        Validators.minLength(2),
+        Validators.maxLength(255),
         this.categoryObjectValidator(this.categories),
       ]);
       this.productCategoryForm.controls.name.updateValueAndValidity();
@@ -159,8 +162,8 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
       this.isCreating.set(true);
       this.isUpdating.set(false);
       this.productCategoryForm.patchValue({
-        name: '',
-        description: '',
+        name: null,
+        description: null,
       });
 
       this.productCategoryForm.controls.name.enable();
@@ -170,7 +173,7 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
       const category = selected as ProductCategoryResponse;
       this.isCreating.set(false);
       this.isUpdating.set(true);
-      this.id = category.id;
+      this.idCategory = category.id;
       this.productCategoryForm.patchValue({
         name: category,
         description: category.description,
@@ -184,8 +187,8 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
   private filterCategories(name: string): ProductCategoryResponse[] {
     const filterValue = name.toLowerCase();
 
-    const filtered = this.categories.filter((cat) =>
-      cat.name.toLowerCase().includes(filterValue),
+    const filtered = this.categories.filter((catategory) =>
+      catategory.name.toLowerCase().includes(filterValue),
     );
 
     return filtered;
@@ -208,12 +211,12 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
 
       if (typeof value === 'string') {
         const exists = categories.some(
-          (cat) => cat.name.toLowerCase() === value.toLowerCase(),
+          (category) => category.name.toLowerCase() === value.toLowerCase(),
         );
         return exists ? null : { invalidCategory: true };
       }
 
-      const exists = categories.some((cat) => cat.id === value?.id);
+      const exists = categories.some((category) => category.id === value?.id);
       return exists ? null : { invalidCategory: true };
     };
   }
@@ -231,7 +234,7 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
     const nameControlValue = this.productCategoryForm.controls.name.value;
 
     const productCategory: ProductCategoryRequest = {
-      id: this.id ?? null,
+      id: this.idCategory ?? null,
       name:
         typeof nameControlValue === 'string'
           ? nameControlValue

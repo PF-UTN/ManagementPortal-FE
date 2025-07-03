@@ -1,3 +1,5 @@
+import { environment } from '@Common';
+
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -9,8 +11,7 @@ import { ProductCategoryResponse } from '../models/product-category-response.mod
   providedIn: 'root',
 })
 export class ProductCategoryService {
-  private readonly baseUrl =
-    'https://dev-management-portal-be.vercel.app/product-categories';
+  private readonly baseUrl = environment.apiBaseUrl + '/product-categories';
 
   constructor(private readonly http: HttpClient) {}
 

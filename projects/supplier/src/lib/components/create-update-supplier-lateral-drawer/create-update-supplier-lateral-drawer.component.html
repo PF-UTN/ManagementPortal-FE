@@ -35,7 +35,6 @@
       label="Razón Social"
       formControlName="businessName"
       [icon] ="'close'"
-      [iconAction]="supplierForm.controls.businessName.reset"
       [errorMessages]="{
         required: 'Razón Social es requerido.',
         maxlength: 'El valor no puede superar los 50 caracteres.',
@@ -50,7 +49,6 @@
       label="Email"
       formControlName="email"
       [icon] ="'close'"
-      [iconAction]="supplierForm.controls.email.reset"
       [errorMessages]="{
         required: 'Email es requerido.',
         email: 'Email no válido.'
@@ -64,7 +62,6 @@
       label="Teléfono"
       formControlName="phone"
       [icon] ="'close'"
-      [iconAction]="supplierForm.controls.phone.reset"
       [errorMessages]="{
         required: 'Teléfono es requerido.',
         pattern: 'Teléfono no válido.'
@@ -79,7 +76,6 @@
           label="Calle"
           formControlName="street"
           [icon] ="'close'"
-          [iconAction]="supplierForm.controls.street.reset"
           [errorMessages]="{
             required: 'Calle es requerido.'
           }"
@@ -92,7 +88,6 @@
           label="Número"
           formControlName="streetNumber"
           [icon] ="'close'"
-          [iconAction]="supplierForm.controls.streetNumber.reset"
           [errorMessages]="{
             required: 'Número es requerido.'
           }"
