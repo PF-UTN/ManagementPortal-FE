@@ -155,8 +155,9 @@ export class CreateUpdateSupplierLateralDrawerComponent
         this.townListValidator(),
       ]),
     });
-    this.supplierForm.get('documentType')?.valueChanges.subscribe(() => {
-      this.supplierForm.get('documentNumber')?.reset();
+    this.supplierForm.controls.documentType.valueChanges.subscribe(() => {
+      this.supplierForm.controls.documentNumber.reset();
+      this.disableSupplierFields();
     });
 
     this.supplierForm.controls.documentType.valueChanges.subscribe((value) => {
@@ -178,7 +179,10 @@ export class CreateUpdateSupplierLateralDrawerComponent
       const validators = [Validators.required];
 
       if (this.maxDocumentLength) {
-        validators.push(Validators.maxLength(this.maxDocumentLength));
+        validators.push(
+          Validators.maxLength(this.maxDocumentLength),
+          Validators.minLength(this.maxDocumentLength),
+        );
       }
 
       docNumberControl.setValidators(validators);
