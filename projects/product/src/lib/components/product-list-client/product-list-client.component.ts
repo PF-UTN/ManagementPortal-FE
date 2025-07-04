@@ -1,20 +1,22 @@
 import {
   TitleComponent,
   SubtitleComponent,
-  ButtonComponent,
   LateralDrawerService,
+  LoadingComponent,
+  ButtonComponent,
+  InputComponent,
 } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { MatButtonModule, MatIconButton } from '@angular/material/button';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
-import { Subject } from 'rxjs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { debounceTime } from 'rxjs/operators';
 
 import { ProductCategoryResponse } from '../../models/product-category-response.model';
@@ -29,16 +31,18 @@ import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-la
   imports: [
     TitleComponent,
     SubtitleComponent,
-    ButtonComponent,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
     MatCardModule,
     CommonModule,
     MatSelectModule,
-    MatProgressSpinnerModule,
     MatButtonModule,
-    MatIconButton,
+    LoadingComponent,
+    ButtonComponent,
+    InputComponent,
+    ReactiveFormsModule,
+    MatTooltipModule,
   ],
   templateUrl: './product-list-client.component.html',
   styleUrls: ['./product-list-client.component.scss'],
@@ -47,53 +51,53 @@ export class ProductListClientComponent {
   products: ProductListItem[] = [];
   categories: ProductCategoryResponse[] = [];
   selectedCategories: string[] = [];
-  quantities: { [productId: string]: number } = {};
-  stockError: { [productId: string]: boolean } = {};
+  quantities: { [productId: number]: number } = {};
+  stockError: { [productId: number]: boolean } = {};
 
   sort: string = '';
   searchText: string = '';
-  selectedProductId?: number | string;
+  selectedProductId?: number;
   isLoading: boolean = true;
-
-  private searchTextChange$ = new Subject<string>();
-  private filterChange$ = new Subject<void>();
+  filterForm: FormGroup;
 
   constructor(
+    private fb: FormBuilder,
     private productService: ProductService,
     private lateralDrawerService: LateralDrawerService,
-  ) {}
+  ) {
+    this.filterForm = this.fb.group({
+      searchText: [''],
+      selectedCategories: [[]],
+      sort: [''],
+    });
+  }
 
   ngOnInit() {
     this.isLoading = true;
 
     this.productService.getCategories().subscribe({
-      next: (cats) => (this.categories = cats),
+      next: (categories) => (this.categories = categories),
     });
 
-    this.filterChange$.pipe(debounceTime(500)).subscribe(() => {
-      this.fetchProducts();
-    });
-
-    this.searchTextChange$.pipe(debounceTime(500)).subscribe((text) => {
-      this.searchText = text;
+    this.filterForm.valueChanges.pipe(debounceTime(400)).subscribe(() => {
       this.fetchProducts();
     });
 
     this.fetchProducts();
   }
 
-  onFilterChange() {
-    this.filterChange$.next();
-  }
-
   fetchProducts() {
     this.isLoading = true;
 
+    const { searchText, selectedCategories, sort } = this.filterForm.value;
+
     const selectedCategoryNames =
-      this.selectedCategories.length > 0
+      selectedCategories && selectedCategories.length > 0
         ? this.categories
-            .filter((cat) => this.selectedCategories.includes(String(cat.id)))
-            .map((cat) => cat.name)
+            .filter((category) =>
+              selectedCategories.includes(String(category.id)),
+            )
+            .map((category) => category.name)
         : undefined;
 
     const filters: Pick<ProductParams['filters'], 'categoryName'> = {};
@@ -104,20 +108,20 @@ export class ProductListClientComponent {
     const params: ProductParams = {
       page: 1,
       pageSize: 999999,
-      searchText: this.searchText,
+      searchText,
       filters,
     };
 
     this.productService.postSearchProduct(params).subscribe({
       next: (res) => {
-        let products = res.results || [];
-        if (this.sort === 'price-asc') {
+        let products = res.results;
+        if (sort === 'price-asc') {
           products = products.sort((a, b) => a.price - b.price);
-        } else if (this.sort === 'price-desc') {
+        } else if (sort === 'price-desc') {
           products = products.sort((a, b) => b.price - a.price);
-        } else if (this.sort === 'name-asc') {
+        } else if (sort === 'name-asc') {
           products = products.sort((a, b) => a.name.localeCompare(b.name));
-        } else if (this.sort === 'name-desc') {
+        } else if (sort === 'name-desc') {
           products = products.sort((a, b) => b.name.localeCompare(a.name));
         }
         this.products = products;
@@ -133,67 +137,66 @@ export class ProductListClientComponent {
     console.log('Add to cart key down event triggered');
   }
 
+  clearSearch() {
+    this.filterForm.get('searchText')?.setValue('');
+  }
+
   onCardKeyDown(event: KeyboardEvent) {
     if (event.key === 'Enter' && this.selectedProductId !== undefined) {
       this.openProductDrawer(this.selectedProductId);
     }
   }
 
-  onInputChange(event: Event) {
-    const value = (event.target as HTMLInputElement).value;
-    this.onSearchChange(value);
+  canOpenProductDrawer(item: ProductListItem): boolean {
+    return item.stock > 0 && (this.quantities[item.id] || 1) < item.stock;
   }
 
-  onSearchChange(value: string) {
-    this.searchTextChange$.next(value);
+  private updateStockError(productId: number): void {
+    const product = this.products.find(
+      (p) => p.id.toString() === productId.toString(),
+    );
+    this.stockError[productId] =
+      !!product && this.quantities[productId] > product.stock;
   }
 
-  increment(productId: string) {
-    if (!this.quantities[productId]) this.quantities[productId] = 1;
-    this.quantities[productId]++;
-    const product = this.products.find((p) => p.id.toString() === productId);
-    if (product && this.quantities[productId] > product.stock) {
-      this.stockError[productId] = true;
-    } else {
-      this.stockError[productId] = false;
+  increaseQuantity(productId: number) {
+    if (!this.quantities[productId]) {
+      this.quantities[productId] = 1;
     }
+    this.quantities[productId]++;
+    this.updateStockError(productId);
   }
 
-  decrement(productId: string) {
-    if (!this.quantities[productId]) this.quantities[productId] = 1;
+  decreaseQuantity(productId: number) {
+    if (!this.quantities[productId]) {
+      this.quantities[productId] = 1;
+    }
     if (this.quantities[productId] > 1) {
       this.quantities[productId]--;
-      const product = this.products.find((p) => p.id.toString() === productId);
-      if (product && this.quantities[productId] > product.stock) {
-        this.stockError[productId] = true;
-      } else {
-        this.stockError[productId] = false;
-      }
     }
+    this.updateStockError(productId);
   }
 
-  clearSearch() {
-    this.searchText = '';
-    this.onSearchChange('');
-  }
-
-  onQuantityInput(productId: string, event: Event) {
+  onQuantityInput(productId: number, event: Event) {
     const input = event.target as HTMLInputElement;
     let value = parseInt(input.value, 10);
 
     if (isNaN(value) || value < 1) value = 1;
 
-    this.quantities[productId] = value;
-
-    const product = this.products.find((p) => p.id.toString() === productId);
-    if (product && this.quantities[productId] > product.stock) {
-      this.stockError[productId] = true;
-    } else {
-      this.stockError[productId] = false;
+    const product = this.products.find(
+      (p) => p.id.toString() === productId.toString(),
+    );
+    if (product && value > product.stock) {
+      value = product.stock;
     }
+
+    this.quantities[productId] = value;
+    input.value = value.toString();
+
+    this.updateStockError(productId);
   }
 
-  openProductDrawer(productId: number | string) {
+  openProductDrawer(productId: number) {
     this.lateralDrawerService.open(
       DetailLateralDrawerComponent,
       { productId },

@@ -1,91 +1,96 @@
 <div class="main-container">
-  <div class="main-container__header">
-      <mp-title>Alimentos</mp-title>
-      <mp-subtitle>
-          Encuentra la mejor selección de alimentos nutritivos y balanceados para el bienestar de tu mascota
-      </mp-subtitle>
-  </div>
-  <div class="row p-3">
-      <div class="col-12 col-md-8 mb-2">
-          <mat-form-field appearance="outline" class="w-100">
-              <mat-label>Buscar producto</mat-label>
-              <mat-icon matPrefix>search</mat-icon>
-              <input matInput placeholder="Producto" [value]="searchText" (input)="onInputChange($event)">
-              <button *ngIf="searchText" matSuffix mat-icon-button aria-label="Limpiar" (click)="clearSearch()" tabindex="-1">
-                  <mat-icon>close</mat-icon>
-              </button>
-          </mat-form-field>
-      </div>
-      <div class="col-6 col-md-2 mb-2">
-          <mat-form-field appearance="outline" class="w-100">
-              <mat-label>Categoría</mat-label>
-              <mat-select [(value)]="selectedCategories" multiple (selectionChange)="fetchProducts()">
-                  <mat-option *ngFor="let cat of categories" [value]="cat.id.toString()">
-                      {{ cat.name }}
-                  </mat-option>
-              </mat-select>
-          </mat-form-field>
-      </div>
-      <div class="col-6 col-md-2 mb-2">
-          <mat-form-field appearance="outline" class="w-100">
-              <mat-label>Ordenar por</mat-label>
-              <mat-select [(value)]="sort" (selectionChange)="fetchProducts()">
-                  <mat-option value="price-asc">Precio: Menor a Mayor</mat-option>
-                  <mat-option value="price-desc">Precio: Mayor a Menor</mat-option>
-                  <mat-option value="name-asc">A - Z</mat-option>
-                  <mat-option value="name-desc">Z - A</mat-option>
-              </mat-select>
-          </mat-form-field>
-      </div>
-  </div>
-  <div class="main-container__bg">
-      <ng-container *ngIf="isLoading">
-          <div class="d-flex justify-content-center align-items-center py-5">
-              <mat-spinner diameter="48"></mat-spinner>
-          </div>
-      </ng-container>
-      <ng-container *ngIf="!isLoading">
-          <div *ngIf="products.length === 0" class="text-center py-5">
-              <mat-icon>dashboard</mat-icon>
-              <h4>No se encontraron productos para tu búsqueda</h4>
-              <p>Probá cambiando los filtros o el texto de búsqueda</p>
-          </div>
-          <div class="main-container__grid" *ngIf="products.length > 0">
-              <mat-card (keydown)="onCardKeyDown($event)" class="main-container__card mx-2" [ngClass]="{'main-container__card--disabled': item.stock === 0}" appearance="outlined"
-                  *ngFor="let item of products" (click)="openProductDrawer(item.id)">
-                  <img class="p-2" mat-card-image src="https://material.angular.dev/assets/img/examples/shiba2.jpg"
-                      alt="Photo of a Shiba Inu">
-                  <mat-card-content>
-                      <span><strong>{{ item.name }}</strong></span>
-                      <p>{{ item.weight }} kg</p>
-                      <div class="main-container__flex-row mt-2">
-                          <div class="d-flex align-items-center" *ngIf="item.stock > 0">
-                              <button mat-icon-button color="primary" aria-label="Restar"
-                                  (click)="decrement(item.id.toString()); $event.stopPropagation()" class="main-container__circle-btn">
-                                  <mat-icon class="main-container__circle-btn-icon">remove</mat-icon>
-                              </button>
-                              <input type="number" min="1" [max]="item.stock + 10" class="mx-2 main-container__input-number"
-                                  [value]="quantities[item.id.toString()] || 1"
-                                  (click)="$event.stopPropagation()"
-                                  (input)="onQuantityInput(item.id.toString(), $event)" />
-                              <button mat-icon-button color="primary" aria-label="Sumar"
-                                  (click)="increment(item.id.toString()); $event.stopPropagation()" class="main-container__circle-btn">
-                                  <mat-icon class="main-container__circle-btn-icon">add</mat-icon>
-                              </button>
-                          </div>
-                          <span class="main-container__price">$ {{ item.price }}</span>
-                      </div>
-                  </mat-card-content>
-                  <mat-card-actions>
-                      <ng-container *ngIf="item.stock > 0 && !stockError[item.id.toString()]; else noStock">
-                          <mp-button class="w-100" (keydown)="onAddToCartKeyDown()" (click)="$event.stopPropagation()">Agregar al carrito</mp-button>
-                      </ng-container>
-                      <ng-template #noStock>
-                          <div class="text-secondary small mt-1 text-center w-100">Sin disponibilidad</div>
-                      </ng-template>
-                  </mat-card-actions>
-              </mat-card>
-          </div>
-      </ng-container>
-  </div>
+    <div class="main-container__header">
+        <mp-title>Alimentos</mp-title>
+        <mp-subtitle>
+            Encuentra la mejor selección de alimentos nutritivos y balanceados para el bienestar de tu mascota
+        </mp-subtitle>
+    </div>
+    <form [formGroup]="filterForm">
+        <div class="row p-3">
+            <div class="col-12 col-md-8 mb-2">
+                <mp-input label="Buscar producto" formControlName="searchText" [icon]="'close'" type="text"
+                    [iconAction]="clearSearch.bind(this)">
+                </mp-input>
+            </div>
+            <div class="col-6 col-md-2 mb-2">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Categoría</mat-label>
+                    <mat-select formControlName="selectedCategories" multiple>
+                        <mat-option *ngFor="let category of categories" [value]="category.id.toString()">
+                            {{ category.name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col-6 col-md-2 mb-2">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Ordenar por</mat-label>
+                    <mat-select formControlName="sort">
+                        <mat-option value="price-asc">Precio: Menor a Mayor</mat-option>
+                        <mat-option value="price-desc">Precio: Mayor a Menor</mat-option>
+                        <mat-option value="name-asc">A - Z</mat-option>
+                        <mat-option value="name-desc">Z - A</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+    </form>
+    <div class="main-container__bg">
+        <ng-container *ngIf="isLoading">
+            <div class="d-flex justify-content-center align-items-center py-5">
+                <mp-loading></mp-loading>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="!isLoading">
+            <div *ngIf="products.length === 0" class="text-center py-5">
+                <mat-icon>dashboard</mat-icon>
+                <h4>No se encontraron productos para tu búsqueda</h4>
+                <p>Probá cambiando los filtros o el texto de búsqueda</p>
+            </div>
+            <div class="main-container__grid" *ngIf="products.length > 0">
+                <mat-card (keydown)="onCardKeyDown($event)" class="main-container__card mx-2"
+                    [ngClass]="{'main-container__card--disabled': item.stock === 0}" appearance="outlined"
+                    *ngFor="let item of products" (click)="canOpenProductDrawer(item) && openProductDrawer(item.id)">
+                    <img class="p-2" mat-card-image src="https://material.angular.dev/assets/img/examples/shiba2.jpg"
+                        alt="Photo of a Shiba Inu">
+                    <mat-card-content>
+                        <span><strong>{{ item.name }}</strong></span>
+                        <p>{{ item.weight }} kg</p>
+                        <div class="main-container__flex-row mt-2">
+                            <div class="d-flex align-items-center" *ngIf="item.stock > 0">
+                                <mp-button 
+                                    [icon]="true" 
+                                    class="main-container__circle-btn" 
+                                    ariaLabel="Restar"
+                                    [disabled]="quantities[item.id] <= 1"
+                                    (onClick)="decreaseQuantity(item.id)">
+                                        <mat-icon class="main-container__circle-btn-icon">remove</mat-icon>
+                                </mp-button>
+                                <input type="number" min="1" [max]="item.stock"
+                                    class="mx-2 main-container__input-number" [value]="quantities[item.id] || 1"
+                                    (click)="$event.stopPropagation()" (input)="onQuantityInput(item.id, $event)" />
+                                <mp-button 
+                                    [icon]="true" 
+                                    class="main-container__circle-btn" 
+                                    ariaLabel="Sumar"
+                                    [disabled]="quantities[item.id] >= item.stock"
+                                    [tooltip]="quantities[item.id] >= item.stock ? 'No hay más stock disponible' : ''"
+                                    tooltipPosition="above"
+                                    (onClick)="increaseQuantity(item.id)">
+                                     <mat-icon>add</mat-icon>
+                                </mp-button>
+                            </div>
+                            <span class="main-container__price">$ {{ item.price }}</span>
+                        </div>
+                    </mat-card-content>
+                    <mat-card-actions>
+                        <ng-container *ngIf="item.stock > 0 && !stockError[item.id]">
+                            <mp-button class="w-100" (onClick)="onAddToCartKeyDown()"
+                                (click)="$event.stopPropagation()">Agregar al carrito</mp-button>
+                        </ng-container>
+                    </mat-card-actions>
+                </mat-card>
+            </div>
+        </ng-container>
+    </div>
 </div>

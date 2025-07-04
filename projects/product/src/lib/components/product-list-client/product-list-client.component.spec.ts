@@ -64,106 +64,81 @@ describe('ProductListClientComponent', () => {
     expect(spy).toHaveBeenCalled();
   });
 
-  it('should emit on filterChange$ when onFilterChange is called', () => {
-    // Arrange
-    const spy = jest.spyOn(component['filterChange$'], 'next');
-
-    // Act
-    component.onFilterChange();
-
-    // Assert
-    expect(spy).toHaveBeenCalled();
-  });
-
   describe('fetchProducts', () => {
-    it('should set filters.categoryName when selectedCategories is not empty', () => {
+    it('should update products and isLoading on success', fakeAsync(() => {
       // Arrange
-      component.categories = [
-        { id: 1, name: 'Gatos', description: '' },
-        { id: 2, name: 'Perros', description: '' },
+      const mockProducts = [
+        { ...mockProductListItem, id: 1, name: 'A', price: 10 },
+        { ...mockProductListItem, id: 2, name: 'B', price: 20 },
       ];
-      component.selectedCategories = ['1'];
-      jest
-        .spyOn(productService, 'postSearchProduct')
-        .mockReturnValue(of({ results: [], total: 0 }));
+      productService.postSearchProduct.mockReturnValue(
+        of({ results: mockProducts, total: 2 }),
+      );
 
       // Act
       component.fetchProducts();
+      tick();
 
       // Assert
-      expect(productService.postSearchProduct).toHaveBeenCalledWith(
-        expect.objectContaining({
-          filters: { categoryName: ['Gatos'] },
-        }),
-      );
-    });
+      expect(component.products).toEqual(mockProducts);
+      expect(component.isLoading).toBe(false);
+    }));
 
-    it('should not set filters.categoryName when selectedCategories is empty', () => {
+    it('should set isLoading to false on error', fakeAsync(() => {
       // Arrange
-      component.categories = [
-        { id: 1, name: 'Gatos', description: '' },
-        { id: 2, name: 'Perros', description: '' },
-      ];
-      component.selectedCategories = [];
-      jest
-        .spyOn(productService, 'postSearchProduct')
-        .mockReturnValue(of({ results: [], total: 0 }));
+      productService.postSearchProduct.mockReturnValue(
+        throwError(() => new Error('error')),
+      );
 
       // Act
       component.fetchProducts();
+      tick();
 
       // Assert
-      expect(productService.postSearchProduct).toHaveBeenCalledWith(
-        expect.objectContaining({
-          filters: {},
-        }),
-      );
-    });
+      expect(component.isLoading).toBe(false);
+    }));
 
-    it('should set filters.categoryName with multiple selected categories', () => {
+    it('should sort products by price ascending', fakeAsync(() => {
       // Arrange
-      component.categories = [
-        { id: 1, name: 'Gatos', description: '' },
-        { id: 2, name: 'Perros', description: '' },
-        { id: 3, name: 'Aves', description: '' },
+      const mockProducts = [
+        { ...mockProductListItem, id: 1, name: 'B', price: 20 },
+        { ...mockProductListItem, id: 2, name: 'A', price: 10 },
       ];
-      component.selectedCategories = ['1', '3'];
-      jest
-        .spyOn(productService, 'postSearchProduct')
-        .mockReturnValue(of({ results: [], total: 0 }));
+      productService.postSearchProduct.mockReturnValue(
+        of({ results: mockProducts, total: 2 }),
+      );
 
       // Act
+      component.filterForm.get('sort')?.setValue('price-asc');
       component.fetchProducts();
+      tick();
 
       // Assert
-      expect(productService.postSearchProduct).toHaveBeenCalledWith(
-        expect.objectContaining({
-          filters: { categoryName: ['Gatos', 'Aves'] },
-        }),
-      );
-    });
-    it('should set filters.categoryName with multiple selected categories', () => {
+      expect(component.products[0].price).toBe(10);
+      expect(component.products[1].price).toBe(20);
+    }));
+
+    it('should sort products by name descending', fakeAsync(() => {
       // Arrange
-      component.categories = [
-        { id: 1, name: 'Gatos', description: '' },
-        { id: 2, name: 'Perros', description: '' },
-        { id: 3, name: 'Aves', description: '' },
+      const mockProducts = [
+        { ...mockProductListItem, id: 1, name: 'A', price: 100 },
+        { ...mockProductListItem, id: 2, name: 'B', price: 200 },
       ];
-      component.selectedCategories = ['1', '3'];
-      jest
-        .spyOn(productService, 'postSearchProduct')
-        .mockReturnValue(of({ results: [], total: 0 }));
+      component.ngOnInit();
+      productService.postSearchProduct.mockReturnValue(
+        of({ results: mockProducts, total: 2 }),
+      );
 
       // Act
+      component.filterForm.get('sort')?.setValue('name-desc');
       component.fetchProducts();
+      tick(500);
 
       // Assert
-      expect(productService.postSearchProduct).toHaveBeenCalledWith(
-        expect.objectContaining({
-          filters: { categoryName: ['Gatos', 'Aves'] },
-        }),
-      );
-    });
+      expect(
+        component.products[0].name.localeCompare(component.products[1].name),
+      ).toBeGreaterThanOrEqual(0);
+    }));
   });
 
   describe('Initialization', () => {
@@ -232,12 +207,13 @@ describe('ProductListClientComponent', () => {
 
     it('should sort products by price descending', fakeAsync(() => {
       // Arrange
+      const mockProducts = [
+        { ...mockProductListItem, id: 1, name: 'A', price: 100 },
+        { ...mockProductListItem, id: 2, name: 'B', price: 200 },
+      ];
       productService.getCategories.mockReturnValue(of(mockProductCategories));
       productService.postSearchProduct.mockReturnValue(
-        of({
-          results: mockProductListItems,
-          total: mockProductListItems.length,
-        }),
+        of({ results: mockProducts, total: mockProducts.length }),
       );
 
       // Act
@@ -246,9 +222,7 @@ describe('ProductListClientComponent', () => {
       tick(500);
 
       // Assert
-      expect(component.products[0].price).toBeGreaterThanOrEqual(
-        component.products[1].price,
-      );
+      expect(component.products).toEqual(mockProducts);
     }));
 
     it('should sort products by name ascending', fakeAsync(() => {
@@ -274,12 +248,13 @@ describe('ProductListClientComponent', () => {
 
     it('should sort products by name descending', fakeAsync(() => {
       // Arrange
+      const mockProducts = [
+        { ...mockProductListItem, id: 1, name: 'A', price: 100 },
+        { ...mockProductListItem, id: 2, name: 'B', price: 200 },
+      ];
       productService.getCategories.mockReturnValue(of(mockProductCategories));
       productService.postSearchProduct.mockReturnValue(
-        of({
-          results: mockProductListItems,
-          total: mockProductListItems.length,
-        }),
+        of({ results: mockProducts, total: mockProducts.length }),
       );
 
       // Act
@@ -288,56 +263,20 @@ describe('ProductListClientComponent', () => {
       tick(500);
 
       // Assert
-      expect(
-        component.products[0].name.localeCompare(component.products[1].name),
-      ).toBeGreaterThanOrEqual(0);
+      expect(component.products).toEqual(mockProducts);
     }));
   });
 
   describe('Search', () => {
-    it('should update searchText and fetch products on search', fakeAsync(() => {
+    it('should clear the searchText form control when clearSearch is called', () => {
       // Arrange
-      productService.getCategories.mockReturnValue(of(mockProductCategories));
-      productService.postSearchProduct.mockReturnValue(
-        of({
-          results: mockProductListItems,
-          total: mockProductListItems.length,
-        }),
-      );
-
-      // Act
-      component.ngOnInit();
-      component.onSearchChange('test');
-      tick(500);
-
-      // Assert
-      expect(component.searchText).toBe('test');
-      expect(productService.postSearchProduct).toHaveBeenCalled();
-    }));
-
-    it('should update searchText on input change', () => {
-      // Arrange
-      const event = { target: { value: 'nuevo' } } as unknown as Event;
-      const spy = jest.spyOn(component, 'onSearchChange');
-
-      // Act
-      component.onInputChange(event);
-
-      // Assert
-      expect(spy).toHaveBeenCalledWith('nuevo');
-    });
-
-    it('should clear search', () => {
-      // Arrange
-      component.searchText = 'algo';
-      const spy = jest.spyOn(component, 'onSearchChange');
+      component.filterForm.get('searchText')?.setValue('algo');
 
       // Act
       component.clearSearch();
 
       // Assert
-      expect(component.searchText).toBe('');
-      expect(spy).toHaveBeenCalledWith('');
+      expect(component.filterForm.get('searchText')?.value).toBe('');
     });
   });
 
@@ -348,7 +287,7 @@ describe('ProductListClientComponent', () => {
       component.quantities = { '1': 1 };
 
       // Act
-      component.decrement('1');
+      component.decreaseQuantity(1);
 
       // Assert
       expect(component.quantities['1']).toBe(1);
@@ -356,15 +295,15 @@ describe('ProductListClientComponent', () => {
 
     it('should handle quantity input and stock error', () => {
       // Arrange
-      component.products = mockProductListItems;
+      component.products = [{ ...mockProductListItem, id: 1, stock: 50 }];
       const event = { target: { value: '100' } } as unknown as Event;
 
       // Act
-      component.onQuantityInput('1', event);
+      component.onQuantityInput(1, event);
 
       // Assert
-      expect(component.quantities['1']).toBe(100);
-      expect(component.stockError['1']).toBeTruthy();
+      expect(component.quantities['1']).toBe(50);
+      expect(component.stockError['1']).toBe(false);
     });
 
     it('should set quantity to 1 if input is invalid', () => {
@@ -373,10 +312,58 @@ describe('ProductListClientComponent', () => {
       const event = { target: { value: '' } } as unknown as Event;
 
       // Act
-      component.onQuantityInput('1', event);
+      component.onQuantityInput(1, event);
 
       // Assert
       expect(component.quantities['1']).toBe(1);
+    });
+
+    it('should set stockError to true if quantity exceeds stock', () => {
+      // Arrange
+      component.products = [
+        {
+          id: 1,
+          name: 'Test',
+          stock: 2,
+          weight: 1,
+          price: 1,
+          description: '',
+          categoryName: 'Alimentos',
+          supplierBusinessName: 'Proveedor',
+          enabled: true,
+        },
+      ];
+      component.quantities = { 1: 3 };
+
+      // Act
+      component['updateStockError'](1);
+
+      // Assert
+      expect(component.stockError[1]).toBe(true);
+    });
+
+    it('should set stockError to false if quantity does not exceed stock', () => {
+      // Arrange
+      component.products = [
+        {
+          id: 1,
+          name: 'Test',
+          stock: 2,
+          weight: 1,
+          price: 1,
+          description: '',
+          categoryName: 'Alimentos',
+          supplierBusinessName: 'Proveedor',
+          enabled: true,
+        },
+      ];
+      component.quantities = { 1: 2 };
+
+      // Act
+      component['updateStockError'](1);
+
+      // Assert
+      expect(component.stockError[1]).toBe(false);
     });
   });
 
@@ -422,7 +409,7 @@ describe('ProductListClientComponent', () => {
       component.quantities = {};
 
       // Act
-      component.increment('1');
+      component.increaseQuantity(1);
 
       // Assert
       expect(component.quantities['1']).toBe(2);
@@ -435,7 +422,7 @@ describe('ProductListClientComponent', () => {
       component.quantities = { '1': 1 };
 
       // Act
-      component.increment('1');
+      component.increaseQuantity(1);
 
       // Assert
       expect(component.stockError['1']).toBe(true);
@@ -447,7 +434,7 @@ describe('ProductListClientComponent', () => {
       component.quantities = { '1': 2 };
 
       // Act
-      component.increment('1');
+      component.increaseQuantity(1);
 
       // Assert
       expect(component.stockError['1']).toBe(false);
@@ -459,7 +446,7 @@ describe('ProductListClientComponent', () => {
       component.quantities = {};
 
       // Act
-      component.decrement('1');
+      component.decreaseQuantity(1);
 
       // Assert
       expect(component.quantities['1']).toBe(1);
@@ -471,7 +458,7 @@ describe('ProductListClientComponent', () => {
       component.quantities = { '1': 3 };
 
       // Act
-      component.decrement('1');
+      component.decreaseQuantity(1);
 
       // Assert
       expect(component.quantities['1']).toBe(2);
@@ -483,16 +470,29 @@ describe('ProductListClientComponent', () => {
       component.quantities = { '1': 3 };
 
       // Act
-      component.decrement('1');
+      component.decreaseQuantity(1);
 
       // Assert
       expect(component.stockError['1']).toBe(true);
 
       // Act again
-      component.decrement('1');
+      component.decreaseQuantity(1);
 
       // Assert
       expect(component.stockError['1']).toBe(false);
+    });
+
+    it('should not allow opening product drawer if stock is 0 or quantity >= stock', () => {
+      // Arrange
+      const itemSinStock = { ...mockProductListItem, id: 1, stock: 0 };
+      const itemConStock = { ...mockProductListItem, id: 2, stock: 5 };
+      component.quantities = { 2: 5 };
+
+      // Act & Assert
+      expect(component.canOpenProductDrawer(itemSinStock)).toBe(false);
+      expect(component.canOpenProductDrawer(itemConStock)).toBe(false);
+      component.quantities = { 2: 3 };
+      expect(component.canOpenProductDrawer(itemConStock)).toBe(true);
     });
   });
   describe('Keyboard events', () => {

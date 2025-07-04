@@ -1,3 +1,22 @@
+<ng-container *ngIf="icon; else normalButton">
+  <span
+    [matTooltip]="tooltip"
+    [matTooltipPosition]="tooltipPosition"
+  >
+    <button
+      mat-icon-button
+      [disabled]="disabled()"
+      [attr.aria-label]="ariaLabel"
+      (click)="clickEvent($event)"
+      type="button"
+    >
+      <ng-template #content>
+         <ng-content></ng-content>
+  </ng-template>
+    </button>
+  </span>
+</ng-container>
+<ng-template #normalButton>
 <button class="button button__{{type}}" 
   mat-raised-button  
   [disabled]="disabled() || loading()"
@@ -18,3 +37,4 @@
   </ng-template>
 
 </button>
+</ng-template>
