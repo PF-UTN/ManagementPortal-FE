@@ -59,25 +59,25 @@
                         <div class="main-container__flex-row mt-2">
                             <div class="d-flex align-items-center" *ngIf="item.stock > 0">
                                 <mp-button 
-                                    [icon]="true" 
                                     class="main-container__circle-btn" 
+                                    type="icon"
+                                    icon="remove"
                                     ariaLabel="Restar"
                                     [disabled]="quantities[item.id] <= 1"
                                     (onClick)="decreaseQuantity(item.id)">
-                                        <mat-icon class="main-container__circle-btn-icon">remove</mat-icon>
                                 </mp-button>
                                 <input type="number" min="1" [max]="item.stock"
                                     class="mx-2 main-container__input-number" [value]="quantities[item.id] || 1"
                                     (click)="$event.stopPropagation()" (input)="onQuantityInput(item.id, $event)" />
                                 <mp-button 
-                                    [icon]="true" 
+                                    type="icon"
+                                    icon="add"
                                     class="main-container__circle-btn" 
                                     ariaLabel="Sumar"
                                     [disabled]="quantities[item.id] >= item.stock"
                                     [tooltip]="quantities[item.id] >= item.stock ? 'No hay más stock disponible' : ''"
                                     tooltipPosition="above"
                                     (onClick)="increaseQuantity(item.id)">
-                                     <mat-icon>add</mat-icon>
                                 </mp-button>
                             </div>
                             <span class="main-container__price">$ {{ item.price }}</span>
