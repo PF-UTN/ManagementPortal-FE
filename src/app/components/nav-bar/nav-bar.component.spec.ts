@@ -54,6 +54,12 @@ describe('NavBarComponent', () => {
       //Assert
       expect(component.items).toEqual([
         {
+          title: 'Inicio',
+          icon: 'home',
+          route: 'inicio',
+          shouldRender: true,
+        },
+        {
           title: 'Solicitudes de Registro',
           icon: 'app_registration',
           route: 'solicitudes-registro',
@@ -84,6 +90,12 @@ describe('NavBarComponent', () => {
 
       //Assert
       expect(component.items).toEqual([
+        {
+          title: 'Inicio',
+          icon: 'home',
+          route: 'inicio',
+          shouldRender: true,
+        },
         {
           title: 'Solicitudes de Registro',
           icon: 'app_registration',
@@ -117,6 +129,12 @@ describe('NavBarComponent', () => {
     //Assert
     expect(component.items).toEqual([
       {
+        title: 'Inicio',
+        icon: 'home',
+        route: 'inicio',
+        shouldRender: true,
+      },
+      {
         title: 'Solicitudes de Registro',
         icon: 'app_registration',
         route: 'solicitudes-registro',
@@ -145,6 +163,30 @@ describe('NavBarComponent', () => {
 
       // Assert
       expect(logOutSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('toggleNavBar', () => {
+    it('should toggle isOpen from true to false', () => {
+      // Arrange
+      component.isOpen = true;
+
+      // Act
+      component.toggleNavBar();
+
+      // Assert
+      expect(component.isOpen).toBe(false);
+    });
+
+    it('should toggle isOpen from false to true', () => {
+      // Arrange
+      component.isOpen = false;
+
+      // Act
+      component.toggleNavBar();
+
+      // Assert
+      expect(component.isOpen).toBe(true);
     });
   });
 });
