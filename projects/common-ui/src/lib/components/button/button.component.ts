@@ -23,12 +23,14 @@ import { ButtonType } from '../../models/button-type.model';
 })
 export class ButtonComponent {
   @Input() type: ButtonType = ButtonTypes.primary;
-  @Input() icon = false;
+  @Input() icon: string = 'close';
   @Input() tooltip: string = '';
   @Input() tooltipPosition: 'above' | 'below' | 'left' | 'right' = 'above';
   @Input() ariaLabel: string = '';
   disabled = input(false);
   loading = input(false);
+
+  BUTTON_TYPES = ButtonTypes;
 
   @Output() onClick = new EventEmitter<void>();
 
