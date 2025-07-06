@@ -18,3 +18,12 @@ body {
 a {
   color: $muted-purple;
 }
+
+.mat-form-field-subscript-wrapper,
+.mat-hint,
+.mat-error {
+  min-height: $input-footer-height;
+  height: $input-footer-height;
+  line-height: $input-footer-height;
+  display: block;
+}
