@@ -65,7 +65,7 @@ export class ProductListComponent implements OnInit {
     },
     {
       columnDef: 'stock',
-      header: 'Stock',
+      header: 'Stock Disponible',
       type: ColumnTypeEnum.VALUE,
       value: (element: ProductListItem) => element.stock.toString(),
     },
