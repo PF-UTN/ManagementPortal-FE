@@ -52,11 +52,12 @@
                     [ngClass]="{'main-container__card--disabled': item.stock === 0}" appearance="outlined"
                     *ngFor="let item of products" (click)="canOpenProductDrawer(item) && openProductDrawer(item.id)">
                     <img class="p-2" mat-card-image src="https://material.angular.dev/assets/img/examples/shiba2.jpg"
-                        alt="Photo of a Shiba Inu">
+                        alt="Shiba Inu">
                     <mat-card-content>
                         <span><strong>{{ item.name }}</strong></span>
                         <p>{{ item.weight }} kg</p>
-                        <div class="main-container__flex-row mt-2">
+                        <div class="main-container__card__spacer"></div>
+                        <div class="main-container__card__footer-row">
                             <div class="d-flex align-items-center" *ngIf="item.stock > 0">
                                 <mp-button 
                                     class="main-container__circle-btn" 
@@ -64,7 +65,8 @@
                                     icon="remove"
                                     ariaLabel="Restar"
                                     [disabled]="quantities[item.id] <= 1"
-                                    (onClick)="decreaseQuantity(item.id)">
+                                    (onClick)="decreaseQuantity(item.id)"
+                                    (click)="$event.stopPropagation()">
                                 </mp-button>
                                 <input type="number" min="1" [max]="item.stock"
                                     class="mx-2 main-container__input-number" [value]="quantities[item.id] || 1"
@@ -77,16 +79,23 @@
                                     [disabled]="quantities[item.id] >= item.stock"
                                     [tooltip]="quantities[item.id] >= item.stock ? 'No hay más stock disponible' : ''"
                                     tooltipPosition="above"
-                                    (onClick)="increaseQuantity(item.id)">
+                                    (onClick)="increaseQuantity(item.id)"
+                                    (click)="$event.stopPropagation()">
                                 </mp-button>
                             </div>
                             <span class="main-container__price">$ {{ item.price }}</span>
+                            <span *ngIf="item.stock === 0" class="ms-2">Sin stock</span>
                         </div>
                     </mat-card-content>
                     <mat-card-actions>
                         <ng-container *ngIf="item.stock > 0 && !stockError[item.id]">
-                            <mp-button class="w-100" (onClick)="onAddToCartKeyDown()"
-                                (click)="$event.stopPropagation()">Agregar al carrito</mp-button>
+                            <mp-button 
+                                class="w-100"
+                                (keydown.enter)="onAddToCartKeyDown()" 
+                                (onClick)="onAddToCartKeyDown()"
+                                (click)="$event.stopPropagation()"
+                                >Agregar al carrito
+                            </mp-button>
                         </ng-container>
                     </mat-card-actions>
                 </mat-card>

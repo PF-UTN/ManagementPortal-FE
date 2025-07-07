@@ -1,14 +1,18 @@
 <ng-container *ngIf="type === BUTTON_TYPES.icon; else normalButton">
+  <span
+    [matTooltip]="tooltip"
+    [matTooltipPosition]="tooltipPosition"
+    style="display: inline-block"
+  >
   <button
     mat-icon-button
     [disabled]="disabled() || loading()"
     [attr.aria-label]="ariaLabel"
     (click)="clickEvent($event)"
-    [matTooltip]="tooltip"
-    [matTooltipPosition]="tooltipPosition"
   >
     <mat-icon *ngIf="icon">{{ icon }}</mat-icon>
   </button>
+  </span>
 </ng-container>
 <ng-template #normalButton>
   <button class="button button__{{type}}" 

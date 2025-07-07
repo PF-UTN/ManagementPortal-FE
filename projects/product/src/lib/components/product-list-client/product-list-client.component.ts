@@ -61,9 +61,9 @@ export class ProductListClientComponent {
   filterForm: FormGroup;
 
   constructor(
-    private fb: FormBuilder,
-    private productService: ProductService,
-    private lateralDrawerService: LateralDrawerService,
+    private readonly fb: FormBuilder,
+    private readonly productService: ProductService,
+    private readonly lateralDrawerService: LateralDrawerService,
   ) {
     this.filterForm = this.fb.group({
       searchText: [''],
