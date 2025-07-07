@@ -66,6 +66,7 @@
                                     ariaLabel="Restar"
                                     [disabled]="quantities[item.id] <= 1"
                                     (onClick)="decreaseQuantity(item.id)"
+                                    (keydown.enter)="decreaseQuantity(item.id)"
                                     (click)="$event.stopPropagation()">
                                 </mp-button>
                                 <input type="number" min="1" [max]="item.stock"
@@ -80,6 +81,7 @@
                                     [tooltip]="quantities[item.id] >= item.stock ? 'No hay más stock disponible' : ''"
                                     tooltipPosition="above"
                                     (onClick)="increaseQuantity(item.id)"
+                                    (keydown.enter)="decreaseQuantity(item.id)"
                                     (click)="$event.stopPropagation()">
                                 </mp-button>
                             </div>
