@@ -58,6 +58,7 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
   isLoading = signal(false);
   isUpdating = signal(false);
   isCreating = signal(false);
+  isFormValid = signal(false);
 
   idCategory: number | null = null;
 
@@ -85,6 +86,7 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
     effect(() => {
       const isUpdate = this.isUpdating();
       const isCreate = this.isCreating();
+      const isFormValid = this.isFormValid();
 
       const drawerConfig = {
         ...this.lateralDrawerService.config,
@@ -98,6 +100,7 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
             click: () => this.onSubmit(),
             text: isUpdate ? 'Modificar' : isCreate ? 'Crear' : 'Confirmar',
             loading: this.isLoading(),
+            disabled: !isFormValid,
           },
           secondButton: {
             click: () => this.closeDrawer(),
@@ -112,6 +115,7 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
 
   ngOnInit(): void {
     this.initForm();
+    this.setupFormWatchers();
     this.initCategories();
     this.productCategoryForm.controls.description.disable();
   }
@@ -168,7 +172,7 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
 
       this.productCategoryForm.controls.name.enable();
       this.productCategoryForm.controls.description.enable();
-      this.productCategoryForm.controls.name.reset();
+      this.productCategoryForm.controls.name.markAsUntouched();
     } else {
       const category = selected as ProductCategoryResponse;
       this.isCreating.set(false);
@@ -184,11 +188,17 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
     }
   }
 
+  private setupFormWatchers() {
+    this.productCategoryForm.valueChanges.subscribe(() => {
+      this.isFormValid.set(this.productCategoryForm.valid);
+    });
+  }
+
   private filterCategories(name: string): ProductCategoryResponse[] {
     const filterValue = name.toLowerCase();
 
-    const filtered = this.categories.filter((catategory) =>
-      catategory.name.toLowerCase().includes(filterValue),
+    const filtered = this.categories.filter((category) =>
+      category.name.toLowerCase().includes(filterValue),
     );
 
     return filtered;

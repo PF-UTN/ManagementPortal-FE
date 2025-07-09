@@ -23,50 +23,41 @@
   </div>
   <div class="mb-4">
     <mp-input
-      class="w-100"
       type="text"
       label="Número Documento"
       formControlName="documentNumber"
-      [icon]="'close'"
-      [attr.maxLength]="maxDocumentLength || null"
-      [attr.minLength]="maxDocumentLength || null"
+      icon="close"
       (keydown)="preventNonNumericInput($event)"
     />
   </div>
   <div class="mb-4">
     <mp-input
-      class="w-100"
       type="text"
       label="Razón Social"
       formControlName="businessName"
-      [icon]="'close'"
+      icon="close"
       [errorMessages]="{
         required: 'Razón Social es requerido.',
-        maxlength: 'El valor no puede superar los 50 caracteres.',
-        minlength: 'Debe tener al menos 2 caracteres.',
       }"
     />
   </div>
   <div class="mb-4">
     <mp-input
-      class="w-100"
       type="email"
       label="Email"
       formControlName="email"
-      [icon]="'close'"
+      icon="close"
       [errorMessages]="{
         required: 'Email es requerido.',
-        email: 'Email no válido.',
       }"
     />
   </div>
   <div class="mb-4">
     <mp-input
-      class="w-100"
       type="text"
       label="Teléfono"
       formControlName="phone"
-      [icon]="'close'"
+      icon="close"
       [errorMessages]="{
         required: 'Teléfono es requerido.',
         pattern: 'Teléfono no válido.',
@@ -76,11 +67,10 @@
   <div class="row g-3 mb-4">
     <div class="col-7">
       <mp-input
-        class="w-100"
         type="text"
         label="Calle"
         formControlName="street"
-        [icon]="'close'"
+        icon="close"
         [errorMessages]="{
           required: 'Calle es requerido.',
         }"
@@ -88,11 +78,10 @@
     </div>
     <div class="col-5">
       <mp-input
-        class="w-100"
         type="number"
         label="Número"
         formControlName="streetNumber"
-        [icon]="'close'"
+        icon="close"
         [errorMessages]="{
           required: 'Número es requerido.',
         }"
@@ -100,7 +89,7 @@
     </div>
   </div>
   <div class="mb-4">
-    <mat-form-field class="w-100" appearance="outline">
+    <!-- <mat-form-field class="w-100" appearance="outline">
       <mat-label>Ciudad</mat-label>
       <input
         type="text"
@@ -144,6 +133,23 @@
       >
         Debe seleccionar una ciudad de la lista.
       </mat-error>
-    </mat-form-field>
+    </mat-form-field> -->
+    <mp-input
+        label="Ciudad"
+        formControlName="town"
+        [icon]="'close'"
+        [errorMessages]="{
+          invalidTown: 'Debe seleccionar una ciudad de la lista.'
+        }"
+        type="text"
+        placeholder="Buscar ciudad o código postal"
+        [matAutocomplete]="auto"
+      ></mp-input>
+      <mat-autocomplete #auto="matAutocomplete"
+        [displayWith]="displayTown.bind(this)">
+        <mat-option *ngFor="let town of filteredTowns$ | async" [value]="town">
+          {{ town.name }} ({{ town.zipCode }})
+        </mat-option>
+      </mat-autocomplete>
   </div>
 </form>

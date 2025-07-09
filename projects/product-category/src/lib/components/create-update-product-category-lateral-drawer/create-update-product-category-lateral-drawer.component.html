@@ -11,86 +11,55 @@
     <div class="mb-4">
       <ng-container *ngIf="isCreating(); else selectName">
         <mp-input
-          class="w-100"
           type="text"
           label="Nombre"
           formControlName="name"
-          [icon]="'close'"
+          icon="close"
         >
         </mp-input>
       </ng-container>
       <ng-template #selectName>
-        <mat-form-field class="w-100" appearance="outline">
-          <mat-label>Nombre</mat-label>
-          <input
-            matInput
-            type="text"
-            formControlName="name"
-            [matAutocomplete]="autoCategory"
-            [attr.autocomplete]="'off'"
-          />
-          <mat-autocomplete
-            #autoCategory="matAutocomplete"
-            [displayWith]="displayCategory.bind(this)"
-            (optionSelected)="onCategorySelected($event)"
+        <mp-input
+          type="text"
+          label="Nombre"
+          formControlName="name"
+          icon="close"
+          [matAutocomplete]="autoCategory"
+          [attr.autocomplete]="'off'"
+          [errorMessages]="{
+            invalidCategory:
+              'Debe seleccionar una categoría de la lista o seleccionar + Crear nueva categoría.',
+          }"
+        >
+        </mp-input>
+        <mat-autocomplete
+          #autoCategory="matAutocomplete"
+          [displayWith]="displayCategory.bind(this)"
+          (optionSelected)="onCategorySelected($event)"
+        >
+          <mat-option
+            *ngFor="let catategory of filteredCategories$ | async"
+            [value]="catategory"
           >
-            <mat-option
-              *ngFor="let catategory of filteredCategories$ | async"
-              [value]="catategory"
-            >
-              {{ catategory.name }}
-            </mat-option>
-            <mat-option
-              class="create-category-option"
-              [disabled]="false"
-              [value]="NEW_CATEGORY_OPTION"
-            >
-              <span class="span">+ Crear nueva categoría</span>
-            </mat-option>
-          </mat-autocomplete>
-          <mat-error
-            *ngIf="
-              productCategoryForm.controls.name.hasError('required') &&
-              productCategoryForm.controls.name.touched
-            "
+            {{ catategory.name }}
+          </mat-option>
+          <mat-option
+            class="create-category-option"
+            [disabled]="false"
+            [value]="NEW_CATEGORY_OPTION"
           >
-            Nombre es requerido.
-          </mat-error>
-          <mat-error
-            *ngIf="
-              productCategoryForm.controls.name.hasError('maxlength') &&
-              productCategoryForm.controls.name.touched
-            "
-          >
-            El valor no puede superar los 255 caracteres.
-          </mat-error>
-          <mat-error
-            *ngIf="
-              productCategoryForm.controls.name.hasError('minlength') &&
-              productCategoryForm.controls.name.touched
-            "
-          >
-            Debe tener al menos 2 caracteres.
-          </mat-error>
-          <mat-error
-            *ngIf="
-              productCategoryForm.controls.name.hasError('invalidCategory') &&
-              productCategoryForm.controls.name.touched
-            "
-          >
-            Debe seleccionar una categoría de la lista o la opción
-            <strong>" + Crear nueva categoría"</strong>.
-          </mat-error>
-        </mat-form-field>
+            <span class="span">+ Crear nueva categoría</span>
+          </mat-option>
+        </mat-autocomplete>
       </ng-template>
     </div>
     <div class="mb-4">
       <mp-input
-        class="w-100"
         type="text"
         label="Descripción"
         formControlName="description"
-        [icon]="'close'"
+        icon="close"
+        [textarea]="true"
       >
       </mp-input>
     </div>
