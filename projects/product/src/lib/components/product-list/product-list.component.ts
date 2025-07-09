@@ -6,6 +6,7 @@ import {
   TableComponent,
   DropdownItem,
 } from '@Common-UI';
+import { CreateUpdateProductCategoryLateralDrawerComponent } from '@Product-Category';
 import { CreateUpdateSupplierLateralDrawerComponent } from '@Supplier';
 
 import { CommonModule } from '@angular/common';
@@ -24,6 +25,7 @@ import { ProductListItem } from '../../models/product-item.model';
 import { ProductParams } from '../../models/product-param.model';
 import { ProductService } from '../../services/product.service';
 import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-lateral-drawer.component';
+
 @Component({
   selector: 'mp-product-list',
   standalone: true,
@@ -124,8 +126,8 @@ export class ProductListComponent implements OnInit {
     },
     {
       label: 'Crear/Editar categoría',
-      action: () => console.log('crear categoria'),
-    }, //Accion Provisorio hasta que se implemente el drawer
+      action: () => this.onCreateUpdateProductCategoryDrawer(),
+    },
     {
       label: 'Crear/Editar proveedor',
       action: () => this.onCreateUpdateSupplierDrawer(),
@@ -220,12 +222,34 @@ export class ProductListComponent implements OnInit {
       .subscribe(() => this.doSearchSubject$.next());
   }
 
+  onCreateUpdateProductCategoryDrawer(): void {
+    this.lateralDrawerService.open(
+      CreateUpdateProductCategoryLateralDrawerComponent,
+      {},
+      {
+        title: 'Gestionar Categoría',
+        footer: {
+          firstButton: {
+            text: 'Confirmar',
+            click: () => {},
+          },
+          secondButton: {
+            text: 'Cancelar',
+            click: () => {
+              this.lateralDrawerService.close();
+            },
+          },
+        },
+      },
+    );
+  }
+
   onModifyDrawer(request: ProductListItem): void {
     console.log('Modificar', request); //Provisorio hasta que se implemente el drawer
   }
 
   onDeleteDrawer(request: ProductListItem): void {
-    console.log('Eliminar', request); //Provisorio hasta que se implemente el drawer
+    console.log('Eliminar', request); //Provisorio hasta que se implemente el lateral drawer
   }
 
   onPauseDrawer(request: ProductListItem): void {

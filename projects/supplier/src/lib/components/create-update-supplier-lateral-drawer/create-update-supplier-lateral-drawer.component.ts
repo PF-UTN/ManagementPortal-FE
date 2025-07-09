@@ -58,6 +58,7 @@ export class CreateUpdateSupplierLateralDrawerComponent
   isDocumentCompleted = signal(false);
   isCreating = signal(false);
   isUpdating = signal(false);
+  isFormValid = signal(false);
   maxDocumentLength: number | null;
 
   supplierForm: FormGroup<{
@@ -85,6 +86,7 @@ export class CreateUpdateSupplierLateralDrawerComponent
     effect(() => {
       const isCreating = this.isCreating();
       const isUpdating = this.isUpdating();
+      const isFormValid = this.isFormValid();
 
       const drawerConfig = {
         ...this.lateralDrawerService.config,
@@ -98,6 +100,7 @@ export class CreateUpdateSupplierLateralDrawerComponent
             click: () => this.onSubmit(),
             text: isCreating ? 'Crear' : isUpdating ? 'Modificar' : 'Confirmar',
             loading: this.isLoading(),
+            disabled: !isFormValid,
           },
           secondButton: {
             click: () => this.closeDrawer(),
@@ -112,8 +115,10 @@ export class CreateUpdateSupplierLateralDrawerComponent
 
   ngOnInit(): void {
     this.initForm();
+    this.isFormValid.set(this.supplierForm.valid ? true : false);
     this.disableSupplierFields();
     this.setupDocumentWatcher();
+    this.setupFormWatchers();
     this.filteredTowns$ = this.supplierForm.controls.town.valueChanges.pipe(
       debounceTime(300),
       startWith(''),
@@ -155,8 +160,9 @@ export class CreateUpdateSupplierLateralDrawerComponent
         this.townListValidator(),
       ]),
     });
-    this.supplierForm.get('documentType')?.valueChanges.subscribe(() => {
-      this.supplierForm.get('documentNumber')?.reset();
+    this.supplierForm.controls.documentType.valueChanges.subscribe(() => {
+      this.supplierForm.controls.documentNumber.setValue(null);
+      this.disableSupplierFields();
     });
 
     this.supplierForm.controls.documentType.valueChanges.subscribe((value) => {
@@ -178,7 +184,10 @@ export class CreateUpdateSupplierLateralDrawerComponent
       const validators = [Validators.required];
 
       if (this.maxDocumentLength) {
-        validators.push(Validators.maxLength(this.maxDocumentLength));
+        validators.push(
+          Validators.maxLength(this.maxDocumentLength),
+          Validators.minLength(this.maxDocumentLength),
+        );
       }
 
       docNumberControl.setValidators(validators);
@@ -203,6 +212,13 @@ export class CreateUpdateSupplierLateralDrawerComponent
       this.checkSupplierExists(),
     );
   }
+
+  private setupFormWatchers() {
+    this.supplierForm.valueChanges.subscribe(() => {
+      this.isFormValid.set(this.supplierForm.valid);
+    });
+  }
+
   townListValidator(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const value = control.value;
@@ -294,7 +310,10 @@ export class CreateUpdateSupplierLateralDrawerComponent
       event.preventDefault();
     }
   }
-  displayTown(town: Town | null): string {
+  displayTown(town: Town | string | null): string {
+    if (typeof town === 'string') {
+      return town;
+    }
     return town ? `${town.name} (${town.zipCode})` : '';
   }
   onSubmit() {
@@ -320,7 +339,9 @@ export class CreateUpdateSupplierLateralDrawerComponent
       next: () => {
         this.isLoading.set(false);
         this.snackBar.open(
-          'Proveedor creado/modificado correctamente',
+          this.isCreating()
+            ? 'Proveedor creado correctamente'
+            : 'Proveedor modificado correctamente',
           'Cerrar',
           {
             duration: 3000,

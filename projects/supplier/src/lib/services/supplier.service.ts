@@ -1,3 +1,5 @@
+import { environment } from '@Common';
+
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -10,8 +12,7 @@ import { Supplier } from '../models/supplier.model';
   providedIn: 'root',
 })
 export class SupplierService {
-  private readonly baseUrl =
-    'https://dev-management-portal-be.vercel.app/supplier';
+  private readonly baseUrl = environment.apiBaseUrl + '/supplier';
 
   constructor(private readonly http: HttpClient) {}
 
