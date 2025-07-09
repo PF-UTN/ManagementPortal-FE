@@ -1,3 +1,5 @@
+@import '../../../../../../src/styles/varibles';
+
 .mp-table {
   width: 100%;
   max-width: 65%;
@@ -29,10 +31,9 @@
   gap: 16px;
   justify-content: center;
   align-items: center;
-  padding: 5px;
 
-  mat-form-field {
-    flex: 1;
-    min-width: 200px;
+  &__dropdown {
+    margin-bottom: $input-footer-height;
+    padding: 0 32px;
   }
 }

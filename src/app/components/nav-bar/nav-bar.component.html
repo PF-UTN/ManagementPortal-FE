@@ -1,9 +1,8 @@
-<div class="container">
+<div class="container" [class.closed]="!isOpen">
   <div class="container__header">
-    <img alt="logo" src="images\dog.jpeg" class="container__header__image"/>
-    <div routerLink="/inicio">
-      <h2 class="container__header__title">Portal de Gestión</h2>
-    </div>
+    <button mat-icon-button (click)="toggleNavBar()" class="container__header__toggle">
+      <mat-icon>menu</mat-icon>
+    </button>
   </div>
   <div class="container__body">
     <div class="container__body__menu">
@@ -14,9 +13,10 @@
             [routerLink]="'/' + item.route"
             routerLinkActive="active-link"
             class="container__body__menu__item"
+            [class.closed]="!isOpen"
           >
             <mat-icon>{{ item.icon }}</mat-icon>
-            <p class="container__body__menu__item__title">{{ item.title }}</p>
+            <p class="container__body__menu__item__title" *ngIf="isOpen">{{ item.title }}</p>
           </div>
         </ng-container>
       </nav>
@@ -24,7 +24,7 @@
     <div class="container__body__footer">
       <div class="container__body__menu__item" (click)="handleLogOutClick()">
         <mat-icon>logout</mat-icon>
-        <p class="container__body__menu__item__title">Cerrar Sesión</p>
+        <p class="container__body__menu__item__title" *ngIf="isOpen">Cerrar Sesión</p>
       </div>
     </div>
   </div>

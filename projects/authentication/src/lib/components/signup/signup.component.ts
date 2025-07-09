@@ -11,6 +11,9 @@ import {
   Validators,
   FormsModule,
   ReactiveFormsModule,
+  AbstractControl,
+  ValidationErrors,
+  ValidatorFn,
 } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -166,7 +169,7 @@ export class SignupComponent implements OnInit {
           Validators.maxLength(20),
         ]),
         birthdate: new FormControl<Date | null>(null, Validators.required),
-        town: new FormControl<Town | null>(null, Validators.required),
+        town: new FormControl<Town | null>(null, [Validators.required, this.townListValidator()]),
         street: new FormControl<string | null>(null, Validators.required),
         streetNumber: new FormControl<number | null>(null, Validators.required),
         taxCategory: new FormControl<number | null>(null, Validators.required),
@@ -240,6 +243,16 @@ export class SignupComponent implements OnInit {
     }
 
     return '';
+  }
+
+  townListValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      if (!value || typeof value !== 'object' || !('id' in value)) {
+        return { invalidTown: true };
+      }
+      return null;
+    };
   }
 
   onSubmit(): void {
