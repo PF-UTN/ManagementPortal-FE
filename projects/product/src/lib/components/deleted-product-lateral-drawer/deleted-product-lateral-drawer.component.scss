@@ -1,0 +1,12 @@
+.drawer-container {
+  &__row {
+    display: flex;
+    flex-direction: column;
+    margin-top: 15px;
+
+    &__label {
+      margin: 0;
+      line-height: 1.2px;
+    }
+  }
+}
