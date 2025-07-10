@@ -6,8 +6,16 @@ import {
   TableComponent,
   DropdownItem,
 } from '@Common-UI';
-import { CreateUpdateProductCategoryLateralDrawerComponent } from '@Product-Category';
-import { CreateUpdateSupplierLateralDrawerComponent } from '@Supplier';
+import {
+  CreateUpdateProductCategoryLateralDrawerComponent,
+  ProductCategoryService,
+  ProductCategoryResponse,
+} from '@Product-Category';
+import {
+  CreateUpdateSupplierLateralDrawerComponent,
+  SupplierCreateUpdateResponse,
+  SupplierService,
+} from '@Supplier';
 
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
@@ -109,6 +117,8 @@ export class ProductListComponent implements OnInit {
     },
   ];
 
+  categories: ProductCategoryResponse[];
+  suppliers: SupplierCreateUpdateResponse[];
   dataSource$ = new BehaviorSubject<ProductListItem[]>([]);
   isLoading: boolean = true;
   pageIndex: number = 0;
@@ -131,18 +141,22 @@ export class ProductListComponent implements OnInit {
     {
       label: 'Crear/Editar proveedor',
       action: () => this.onCreateUpdateSupplierDrawer(),
-    }, //Accion Provisorio hasta que se implemente el drawer
+    },
   ];
 
   doSearchSubject$ = new Subject<void>();
 
   constructor(
     private readonly productService: ProductService,
+    private readonly productCategoryService: ProductCategoryService,
+    private readonly supplierService: SupplierService,
     private readonly lateralDrawerService: LateralDrawerService,
     private readonly router: Router,
   ) {}
 
   ngOnInit(): void {
+    this.initCategories();
+    this.initSuppliers();
     this.doSearchSubject$
       .pipe(
         debounceTime(500),
@@ -180,6 +194,25 @@ export class ProductListComponent implements OnInit {
         },
       });
     this.doSearchSubject$.next();
+  }
+
+  private initCategories(): void {
+    this.isLoading = true;
+    this.productCategoryService.getCategoriesAsync().subscribe({
+      next: (categories) => {
+        this.categories = categories;
+      },
+      error: () => {},
+    });
+  }
+
+  private initSuppliers(): void {
+    this.isLoading = true;
+    this.supplierService.getSuppliersAsync().subscribe({
+      next: (suppliers) => {
+        this.suppliers = suppliers;
+      },
+    });
   }
 
   onDetailDrawer(request: ProductListItem): void {

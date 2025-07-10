@@ -7,3 +7,4 @@ export * from './lib/components/create-update-supplier-lateral-drawer/create-upd
 export * from './lib/models/supplier.detail.model';
 export * from './lib/models/supplier-create-update-response.model';
 export * from './lib/models/supplier.model';
+export * from './lib/models/supplier-create-update-response.model';
