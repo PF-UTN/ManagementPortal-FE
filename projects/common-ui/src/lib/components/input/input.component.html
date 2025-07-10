@@ -47,6 +47,7 @@
     type="button"
     (click)="iconAction && iconAction()"
     aria-label="icon action"
+    [disabled]="control.disabled"
     tabindex="-1"
   >
     <mat-icon>{{ icon }}</mat-icon>
@@ -58,6 +59,7 @@
     mat-icon-button
     type="button"
     (click)="iconAction && iconAction()"
+    [disabled]="control.disabled"
     aria-label="icon action"
     tabindex="-1"
   >
