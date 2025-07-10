@@ -176,4 +176,38 @@ describe('ProductService', () => {
       req.error(mockError);
     });
   });
+
+  describe('deletedProduct', () => {
+    it('should send a DELETE request with the correct id', () => {
+      // Arrange
+      productId = 1;
+      const url = `${baseUrl}/${productId}`;
+
+      // Act & Assert
+      service.deletedProduct(productId).subscribe((response) => {
+        expect(response).toBeUndefined();
+      });
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('DELETE');
+      req.flush(null);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      productId = 1;
+      const url = `${baseUrl}/${productId}`;
+      const mockError = new ErrorEvent('Network error');
+
+      // Act & Assert
+      service.deletedProduct(productId).subscribe({
+        next: () => fail('Expected an error, but got a successful response'),
+        error: (error) => {
+          expect(error.error).toBe(mockError);
+        },
+      });
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('DELETE');
+      req.error(mockError);
+    });
+  });
 });

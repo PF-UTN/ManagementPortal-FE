@@ -23,6 +23,11 @@ export class ProductService {
     return this.http.post<SearchProductResponse>(url, params);
   }
 
+  deletedProduct(id: number): Observable<void> {
+    const url = `${this.baseUrl}/${id}`;
+    return this.http.delete<void>(url);
+  }
+
   createProduct(params: ProductCreate): Observable<ProductResponse> {
     const url = `${this.baseUrl}`;
     return this.http.post<ProductResponse>(url, params);
