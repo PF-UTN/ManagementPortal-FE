@@ -3,14 +3,10 @@
 @import '../../../../../../src/styles/varibles';
 
 .product-card {
-  max-width: 360px;
-  min-width: 80px;
+  min-width: 150px;
   width: 100%;
-  margin: 0 auto;
-  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
   cursor: pointer;
   transition:
     transform 0.2s,
@@ -30,7 +26,7 @@
 
   &__image {
     width: 100%;
-    max-width: 300px;
+
     object-fit: contain;
     display: block;
     margin: 0 auto;
@@ -74,16 +70,14 @@
 
 @media (max-width: calc(map-get($grid-breakpoints, 'sm'))) {
   .product-card {
-    max-width: 98vw !important;
-    min-width: 0 !important;
-    width: 100% !important;
-    margin: 8px auto !important;
-    padding: 8px !important;
+    min-width: 0;
     box-sizing: border-box;
+
+    &__row {
+      flex-direction: column;
+    }
   }
   .product-card__image {
-    max-width: 90vw !important;
-    height: auto !important;
     display: block;
     margin: 0 auto;
   }

@@ -14,10 +14,13 @@
   &__grid {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-around;
     width: 100%;
     gap: 24px;
     box-sizing: border-box;
+
+    &__card {
+      flex: 1 1 20%;
+    }
   }
 
   &__bg {

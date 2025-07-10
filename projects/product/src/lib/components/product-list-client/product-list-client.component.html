@@ -49,6 +49,7 @@
             </div>
             <div class="main-container__grid" *ngIf="products.length > 0">
                 <lib-product-card
+                class="main-container__grid__card"
                     *ngFor="let product of products"
                     [product]="product"
                     [quantities]="quantities"
