@@ -97,48 +97,6 @@ describe('ProductListClientComponent', () => {
       // Assert
       expect(component.isLoading).toBe(false);
     }));
-
-    it('should sort products by price ascending', fakeAsync(() => {
-      // Arrange
-      const mockProducts = [
-        { ...mockProductListItem, id: 1, name: 'B', price: 20 },
-        { ...mockProductListItem, id: 2, name: 'A', price: 10 },
-      ];
-      productService.postSearchProduct.mockReturnValue(
-        of({ results: mockProducts, total: 2 }),
-      );
-
-      // Act
-      component.filterForm.get('sort')?.setValue('price-asc');
-      component.fetchProducts();
-      tick();
-
-      // Assert
-      expect(component.products[0].price).toBe(10);
-      expect(component.products[1].price).toBe(20);
-    }));
-
-    it('should sort products by name descending', fakeAsync(() => {
-      // Arrange
-      const mockProducts = [
-        { ...mockProductListItem, id: 1, name: 'A', price: 100 },
-        { ...mockProductListItem, id: 2, name: 'B', price: 200 },
-      ];
-      component.ngOnInit();
-      productService.postSearchProduct.mockReturnValue(
-        of({ results: mockProducts, total: 2 }),
-      );
-
-      // Act
-      component.filterForm.get('sort')?.setValue('name-desc');
-      component.fetchProducts();
-      tick(500);
-
-      // Assert
-      expect(
-        component.products[0].name.localeCompare(component.products[1].name),
-      ).toBeGreaterThanOrEqual(0);
-    }));
   });
 
   describe('Initialization', () => {
@@ -184,83 +142,55 @@ describe('ProductListClientComponent', () => {
   });
 
   describe('Sorting', () => {
-    it('should sort products by price ascending', fakeAsync(() => {
+    it('should send orderBy param as price-asc', fakeAsync(() => {
       // Arrange
-      productService.getCategories.mockReturnValue(of(mockProductCategories));
-      productService.postSearchProduct.mockReturnValue(
-        of({
-          results: mockProductListItems,
-          total: mockProductListItems.length,
+      const spy = jest.spyOn(productService, 'postSearchProduct');
+      component.filterForm.get('sort')?.setValue('price-asc');
+      const expectedOrderBy = { field: 'price', direction: 'asc' };
+
+      // Act
+      component.fetchProducts();
+      tick();
+
+      // Assert
+      expect(spy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          orderBy: expectedOrderBy,
         }),
       );
-
-      // Act
-      component.sort = 'price-asc';
-      component.ngOnInit();
-      tick(500);
-
-      // Assert
-      expect(component.products[0].price).toBeLessThanOrEqual(
-        component.products[1].price,
-      );
     }));
 
-    it('should sort products by price descending', fakeAsync(() => {
+    it('should send orderBy param as name-desc', fakeAsync(() => {
       // Arrange
-      const mockProducts = [
-        { ...mockProductListItem, id: 1, name: 'A', price: 100 },
-        { ...mockProductListItem, id: 2, name: 'B', price: 200 },
-      ];
-      productService.getCategories.mockReturnValue(of(mockProductCategories));
-      productService.postSearchProduct.mockReturnValue(
-        of({ results: mockProducts, total: mockProducts.length }),
-      );
+      const spy = jest.spyOn(productService, 'postSearchProduct');
+      component.filterForm.get('sort')?.setValue('name-desc');
+      const expectedOrderBy = { field: 'name', direction: 'desc' };
 
       // Act
-      component.sort = 'price-desc';
-      component.ngOnInit();
-      tick(500);
+      component.fetchProducts();
+      tick();
 
       // Assert
-      expect(component.products).toEqual(mockProducts);
-    }));
-
-    it('should sort products by name ascending', fakeAsync(() => {
-      // Arrange
-      productService.getCategories.mockReturnValue(of(mockProductCategories));
-      productService.postSearchProduct.mockReturnValue(
-        of({
-          results: mockProductListItems,
-          total: mockProductListItems.length,
+      expect(spy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          orderBy: expectedOrderBy,
         }),
       );
-
-      // Act
-      component.sort = 'name-asc';
-      component.ngOnInit();
-      tick(500);
-
-      // Assert
-      expect(
-        component.products[0].name.localeCompare(component.products[1].name),
-      ).toBeLessThanOrEqual(0);
     }));
 
-    it('should sort products by name descending', fakeAsync(() => {
+    it('should assign products as returned by backend', fakeAsync(() => {
       // Arrange
       const mockProducts = [
-        { ...mockProductListItem, id: 1, name: 'A', price: 100 },
-        { ...mockProductListItem, id: 2, name: 'B', price: 200 },
+        { ...mockProductListItem, id: 1, name: 'B', price: 20 },
+        { ...mockProductListItem, id: 2, name: 'A', price: 10 },
       ];
-      productService.getCategories.mockReturnValue(of(mockProductCategories));
       productService.postSearchProduct.mockReturnValue(
-        of({ results: mockProducts, total: mockProducts.length }),
+        of({ results: mockProducts, total: 2 }),
       );
 
       // Act
-      component.sort = 'name-desc';
-      component.ngOnInit();
-      tick(500);
+      component.fetchProducts();
+      tick();
 
       // Assert
       expect(component.products).toEqual(mockProducts);

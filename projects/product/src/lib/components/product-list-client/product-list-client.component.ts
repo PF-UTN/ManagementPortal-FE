@@ -3,7 +3,6 @@ import {
   SubtitleComponent,
   LateralDrawerService,
   LoadingComponent,
-  ButtonComponent,
   InputComponent,
 } from '@Common-UI';
 
@@ -24,6 +23,7 @@ import { ProductListItem } from '../../models/product-item.model';
 import { ProductParams } from '../../models/product-param.model';
 import { ProductService } from '../../services/product.service';
 import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-lateral-drawer.component';
+import { ProductCardComponent } from '../product-card/product-card.component';
 
 @Component({
   selector: 'lib-product-list-client',
@@ -39,7 +39,7 @@ import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-la
     MatSelectModule,
     MatButtonModule,
     LoadingComponent,
-    ButtonComponent,
+    ProductCardComponent,
     InputComponent,
     ReactiveFormsModule,
     MatTooltipModule,
