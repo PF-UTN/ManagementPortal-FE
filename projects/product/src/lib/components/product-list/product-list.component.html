@@ -2,30 +2,28 @@
   <div class="filters-container">
     <div class="filters-container__selector col">
       <mat-form-field appearance="outline">
-        <mat-label>Filtrar por categoría</mat-label>
-        <mat-select [(ngModel)]="selectedCategories" (selectionChange)="onCategoryFilterChange()" multiple>
-          <mat-option [value]="'Gatos'">Gatos</mat-option>
-          <mat-option [value]="'Perros'">Perros</mat-option>
-        </mat-select>
-      </mat-form-field>
+      <mat-label>Filtrar por categoría</mat-label>
+      <mat-select [(ngModel)]="selectedCategories" (selectionChange)="onCategoryFilterChange()" multiple>
+        <mat-option *ngFor="let category of categories" [value]="category.name">{{ category.name }}</mat-option>
+      </mat-select>
+    </mat-form-field>
     </div>
   
     <div class="filters-container__selector col">
       <mat-form-field appearance="outline">
         <mat-label>Filtrar por proveedor</mat-label>
         <mat-select [(ngModel)]="selectedSuppliers" (selectionChange)="onSupplierFilterChange()" multiple>
-          <mat-option [value]="'Alimentos Mascotas S.A.'">Alimentos Mascotas S.A.</mat-option>
-          <mat-option [value]="'PetNutrición SRL'">PetNutrición SRL</mat-option>
+          <mat-option *ngFor="let supplier of suppliers" [value]="supplier.businessName">{{supplier.businessName}}</mat-option>
         </mat-select>
       </mat-form-field>
     </div>
 
     <div class="filters-container__selector col">
       <mat-form-field appearance="outline">
-        <mat-label>Filtrar por estado</mat-label>
+        <mat-label>Habilitado</mat-label>
         <mat-select [(ngModel)]="selectedEnabled" (selectionChange)="onEnabledFilterChange()">
-          <mat-option [value]="true">Activo</mat-option>
-          <mat-option [value]="false">Pausado</mat-option>
+          <mat-option [value]="true">Si</mat-option>
+          <mat-option [value]="false">No</mat-option>
         </mat-select>
       </mat-form-field>
     </div>

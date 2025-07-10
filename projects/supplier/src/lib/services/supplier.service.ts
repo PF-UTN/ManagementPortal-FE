@@ -33,4 +33,8 @@ export class SupplierService {
       `${this.baseUrl}/search?documentType=${documentType}&documentNumber=${documentNumber}`,
     );
   }
+
+  getSuppliersAsync(): Observable<SupplierCreateUpdateResponse[]> {
+    return this.http.get<SupplierCreateUpdateResponse[]>(this.baseUrl);
+  }
 }
