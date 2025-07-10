@@ -197,20 +197,23 @@ export class ProductListComponent implements OnInit {
   }
 
   private initCategories(): void {
-    this.isLoading = true;
     this.productCategoryService.getCategoriesAsync().subscribe({
       next: (categories) => {
         this.categories = categories;
       },
-      error: () => {},
+      error: (err) => {
+        console.error('Error al obtener las categorías:', err);
+      },
     });
   }
 
   private initSuppliers(): void {
-    this.isLoading = true;
     this.supplierService.getSuppliersAsync().subscribe({
       next: (suppliers) => {
         this.suppliers = suppliers;
+      },
+      error: (err) => {
+        console.error('Error al obtener los proveedores:', err);
       },
     });
   }
