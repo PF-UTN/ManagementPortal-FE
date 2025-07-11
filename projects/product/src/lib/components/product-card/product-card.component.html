@@ -34,6 +34,7 @@
                     [value]="quantities[product.id] || 1"
                     (click)="$event.stopPropagation()" 
                     (input)="onQuantityInput(product.id, $event)"
+                    (click)="$event.stopPropagation()"
                 />
                 <mp-button 
                     type="icon"
@@ -61,5 +62,14 @@
         Agregar al carrito
     </mp-button>
   </ng-container>
-  <span *ngIf="product.stock === 0" class="ms-2">Sin stock</span>
+  <ng-container *ngIf="product.stock === 0">
+    <mp-button 
+       class="w-100"
+       [disabled]="true"
+       (click)="$event.stopPropagation()"
+       [type]="'secondary'">
+        No hay stock disponible
+    </mp-button>
+  </ng-container>
+
 </mat-card-actions>
