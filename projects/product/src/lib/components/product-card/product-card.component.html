@@ -67,7 +67,8 @@
        class="w-100"
        [disabled]="true"
        (click)="$event.stopPropagation()"
-       [type]="'secondary'">
+       [type]="'secondary'"
+       (onKeyDown)="null">
         No hay stock disponible
     </mp-button>
   </ng-container>
