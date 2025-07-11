@@ -1,7 +1,6 @@
 export enum ProductOrderField {
   Name = 'name',
   Price = 'price',
-  // agrega más campos si es necesario
 }
 
 export enum ProductOrderDirection {

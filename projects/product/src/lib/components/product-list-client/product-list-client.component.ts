@@ -20,7 +20,11 @@ import { debounceTime } from 'rxjs/operators';
 
 import { ProductCategoryResponse } from '../../models/product-category-response.model';
 import { ProductListItem } from '../../models/product-item.model';
-import { ProductParams } from '../../models/product-param.model';
+import {
+  ProductParams,
+  ProductOrderField,
+  ProductOrderDirection,
+} from '../../models/product-param.model';
 import { ProductService } from '../../services/product.service';
 import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-lateral-drawer.component';
 import { ProductCardComponent } from '../product-card/product-card.component';
@@ -100,9 +104,17 @@ export class ProductListClientComponent {
             .map((category) => category.name)
         : undefined;
 
-    const filters: Pick<ProductParams['filters'], 'categoryName'> = {};
-    if (selectedCategoryNames && selectedCategoryNames.length > 0) {
-      filters.categoryName = selectedCategoryNames;
+    const filters: Pick<ProductParams['filters'], 'categoryName'> = {
+      categoryName: selectedCategoryNames,
+    };
+
+    let orderBy;
+    if (sort && typeof sort === 'string' && sort.includes('-')) {
+      const [field, direction] = sort.split('-');
+      orderBy = {
+        field: field as ProductOrderField,
+        direction: direction as ProductOrderDirection,
+      };
     }
 
     const params: ProductParams = {
@@ -110,21 +122,12 @@ export class ProductListClientComponent {
       pageSize: 999999,
       searchText,
       filters,
+      ...(orderBy && { orderBy }),
     };
 
     this.productService.postSearchProduct(params).subscribe({
       next: (res) => {
-        let products = res.results;
-        if (sort === 'price-asc') {
-          products = products.sort((a, b) => a.price - b.price);
-        } else if (sort === 'price-desc') {
-          products = products.sort((a, b) => b.price - a.price);
-        } else if (sort === 'name-asc') {
-          products = products.sort((a, b) => a.name.localeCompare(b.name));
-        } else if (sort === 'name-desc') {
-          products = products.sort((a, b) => b.name.localeCompare(a.name));
-        }
-        this.products = products;
+        this.products = res.results;
         this.isLoading = false;
       },
       error: () => {
