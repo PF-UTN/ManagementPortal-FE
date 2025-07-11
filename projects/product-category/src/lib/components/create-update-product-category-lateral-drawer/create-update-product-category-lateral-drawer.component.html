@@ -1,0 +1,67 @@
+<ng-container *ngIf="isLoadingCategories(); else loaded">
+  <mp-loading></mp-loading>
+</ng-container>
+
+<ng-template #loaded>
+  <form
+    [formGroup]="productCategoryForm"
+    class="container-fluid p-3"
+    (keydown.enter)="onSubmit()"
+  >
+    <div class="mb-4">
+      <ng-container *ngIf="isCreating(); else selectName">
+        <mp-input
+          type="text"
+          label="Nombre"
+          formControlName="name"
+          icon="close"
+        >
+        </mp-input>
+      </ng-container>
+      <ng-template #selectName>
+        <mp-input
+          type="text"
+          label="Nombre"
+          formControlName="name"
+          icon="close"
+          [matAutocomplete]="autoCategory"
+          [attr.autocomplete]="'off'"
+          [errorMessages]="{
+            invalidCategory:
+              'Debe seleccionar una categoría de la lista o seleccionar + Crear nueva categoría.',
+          }"
+        >
+        </mp-input>
+        <mat-autocomplete
+          #autoCategory="matAutocomplete"
+          [displayWith]="displayCategory.bind(this)"
+          (optionSelected)="onCategorySelected($event)"
+        >
+          <mat-option
+            *ngFor="let catategory of filteredCategories$ | async"
+            [value]="catategory"
+          >
+            {{ catategory.name }}
+          </mat-option>
+          <mat-option
+            class="create-category-option"
+            [disabled]="false"
+            [value]="NEW_CATEGORY_OPTION"
+          >
+            <span class="span">+ Crear nueva categoría</span>
+          </mat-option>
+        </mat-autocomplete>
+      </ng-template>
+    </div>
+    <div class="mb-4">
+      <mp-input
+        type="text"
+        label="Descripción"
+        formControlName="description"
+        icon="close"
+        [textarea]="true"
+      >
+      </mp-input>
+    </div>
+  </form>
+</ng-template>

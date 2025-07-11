@@ -136,12 +136,13 @@ describe('CreateEditSupplierLateralDrawerComponent', () => {
     //Arrange
     const resetSpy = jest.spyOn(
       component.supplierForm.controls.documentNumber,
-      'reset',
+      'setValue',
     );
     component.supplierForm.controls.documentType.setValue('CUIT');
 
     //Assert
     expect(resetSpy).toHaveBeenCalled();
+    expect(component.supplierForm.controls.documentNumber.value).toBe(null);
   });
   it('should not call getSupplierByDocument when documentNumber have not enough characters (CUIT)', () => {
     // Arrange

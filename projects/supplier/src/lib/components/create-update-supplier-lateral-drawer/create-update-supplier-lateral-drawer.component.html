@@ -1,4 +1,8 @@
-<form [formGroup]="supplierForm" class="container-fluid p-3" (keydown.enter)="onSubmit()">
+<form
+  [formGroup]="supplierForm"
+  class="container-fluid p-3"
+  (keydown.enter)="onSubmit()"
+>
   <div class="mb-4">
     <mat-form-field class="w-100" appearance="outline">
       <mat-label>Tipo de Documento</mat-label>
@@ -8,118 +12,144 @@
         </mat-option>
       </mat-select>
       <mat-error
-        *ngIf="supplierForm.controls.documentType?.hasError('required') && supplierForm.controls.documentType?.touched">
+        *ngIf="
+          supplierForm.controls.documentType?.hasError('required') &&
+          supplierForm.controls.documentType?.touched
+        "
+      >
         Tipo de Documento es requerido
       </mat-error>
     </mat-form-field>
   </div>
   <div class="mb-4">
-    <mat-form-field class="w-100" appearance="outline">
-      <mat-label>Número Documento</mat-label>
-      <input type="text" matInput formControlName="documentNumber" [attr.maxLength]="maxDocumentLength || null"
-        (keydown)="preventNonNumericInput($event)" />
-      <button type="button" matSuffix mat-icon-button aria-label="Clear" 
-        (click)="supplierForm.controls.documentNumber.reset()">
-        <mat-icon>close</mat-icon>
-      </button>
-      <mat-error
-        *ngIf="supplierForm.controls.documentNumber?.hasError('required') && supplierForm.controls.documentNumber?.touched">
-        Número Documento es requerido
-      </mat-error>
-    </mat-form-field>
+    <mp-input
+      type="text"
+      label="Número Documento"
+      formControlName="documentNumber"
+      icon="close"
+      (keydown)="preventNonNumericInput($event)"
+    />
   </div>
   <div class="mb-4">
     <mp-input
-      class="w-100"
       type="text"
       label="Razón Social"
       formControlName="businessName"
-      [icon] ="'close'"
-      [iconAction]="supplierForm.controls.businessName.reset"
+      icon="close"
       [errorMessages]="{
         required: 'Razón Social es requerido.',
-        maxlength: 'El valor no puede superar los 50 caracteres.',
-        minlength: 'Debe tener al menos 2 caracteres.'
       }"
     />
   </div>
   <div class="mb-4">
     <mp-input
-      class="w-100"
       type="email"
       label="Email"
       formControlName="email"
-      [icon] ="'close'"
-      [iconAction]="supplierForm.controls.email.reset"
+      icon="close"
       [errorMessages]="{
         required: 'Email es requerido.',
-        email: 'Email no válido.'
       }"
     />
   </div>
   <div class="mb-4">
     <mp-input
-      class="w-100"
       type="text"
       label="Teléfono"
       formControlName="phone"
-      [icon] ="'close'"
-      [iconAction]="supplierForm.controls.phone.reset"
+      icon="close"
       [errorMessages]="{
         required: 'Teléfono es requerido.',
-        pattern: 'Teléfono no válido.'
+        pattern: 'Teléfono no válido.',
       }"
     />
   </div>
   <div class="row g-3 mb-4">
-      <div class="col-7">
-        <mp-input
-          class="w-100"
-          type="text"
-          label="Calle"
-          formControlName="street"
-          [icon] ="'close'"
-          [iconAction]="supplierForm.controls.street.reset"
-          [errorMessages]="{
-            required: 'Calle es requerido.'
-          }"
-        />
-      </div>
-      <div class="col-5">
-        <mp-input
-          class="w-100"
-          type="number"
-          label="Número"
-          formControlName="streetNumber"
-          [icon] ="'close'"
-          [iconAction]="supplierForm.controls.streetNumber.reset"
-          [errorMessages]="{
-            required: 'Número es requerido.'
-          }"
-        />
-      </div>
+    <div class="col-7">
+      <mp-input
+        type="text"
+        label="Calle"
+        formControlName="street"
+        icon="close"
+        [errorMessages]="{
+          required: 'Calle es requerido.',
+        }"
+      />
+    </div>
+    <div class="col-5">
+      <mp-input
+        type="number"
+        label="Número"
+        formControlName="streetNumber"
+        icon="close"
+        [errorMessages]="{
+          required: 'Número es requerido.',
+        }"
+      />
+    </div>
   </div>
   <div class="mb-4">
-    <mat-form-field class="w-100" appearance="outline">
+    <!-- <mat-form-field class="w-100" appearance="outline">
       <mat-label>Ciudad</mat-label>
-      <input type="text" matInput formControlName="town" [matAutocomplete]="auto"
-        placeholder="Buscar ciudad o código postal" [attr.autocomplete]="'off'" />
-      <button type="button" matSuffix mat-icon-button aria-label="Clear"
-        (click)="supplierForm.controls.town.setValue(null)">
+      <input
+        type="text"
+        matInput
+        formControlName="town"
+        [matAutocomplete]="auto"
+        placeholder="Buscar ciudad o código postal"
+        [attr.autocomplete]="'off'"
+      />
+      <button
+        type="button"
+        matSuffix
+        mat-icon-button
+        aria-label="Clear"
+        (click)="supplierForm.controls.town.setValue(null)"
+      >
         <mat-icon>close</mat-icon>
       </button>
-      <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayTown.bind(this)">
+      <mat-autocomplete
+        #auto="matAutocomplete"
+        [displayWith]="displayTown.bind(this)"
+      >
         <mat-option *ngFor="let town of filteredTowns$ | async" [value]="town">
           {{ town.name }} ({{ town.zipCode }})
         </mat-option>
       </mat-autocomplete>
-      <mat-error *ngIf="supplierForm.controls.town?.hasError('required') && supplierForm.controls.town?.touched ">
+      <mat-error
+        *ngIf="
+          supplierForm.controls.town?.hasError('required') &&
+          supplierForm.controls.town?.touched
+        "
+      >
         Ciudad es requerido
       </mat-error>
       <mat-error
-        *ngIf="supplierForm.controls.town?.hasError('invalidTown') && supplierForm.controls.town?.touched && supplierForm.controls.town?.value != null">
+        *ngIf="
+          supplierForm.controls.town?.hasError('invalidTown') &&
+          supplierForm.controls.town?.touched &&
+          supplierForm.controls.town?.value != null
+        "
+      >
         Debe seleccionar una ciudad de la lista.
       </mat-error>
-    </mat-form-field>
+    </mat-form-field> -->
+    <mp-input
+        label="Ciudad"
+        formControlName="town"
+        [icon]="'close'"
+        [errorMessages]="{
+          invalidTown: 'Debe seleccionar una ciudad de la lista.'
+        }"
+        type="text"
+        placeholder="Buscar ciudad o código postal"
+        [matAutocomplete]="auto"
+      ></mp-input>
+      <mat-autocomplete #auto="matAutocomplete"
+        [displayWith]="displayTown.bind(this)">
+        <mat-option *ngFor="let town of filteredTowns$ | async" [value]="town">
+          {{ town.name }} ({{ town.zipCode }})
+        </mat-option>
+      </mat-autocomplete>
   </div>
 </form>

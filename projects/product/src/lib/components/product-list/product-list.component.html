@@ -1,31 +1,39 @@
 <div class="container-fluid">
   <div class="filters-container">
-    <mat-form-field appearance="outline">
-      <mat-label>Filtrar por categoría</mat-label>
-      <mat-select [(ngModel)]="selectedCategories" (selectionChange)="onCategoryFilterChange()" multiple>
-        <mat-option [value]="'Gatos'">Gatos</mat-option>
-        <mat-option [value]="'Perros'">Perros</mat-option>
-      </mat-select>
-    </mat-form-field>
+    <div class="filters-container__selector col">
+      <mat-form-field appearance="outline">
+        <mat-label>Filtrar por categoría</mat-label>
+        <mat-select [(ngModel)]="selectedCategories" (selectionChange)="onCategoryFilterChange()" multiple>
+          <mat-option [value]="'Gatos'">Gatos</mat-option>
+          <mat-option [value]="'Perros'">Perros</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
   
-    <mat-form-field appearance="outline">
-      <mat-label>Filtrar por proveedor</mat-label>
-      <mat-select [(ngModel)]="selectedSuppliers" (selectionChange)="onSupplierFilterChange()" multiple>
-        <mat-option [value]="'Alimentos Mascotas S.A.'">Alimentos Mascotas S.A.</mat-option>
-        <mat-option [value]="'PetNutrición SRL'">PetNutrición SRL</mat-option>
-      </mat-select>
-    </mat-form-field>
-  
-    <mat-form-field appearance="outline">
-      <mat-label>Filtrar por estado</mat-label>
-      <mat-select [(ngModel)]="selectedEnabled" (selectionChange)="onEnabledFilterChange()">
-        <mat-option [value]="true">Activo</mat-option>
-        <mat-option [value]="false">Pausado</mat-option>
-      </mat-select>
-    </mat-form-field>
-      <mp-dropdown-button [items]="dropdownItems">
+    <div class="filters-container__selector col">
+      <mat-form-field appearance="outline">
+        <mat-label>Filtrar por proveedor</mat-label>
+        <mat-select [(ngModel)]="selectedSuppliers" (selectionChange)="onSupplierFilterChange()" multiple>
+          <mat-option [value]="'Alimentos Mascotas S.A.'">Alimentos Mascotas S.A.</mat-option>
+          <mat-option [value]="'PetNutrición SRL'">PetNutrición SRL</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="filters-container__selector col">
+      <mat-form-field appearance="outline">
+        <mat-label>Filtrar por estado</mat-label>
+        <mat-select [(ngModel)]="selectedEnabled" (selectionChange)="onEnabledFilterChange()">
+          <mat-option [value]="true">Activo</mat-option>
+          <mat-option [value]="false">Pausado</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="filters-container__dropdown">
+      <mp-dropdown-button type="primary" [items]="dropdownItems">
         Nuevo
       </mp-dropdown-button>
+    </div>
   </div>
   
   <mp-table [columns]="columns" [dataSource$]="dataSource$" [isLoading]="isLoading"
