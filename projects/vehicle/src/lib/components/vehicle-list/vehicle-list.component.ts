@@ -68,7 +68,7 @@ export class VehicleListComponent implements OnInit {
           },
         },
         {
-          description: 'Modificar',
+          description: 'Editar',
           action: (element: VehicleListItem) => {
             // Implement edit action here
             console.log('Edit vehicle:', element);
@@ -79,6 +79,13 @@ export class VehicleListComponent implements OnInit {
           action: (element: VehicleListItem) => {
             // Implement delete action here
             console.log('Delete vehicle:', element);
+          },
+        },
+        {
+          description: 'Deshabilitar',
+          action: (element: VehicleListItem) => {
+            // Implement disable action here
+            console.log('Disable vehicle:', element);
           },
         },
       ],
