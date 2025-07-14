@@ -136,4 +136,31 @@ describe('VehicleListComponent', () => {
       expect(component.doSearchSubject$.next).toHaveBeenCalled();
     });
   });
+  describe('onSearchTextChange integration', () => {
+    it('should fetch vehicles and update dataSource$ after searchText changes', fakeAsync(() => {
+      // Arrange
+      jest.spyOn(service, 'postSearchVehiclesAsync').mockReturnValue(
+        of({
+          total: mockVehicleListItems.length,
+          results: mockVehicleListItems,
+        }),
+      );
+
+      component.ngOnInit();
+      component.pageIndex = 2;
+      component.searchText = 'HJD';
+
+      // Act
+
+      component.onSearchTextChange();
+      tick(2000);
+      fixture.detectChanges();
+
+      // Assert
+      expect(component.dataSource$.value).toEqual(mockVehicleListItems);
+      expect(component.pageIndex).toBe(0);
+      expect(component.itemsNumber).toBe(2);
+      expect(component.isLoading).toBe(false);
+    }));
+  });
 });
