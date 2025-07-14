@@ -1,11 +1,14 @@
 import {
+  ButtonComponent,
   ColumnTypeEnum,
+  InputComponent,
   LateralDrawerService,
   TableColumn,
   TableComponent,
 } from '@Common-UI';
 
 import { Component, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { BehaviorSubject, debounceTime, Subject, switchMap, tap } from 'rxjs';
 
@@ -16,7 +19,7 @@ import { VehicleService } from '../../services/vehicle.service';
 @Component({
   selector: 'mp-vehicle-list',
   standalone: true,
-  imports: [TableComponent],
+  imports: [TableComponent, FormsModule, InputComponent, ButtonComponent],
   templateUrl: './vehicle-list.component.html',
   styleUrl: './vehicle-list.component.scss',
 })
@@ -24,40 +27,34 @@ export class VehicleListComponent implements OnInit {
   columns: TableColumn<VehicleListItem>[] = [
     {
       columnDef: 'licensePlate',
-      header: 'Patente',
+      header: 'PATENTE',
       type: ColumnTypeEnum.VALUE,
       value: (element: VehicleListItem) => element.licensePlate,
     },
     {
-      columnDef: 'brand',
-      header: 'Marca',
-      type: ColumnTypeEnum.VALUE,
-      value: (element: VehicleListItem) => element.brand,
-    },
-    {
       columnDef: 'model',
-      header: 'Modelo',
+      header: 'MODELO',
       type: ColumnTypeEnum.VALUE,
       value: (element: VehicleListItem) => element.model,
     },
     {
-      columnDef: 'enabled',
-      header: 'Habilitado',
-      type: ColumnTypeEnum.VALUE,
-      value: (element: VehicleListItem) => (element.enabled ? 'Sí' : 'No'),
-    },
-    {
       columnDef: 'kmTraveled',
-      header: 'KM Recorridos',
+      header: 'KILOMETRAJE',
       type: ColumnTypeEnum.VALUE,
       value: (element: VehicleListItem) => element.kmTraveled.toString(),
     },
     {
-      columnDef: 'entryDate',
-      header: 'Fecha de Ingreso',
+      columnDef: 'admissionDate',
+      header: 'FECHA DE INGRESO',
+      type: ColumnTypeEnum.VALUE,
+      value: (element: VehicleListItem) => element.admissionDate.toString(),
+    },
+    {
+      columnDef: 'enabled',
+      header: 'ESTADO',
       type: ColumnTypeEnum.VALUE,
       value: (element: VehicleListItem) =>
-        element.entryDate ? element.entryDate.toLocaleDateString() : '',
+        element.enabled ? 'Habilitado' : 'No habilitado',
     },
     {
       columnDef: 'actions',
@@ -94,6 +91,7 @@ export class VehicleListComponent implements OnInit {
   pageIndex: number = 0;
   pageSize: number = 10;
   doSearchSubject$ = new Subject<void>();
+  searchText: string = '';
 
   constructor(
     private readonly vehicleService: VehicleService,
@@ -111,9 +109,9 @@ export class VehicleListComponent implements OnInit {
           const params: VehicleParams = {
             page: this.pageIndex + 1,
             pageSize: this.pageSize,
-            searchText: '',
+            searchText: this.searchText,
           };
-          return this.vehicleService.postSearchVehicles(params);
+          return this.vehicleService.postSearchVehiclesAsync(params);
         }),
       )
       .subscribe({
@@ -127,6 +125,12 @@ export class VehicleListComponent implements OnInit {
           this.isLoading = false;
         },
       });
+    this.doSearchSubject$.next();
+  }
+
+  onSearchTextChange(): void {
+    this.pageIndex = 0;
+    this.isLoading = true;
     this.doSearchSubject$.next();
   }
 

@@ -5,5 +5,5 @@ export interface VehicleListItem {
   model: string;
   enabled: boolean;
   kmTraveled: number;
-  entryDate: Date;
+  admissionDate: Date;
 }

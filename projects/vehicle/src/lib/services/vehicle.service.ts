@@ -14,7 +14,9 @@ export class VehicleService {
   private readonly baseUrl = environment.apiBaseUrl + '/vehicle';
   constructor(private readonly http: HttpClient) {}
 
-  postSearchVehicles(params: VehicleParams): Observable<SearchVehicleResponse> {
+  postSearchVehiclesAsync(
+    params: VehicleParams,
+  ): Observable<SearchVehicleResponse> {
     const url = `${this.baseUrl}/search`;
     return this.http.post<SearchVehicleResponse>(url, params);
   }
