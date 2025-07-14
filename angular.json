@@ -339,7 +339,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular-devkit/build-angular:jest",
           "options": {
             "tsConfig": "projects/product-category/tsconfig.spec.json",
             "polyfills": ["zone.js", "zone.js/testing"]
@@ -369,7 +369,7 @@
           "defaultConfiguration": "production"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular-devkit/build-angular:jest",
           "options": {
             "tsConfig": "projects/vehicle/tsconfig.spec.json",
             "polyfills": ["zone.js", "zone.js/testing"]
