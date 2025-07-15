@@ -1,0 +1,40 @@
+@import '../../../../../../src/styles/varibles';
+
+.mp-table {
+  width: 100%;
+  max-width: 65%;
+
+  &__grid-container {
+    width: 100%;
+    margin-top: 20px;
+    display: grid;
+
+    &__item {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+}
+
+.mat-mdc-form-field {
+  font-size: 14px;
+  width: 100%;
+  padding: 16px;
+}
+
+.filters-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+  margin: 15px;
+
+  &__dropdown {
+    margin-bottom: $input-footer-height;
+    padding: 0 32px;
+  }
+}

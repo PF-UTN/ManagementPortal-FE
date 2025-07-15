@@ -71,6 +71,12 @@ describe('NavBarComponent', () => {
           route: 'productos',
           shouldRender: true,
         },
+        {
+          title: 'Vehiculos',
+          icon: 'directions_car',
+          route: 'vehiculos',
+          shouldRender: true,
+        },
       ]);
     });
 
@@ -106,6 +112,12 @@ describe('NavBarComponent', () => {
           title: 'Productos',
           icon: 'inventory_2',
           route: 'productos',
+          shouldRender: true,
+        },
+        {
+          title: 'Vehiculos',
+          icon: 'directions_car',
+          route: 'vehiculos',
           shouldRender: true,
         },
       ]);
@@ -144,6 +156,12 @@ describe('NavBarComponent', () => {
         title: 'Productos',
         icon: 'inventory_2',
         route: 'productos',
+        shouldRender: false,
+      },
+      {
+        title: 'Vehiculos',
+        icon: 'directions_car',
+        route: 'vehiculos',
         shouldRender: false,
       },
     ]);
