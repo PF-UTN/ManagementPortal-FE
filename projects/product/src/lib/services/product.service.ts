@@ -33,6 +33,11 @@ export class ProductService {
     return this.http.post<ProductResponse>(url, params);
   }
 
+  toggleProductStatus(productId: number, enabled: boolean): Observable<void> {
+    const url = `${this.baseUrl}/${productId}/toggle`;
+    return this.http.patch<void>(url, { enabled: !enabled });
+  }
+
   getCategories(): Observable<ProductCategoryResponse[]> {
     const url = `${this.baseUrl}-categories`;
     return this.http.get<ProductCategoryResponse[]>(url);

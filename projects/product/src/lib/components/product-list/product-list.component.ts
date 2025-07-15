@@ -27,6 +27,7 @@ import { ProductParams } from '../../models/product-param.model';
 import { ProductService } from '../../services/product.service';
 import { DeletedProductLateralDrawerComponent } from '../deleted-product-lateral-drawer/deleted-product-lateral-drawer.component';
 import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-lateral-drawer.component';
+import { ToggleProductLatearalDrawerComponent } from '../toggle-product-latearal-drawer/toggle-product-latearal-drawer.component';
 
 @Component({
   selector: 'mp-product-list',
@@ -100,7 +101,7 @@ export class ProductListComponent implements OnInit {
           action: (element: ProductListItem) => this.onModifyDrawer(element),
         },
         {
-          description: 'Pausar',
+          description: 'Pausar/Reanudar',
           action: (element: ProductListItem) => this.onPauseDrawer(element),
         },
         {
@@ -282,7 +283,28 @@ export class ProductListComponent implements OnInit {
   }
 
   onPauseDrawer(request: ProductListItem): void {
-    console.log('Pausar', request); //Provisorio hasta que se implemente el drawer
+    const isEnabled = request.enabled;
+    this.lateralDrawerService
+      .open(
+        ToggleProductLatearalDrawerComponent,
+        { productId: request.id, isPause: true },
+        {
+          title: 'Pausar producto',
+          footer: {
+            firstButton: {
+              text: isEnabled ? 'Pausar' : 'Reanudar',
+              click: () => {},
+            },
+            secondButton: {
+              text: 'Cancelar',
+              click: () => this.lateralDrawerService.close(),
+            },
+          },
+        },
+      )
+      .subscribe(() => {
+        this.doSearchSubject$.next();
+      });
   }
 
   onEnabledFilterChange(): void {
