@@ -210,4 +210,41 @@ describe('ProductService', () => {
       req.error(mockError);
     });
   });
+
+  describe('toggleProductStatus', () => {
+    it('should send a PATCH request with the correct parameters and return void', () => {
+      // Arrange
+      productId = 1;
+      const enabled = true;
+      const url = `${baseUrl}/${productId}/toggle`;
+
+      // Act & Assert
+      service.toggleProductStatus(productId, enabled).subscribe((response) => {
+        expect(response).toBeUndefined();
+      });
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('PATCH');
+      expect(req.request.body).toEqual({ enabled: !enabled });
+      req.flush(null);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      productId = 1;
+      const enabled = false;
+      const url = `${baseUrl}/${productId}/toggle`;
+      const mockError = new ErrorEvent('Network error');
+
+      // Act & Assert
+      service.toggleProductStatus(productId, enabled).subscribe({
+        next: () => fail('Expected an error, but got a successful response'),
+        error: (error) => {
+          expect(error.error).toBe(mockError);
+        },
+      });
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('PATCH');
+      req.error(mockError);
+    });
+  });
 });

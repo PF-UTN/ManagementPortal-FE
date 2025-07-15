@@ -25,11 +25,11 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { Observable, of, startWith, map } from 'rxjs';
 
+import { SupplierResponse } from '../../../../../supplier/src/lib/models/supplier-response.model';
+import { SupplierService } from '../../../../../supplier/src/lib/services/supplier.service';
 import { ProductCategoryResponse } from '../../models/product-category-response.model';
 import { ProductCreate } from '../../models/product-create-param.model';
-import { SupplierResponse } from '../../models/supplier-response.model';
 import { ProductService } from '../../services/product.service';
-import { SupplierService } from '../../services/supplier.service';
 
 @Component({
   selector: 'mp-product-create',

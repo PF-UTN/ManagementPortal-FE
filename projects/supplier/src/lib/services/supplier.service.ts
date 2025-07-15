@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { SupplierCreateUpdateResponse } from '../models/supplier-create-update-response.model';
+import { SupplierResponse } from '../models/supplier-response.model';
 import { SupplierDetail } from '../models/supplier.detail.model';
 import { Supplier } from '../models/supplier.model';
 
@@ -23,6 +24,10 @@ export class SupplierService {
       `${this.baseUrl}/`,
       supplier,
     );
+  }
+
+  getSuppliers(): Observable<SupplierResponse[]> {
+    return this.http.get<SupplierResponse[]>(this.baseUrl);
   }
 
   getSupplierByDocumentAsync(
