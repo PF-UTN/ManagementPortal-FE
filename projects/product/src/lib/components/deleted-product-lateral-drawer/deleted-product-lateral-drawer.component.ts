@@ -15,7 +15,7 @@ import { ProductDetail } from '../../models/product-detail.model';
 import { ProductService } from '../../services/product.service';
 
 @Component({
-  selector: 'lib-delete-lateral-drawer',
+  selector: 'mp-delete-lateral-drawer',
   standalone: true,
   imports: [LoadingComponent, CommonModule, MatSnackBarModule],
   templateUrl: './deleted-product-lateral-drawer.component.html',
