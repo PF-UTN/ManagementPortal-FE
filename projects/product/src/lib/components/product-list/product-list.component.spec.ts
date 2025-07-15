@@ -20,6 +20,7 @@ import { of, throwError } from 'rxjs';
 import { ProductListComponent } from './product-list.component';
 import { ProductService } from '../../services/product.service';
 import { mockProductListItems, mockProductListItem } from '../../testing';
+import { DeletedProductLateralDrawerComponent } from '../deleted-product-lateral-drawer/deleted-product-lateral-drawer.component';
 import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-lateral-drawer.component';
 
 describe('ProductListComponent', () => {
@@ -339,6 +340,38 @@ describe('ProductListComponent', () => {
           }),
         }),
       );
+    });
+  });
+
+  describe('onDeleteDrawer', () => {
+    it('should open DeleteLateralDrawerComponent with correct config and refresh list on close', () => {
+      // Arrange
+      const request = mockProductListItem;
+      lateralDrawerService.open.mockReturnValue(of(void 0));
+      const doSearchSpy = jest.spyOn(component.doSearchSubject$, 'next');
+
+      // Act
+      component.onDeleteDrawer(request);
+
+      // Assert
+      expect(lateralDrawerService.open).toHaveBeenCalledWith(
+        DeletedProductLateralDrawerComponent,
+        { productId: request.id },
+        expect.objectContaining({
+          title: 'Eliminar producto',
+          footer: expect.objectContaining({
+            firstButton: expect.objectContaining({
+              text: 'Eliminar',
+              click: expect.any(Function),
+            }),
+            secondButton: expect.objectContaining({
+              text: 'Cancelar',
+              click: expect.any(Function),
+            }),
+          }),
+        }),
+      );
+      expect(doSearchSpy).toHaveBeenCalled();
     });
   });
 });

@@ -169,7 +169,10 @@ export class SignupComponent implements OnInit {
           Validators.maxLength(20),
         ]),
         birthdate: new FormControl<Date | null>(null, Validators.required),
-        town: new FormControl<Town | null>(null, [Validators.required, this.townListValidator()]),
+        town: new FormControl<Town | null>(null, [
+          Validators.required,
+          this.townListValidator(),
+        ]),
         street: new FormControl<string | null>(null, Validators.required),
         streetNumber: new FormControl<number | null>(null, Validators.required),
         taxCategory: new FormControl<number | null>(null, Validators.required),

@@ -1,0 +1,28 @@
+<div class="container-fluid">
+  <div class="filters-container">
+    <div class="filters-container__selector col">
+      <mp-input
+        label="Buscar vehículos"
+        [placeholder]="'Buscar por patente, marca o modelo...'"
+        icon="search"
+        [iconPosition]="'prefix'"
+        [(ngModel)]="searchText"
+        (input)="onSearchTextChange()"
+      />
+    </div>
+    <div class="filters-container__dropdown">
+      <mp-button type="primary"> Nuevo </mp-button>
+    </div>
+  </div>
+  <mp-table
+    [columns]="columns"
+    [dataSource$]="dataSource$"
+    [isLoading]="isLoading"
+    noDataMessage="No existen vehiculos disponibles"
+    [itemsNumber]="itemsNumber"
+    [pageSize]="pageSize"
+    [pageIndex]="pageIndex"
+    (pageChange)="handlePageChange($event)"
+  >
+  </mp-table>
+</div>
