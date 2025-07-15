@@ -66,62 +66,139 @@ describe('ToggleProductLatearalDrawerComponent', () => {
     component.productId = 1;
   });
 
-  it('should create the component', () => {
-    // Act & Assert
-    expect(component).toBeTruthy();
+  describe('component creation and initialization', () => {
+    it('should create the component', () => {
+      // Act & Assert
+      expect(component).toBeTruthy();
+    });
+
+    it('should load product on init', () => {
+      // Arrange
+      productService.getProductById.mockReturnValue(of(mockProduct));
+
+      // Act
+      component.ngOnInit();
+
+      // Assert
+      expect(productService.getProductById).toHaveBeenCalledWith(1);
+      expect(component.product()).toEqual(mockProduct);
+      expect(component.isLoading()).toBe(false);
+    });
   });
 
-  it('should load product on init', () => {
-    // Arrange
-    productService.getProductById.mockReturnValue(of(mockProduct));
+  describe('toggleButtonText getter', () => {
+    it('should return correct toggleButtonText when product is enabled', () => {
+      // Arrange
+      component.product.set({ ...mockProduct, enabled: true });
 
-    // Act
-    component.ngOnInit();
+      // Act
+      const text = component.toggleButtonText;
 
-    // Assert
-    expect(productService.getProductById).toHaveBeenCalledWith(1);
-    expect(component.product()).toEqual(mockProduct);
-    expect(component.isLoading()).toBe(false);
+      // Assert
+      expect(text).toBe('Pausar');
+    });
+
+    it('should return correct toggleButtonText when product is disabled', () => {
+      // Arrange
+      component.product.set({ ...mockProduct, enabled: false });
+
+      // Act
+      const text = component.toggleButtonText;
+
+      // Assert
+      expect(text).toBe('Reanudar');
+    });
+
+    it('should return empty string when product is null', () => {
+      // Arrange
+      component.product.set(null);
+
+      // Act
+      const text = component.toggleButtonText;
+
+      // Assert
+      expect(text).toBe('');
+    });
   });
 
-  it('should return correct toggleButtonText when product is enabled', () => {
-    // Arrange
-    component.product.set({ ...mockProduct, enabled: true });
+  describe('drawer actions', () => {
+    it('should close drawer on closeDrawer()', () => {
+      // Act
+      component.closeDrawer();
 
-    // Act
-    const text = component.toggleButtonText;
+      // Assert
+      expect(lateralDrawerService.close).toHaveBeenCalled();
+    });
 
-    // Assert
-    expect(text).toBe('Pausar');
-  });
+    it('should not toggle state if product is null', () => {
+      // Arrange
+      component.product.set(null);
 
-  it('should return correct toggleButtonText when product is disabled', () => {
-    // Arrange
-    component.product.set({ ...mockProduct, enabled: false });
+      // Act
+      component.toggleProductState();
 
-    // Act
-    const text = component.toggleButtonText;
+      // Assert
+      expect(component.toggleLoading()).toBe(false);
+    });
 
-    // Assert
-    expect(text).toBe('Reanudar');
-  });
+    it('should update drawer config when product signal changes', () => {
+      // Arrange
+      productService.getProductById.mockReturnValue(of(mockProduct));
+      const updateConfigSpy = jest.spyOn(lateralDrawerService, 'updateConfig');
 
-  it('should close drawer on closeDrawer()', () => {
-    // Act
-    component.closeDrawer();
+      // Act
+      fixture.detectChanges();
+      component.product.set({ ...mockProduct, enabled: false });
 
-    // Assert
-    expect(lateralDrawerService.close).toHaveBeenCalled();
-  });
+      // Assert
+      expect(updateConfigSpy).toHaveBeenCalled();
+    });
 
-  it('should not toggle state if product is null', () => {
-    // Arrange
-    component.product.set(null);
+    it('should call toggleProductState when firstButton click is triggered', () => {
+      // Arrange
+      productService.getProductById.mockReturnValue(of(mockProduct));
+      productService.toggleProductStatus.mockReturnValue(of(undefined));
+      const spy = jest.spyOn(component, 'toggleProductState');
+      fixture.detectChanges();
+      component.product.set({ ...mockProduct, enabled: true });
+      const config = lateralDrawerService.updateConfig.mock.calls.at(-1)?.[0];
+      expect(config).toBeDefined();
 
-    // Act
-    component.toggleProductState();
+      // Act
+      config?.footer?.firstButton.click();
 
-    // Assert
-    expect(component.toggleLoading()).toBe(false);
+      // Assert
+      expect(spy).toHaveBeenCalled();
+    });
+
+    it('should call closeDrawer when secondButton click is triggered', () => {
+      // Arrange
+      productService.getProductById.mockReturnValue(of(mockProduct));
+      const spy = jest.spyOn(component, 'closeDrawer');
+      component.product.set({ ...mockProduct, enabled: true });
+      fixture.detectChanges();
+      const config = lateralDrawerService.updateConfig.mock.calls.at(-1)?.[0];
+      expect(config).toBeDefined();
+
+      // Act
+      config?.footer?.secondButton?.click();
+
+      // Assert
+      expect(spy).toHaveBeenCalled();
+    });
+
+    it('should update drawer config when product signal changes', () => {
+      // Arrange
+      productService.getProductById.mockReturnValue(of(mockProduct));
+      const updateConfigSpy = jest.spyOn(lateralDrawerService, 'updateConfig');
+
+      fixture.detectChanges();
+
+      // Act
+      component.product.set({ ...mockProduct, enabled: false });
+
+      // Assert
+      expect(updateConfigSpy).toHaveBeenCalled();
+    });
   });
 });
