@@ -6,8 +6,16 @@ import {
   TableComponent,
   DropdownItem,
 } from '@Common-UI';
-import { CreateUpdateProductCategoryLateralDrawerComponent } from '@Product-Category';
-import { CreateUpdateSupplierLateralDrawerComponent } from '@Supplier';
+import {
+  CreateUpdateProductCategoryLateralDrawerComponent,
+  ProductCategoryService,
+  ProductCategoryResponse,
+} from '@Product-Category';
+import {
+  CreateUpdateSupplierLateralDrawerComponent,
+  SupplierCreateUpdateResponse,
+  SupplierService,
+} from '@Supplier';
 
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
@@ -111,6 +119,8 @@ export class ProductListComponent implements OnInit {
     },
   ];
 
+  categories: ProductCategoryResponse[];
+  suppliers: SupplierCreateUpdateResponse[];
   dataSource$ = new BehaviorSubject<ProductListItem[]>([]);
   isLoading: boolean = true;
   pageIndex: number = 0;
@@ -146,12 +156,16 @@ export class ProductListComponent implements OnInit {
 
   constructor(
     private readonly productService: ProductService,
+    private readonly productCategoryService: ProductCategoryService,
+    private readonly supplierService: SupplierService,
     private readonly lateralDrawerService: LateralDrawerService,
     private readonly router: Router,
     private readonly snackBar: MatSnackBar,
   ) {}
 
   ngOnInit(): void {
+    this.initCategories();
+    this.initSuppliers();
     this.doSearchSubject$
       .pipe(
         debounceTime(500),
@@ -189,6 +203,28 @@ export class ProductListComponent implements OnInit {
         },
       });
     this.doSearchSubject$.next();
+  }
+
+  private initCategories(): void {
+    this.productCategoryService.getCategoriesAsync().subscribe({
+      next: (categories) => {
+        this.categories = categories;
+      },
+      error: (err) => {
+        console.error('Error al obtener las categorías:', err);
+      },
+    });
+  }
+
+  private initSuppliers(): void {
+    this.supplierService.getSuppliersAsync().subscribe({
+      next: (suppliers) => {
+        this.suppliers = suppliers;
+      },
+      error: (err) => {
+        console.error('Error al obtener los proveedores:', err);
+      },
+    });
   }
 
   onDetailDrawer(request: ProductListItem): void {
