@@ -1,0 +1,73 @@
+<ng-container *ngIf="isLoading(); else loaded">
+  <mp-loading></mp-loading>
+</ng-container>
+
+<ng-template #loaded>
+    <ng-container *ngIf="product as product">
+      <div class="container py-3">
+        <div class="row mb-3">
+          <div class="col-12">
+            <strong>Nombre</strong>
+            <p>{{ product.name }}</p>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-12">
+            <strong>Descripción</strong>
+            <p>{{ product.description }}</p>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-12">
+            <strong>Categoría</strong>
+            <p>{{ product.category.name }}</p>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-12">
+            <strong>Precio</strong>
+            <p>${{ product.price }}</p>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-12">
+            <strong>Stock</strong>
+            <ul>
+              <li><strong>Disponible:</strong> {{ product.stock.quantityAvailable }}</li>
+              <li><strong>En pedido:</strong> {{ product.stock.quantityOrdered }}</li>
+              <li><strong>Reservado:</strong> {{ product.stock.quantityReserved }}</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-12">
+            <strong>Peso</strong>
+            <p>{{ product.weight }} kg</p>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-12">
+            <strong>Proveedor</strong>
+            <ul>
+              <li><strong>Nombre del negocio:</strong> {{ product.supplier.businessName }}</li>
+              <li><strong>Email:</strong> {{ product.supplier.email }}</li>
+              <li><strong>Teléfono:</strong> {{ product.supplier.phone }}</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12">
+            <strong>Estado del producto:</strong>
+            <p>{{ product.enabled ? 'Activo' : 'En Pausa' }}</p>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+</ng-template>

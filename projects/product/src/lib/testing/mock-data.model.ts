@@ -72,6 +72,7 @@ export const mockProductCategories: ProductCategoryResponse[] = [
 ];
 
 export const mockProductDetail: ProductDetail = {
+  id: 1,
   name: 'Producto Test',
   description: 'Descripción de prueba',
   category: { name: 'Categoría Test' },

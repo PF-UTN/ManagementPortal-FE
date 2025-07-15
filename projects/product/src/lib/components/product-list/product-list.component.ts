@@ -17,6 +17,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
@@ -24,6 +25,7 @@ import { debounceTime, switchMap, tap } from 'rxjs/operators';
 import { ProductListItem } from '../../models/product-item.model';
 import { ProductParams } from '../../models/product-param.model';
 import { ProductService } from '../../services/product.service';
+import { DeletedProductLateralDrawerComponent } from '../deleted-product-lateral-drawer/deleted-product-lateral-drawer.component';
 import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-lateral-drawer.component';
 
 @Component({
@@ -146,6 +148,7 @@ export class ProductListComponent implements OnInit {
     private readonly productService: ProductService,
     private readonly lateralDrawerService: LateralDrawerService,
     private readonly router: Router,
+    private readonly snackBar: MatSnackBar,
   ) {}
 
   ngOnInit(): void {
@@ -255,7 +258,27 @@ export class ProductListComponent implements OnInit {
   }
 
   onDeleteDrawer(request: ProductListItem): void {
-    console.log('Eliminar', request); //Provisorio hasta que se implemente el lateral drawer
+    this.lateralDrawerService
+      .open(
+        DeletedProductLateralDrawerComponent,
+        { productId: request.id },
+        {
+          title: 'Eliminar producto',
+          footer: {
+            firstButton: {
+              text: 'Eliminar',
+              click: () => {},
+            },
+            secondButton: {
+              text: 'Cancelar',
+              click: () => this.lateralDrawerService.close(),
+            },
+          },
+        },
+      )
+      .subscribe(() => {
+        this.doSearchSubject$.next();
+      });
   }
 
   onPauseDrawer(request: ProductListItem): void {
