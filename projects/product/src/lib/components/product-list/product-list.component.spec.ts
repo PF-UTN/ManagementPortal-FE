@@ -414,4 +414,18 @@ describe('ProductListComponent', () => {
       expect(doSearchSpy).toHaveBeenCalled();
     });
   });
+
+  describe('onModifyProduct', () => {
+    it('should navigate to the edit page with the correct id', () => {
+      // Arrange
+      const routerSpy = jest.spyOn(component['router'], 'navigate');
+      const request = { ...mockProductListItem, id: 123 };
+
+      // Act
+      component.onModifyProduct(request);
+
+      // Assert
+      expect(routerSpy).toHaveBeenCalledWith(['/productos/editar', 123]);
+    });
+  });
 });

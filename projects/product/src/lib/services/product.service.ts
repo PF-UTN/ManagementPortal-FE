@@ -38,6 +38,14 @@ export class ProductService {
     return this.http.patch<void>(url, { enabled: !enabled });
   }
 
+  updateProduct(
+    productId: number,
+    params: ProductCreate,
+  ): Observable<ProductResponse> {
+    const url = `${this.baseUrl}/${productId}`;
+    return this.http.put<ProductResponse>(url, params);
+  }
+
   getCategories(): Observable<ProductCategoryResponse[]> {
     const url = `${this.baseUrl}-categories`;
     return this.http.get<ProductCategoryResponse[]>(url);

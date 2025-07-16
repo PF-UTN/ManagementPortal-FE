@@ -98,7 +98,7 @@ export class ProductListComponent implements OnInit {
         },
         {
           description: 'Modificar',
-          action: (element: ProductListItem) => this.onModifyDrawer(element),
+          action: (element: ProductListItem) => this.onModifyProduct(element),
         },
         {
           description: 'Pausar/Reanudar',
@@ -254,8 +254,8 @@ export class ProductListComponent implements OnInit {
     );
   }
 
-  onModifyDrawer(request: ProductListItem): void {
-    console.log('Modificar', request); //Provisorio hasta que se implemente el drawer
+  onModifyProduct(request: ProductListItem): void {
+    this.router.navigate(['/productos/editar', request.id]);
   }
 
   onDeleteDrawer(request: ProductListItem): void {

@@ -8,7 +8,7 @@ import { ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
 import { ProductCreateComponent } from './product-create.component';
@@ -23,6 +23,7 @@ describe('ProductCreateComponent', () => {
   let fixture: ComponentFixture<ProductCreateComponent>;
   let productServiceMock: {
     createProduct: jest.Mock;
+    updateProduct: jest.Mock;
     getCategories: jest.Mock;
   };
   let supplierServiceMock: { getSuppliers: jest.Mock };
@@ -60,6 +61,7 @@ describe('ProductCreateComponent', () => {
   beforeEach(async () => {
     productServiceMock = {
       createProduct: jest.fn(),
+      updateProduct: jest.fn(),
       getCategories: jest.fn().mockReturnValue(of(mockCategories)),
     };
     supplierServiceMock = {
@@ -79,6 +81,13 @@ describe('ProductCreateComponent', () => {
         { provide: SupplierService, useValue: supplierServiceMock },
         { provide: MatSnackBar, useValue: snackBarMock },
         { provide: Router, useValue: routerMock },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            snapshot: { paramMap: { get: () => null } },
+            paramMap: of({ get: () => null }),
+          },
+        },
       ],
     }).compileComponents();
 
@@ -210,6 +219,89 @@ describe('ProductCreateComponent', () => {
       expect(productServiceMock.createProduct).toHaveBeenCalled();
       expect(snackBarMock.open).not.toHaveBeenCalledWith(
         'Producto creado correctamente',
+        'Cerrar',
+        { duration: 3000 },
+      );
+      expect(routerMock.navigate).not.toHaveBeenCalled();
+    }));
+
+    it('should call updateProduct and navigate on success when editing', fakeAsync(() => {
+      // arrange
+      jest
+        .spyOn(component['route'].snapshot.paramMap, 'get')
+        .mockReturnValue('5');
+      productServiceMock.updateProduct = jest
+        .fn()
+        .mockReturnValue(of(mockProductResponse));
+      component.ngOnInit();
+      tick();
+      component.productForm.patchValue({
+        name: 'Edit',
+        description: 'EditDesc',
+        price: 2,
+        enabled: true,
+        weight: 2,
+        category: mockCategories[0],
+        categoryId: 1,
+        supplier: mockSuppliers[0],
+        supplierId: 1,
+        stock: {
+          quantityOrdered: 1,
+          quantityAvailable: 1,
+          quantityReserved: 1,
+        },
+      });
+
+      // act
+      component.onSubmit();
+
+      // assert
+      expect(productServiceMock.updateProduct).toHaveBeenCalledWith(
+        5,
+        expect.any(Object),
+      );
+      expect(snackBarMock.open).toHaveBeenCalledWith(
+        'Producto actualizado correctamente',
+        'Cerrar',
+        { duration: 3000 },
+      );
+      expect(routerMock.navigate).toHaveBeenCalledWith(['/productos']);
+    }));
+
+    it('should handle error on updateProduct', fakeAsync(() => {
+      // arrange
+      jest
+        .spyOn(component['route'].snapshot.paramMap, 'get')
+        .mockReturnValue('5');
+      productServiceMock.updateProduct = jest
+        .fn()
+        .mockReturnValue(throwError(() => new Error('fail')));
+      component.ngOnInit();
+      tick();
+      component.productForm.patchValue({
+        name: 'Edit',
+        description: 'EditDesc',
+        price: 2,
+        enabled: true,
+        weight: 2,
+        category: mockCategories[0],
+        categoryId: 1,
+        supplier: mockSuppliers[0],
+        supplierId: 1,
+        stock: {
+          quantityOrdered: 1,
+          quantityAvailable: 1,
+          quantityReserved: 1,
+        },
+      });
+
+      // act
+      component.onSubmit();
+
+      // assert
+      expect(productServiceMock.updateProduct).toHaveBeenCalled();
+      expect(snackBarMock.open).not.toHaveBeenCalledWith(
+        'Producto actualizado correctamente',
         'Cerrar',
         { duration: 3000 },
       );
