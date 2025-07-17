@@ -4,9 +4,10 @@
       <mp-input
         label="Buscar vehículos"
         [placeholder]="'Buscar por patente, marca o modelo...'"
-        icon="search"
-        [iconPosition]="'prefix'"
         [(ngModel)]="searchText"
+        icon="close"
+        [iconPosition]="'suffix'"
+        [iconAction]="onClearSearch.bind(this)"
         (input)="onSearchTextChange()"
       />
     </div>
