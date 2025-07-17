@@ -8,3 +8,5 @@ export * from './lib/models/supplier.detail.model';
 export * from './lib/models/supplier-create-update-response.model';
 export * from './lib/models/supplier.model';
 export * from './lib/models/supplier-create-update-response.model';
+export * from './lib/models/supplier-response.model';
+export * from './lib/services/supplier.service';

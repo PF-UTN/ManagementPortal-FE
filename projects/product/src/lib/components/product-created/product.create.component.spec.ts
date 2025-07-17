@@ -1,3 +1,5 @@
+import { SupplierResponse, SupplierService } from '@Supplier';
+
 import {
   ComponentFixture,
   TestBed,
@@ -12,8 +14,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
 import { ProductCreateComponent } from './product-create.component';
-import { SupplierResponse } from '../../../../../supplier/src/lib/models/supplier-response.model';
-import { SupplierService } from '../../../../../supplier/src/lib/services/supplier.service';
 import { ProductCategoryResponse } from '../../models/product-category-response.model';
 import { ProductResponse } from '../../models/product-create-response.model';
 import { ProductService } from '../../services/product.service';

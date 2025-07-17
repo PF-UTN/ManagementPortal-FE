@@ -4,6 +4,7 @@ import {
   SubtitleComponent,
   LoadingComponent,
 } from '@Common-UI';
+import { SupplierResponse, SupplierService } from '@Supplier';
 
 import { CommonModule } from '@angular/common';
 import { Component, signal } from '@angular/core';
@@ -30,8 +31,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Observable, of, startWith, map } from 'rxjs';
 
-import { SupplierResponse } from '../../../../../supplier/src/lib/models/supplier-response.model';
-import { SupplierService } from '../../../../../supplier/src/lib/services/supplier.service';
 import { ProductCategoryResponse } from '../../models/product-category-response.model';
 import { ProductCreate } from '../../models/product-create-param.model';
 import { ProductService } from '../../services/product.service';
@@ -133,7 +132,7 @@ export class ProductCreateComponent {
       if (productId) {
         this.productService.getProductById(+productId).subscribe((product) => {
           const category = this.categories.find(
-            (cat) => cat.name === product.category?.name,
+            (category) => category.name === product.category?.name,
           );
           const supplier = this.suppliers.find(
             (sup) => sup.businessName === product.supplier?.businessName,
@@ -226,7 +225,7 @@ export class ProductCreateComponent {
       if (!value) {
         return { required: true };
       }
-      const exists = categories.some((cat) => cat.id === value.id);
+      const exists = categories.some((category) => category.id === value.id);
       return exists ? null : { invalidCategory: true };
     };
   }
@@ -244,8 +243,8 @@ export class ProductCreateComponent {
 
   private filterCategories(name: string): ProductCategoryResponse[] {
     const filterValue = name.toLowerCase();
-    return this.categories.filter((cat) =>
-      cat.name.toLowerCase().includes(filterValue),
+    return this.categories.filter((category) =>
+      category.name.toLowerCase().includes(filterValue),
     );
   }
 
