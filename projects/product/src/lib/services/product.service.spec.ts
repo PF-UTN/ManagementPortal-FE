@@ -210,4 +210,79 @@ describe('ProductService', () => {
       req.error(mockError);
     });
   });
+
+  describe('toggleProductStatus', () => {
+    it('should send a PATCH request with the correct parameters and return void', () => {
+      // Arrange
+      productId = 1;
+      const enabled = true;
+      const url = `${baseUrl}/${productId}/toggle`;
+
+      // Act & Assert
+      service.toggleProductStatus(productId, enabled).subscribe((response) => {
+        expect(response).toBeUndefined();
+      });
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('PATCH');
+      expect(req.request.body).toEqual({ enabled: !enabled });
+      req.flush(null);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      productId = 1;
+      const enabled = false;
+      const url = `${baseUrl}/${productId}/toggle`;
+      const mockError = new ErrorEvent('Network error');
+
+      // Act & Assert
+      service.toggleProductStatus(productId, enabled).subscribe({
+        next: () => fail('Expected an error, but got a successful response'),
+        error: (error) => {
+          expect(error.error).toBe(mockError);
+        },
+      });
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('PATCH');
+      req.error(mockError);
+    });
+  });
+
+  describe('updateProduct', () => {
+    it('should send a PUT request with the correct parameters and return data', () => {
+      // Arrange
+      const productId = 1;
+      const params: ProductCreate = mockProductCreate;
+      const expectedResponse: ProductResponse = mockProductResponse;
+      const url = `${baseUrl}/${productId}`;
+
+      // Act & Assert
+      service.updateProduct(productId, params).subscribe((response) => {
+        expect(response).toEqual(expectedResponse);
+      });
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('PUT');
+      expect(req.request.body).toEqual(params);
+      req.flush(expectedResponse);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const productId = 1;
+      const params: ProductCreate = mockProductCreate;
+      const mockError = new ErrorEvent('Network error');
+      const url = `${baseUrl}/${productId}`;
+
+      // Act & Assert
+      service.updateProduct(productId, params).subscribe({
+        next: () => fail('Expected an error, but got a successful response'),
+        error: (error) => {
+          expect(error.error).toBe(mockError);
+        },
+      });
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('PUT');
+      req.error(mockError);
+    });
+  });
 });

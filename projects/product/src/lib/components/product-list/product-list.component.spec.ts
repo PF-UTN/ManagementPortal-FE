@@ -22,6 +22,7 @@ import { ProductService } from '../../services/product.service';
 import { mockProductListItems, mockProductListItem } from '../../testing';
 import { DeletedProductLateralDrawerComponent } from '../deleted-product-lateral-drawer/deleted-product-lateral-drawer.component';
 import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-lateral-drawer.component';
+import { ToggleProductLatearalDrawerComponent } from '../toggle-product-latearal-drawer/toggle-product-latearal-drawer.component';
 
 describe('ProductListComponent', () => {
   let component: ProductListComponent;
@@ -372,6 +373,82 @@ describe('ProductListComponent', () => {
         }),
       );
       expect(doSearchSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('onPauseDrawer', () => {
+    it('should open ToggleProductLatearalDrawerComponent with correct config and refresh list on close (pausar)', () => {
+      // Arrange
+      const request = { ...mockProductListItem, enabled: true };
+      lateralDrawerService.open.mockReturnValue(of(void 0));
+      const doSearchSpy = jest.spyOn(component.doSearchSubject$, 'next');
+
+      // Act
+      component.onPauseDrawer(request);
+
+      // Assert
+      expect(lateralDrawerService.open).toHaveBeenCalledWith(
+        ToggleProductLatearalDrawerComponent,
+        { productId: request.id, isPause: true },
+        expect.objectContaining({
+          title: 'Pausar producto',
+          footer: expect.objectContaining({
+            firstButton: expect.objectContaining({
+              text: 'Pausar',
+              click: expect.any(Function),
+            }),
+            secondButton: expect.objectContaining({
+              text: 'Cancelar',
+              click: expect.any(Function),
+            }),
+          }),
+        }),
+      );
+      expect(doSearchSpy).toHaveBeenCalled();
+    });
+
+    it('should open ToggleProductLatearalDrawerComponent with correct config and text "Reanudar" if product is paused', () => {
+      // Arrange
+      const request = { ...mockProductListItem, enabled: false };
+      lateralDrawerService.open.mockReturnValue(of(void 0));
+      const doSearchSpy = jest.spyOn(component.doSearchSubject$, 'next');
+
+      // Act
+      component.onPauseDrawer(request);
+
+      // Assert
+      expect(lateralDrawerService.open).toHaveBeenCalledWith(
+        ToggleProductLatearalDrawerComponent,
+        { productId: request.id, isPause: true },
+        expect.objectContaining({
+          title: 'Pausar producto',
+          footer: expect.objectContaining({
+            firstButton: expect.objectContaining({
+              text: 'Reanudar',
+              click: expect.any(Function),
+            }),
+            secondButton: expect.objectContaining({
+              text: 'Cancelar',
+              click: expect.any(Function),
+            }),
+          }),
+        }),
+      );
+      expect(doSearchSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('onModifyProduct', () => {
+    it('should navigate to the edit page with the correct id', () => {
+      // Arrange
+      const routerSpy = jest.spyOn(component['router'], 'navigate');
+      const request = { ...mockProductListItem, id: 123 };
+
+      // Act
+      component.onModifyProduct(request);
+
+      // Assert
+      expect(routerSpy).toHaveBeenCalledWith(['/productos/editar', 123]);
     });
   });
 });
