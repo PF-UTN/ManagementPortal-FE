@@ -6,7 +6,7 @@ import {
   fakeAsync,
   tick,
 } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 import { ProductListClientComponent } from './product-list-client.component';
 import { ProductService } from '../../services/product.service';
@@ -77,6 +77,37 @@ describe('ProductListClientComponent', () => {
       expect(component.categories).toEqual(mockProductCategories);
       expect(component.products).toEqual(mockProductListItems);
       expect(component.isLoading).toBeFalsy();
+    }));
+
+    it('should fetch categories and products on init', fakeAsync(() => {
+      // Arrange
+      productService.getCategories.mockReturnValue(of(mockProductCategories));
+      productService.postSearchProduct.mockReturnValue(
+        of({
+          results: mockProductListItems,
+          total: mockProductListItems.length,
+        }),
+      );
+
+      // Act
+      component.ngOnInit();
+      tick(500);
+
+      // Assert
+      expect(component.categories).toEqual(mockProductCategories);
+      expect(component.products).toEqual(mockProductListItems);
+      expect(component.isLoading).toBeFalsy();
+    }));
+
+    it('should set isLoading to false and return empty results on error', fakeAsync(() => {
+      productService.postSearchProduct.mockReturnValueOnce(
+        throwError(() => new Error('fail')),
+      );
+      component.ngOnInit();
+      component.filterForm.get('searchText')?.setValue('error');
+      tick(500);
+      expect(component.products).toEqual([]);
+      expect(component.isLoading).toBe(false);
     }));
   });
 
