@@ -35,7 +35,7 @@ export class VehicleListComponent implements OnInit {
       columnDef: 'brand',
       header: 'Marca',
       type: ColumnTypeEnum.VALUE,
-      value: (element: VehicleListItem) => element.model,
+      value: (element: VehicleListItem) => element.brand,
     },
     {
       columnDef: 'model',
