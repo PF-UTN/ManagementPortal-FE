@@ -34,16 +34,6 @@
 
   &__content {
     padding: 0 20px;
-    min-width: 290px;
-  }
-
-  &__name {
-    display: block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-weight: bold;
-    max-width: 200px;
   }
 
   &__row {
@@ -62,7 +52,6 @@
   &__content-price {
     align-items: center;
     font-size: 1.1em;
-    white-space: nowrap;
   }
 
   &__quantity input[type='number'] {
