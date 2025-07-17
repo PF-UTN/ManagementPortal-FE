@@ -32,6 +32,12 @@ export const routes: Routes = [
     canActivate: [RoleGuard],
     data: { admittedRoles: [RolesEnum.Employee] },
   },
+  {
+    path: 'vehiculos',
+    loadChildren: () => import('@Vehicle').then((m) => m.VehicleRoutingModule),
+    canActivate: [RoleGuard],
+    data: { admittedRoles: [RolesEnum.Employee] },
+  },
   { path: 'unauthorized', pathMatch: 'full', component: UnauthorizedComponent },
   { path: '**', pathMatch: 'full', redirectTo: 'inicio' },
 ];

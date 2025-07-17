@@ -1,4 +1,6 @@
 import { LateralDrawerService } from '@Common-UI';
+import { ProductCategoryService } from '@Product-Category';
+import { SupplierService } from '@Supplier';
 
 import { CommonModule } from '@angular/common';
 import {
@@ -27,6 +29,8 @@ describe('ProductListComponent', () => {
   let fixture: ComponentFixture<ProductListComponent>;
   let service: DeepMockProxy<ProductService>;
   let lateralDrawerService: DeepMockProxy<LateralDrawerService>;
+  let productCategoryService: DeepMockProxy<ProductCategoryService>;
+  let supplierService: DeepMockProxy<SupplierService>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -48,19 +52,38 @@ describe('ProductListComponent', () => {
           provide: LateralDrawerService,
           useValue: mockDeep<LateralDrawerService>(),
         },
+        {
+          provide: ProductCategoryService,
+          useValue: mockDeep<ProductCategoryService>(),
+        },
+        {
+          provide: SupplierService,
+          useValue: mockDeep<SupplierService>(),
+        },
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ProductListComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
     service = TestBed.inject(ProductService) as DeepMockProxy<ProductService>;
+    productCategoryService = TestBed.inject(
+      ProductCategoryService,
+    ) as DeepMockProxy<ProductCategoryService>;
+    productCategoryService.getCategoriesAsync.mockReturnValue(of([]));
+
+    supplierService = TestBed.inject(
+      SupplierService,
+    ) as DeepMockProxy<SupplierService>;
+    supplierService.getSuppliersAsync.mockReturnValue(of([]));
+
     lateralDrawerService = TestBed.inject(
       LateralDrawerService,
     ) as DeepMockProxy<LateralDrawerService>;
     service.postSearchProduct.mockReturnValue(
       of({ total: mockProductListItems.length, results: mockProductListItems }),
     );
+
+    fixture = TestBed.createComponent(ProductListComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
   it('should create', () => {
