@@ -16,7 +16,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { debounceTime } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { switchMap, debounceTime, startWith } from 'rxjs/operators';
 
 import { ProductCategoryResponse } from '../../models/product-category-response.model';
 import { ProductListItem } from '../../models/product-item.model';
@@ -25,6 +26,7 @@ import {
   ProductOrderField,
   ProductOrderDirection,
 } from '../../models/product-param.model';
+import { SearchProductResponse } from '../../models/search-product-response.model';
 import { ProductService } from '../../services/product.service';
 import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-lateral-drawer.component';
 import { ProductCardComponent } from '../product-card/product-card.component';
@@ -63,6 +65,7 @@ export class ProductListClientComponent {
   selectedProductId?: number;
   isLoading: boolean = true;
   filterForm: FormGroup;
+  private filters$ = new Subject<void>();
 
   constructor(
     private readonly fb: FormBuilder,
@@ -84,56 +87,60 @@ export class ProductListClientComponent {
     });
 
     this.filterForm.valueChanges.pipe(debounceTime(400)).subscribe(() => {
-      this.fetchProducts();
+      this.filters$.next();
     });
 
-    this.fetchProducts();
-  }
+    this.filters$.next();
+    this.filters$
+      .pipe(
+        startWith(null),
+        switchMap(() => {
+          this.isLoading = true;
+          const { searchText, selectedCategories, sort } =
+            this.filterForm.value;
+          const selectedCategoryNames =
+            selectedCategories && selectedCategories.length > 0
+              ? this.categories
+                  .filter((category) =>
+                    selectedCategories.includes(String(category.id)),
+                  )
+                  .map((category) => category.name)
+              : undefined;
 
-  fetchProducts() {
-    this.isLoading = true;
+          const filters: Pick<ProductParams['filters'], 'categoryName'> = {
+            categoryName: selectedCategoryNames,
+          };
 
-    const { searchText, selectedCategories, sort } = this.filterForm.value;
+          let orderBy;
+          if (sort && typeof sort === 'string' && sort.includes('-')) {
+            const [field, direction] = sort.split('-');
+            orderBy = {
+              field: field as ProductOrderField,
+              direction: direction as ProductOrderDirection,
+            };
+          }
 
-    const selectedCategoryNames =
-      selectedCategories && selectedCategories.length > 0
-        ? this.categories
-            .filter((category) =>
-              selectedCategories.includes(String(category.id)),
-            )
-            .map((category) => category.name)
-        : undefined;
+          const params: ProductParams = {
+            page: 1,
+            pageSize: 999999,
+            searchText,
+            filters,
+            ...(orderBy && { orderBy }),
+          };
 
-    const filters: Pick<ProductParams['filters'], 'categoryName'> = {
-      categoryName: selectedCategoryNames,
-    };
-
-    let orderBy;
-    if (sort && typeof sort === 'string' && sort.includes('-')) {
-      const [field, direction] = sort.split('-');
-      orderBy = {
-        field: field as ProductOrderField,
-        direction: direction as ProductOrderDirection,
-      };
-    }
-
-    const params: ProductParams = {
-      page: 1,
-      pageSize: 999999,
-      searchText,
-      filters,
-      ...(orderBy && { orderBy }),
-    };
-
-    this.productService.postSearchProduct(params).subscribe({
-      next: (res) => {
-        this.products = res.results;
-        this.isLoading = false;
-      },
-      error: () => {
-        this.isLoading = false;
-      },
-    });
+          return this.productService.postSearchProduct(params);
+        }),
+      )
+      .subscribe({
+        next: (res: SearchProductResponse) => {
+          this.products = res.results;
+          this.isLoading = false;
+        },
+        error: () => {
+          this.products = [];
+          this.isLoading = false;
+        },
+      });
   }
 
   onAddToCartKeyDown() {

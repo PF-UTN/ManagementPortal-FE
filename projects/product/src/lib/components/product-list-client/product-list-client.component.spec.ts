@@ -53,52 +53,6 @@ describe('ProductListClientComponent', () => {
     component = fixture.componentInstance;
   });
 
-  it('should call fetchProducts on ngOnInit', () => {
-    // Arrange
-    const spy = jest.spyOn(component, 'fetchProducts');
-
-    // Act
-    component.ngOnInit();
-
-    // Assert
-    expect(spy).toHaveBeenCalled();
-  });
-
-  describe('fetchProducts', () => {
-    it('should update products and isLoading on success', fakeAsync(() => {
-      // Arrange
-      const mockProducts = [
-        { ...mockProductListItem, id: 1, name: 'A', price: 10 },
-        { ...mockProductListItem, id: 2, name: 'B', price: 20 },
-      ];
-      productService.postSearchProduct.mockReturnValue(
-        of({ results: mockProducts, total: 2 }),
-      );
-
-      // Act
-      component.fetchProducts();
-      tick();
-
-      // Assert
-      expect(component.products).toEqual(mockProducts);
-      expect(component.isLoading).toBe(false);
-    }));
-
-    it('should set isLoading to false on error', fakeAsync(() => {
-      // Arrange
-      productService.postSearchProduct.mockReturnValue(
-        throwError(() => new Error('error')),
-      );
-
-      // Act
-      component.fetchProducts();
-      tick();
-
-      // Assert
-      expect(component.isLoading).toBe(false);
-    }));
-  });
-
   describe('Initialization', () => {
     it('should create', () => {
       // Assert
@@ -125,11 +79,14 @@ describe('ProductListClientComponent', () => {
       expect(component.isLoading).toBeFalsy();
     }));
 
-    it('should handle error on fetchProducts', fakeAsync(() => {
+    it('should fetch categories and products on init', fakeAsync(() => {
       // Arrange
       productService.getCategories.mockReturnValue(of(mockProductCategories));
       productService.postSearchProduct.mockReturnValue(
-        throwError(() => new Error('error')),
+        of({
+          results: mockProductListItems,
+          total: mockProductListItems.length,
+        }),
       );
 
       // Act
@@ -137,7 +94,25 @@ describe('ProductListClientComponent', () => {
       tick(500);
 
       // Assert
+      expect(component.categories).toEqual(mockProductCategories);
+      expect(component.products).toEqual(mockProductListItems);
       expect(component.isLoading).toBeFalsy();
+    }));
+
+    it('should set isLoading to false and return empty results on error', fakeAsync(() => {
+      // Arrange
+      productService.postSearchProduct.mockReturnValueOnce(
+        throwError(() => new Error('fail')),
+      );
+
+      // Act
+      component.ngOnInit();
+      component.filterForm.get('searchText')?.setValue('error');
+      tick(500);
+
+      // Assert
+      expect(component.products).toEqual([]);
+      expect(component.isLoading).toBe(false);
     }));
   });
 
@@ -149,7 +124,7 @@ describe('ProductListClientComponent', () => {
       const expectedOrderBy = { field: 'price', direction: 'asc' };
 
       // Act
-      component.fetchProducts();
+      component.ngOnInit();
       tick();
 
       // Assert
@@ -167,7 +142,7 @@ describe('ProductListClientComponent', () => {
       const expectedOrderBy = { field: 'name', direction: 'desc' };
 
       // Act
-      component.fetchProducts();
+      component.ngOnInit();
       tick();
 
       // Assert
@@ -189,7 +164,7 @@ describe('ProductListClientComponent', () => {
       );
 
       // Act
-      component.fetchProducts();
+      component.ngOnInit();
       tick();
 
       // Assert
