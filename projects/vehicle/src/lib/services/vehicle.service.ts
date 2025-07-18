@@ -20,4 +20,9 @@ export class VehicleService {
     const url = `${this.baseUrl}/search`;
     return this.http.post<SearchVehicleResponse>(url, params);
   }
+
+  deleteVehicleAsync(id: number): Observable<void> {
+    const url = `${this.baseUrl}/${id}`;
+    return this.http.delete<void>(url);
+  }
 }
