@@ -16,8 +16,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { Subject, of } from 'rxjs';
-import { switchMap, debounceTime, startWith, catchError } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { switchMap, debounceTime, startWith } from 'rxjs/operators';
 
 import { ProductCategoryResponse } from '../../models/product-category-response.model';
 import { ProductListItem } from '../../models/product-item.model';
@@ -128,17 +128,18 @@ export class ProductListClientComponent {
             ...(orderBy && { orderBy }),
           };
 
-          return this.productService.postSearchProduct(params).pipe(
-            catchError(() => {
-              this.isLoading = false;
-              return of({ results: [], total: 0 });
-            }),
-          );
+          return this.productService.postSearchProduct(params);
         }),
       )
-      .subscribe((res: SearchProductResponse) => {
-        this.products = res.results;
-        this.isLoading = false;
+      .subscribe({
+        next: (res: SearchProductResponse) => {
+          this.products = res.results;
+          this.isLoading = false;
+        },
+        error: () => {
+          this.products = [];
+          this.isLoading = false;
+        },
       });
   }
 

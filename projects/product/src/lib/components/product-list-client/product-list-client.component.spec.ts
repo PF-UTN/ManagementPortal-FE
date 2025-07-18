@@ -100,12 +100,17 @@ describe('ProductListClientComponent', () => {
     }));
 
     it('should set isLoading to false and return empty results on error', fakeAsync(() => {
+      // Arrange
       productService.postSearchProduct.mockReturnValueOnce(
         throwError(() => new Error('fail')),
       );
+
+      // Act
       component.ngOnInit();
       component.filterForm.get('searchText')?.setValue('error');
       tick(500);
+
+      // Assert
       expect(component.products).toEqual([]);
       expect(component.isLoading).toBe(false);
     }));
