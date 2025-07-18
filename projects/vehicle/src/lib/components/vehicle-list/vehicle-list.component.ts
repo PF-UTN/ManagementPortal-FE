@@ -148,7 +148,6 @@ export class VehicleListComponent implements OnInit {
   }
 
   onClearSearch() {
-    console.log('entre al al onClear Search');
     this.searchText = '';
     this.onSearchTextChange();
   }
