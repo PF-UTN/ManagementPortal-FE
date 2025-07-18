@@ -20,10 +20,11 @@
 
     <div class="filters-container__selector col">
       <mat-form-field appearance="outline">
-        <mat-label>Habilitado</mat-label>
+        <mat-label>Filtrar por estado</mat-label>
         <mat-select [(ngModel)]="selectedEnabled" (selectionChange)="onEnabledFilterChange()">
-          <mat-option [value]="true">Si</mat-option>
-          <mat-option [value]="false">No</mat-option>
+          <mat-option [value]=" ">Todos</mat-option>
+          <mat-option [value]="true">Habilitado</mat-option>
+          <mat-option [value]="false">Deshabilitado</mat-option>
         </mat-select>
       </mat-form-field>
     </div>

@@ -27,31 +27,37 @@ export class VehicleListComponent implements OnInit {
   columns: TableColumn<VehicleListItem>[] = [
     {
       columnDef: 'licensePlate',
-      header: 'PATENTE',
+      header: 'Patente',
       type: ColumnTypeEnum.VALUE,
       value: (element: VehicleListItem) => element.licensePlate,
     },
     {
+      columnDef: 'brand',
+      header: 'Marca',
+      type: ColumnTypeEnum.VALUE,
+      value: (element: VehicleListItem) => element.brand,
+    },
+    {
       columnDef: 'model',
-      header: 'MODELO',
+      header: 'Modelo',
       type: ColumnTypeEnum.VALUE,
       value: (element: VehicleListItem) => element.model,
     },
     {
       columnDef: 'kmTraveled',
-      header: 'KILOMETRAJE',
+      header: 'Kilometraje actual',
       type: ColumnTypeEnum.VALUE,
       value: (element: VehicleListItem) => element.kmTraveled.toString(),
     },
     {
       columnDef: 'admissionDate',
-      header: 'FECHA DE INGRESO',
+      header: 'Fecha de ingreso',
       type: ColumnTypeEnum.VALUE,
       value: (element: VehicleListItem) => element.admissionDate.toString(),
     },
     {
       columnDef: 'enabled',
-      header: 'ESTADO',
+      header: 'Estado (Habilitado / No habilitado)',
       type: ColumnTypeEnum.VALUE,
       value: (element: VehicleListItem) =>
         element.enabled ? 'Habilitado' : 'No habilitado',
@@ -139,6 +145,11 @@ export class VehicleListComponent implements OnInit {
     this.pageIndex = 0;
     this.isLoading = true;
     this.doSearchSubject$.next();
+  }
+
+  onClearSearch() {
+    this.searchText = '';
+    this.onSearchTextChange();
   }
 
   handlePageChange(event: { pageIndex: number; pageSize: number }): void {

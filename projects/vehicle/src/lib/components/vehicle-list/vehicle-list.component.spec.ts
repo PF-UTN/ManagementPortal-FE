@@ -162,5 +162,17 @@ describe('VehicleListComponent', () => {
       expect(component.itemsNumber).toBe(2);
       expect(component.isLoading).toBe(false);
     }));
+    it('should clear searchText and trigger search when onClearSearch is called', () => {
+      // Arrange
+      component.searchText = 'something';
+      jest.spyOn(component, 'onSearchTextChange');
+
+      // Act
+      component.onClearSearch();
+
+      // Assert
+      expect(component.searchText).toBe('');
+      expect(component.onSearchTextChange).toHaveBeenCalled();
+    });
   });
 });
