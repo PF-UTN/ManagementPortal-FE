@@ -15,7 +15,7 @@ export interface SearchTownsResponse {
   providedIn: 'root',
 })
 export class TownService {
-  private baseUrl = environment.apiBaseUrl + '/towns';
+  private baseUrl = environment.apiBaseUrl + '/town';
 
   constructor(private http: HttpClient) {}
 

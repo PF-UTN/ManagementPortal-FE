@@ -153,7 +153,7 @@ describe('ProductService', () => {
         expect(categories).toEqual(expectedResponse);
       });
       const req = httpMock.expectOne(
-        'https://dev-management-portal-be.vercel.app/product-categories',
+        'https://dev-management-portal-be.vercel.app/product-category',
       );
       expect(req.request.method).toBe('GET');
       req.flush(expectedResponse);
@@ -170,7 +170,7 @@ describe('ProductService', () => {
         },
       });
       const req = httpMock.expectOne(
-        'https://dev-management-portal-be.vercel.app/product-categories',
+        'https://dev-management-portal-be.vercel.app/product-category',
       );
       expect(req.request.method).toBe('GET');
       req.error(mockError);

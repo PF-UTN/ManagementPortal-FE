@@ -49,7 +49,7 @@ describe('TownService', () => {
 
     // Assert
     const req = httpMock.expectOne(
-      (req) => req.method === 'POST' && req.url.includes('towns'),
+      (req) => req.method === 'POST' && req.url.includes('town'),
     );
 
     expect(req.request.body.searchText).toBe('Ciudad');
