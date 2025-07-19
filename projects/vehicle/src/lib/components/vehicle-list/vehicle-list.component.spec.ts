@@ -216,4 +216,32 @@ describe('VehicleListComponent', () => {
       expect(lateralDrawerService.close).toHaveBeenCalled();
     });
   });
+
+  describe('onButtonKeyDown', () => {
+    it('should call openCreateVehicleDrawer when Enter is pressed', () => {
+      // Arrange
+      const openSpy = jest
+        .spyOn(component, 'openCreateVehicleDrawer')
+        .mockImplementation(() => {});
+      const event = new KeyboardEvent('keydown', { key: 'Enter' });
+
+      // Act
+      component.onButtonKeyDown(event);
+
+      // Assert
+      expect(openSpy).toHaveBeenCalled();
+    });
+
+    it('should not call openCreateVehicleDrawer for other keys', () => {
+      // Arrange
+      const openSpy = jest.spyOn(component, 'openCreateVehicleDrawer');
+      const event = new KeyboardEvent('keydown', { key: 'Escape' });
+
+      // Act
+      component.onButtonKeyDown(event);
+
+      // Assert
+      expect(openSpy).not.toHaveBeenCalled();
+    });
+  });
 });

@@ -14,7 +14,8 @@
     <div class="filters-container__dropdown">
       <mp-button 
         type="primary"
-        (click)="openCreateVehicleDrawer()">
+        (click)="openCreateVehicleDrawer()"
+        (keydown)="onButtonKeyDown($event)">
         Nuevo 
       </mp-button>
     </div>

@@ -182,4 +182,10 @@ export class VehicleListComponent implements OnInit {
       )
       .subscribe(() => this.doSearchSubject$.next());
   }
+
+  onButtonKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      this.openCreateVehicleDrawer();
+    }
+  }
 }
