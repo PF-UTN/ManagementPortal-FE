@@ -1,0 +1,46 @@
+<form class="container" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <mp-input label="Patente" formControlName="licensePlate" required [errorMessages]="{
+      required: 'La patente es requerida.',
+      pattern: 'Formato de patente inválido',
+    }" 
+    icon="close"
+    [iconAction]="licensePlateClear"
+    iconPosition="suffix"
+  />
+  <mp-input label="Marca" formControlName="brand" required [errorMessages]="{
+      required: 'La marca es requerida.'
+    }" 
+    icon="close"
+    [iconAction]="brandClear"
+    iconPosition="suffix"/>
+  <mp-input label="Modelo" formControlName="model" required [errorMessages]="{
+      required: 'El modelo es requerido.'
+    }" 
+    icon="close"
+    [iconAction]="modelClear"
+    iconPosition="suffix"/>
+  <mp-input label="Kilometraje actual" formControlName="kmTraveled" type="number" required [errorMessages]="{
+      required: 'El kilometraje es requerido.',
+      min: 'El kilometraje debe ser mayor o igual a 0.'
+    }" 
+    icon="close"
+    [iconAction]="kmTraveledClear"
+    iconPosition="suffix"/>
+  <mat-form-field appearance="outline" class="container__date">
+  <mat-label>Fecha de ingreso</mat-label>
+  <input matInput [matDatepicker]="picker" formControlName="admissionDate" required placeholder="dd/mm/aaaa">
+  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+  <mat-datepicker #picker></mat-datepicker>
+  <button type="button" matSuffix mat-icon-button aria-label="Limpiar fecha"
+    (click)="form.get('admissionDate')?.reset()">
+    <mat-icon>close</mat-icon>
+  </button>
+  <mat-error *ngIf="form.get('admissionDate')?.hasError('required') && form.get('admissionDate')?.touched">
+    La fecha de ingreso es requerida.
+  </mat-error>
+</mat-form-field>
+  <div class="container__toggle">
+    <mat-slide-toggle color="primary" formControlName="enabled">
+      Estado de habilitación
+    </mat-slide-toggle>
+  </div>

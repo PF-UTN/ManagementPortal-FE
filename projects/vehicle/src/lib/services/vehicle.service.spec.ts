@@ -7,6 +7,7 @@ import {
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
+import { VehicleCreate } from '../models/vehicle-create.model';
 import { VehicleParams } from '../models/vehicle-params.model';
 import { VehicleService } from '../services/vehicle.service';
 import { mockVehicleListItems } from '../testing/mock-data,model';
@@ -76,5 +77,57 @@ describe('VehicleService', () => {
     const req = httpMock.expectOne(url);
     expect(req.request.method).toBe('POST');
     req.error(mockError);
+  });
+
+  describe('createVehicleAsync', () => {
+    it('should send a POST request with the correct vehicle and return void', () => {
+      const vehicle: VehicleCreate = {
+        // Completa con los campos requeridos por tu modelo
+        licensePlate: 'ABC123',
+        brand: 'Toyota',
+        model: 'Corolla',
+        kmTraveled: 10000,
+        admissionDate: '2025-07-19',
+        enabled: true,
+        deleted: false,
+      };
+      const url = `${baseUrl}`;
+
+      service.createVehicleAsync(vehicle).subscribe((response) => {
+        expect(response).toBeUndefined();
+      });
+
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(vehicle);
+      req.flush(null); // void response
+    });
+
+    it('should handle HTTP errors', () => {
+      const vehicle: VehicleCreate = {
+        licensePlate: 'ABC123',
+        brand: 'Toyota',
+        model: 'Corolla',
+        kmTraveled: 10000,
+        admissionDate: '2025-07-19',
+        enabled: true,
+        deleted: false,
+      };
+      const mockError = new ErrorEvent('Network error');
+      const url = `${baseUrl}`;
+
+      service.createVehicleAsync(vehicle).subscribe({
+        next: () => {
+          fail('Expected an error, but got a successful response');
+        },
+        error: (error) => {
+          expect(error.error).toBe(mockError);
+        },
+      });
+
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
+      req.error(mockError);
+    });
   });
 });

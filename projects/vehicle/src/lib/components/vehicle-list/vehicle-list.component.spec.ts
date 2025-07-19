@@ -175,4 +175,45 @@ describe('VehicleListComponent', () => {
       expect(component.onSearchTextChange).toHaveBeenCalled();
     });
   });
+
+  describe('openCreateVehicleDrawer', () => {
+    it('should open the drawer and refresh the list after closing', () => {
+      // Arrange
+      const lateralDrawerService = {
+        open: jest.fn().mockReturnValue(of({})),
+        close: jest.fn(),
+      };
+      Object.defineProperty(component, 'lateralDrawerService', {
+        value: lateralDrawerService,
+        writable: true,
+      });
+      jest.spyOn(component.doSearchSubject$, 'next');
+
+      // Act
+      component.openCreateVehicleDrawer();
+
+      // Assert
+      expect(lateralDrawerService.open).toHaveBeenCalled();
+      expect(component.doSearchSubject$.next).toHaveBeenCalled();
+    });
+    it('should call lateralDrawerService.close when Cancelar is clicked', () => {
+      // Arrange
+      const lateralDrawerService = {
+        open: jest.fn().mockReturnValue(of({})),
+        close: jest.fn(),
+      };
+      Object.defineProperty(component, 'lateralDrawerService', {
+        value: lateralDrawerService,
+        writable: true,
+      });
+
+      // Act
+      component.openCreateVehicleDrawer();
+      const config = lateralDrawerService.open.mock.calls[0][2];
+      config.footer.secondButton.click();
+
+      // Assert
+      expect(lateralDrawerService.close).toHaveBeenCalled();
+    });
+  });
 });

@@ -15,6 +15,7 @@ import { BehaviorSubject, debounceTime, Subject, switchMap, tap } from 'rxjs';
 import { VehicleListItem } from '../../models/vehicle-item.model';
 import { VehicleParams } from '../../models/vehicle-params.model';
 import { VehicleService } from '../../services/vehicle.service';
+import { CreateVehicleDrawerComponent } from '../create-vehicle-drawer/create-vehicle-drawer.component';
 
 @Component({
   selector: 'mp-vehicle-list',
@@ -57,7 +58,7 @@ export class VehicleListComponent implements OnInit {
     },
     {
       columnDef: 'enabled',
-      header: 'Estado (Habilitado / No habilitado)',
+      header: 'Estado',
       type: ColumnTypeEnum.VALUE,
       value: (element: VehicleListItem) =>
         element.enabled ? 'Habilitado' : 'No habilitado',
@@ -156,5 +157,29 @@ export class VehicleListComponent implements OnInit {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
     this.doSearchSubject$.next();
+  }
+
+  openCreateVehicleDrawer(): void {
+    this.lateralDrawerService
+      .open(
+        CreateVehicleDrawerComponent,
+        {},
+        {
+          title: 'Nuevo Vehículo',
+          footer: {
+            firstButton: {
+              text: 'Guardar',
+              click: () => {},
+            },
+            secondButton: {
+              text: 'Cancelar',
+              click: () => {
+                this.lateralDrawerService.close();
+              },
+            },
+          },
+        },
+      )
+      .subscribe(() => this.doSearchSubject$.next());
   }
 }
