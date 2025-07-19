@@ -47,7 +47,7 @@ export class ProductService {
   }
 
   getCategories(): Observable<ProductCategoryResponse[]> {
-    const url = `${this.baseUrl}-categories`;
+    const url = `${this.baseUrl}-category`;
     return this.http.get<ProductCategoryResponse[]>(url);
   }
 
