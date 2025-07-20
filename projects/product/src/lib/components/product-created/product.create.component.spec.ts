@@ -1,4 +1,10 @@
-import { SupplierResponse, SupplierService } from '@Supplier';
+import { LateralDrawerService } from '@Common-UI';
+import { CreateUpdateProductCategoryLateralDrawerComponent } from '@Product-Category';
+import {
+  CreateUpdateSupplierLateralDrawerComponent,
+  SupplierResponse,
+  SupplierService,
+} from '@Supplier';
 
 import {
   ComponentFixture,
@@ -11,6 +17,7 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Router, ActivatedRoute } from '@angular/router';
+import { mockDeep } from 'jest-mock-extended';
 import { of, throwError } from 'rxjs';
 
 import { ProductCreateComponent } from './product-create.component';
@@ -29,6 +36,7 @@ describe('ProductCreateComponent', () => {
   let supplierServiceMock: { getSuppliers: jest.Mock };
   let snackBarMock: { open: jest.Mock };
   let routerMock: { navigate: jest.Mock; url: string };
+  let lateralDrawerService: LateralDrawerService;
 
   const mockCategories: ProductCategoryResponse[] = [
     { id: 1, name: 'Cat1', description: 'desc1' },
@@ -88,8 +96,14 @@ describe('ProductCreateComponent', () => {
             paramMap: of({ get: () => null }),
           },
         },
+        {
+          provide: LateralDrawerService,
+          useValue: mockDeep<LateralDrawerService>(),
+        },
       ],
     }).compileComponents();
+
+    lateralDrawerService = TestBed.inject(LateralDrawerService);
 
     fixture = TestBed.createComponent(ProductCreateComponent);
     component = fixture.componentInstance;
@@ -463,7 +477,7 @@ describe('ProductCreateComponent', () => {
   });
 
   describe('onCategorySelected', () => {
-    it('debería setear el categoryId en el form', () => {
+    it('should set categoryId in form', () => {
       // arrange
       const category: ProductCategoryResponse = {
         id: 123,
@@ -479,6 +493,53 @@ describe('ProductCreateComponent', () => {
       component.onCategorySelected(event);
       // assert
       expect(component.productForm.controls.categoryId.value).toBe(123);
+    });
+    it('should call onCreateUpdateProductCategoryDrawer if + Gestionar categoria was selected', () => {
+      //Arrange
+      const event = {
+        option: { value: component.MANAGE_CATEGORY_OPTION },
+      } as unknown as MatAutocompleteSelectedEvent;
+
+      const spy = jest.spyOn(component, 'onCreateUpdateProductCategoryDrawer');
+
+      // Act
+      component.onCategorySelected(event);
+
+      // Assert
+      expect(spy).toHaveBeenCalled();
+    });
+    it('should open CreateUpdateProductCategoryLateralDrawerComponent with correct params when onCreateUpdateProductCategoryDrawer is called', () => {
+      //Arrange
+      const event = {
+        option: { value: component.MANAGE_CATEGORY_OPTION },
+      } as unknown as MatAutocompleteSelectedEvent;
+
+      const spy = jest.spyOn(lateralDrawerService, 'open');
+
+      // Act
+      component.onCategorySelected(event);
+
+      // Assert
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith(
+        CreateUpdateProductCategoryLateralDrawerComponent,
+        expect.objectContaining({
+          onSuccessCallback: expect.any(Function),
+        }),
+        expect.objectContaining({
+          title: 'Gestionar Categoría',
+          footer: expect.objectContaining({
+            firstButton: expect.objectContaining({
+              text: 'Confirmar',
+              click: expect.any(Function),
+            }),
+            secondButton: expect.objectContaining({
+              text: 'Cancelar',
+              click: expect.any(Function),
+            }),
+          }),
+        }),
+      );
     });
   });
 
@@ -503,6 +564,53 @@ describe('ProductCreateComponent', () => {
       component.onSupplierSelected(event);
       // assert
       expect(component.productForm.controls.supplierId.value).toBe(456);
+    });
+    it('should call onCreateUpdateSipplierDrawer if + Gestionar proveedor was selected', () => {
+      //Arrange
+      const event = {
+        option: { value: component.MANAGE_SUPPLIER_OPTION },
+      } as unknown as MatAutocompleteSelectedEvent;
+
+      const spy = jest.spyOn(component, 'onCreateUpdateSupplierDrawer');
+
+      // Act
+      component.onSupplierSelected(event);
+
+      // Assert
+      expect(spy).toHaveBeenCalled();
+    });
+    it('should open CreateUpdateSupplierLateralDrawerComponent with correct params when onCreateUpdatSupplierDrawer is called', () => {
+      //Arrange
+      const event = {
+        option: { value: component.MANAGE_SUPPLIER_OPTION },
+      } as unknown as MatAutocompleteSelectedEvent;
+
+      const spy = jest.spyOn(lateralDrawerService, 'open');
+
+      // Act
+      component.onSupplierSelected(event);
+
+      // Assert
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith(
+        CreateUpdateSupplierLateralDrawerComponent,
+        expect.objectContaining({
+          onSuccessCallback: expect.any(Function),
+        }),
+        expect.objectContaining({
+          title: 'Gestionar Proveedor',
+          footer: expect.objectContaining({
+            firstButton: expect.objectContaining({
+              text: 'Confirmar',
+              click: expect.any(Function),
+            }),
+            secondButton: expect.objectContaining({
+              text: 'Cancelar',
+              click: expect.any(Function),
+            }),
+          }),
+        }),
+      );
     });
   });
 
