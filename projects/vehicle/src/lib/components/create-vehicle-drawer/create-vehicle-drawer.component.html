@@ -2,7 +2,7 @@
   <mp-input 
     label="Patente" 
     formControlName="licensePlate" 
-    required 
+    [icon]="'close'"
     [errorMessages]="{
       pattern: 'Formato de patente inválido',
     }"
@@ -10,20 +10,20 @@
   <mp-input 
     label="Marca" 
     formControlName="brand" 
-    required 
+    [icon]="'close'"
     [errorMessages]="{
     }" />
   <mp-input 
     label="Modelo" 
     formControlName="model" 
-    required 
+    [icon]="'close'"
     [errorMessages]="{
     }" />
   <mp-input 
     label="Kilometraje actual" 
     formControlName="kmTraveled" 
+    [icon]="'close'"
     type="number" 
-    required 
     [errorMessages]="{
       min: 'El kilometraje debe ser mayor o igual a 0.'
     }" />
