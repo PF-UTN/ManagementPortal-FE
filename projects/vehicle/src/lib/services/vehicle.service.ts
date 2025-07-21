@@ -11,7 +11,7 @@ import { VehicleParams } from '../models/vehicle-params.model';
   providedIn: 'root',
 })
 export class VehicleService {
-  private readonly baseUrl = environment.apiBaseUrl + '/vehicles';
+  private readonly baseUrl = environment.apiBaseUrl + '/vehicle';
   constructor(private readonly http: HttpClient) {}
 
   postSearchVehiclesAsync(
