@@ -137,6 +137,32 @@ describe('CreateUpdateProductCategoryLateralDrawerComponent', () => {
         mockProductCategoryService.postCreateOrUpdateProductCategoryAsync,
       ).toHaveBeenCalledWith(mockProductCategory);
     });
+    it('should call onSuccessCallback after successful submit', () => {
+      // Arrange
+      const callback = jest.fn();
+      component.onSuccessCallback = callback;
+
+      component.isCreating.set(true);
+      component.productCategoryForm.controls.name.setValue(
+        mockNewProductCategory.name,
+      );
+      component.productCategoryForm.controls.description.setValue(
+        mockNewProductCategory.description,
+      );
+
+      jest
+        .spyOn(
+          mockProductCategoryService,
+          'postCreateOrUpdateProductCategoryAsync',
+        )
+        .mockReturnValue(of(mockProductCategory));
+
+      // Act
+      component.onSubmit();
+
+      // Assert
+      expect(callback).toHaveBeenCalled();
+    });
   });
   it('should close the drawer after submitting', () => {
     // Arrange

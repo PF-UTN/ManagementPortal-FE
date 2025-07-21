@@ -102,6 +102,43 @@ describe('CreateEditSupplierLateralDrawerComponent', () => {
     expect(emitSuccessSpy).toHaveBeenCalled();
     expect(component.isLoading()).toBe(false);
   });
+  it('should call onSuccessCallback after successful submit', () => {
+    // Arrange
+    const callback = jest.fn();
+    component.onSuccessCallback = callback;
+
+    component.isCreating.set(true);
+
+    component.supplierForm.controls.documentType.setValue(
+      mockSupplierWithTown.documentType,
+    );
+    component.supplierForm.controls.documentNumber.setValue(
+      mockSupplierWithTown.documentNumber,
+    );
+    component.supplierForm.controls.email.setValue(mockSupplierWithTown.email);
+    component.supplierForm.controls.businessName.setValue(
+      mockSupplierWithTown.businessName,
+    );
+    component.supplierForm.controls.phone.setValue(mockSupplierWithTown.phone);
+    component.supplierForm.controls.street.setValue(
+      mockSupplierWithTown.address.street,
+    );
+    component.supplierForm.controls.streetNumber.setValue(
+      mockSupplierWithTown.address.streetNumber,
+    );
+    component.supplierForm.controls.town.setValue(
+      mockSupplierWithTown.address.town,
+    );
+    jest
+      .spyOn(supplierService, 'postCreateOrUpdateSupplierAsync')
+      .mockReturnValue(of(mockSupplierCreateUpdateResponse));
+
+    // Act
+    component.onSubmit();
+
+    // Assert
+    expect(callback).toHaveBeenCalled();
+  });
   it('should call getSupplierByDocumentAsync and patch form values when supplier exists', () => {
     // Arrange
     component.supplierForm.controls.documentType.setValue(
