@@ -12,7 +12,7 @@ import { VehicleParams } from '../models/vehicle-params.model';
 import { VehicleService } from '../services/vehicle.service';
 import { mockVehicleListItems } from '../testing/mock-data,model';
 
-const baseUrl = environment.apiBaseUrl + '/vehicles';
+const baseUrl = environment.apiBaseUrl + '/vehicle';
 describe('VehicleService', () => {
   let service: VehicleService;
   let httpMock: HttpTestingController;
@@ -77,6 +77,46 @@ describe('VehicleService', () => {
     const req = httpMock.expectOne(url);
     expect(req.request.method).toBe('POST');
     req.error(mockError);
+  });
+
+  describe('deleteVehicleAsync', () => {
+    it('should send a DELETE request with the correct id', () => {
+      // Arrange
+      const vehicleId = 123;
+      const url = `${baseUrl}/${vehicleId}`;
+
+      // Act
+      service.deleteVehicleAsync(vehicleId).subscribe((response) => {
+        expect(response).toBeNull();
+      });
+
+      // Assert
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('DELETE');
+      req.flush(null);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const vehicleId = 123;
+      const mockError = new ErrorEvent('Network error');
+      const url = `${baseUrl}/${vehicleId}`;
+
+      // Act
+      service.deleteVehicleAsync(vehicleId).subscribe({
+        next: () => {
+          fail('Expected an error, but got a successful response');
+        },
+        error: (error) => {
+          expect(error.error).toBe(mockError);
+        },
+      });
+
+      // Assert
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('DELETE');
+      req.error(mockError);
+    });
   });
 
   describe('createVehicleAsync', () => {

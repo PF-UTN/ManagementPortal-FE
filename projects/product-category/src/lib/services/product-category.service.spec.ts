@@ -43,7 +43,7 @@ describe('ProductCategoryService', () => {
         });
       // Arrange & Act
       const req = httpMock.expectOne(
-        'https://dev-management-portal-be.vercel.app/product-categories/',
+        'https://dev-management-portal-be.vercel.app/product-category/',
       );
       // Assert
       expect(req.request.method).toBe('POST');
@@ -60,7 +60,7 @@ describe('ProductCategoryService', () => {
       });
       // Arrange & Act
       const req = httpMock.expectOne(
-        'https://dev-management-portal-be.vercel.app/product-categories/',
+        'https://dev-management-portal-be.vercel.app/product-category/',
       );
       // Assert
       expect(req.request.method).toBe('GET');

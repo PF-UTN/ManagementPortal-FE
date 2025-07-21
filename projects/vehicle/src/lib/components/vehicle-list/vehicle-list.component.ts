@@ -5,10 +5,14 @@ import {
   LateralDrawerService,
   TableColumn,
   TableComponent,
+  ModalComponent,
+  ModalConfig,
 } from '@Common-UI';
 
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { BehaviorSubject, debounceTime, Subject, switchMap, tap } from 'rxjs';
 
@@ -75,17 +79,39 @@ export class VehicleListComponent implements OnInit {
           },
         },
         {
-          description: 'Editar',
+          description: 'Eliminar',
           action: (element: VehicleListItem) => {
-            // Implement edit action here
-            console.log('Edit vehicle:', element);
+            const dialogRef = this.dialog.open(ModalComponent, {
+              data: {
+                title: 'Eliminar vehículo',
+                message:
+                  '¿Está seguro que desea eliminar este vehículo? Esta acción no se puede deshacer.',
+                cancelText: 'Cancelar',
+                confirmText: 'Eliminar',
+              } as ModalConfig,
+            });
+            dialogRef.afterClosed().subscribe((result: boolean) => {
+              if (result) {
+                this.doSearchSubject$.next();
+                this.snackBar.open(
+                  'Vehículo eliminado correctamente',
+                  'Cerrar',
+                  {
+                    duration: 3000,
+                  },
+                );
+                this.vehicleService
+                  .deleteVehicleAsync(element.id)
+                  .subscribe({});
+              }
+            });
           },
         },
         {
-          description: 'Eliminar',
+          description: 'Editar',
           action: (element: VehicleListItem) => {
             // Implement delete action here
-            console.log('Delete vehicle:', element);
+            console.log('Edit vehicle:', element);
           },
         },
         {
@@ -111,6 +137,8 @@ export class VehicleListComponent implements OnInit {
     private readonly vehicleService: VehicleService,
     private readonly lateralDrawerService: LateralDrawerService,
     private readonly router: Router,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar,
   ) {}
   ngOnInit(): void {
     this.doSearchSubject$

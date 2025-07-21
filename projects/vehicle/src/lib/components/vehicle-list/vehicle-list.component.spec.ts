@@ -1,3 +1,4 @@
+import { ModalComponent } from '@Common-UI';
 import { VehicleService } from '@Vehicle';
 
 import { CommonModule } from '@angular/common';
@@ -8,14 +9,19 @@ import {
   tick,
 } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {
+  BrowserAnimationsModule,
+  NoopAnimationsModule,
+} from '@angular/platform-browser/animations';
 import { mockDeep } from 'jest-mock-extended';
 import { of, throwError } from 'rxjs';
 
 import { VehicleListComponent } from './vehicle-list.component';
+import { VehicleListItem } from '../../models/vehicle-item.model';
 import { mockVehicleListItems } from '../../testing/mock-data,model';
 
 describe('VehicleListComponent', () => {
@@ -28,6 +34,7 @@ describe('VehicleListComponent', () => {
       imports: [
         VehicleListComponent,
         BrowserAnimationsModule,
+        NoopAnimationsModule,
         MatPaginatorModule,
         CommonModule,
         MatIconModule,
@@ -174,6 +181,90 @@ describe('VehicleListComponent', () => {
       expect(component.searchText).toBe('');
       expect(component.onSearchTextChange).toHaveBeenCalled();
     });
+  });
+
+  describe('deleteVehicle', () => {
+    it('should delete vehicle, show snackbar and reload list on confirm', fakeAsync(() => {
+      // Arrange
+      const vehicle: VehicleListItem = {
+        id: 1,
+        licensePlate: 'ABC123',
+        brand: 'Toyota',
+        model: 'Test',
+        enabled: true,
+        kmTraveled: 100,
+        admissionDate: new Date(),
+      };
+      const dialogRefMock: Partial<MatDialogRef<ModalComponent, boolean>> = {
+        afterClosed: () => of(true),
+      };
+      jest
+        .spyOn(component['dialog'], 'open')
+        .mockReturnValue(
+          dialogRefMock as MatDialogRef<ModalComponent, boolean>,
+        );
+      const deleteSpy = jest
+        .spyOn(service, 'deleteVehicleAsync')
+        .mockReturnValue(of(void 0));
+      const snackSpy = jest.spyOn(component['snackBar'], 'open');
+      const reloadSpy = jest.spyOn(component.doSearchSubject$, 'next');
+
+      // Act
+      const actionsColumn = component.columns.find(
+        (c) => c.columnDef === 'actions',
+      );
+      expect(actionsColumn).toBeDefined();
+      expect(actionsColumn?.actions).toBeDefined();
+      actionsColumn?.actions?.[1].action(vehicle);
+      tick();
+
+      // Assert
+      expect(deleteSpy).toHaveBeenCalledWith(vehicle.id);
+      expect(snackSpy).toHaveBeenCalledWith(
+        'Vehículo eliminado correctamente',
+        'Cerrar',
+        { duration: 3000 },
+      );
+      expect(reloadSpy).toHaveBeenCalled();
+    }));
+
+    it('should not delete vehicle or show snackbar if delete is cancelled', fakeAsync(() => {
+      // Arrange
+      const vehicle: VehicleListItem = {
+        id: 1,
+        licensePlate: 'ABC123',
+        brand: 'Toyota',
+        model: 'Test',
+        enabled: true,
+        kmTraveled: 100,
+        admissionDate: new Date(),
+      };
+      const dialogRefMock: Partial<MatDialogRef<ModalComponent, boolean>> = {
+        afterClosed: () => of(false),
+      };
+      jest
+        .spyOn(component['dialog'], 'open')
+        .mockReturnValue(
+          dialogRefMock as MatDialogRef<ModalComponent, boolean>,
+        );
+      const deleteSpy = jest.spyOn(service, 'deleteVehicleAsync');
+      const snackSpy = jest.spyOn(component['snackBar'], 'open');
+      const reloadSpy = jest.spyOn(component.doSearchSubject$, 'next');
+
+      // Act
+      const actionsColumn = component.columns.find(
+        (c) => c.columnDef === 'actions',
+      );
+      expect(actionsColumn).toBeDefined();
+      expect(actionsColumn?.actions).toBeDefined();
+      actionsColumn?.actions?.[1].action(vehicle);
+      tick();
+
+      // Assert
+      expect(deleteSpy).not.toHaveBeenCalled();
+      expect(snackSpy).not.toHaveBeenCalled();
+      expect(reloadSpy).not.toHaveBeenCalled();
+    }));
   });
 
   describe('openCreateVehicleDrawer', () => {

@@ -11,7 +11,7 @@ import { ProductCategoryResponse } from '../models/product-category-response.mod
   providedIn: 'root',
 })
 export class ProductCategoryService {
-  private readonly baseUrl = environment.apiBaseUrl + '/product-categories';
+  private readonly baseUrl = environment.apiBaseUrl + '/product-category';
 
   constructor(private readonly http: HttpClient) {}
 

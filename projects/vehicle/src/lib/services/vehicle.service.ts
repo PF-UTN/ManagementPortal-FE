@@ -12,7 +12,7 @@ import { VehicleParams } from '../models/vehicle-params.model';
   providedIn: 'root',
 })
 export class VehicleService {
-  private readonly baseUrl = environment.apiBaseUrl + '/vehicles';
+  private readonly baseUrl = environment.apiBaseUrl + '/vehicle';
   constructor(private readonly http: HttpClient) {}
 
   postSearchVehiclesAsync(
@@ -20,6 +20,11 @@ export class VehicleService {
   ): Observable<SearchVehicleResponse> {
     const url = `${this.baseUrl}/search`;
     return this.http.post<SearchVehicleResponse>(url, params);
+  }
+
+  deleteVehicleAsync(id: number): Observable<void> {
+    const url = `${this.baseUrl}/${id}`;
+    return this.http.delete<void>(url);
   }
 
   createVehicleAsync(vehicle: VehicleCreate): Observable<void> {
