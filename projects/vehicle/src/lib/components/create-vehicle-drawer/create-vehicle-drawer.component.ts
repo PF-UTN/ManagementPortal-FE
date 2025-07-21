@@ -11,6 +11,7 @@ import {
   FormGroup,
   Validators,
   ReactiveFormsModule,
+  FormControl,
 } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
 import {
@@ -24,10 +25,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
+import { VehicleCreate } from '../../models/vehicle-create.model';
 import { VehicleService } from '../../services/vehicle.service';
 
 @Component({
-  selector: 'lib-create-vehicle-drawer',
+  selector: 'mp-create-vehicle-drawer',
   standalone: true,
   imports: [
     CommonModule,
@@ -49,7 +51,15 @@ export class CreateVehicleDrawerComponent
   extends LateralDrawerContainer
   implements OnInit
 {
-  form: FormGroup;
+  form: FormGroup<{
+    licensePlate: FormControl<string | null>;
+    brand: FormControl<string | null>;
+    model: FormControl<string | null>;
+    kmTraveled: FormControl<number | null>;
+    admissionDate: FormControl<Date | null>;
+    enabled: FormControl<boolean | null>;
+    deleted: FormControl<boolean | null>;
+  }>;
   isFormValid = signal(false);
   isLoading = signal(false);
 
@@ -69,7 +79,7 @@ export class CreateVehicleDrawerComponent
           firstButton: {
             text: 'Guardar',
             click: () => this.onSubmit(),
-            disabled: !this.isFormValid() || this.isLoading(),
+            disabled: !this.isFormValid(),
             loading: this.isLoading(),
           },
           secondButton: {
@@ -90,23 +100,17 @@ export class CreateVehicleDrawerComponent
       ],
       brand: ['', Validators.required],
       model: ['', Validators.required],
-      kmTraveled: ['', [Validators.required, Validators.min(0)]],
-      admissionDate: ['', Validators.required],
+      kmTraveled: [0, [Validators.required, Validators.min(0)]],
+      admissionDate: [null as Date | null, Validators.required],
       enabled: [false],
       deleted: [false],
     });
 
-    this.form.get('kmTraveled')?.valueChanges.subscribe((value) => {
-      if (value < 0) {
-        this.form.get('kmTraveled')?.setValue(0);
-      }
-    });
-
-    this.form.get('licensePlate')?.valueChanges.subscribe((value) => {
+    this.form.controls['licensePlate']?.valueChanges.subscribe((value) => {
       if (value && value !== value.toUpperCase()) {
-        this.form
-          .get('licensePlate')
-          ?.setValue(value.toUpperCase(), { emitEvent: false });
+        this.form.controls['licensePlate']?.setValue(value.toUpperCase(), {
+          emitEvent: false,
+        });
       }
     });
 
@@ -116,42 +120,43 @@ export class CreateVehicleDrawerComponent
   }
 
   onSubmit(): void {
-    if (this.form.valid && !this.isLoading()) {
-      this.isLoading.set(true);
-      this.vehicleService.createVehicleAsync(this.form.value).subscribe({
-        next: () => {
-          this.emitSuccess();
-          this.closeDrawer();
-          this.snackBar.open('Vehículo creado correctamente', 'Cerrar', {
-            duration: 3000,
-          });
-          this.isLoading.set(false);
-        },
-        error: (err) => {
-          let msg = 'Error al crear el vehículo.';
-          if (err?.error?.message?.includes('license plate')) {
-            msg = 'Ya existe un vehículo con esa patente.';
-            this.form.get('licensePlate')?.setErrors({ exists: true });
-          }
-          this.snackBar.open(msg, 'Cerrar', { duration: 5000 });
-          this.isLoading.set(false);
-        },
-      });
-    }
+    this.isLoading.set(true);
+    const admissionDateValue = this.form.value.admissionDate;
+    const payload: VehicleCreate = {
+      licensePlate: this.form.value.licensePlate ?? '',
+      brand: this.form.value.brand ?? '',
+      model: this.form.value.model ?? '',
+      kmTraveled: this.form.value.kmTraveled ?? 0,
+      admissionDate: admissionDateValue
+        ? admissionDateValue instanceof Date
+          ? admissionDateValue.toISOString()
+          : admissionDateValue
+        : new Date().toISOString(),
+      enabled: this.form.value.enabled ?? false,
+      deleted: this.form.value.deleted ?? false,
+    };
+    this.vehicleService.createVehicleAsync(payload).subscribe({
+      next: () => {
+        this.emitSuccess();
+        this.closeDrawer();
+        this.snackBar.open('Vehículo creado correctamente', 'Cerrar', {
+          duration: 3000,
+        });
+        this.isLoading.set(false);
+      },
+      error: (err) => {
+        let msg = 'Error al crear el vehículo.';
+        if (err?.error?.message?.includes('license plate')) {
+          msg = 'Ya existe un vehículo con esa patente.';
+          this.form.controls['licensePlate']?.setErrors({ exists: true });
+        }
+        this.snackBar.open(msg, 'Cerrar', { duration: 5000 });
+        this.isLoading.set(false);
+      },
+    });
   }
 
   closeDrawer() {
     this.lateralDrawerService.close();
-  }
-
-  licensePlateClear = () => this.clearText('licensePlate');
-  brandClear = () => this.clearText('brand');
-  modelClear = () => this.clearText('model');
-  kmTraveledClear = () => this.clearText('kmTraveled');
-
-  clearText(controlName: string) {
-    this.form.get(controlName)?.setValue('');
-    this.form.get(controlName)?.markAsPristine();
-    this.form.get(controlName)?.markAsUntouched();
   }
 }

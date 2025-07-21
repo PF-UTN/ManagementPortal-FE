@@ -62,7 +62,7 @@ describe('CreateVehicleDrawerComponent', () => {
         brand: 'Toyota',
         model: 'Corolla',
         kmTraveled: 10000,
-        admissionDate: '2025-07-19',
+        admissionDate: new Date('2025-07-19'),
         enabled: true,
         deleted: false,
       });
@@ -74,15 +74,6 @@ describe('CreateVehicleDrawerComponent', () => {
   });
 
   describe('onSubmit', () => {
-    it('should not call createVehicleAsync if form is invalid', () => {
-      // Arrange
-      component.form.patchValue({ licensePlate: '' }); // invalid
-      // Act
-      component.onSubmit();
-      // Assert
-      expect(vehicleServiceMock.createVehicleAsync).not.toHaveBeenCalled();
-    });
-
     it('should call createVehicleAsync and show success snackbar on success', fakeAsync(() => {
       // Arrange
       component.form.patchValue({
@@ -90,7 +81,7 @@ describe('CreateVehicleDrawerComponent', () => {
         brand: 'Toyota',
         model: 'Corolla',
         kmTraveled: 10000,
-        admissionDate: '2025-07-19',
+        admissionDate: new Date('2025-07-19'),
         enabled: true,
         deleted: false,
       });
@@ -114,7 +105,7 @@ describe('CreateVehicleDrawerComponent', () => {
         brand: 'Toyota',
         model: 'Corolla',
         kmTraveled: 10000,
-        admissionDate: '2025-07-19',
+        admissionDate: new Date('2025-07-19'),
         enabled: true,
         deleted: false,
       });
@@ -145,7 +136,7 @@ describe('CreateVehicleDrawerComponent', () => {
         brand: 'Toyota',
         model: 'Corolla',
         kmTraveled: 10000,
-        admissionDate: '2025-07-19',
+        admissionDate: new Date('2025-07-19'),
         enabled: true,
         deleted: false,
       });
@@ -166,29 +157,12 @@ describe('CreateVehicleDrawerComponent', () => {
     }));
   });
 
-  describe('clearText', () => {
-    it('should clear the input value and mark as pristine/untouched', () => {
-      // Arrange
-      component.form.get('brand')?.setValue('Toyota');
-      component.form.get('brand')?.markAsDirty();
-      component.form.get('brand')?.markAsTouched();
-      // Act
-      component.clearText('brand');
-      // Assert
-      expect(component.form.get('brand')?.value).toBe('');
-      expect(component.form.get('brand')?.pristine).toBe(true);
-      expect(component.form.get('brand')?.touched).toBe(false);
-    });
-  });
-
   describe('licensePlate uppercase', () => {
     it('should convert licensePlate to uppercase on valueChanges', () => {
       // Arrange
       const control = component.form.get('licensePlate');
       control?.setValue('abc123');
-      // Act
-      // valueChanges already triggers in ngOnInit
-      // Assert
+      // Act && Assert
       expect(control?.value).toBe('ABC123');
     });
   });
