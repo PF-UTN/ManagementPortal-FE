@@ -290,50 +290,50 @@ export class ProductCreateComponent {
     );
   }
   onCreateUpdateSupplierDrawer(): void {
-    this.lateralDrawerService.open(
-      CreateUpdateSupplierLateralDrawerComponent,
-      {
-        onSuccessCallback: () => this.initSuppliers(),
-      },
-      {
-        title: 'Gestionar Proveedor',
-        footer: {
-          firstButton: {
-            text: 'Confirmar',
-            click: () => {},
-          },
-          secondButton: {
-            text: 'Cancelar',
-            click: () => {
-              this.lateralDrawerService.close();
+    this.lateralDrawerService
+      .open(
+        CreateUpdateSupplierLateralDrawerComponent,
+        {},
+        {
+          title: 'Gestionar Proveedor',
+          footer: {
+            firstButton: {
+              text: 'Confirmar',
+              click: () => {},
+            },
+            secondButton: {
+              text: 'Cancelar',
+              click: () => {
+                this.lateralDrawerService.close();
+              },
             },
           },
         },
-      },
-    );
+      )
+      .subscribe(() => this.initSuppliers());
   }
   onCreateUpdateProductCategoryDrawer(): void {
-    this.lateralDrawerService.open(
-      CreateUpdateProductCategoryLateralDrawerComponent,
-      {
-        onSuccessCallback: () => this.initCategories(),
-      },
-      {
-        title: 'Gestionar Categoría',
-        footer: {
-          firstButton: {
-            text: 'Confirmar',
-            click: () => {},
-          },
-          secondButton: {
-            text: 'Cancelar',
-            click: () => {
-              this.lateralDrawerService.close();
+    this.lateralDrawerService
+      .open(
+        CreateUpdateProductCategoryLateralDrawerComponent,
+        {},
+        {
+          title: 'Gestionar Categoría',
+          footer: {
+            firstButton: {
+              text: 'Confirmar',
+              click: () => {},
+            },
+            secondButton: {
+              text: 'Cancelar',
+              click: () => {
+                this.lateralDrawerService.close();
+              },
             },
           },
         },
-      },
-    );
+      )
+      .subscribe(() => this.initCategories());
   }
   displayCategory(category: ProductCategoryResponse): string {
     return category?.name ?? '';

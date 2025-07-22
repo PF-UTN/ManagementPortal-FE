@@ -7,7 +7,12 @@ import {
 } from '@Common';
 import { LateralDrawerService } from '@Common-UI';
 
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+} from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { mockDeep } from 'jest-mock-extended';
 import { of } from 'rxjs';
@@ -102,43 +107,51 @@ describe('CreateEditSupplierLateralDrawerComponent', () => {
     expect(emitSuccessSpy).toHaveBeenCalled();
     expect(component.isLoading()).toBe(false);
   });
-  it('should call onSuccessCallback after successful submit', () => {
-    // Arrange
-    const callback = jest.fn();
-    component.onSuccessCallback = callback;
+  it('should emit successEvent after successful submit', fakeAsync(() => {
+    //Arrange
+    jest
+      .spyOn(supplierService, 'getSupplierByDocumentAsync')
+      .mockReturnValue(of(mockSupplierWithTown));
 
-    component.isCreating.set(true);
-
-    component.supplierForm.controls.documentType.setValue(
-      mockSupplierWithTown.documentType,
-    );
-    component.supplierForm.controls.documentNumber.setValue(
-      mockSupplierWithTown.documentNumber,
-    );
-    component.supplierForm.controls.email.setValue(mockSupplierWithTown.email);
-    component.supplierForm.controls.businessName.setValue(
-      mockSupplierWithTown.businessName,
-    );
-    component.supplierForm.controls.phone.setValue(mockSupplierWithTown.phone);
-    component.supplierForm.controls.street.setValue(
-      mockSupplierWithTown.address.street,
-    );
-    component.supplierForm.controls.streetNumber.setValue(
-      mockSupplierWithTown.address.streetNumber,
-    );
-    component.supplierForm.controls.town.setValue(
-      mockSupplierWithTown.address.town,
-    );
     jest
       .spyOn(supplierService, 'postCreateOrUpdateSupplierAsync')
       .mockReturnValue(of(mockSupplierCreateUpdateResponse));
 
-    // Act
-    component.onSubmit();
+    fixture.detectChanges();
 
-    // Assert
-    expect(callback).toHaveBeenCalled();
-  });
+    const emitSpy = jest.spyOn(component.successEvent, 'emit');
+
+    component.isCreating.set(true);
+
+    component.supplierForm.controls.documentType.setValue(
+      mockSupplier.documentType,
+    );
+    component.supplierForm.controls.documentNumber.setValue(
+      mockSupplier.documentNumber,
+    );
+    component.supplierForm.controls.email.setValue(mockSupplier.email);
+    component.supplierForm.controls.businessName.setValue(
+      mockSupplier.businessName,
+    );
+    component.supplierForm.controls.phone.setValue(mockSupplier.phone);
+    component.supplierForm.controls.street.setValue(
+      mockSupplier.address.street,
+    );
+    component.supplierForm.controls.streetNumber.setValue(
+      mockSupplier.address.streetNumber,
+    );
+    component.supplierForm.controls.town.setValue(
+      mockSupplierWithTown.address.town,
+    );
+
+    //Act
+    component.onSubmit();
+    tick();
+
+    //Assert
+    expect(emitSpy).toHaveBeenCalled();
+  }));
+
   it('should call getSupplierByDocumentAsync and patch form values when supplier exists', () => {
     // Arrange
     component.supplierForm.controls.documentType.setValue(

@@ -224,6 +224,8 @@ describe('ProductCreateComponent', () => {
           quantityReserved: 1,
         },
       });
+      jest.spyOn(lateralDrawerService, 'open').mockReturnValue(of(undefined));
+
       productServiceMock.createProduct.mockReturnValue(
         throwError(() => new Error('fail')),
       );
@@ -284,6 +286,7 @@ describe('ProductCreateComponent', () => {
 
     it('should handle error on updateProduct', fakeAsync(() => {
       // arrange
+      jest.spyOn(lateralDrawerService, 'open').mockReturnValue(of(undefined));
       jest
         .spyOn(component['route'].snapshot.paramMap, 'get')
         .mockReturnValue('5');
@@ -488,6 +491,8 @@ describe('ProductCreateComponent', () => {
         option: { value: category },
       } as MatAutocompleteSelectedEvent;
 
+      jest.spyOn(lateralDrawerService, 'open').mockReturnValue(of(undefined));
+
       component.productForm.patchValue({ categoryId: null });
       // act
       component.onCategorySelected(event);
@@ -500,6 +505,8 @@ describe('ProductCreateComponent', () => {
         option: { value: component.MANAGE_CATEGORY_OPTION },
       } as unknown as MatAutocompleteSelectedEvent;
 
+      jest.spyOn(lateralDrawerService, 'open').mockReturnValue(of(undefined));
+
       const spy = jest.spyOn(component, 'onCreateUpdateProductCategoryDrawer');
 
       // Act
@@ -509,12 +516,14 @@ describe('ProductCreateComponent', () => {
       expect(spy).toHaveBeenCalled();
     });
     it('should open CreateUpdateProductCategoryLateralDrawerComponent with correct params when onCreateUpdateProductCategoryDrawer is called', () => {
-      //Arrange
+      // Arrange
       const event = {
         option: { value: component.MANAGE_CATEGORY_OPTION },
       } as unknown as MatAutocompleteSelectedEvent;
 
-      const spy = jest.spyOn(lateralDrawerService, 'open');
+      const spy = jest
+        .spyOn(lateralDrawerService, 'open')
+        .mockReturnValue(of(undefined));
 
       // Act
       component.onCategorySelected(event);
@@ -523,9 +532,7 @@ describe('ProductCreateComponent', () => {
       expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith(
         CreateUpdateProductCategoryLateralDrawerComponent,
-        expect.objectContaining({
-          onSuccessCallback: expect.any(Function),
-        }),
+        {},
         expect.objectContaining({
           title: 'Gestionar Categoría',
           footer: expect.objectContaining({
@@ -559,6 +566,8 @@ describe('ProductCreateComponent', () => {
         option: { value: supplier },
       } as MatAutocompleteSelectedEvent;
 
+      jest.spyOn(lateralDrawerService, 'open').mockReturnValue(of(undefined));
+
       component.productForm.patchValue({ supplierId: null });
       // act
       component.onSupplierSelected(event);
@@ -570,6 +579,8 @@ describe('ProductCreateComponent', () => {
       const event = {
         option: { value: component.MANAGE_SUPPLIER_OPTION },
       } as unknown as MatAutocompleteSelectedEvent;
+
+      jest.spyOn(lateralDrawerService, 'open').mockReturnValue(of(undefined));
 
       const spy = jest.spyOn(component, 'onCreateUpdateSupplierDrawer');
 
@@ -585,7 +596,9 @@ describe('ProductCreateComponent', () => {
         option: { value: component.MANAGE_SUPPLIER_OPTION },
       } as unknown as MatAutocompleteSelectedEvent;
 
-      const spy = jest.spyOn(lateralDrawerService, 'open');
+      const spy = jest
+        .spyOn(lateralDrawerService, 'open')
+        .mockReturnValue(of(undefined));
 
       // Act
       component.onSupplierSelected(event);
@@ -594,9 +607,7 @@ describe('ProductCreateComponent', () => {
       expect(spy).toHaveBeenCalledTimes(1);
       expect(spy).toHaveBeenCalledWith(
         CreateUpdateSupplierLateralDrawerComponent,
-        expect.objectContaining({
-          onSuccessCallback: expect.any(Function),
-        }),
+        {},
         expect.objectContaining({
           title: 'Gestionar Proveedor',
           footer: expect.objectContaining({

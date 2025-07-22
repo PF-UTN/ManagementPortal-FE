@@ -7,7 +7,7 @@ import {
 } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
-import { Component, effect, Input, OnInit, signal } from '@angular/core';
+import { Component, effect, OnInit, signal } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -54,7 +54,6 @@ export class CreateUpdateSupplierLateralDrawerComponent
   extends LateralDrawerContainer
   implements OnInit
 {
-  @Input() onSuccessCallback?: () => void;
   isLoading = signal(false);
   isDocumentCompleted = signal(false);
   isCreating = signal(false);
@@ -348,11 +347,8 @@ export class CreateUpdateSupplierLateralDrawerComponent
             duration: 3000,
           },
         );
-        this.closeDrawer();
         this.emitSuccess();
-        if (this.onSuccessCallback) {
-          this.onSuccessCallback();
-        }
+        this.closeDrawer();
       },
       error: (err) => {
         console.error('Error al guardar proveedor', err);
