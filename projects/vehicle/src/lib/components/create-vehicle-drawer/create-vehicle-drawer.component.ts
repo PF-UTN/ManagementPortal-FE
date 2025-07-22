@@ -95,15 +95,18 @@ export class CreateVehicleDrawerComponent
   ngOnInit(): void {
     this.form = this.fb.group({
       licensePlate: [
-        '',
+        null as string | null,
         [Validators.required, Validators.pattern(this.PATENTE_REGEX)],
       ],
-      brand: ['', Validators.required],
-      model: ['', Validators.required],
-      kmTraveled: [0, [Validators.required, Validators.min(0)]],
+      brand: [null as string | null, Validators.required],
+      model: [null as string | null, Validators.required],
+      kmTraveled: [
+        null as number | null,
+        [Validators.required, Validators.min(0)],
+      ],
       admissionDate: [null as Date | null, Validators.required],
-      enabled: [false],
-      deleted: [false],
+      enabled: [null as boolean | null],
+      deleted: [null as boolean | null],
     });
 
     this.form.controls['licensePlate']?.valueChanges.subscribe((value) => {
