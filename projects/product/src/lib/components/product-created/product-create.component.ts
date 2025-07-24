@@ -3,8 +3,17 @@ import {
   ButtonComponent,
   SubtitleComponent,
   LoadingComponent,
+  LateralDrawerService,
 } from '@Common-UI';
-import { SupplierResponse, SupplierService } from '@Supplier';
+import {
+  CreateUpdateProductCategoryLateralDrawerComponent,
+  ProductCategoryResponse,
+} from '@Product-Category';
+import {
+  SupplierResponse,
+  CreateUpdateSupplierLateralDrawerComponent,
+  SupplierService,
+} from '@Supplier';
 
 import { CommonModule } from '@angular/common';
 import { Component, signal } from '@angular/core';
@@ -31,7 +40,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Observable, of, startWith, map } from 'rxjs';
 
-import { ProductCategoryResponse } from '../../models/product-category-response.model';
 import { ProductCreate } from '../../models/product-create-param.model';
 import { ProductService } from '../../services/product.service';
 
@@ -82,6 +90,22 @@ export class ProductCreateComponent {
 
   isLoading = signal(true);
 
+  public readonly MANAGE_CATEGORY_OPTION: ProductCategoryResponse = {
+    id: -1,
+    name: 'Gestionar categorías',
+    description: '',
+  };
+
+  public readonly MANAGE_SUPPLIER_OPTION: SupplierResponse = {
+    id: -1,
+    businessName: 'Gestionar proveedor',
+    documentType: '',
+    documentNumber: '',
+    email: '',
+    phone: '',
+    addressId: -1,
+  };
+
   constructor(
     private readonly fb: FormBuilder,
     private readonly productService: ProductService,
@@ -89,6 +113,7 @@ export class ProductCreateComponent {
     private readonly snackBar: MatSnackBar,
     private readonly router: Router,
     private readonly route: ActivatedRoute,
+    private readonly lateralDrawerService: LateralDrawerService,
   ) {}
 
   ngOnInit() {
@@ -211,12 +236,22 @@ export class ProductCreateComponent {
 
   onCategorySelected(event: MatAutocompleteSelectedEvent) {
     const category = event.option.value as ProductCategoryResponse;
-    this.productForm.patchValue({ categoryId: category?.id });
+    if (category === this.MANAGE_CATEGORY_OPTION) {
+      this.onCreateUpdateProductCategoryDrawer();
+      this.productForm.controls.category.reset();
+    } else {
+      this.productForm.patchValue({ categoryId: category?.id });
+    }
   }
 
   onSupplierSelected(event: MatAutocompleteSelectedEvent) {
     const supplier = event.option.value as SupplierResponse;
-    this.productForm.patchValue({ supplierId: supplier?.id });
+    if (supplier === this.MANAGE_SUPPLIER_OPTION) {
+      this.onCreateUpdateSupplierDrawer();
+      this.productForm.controls.supplier.reset();
+    } else {
+      this.productForm.patchValue({ supplierId: supplier?.id });
+    }
   }
 
   categoryObjectValidator(categories: ProductCategoryResponse[]): ValidatorFn {
@@ -254,7 +289,52 @@ export class ProductCreateComponent {
       sup.businessName.toLowerCase().includes(filterValue),
     );
   }
-
+  onCreateUpdateSupplierDrawer(): void {
+    this.lateralDrawerService
+      .open(
+        CreateUpdateSupplierLateralDrawerComponent,
+        {},
+        {
+          title: 'Gestionar Proveedor',
+          footer: {
+            firstButton: {
+              text: 'Confirmar',
+              click: () => {},
+            },
+            secondButton: {
+              text: 'Cancelar',
+              click: () => {
+                this.lateralDrawerService.close();
+              },
+            },
+          },
+        },
+      )
+      .subscribe(() => this.initSuppliers());
+  }
+  onCreateUpdateProductCategoryDrawer(): void {
+    this.lateralDrawerService
+      .open(
+        CreateUpdateProductCategoryLateralDrawerComponent,
+        {},
+        {
+          title: 'Gestionar Categoría',
+          footer: {
+            firstButton: {
+              text: 'Confirmar',
+              click: () => {},
+            },
+            secondButton: {
+              text: 'Cancelar',
+              click: () => {
+                this.lateralDrawerService.close();
+              },
+            },
+          },
+        },
+      )
+      .subscribe(() => this.initCategories());
+  }
   displayCategory(category: ProductCategoryResponse): string {
     return category?.name ?? '';
   }
