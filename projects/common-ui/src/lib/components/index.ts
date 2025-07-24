@@ -10,3 +10,4 @@ export * from './table/table.component';
 export * from './title/title.component';
 export * from './dropdown-button/dropdown-button.component';
 export * from './dropdown-button/constants/dropdown-item';
+export * from './error-modal/error-modal.component';
