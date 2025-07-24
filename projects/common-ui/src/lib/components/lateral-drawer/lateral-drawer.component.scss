@@ -25,21 +25,28 @@
   height: 100%;
 
   &__header {
+    height: 75px;
     padding: 16px;
     border-bottom: 1px solid $dark-muted-purple;
     display: flex;
     flex-direction: row;
+    background-color: $muted-purple;
 
     &__title {
       flex: auto;
-    }
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: $white-color;
+      font-size: 30px;
+      text-align: center;
 
-    &__icon {
-      cursor: pointer;
-      align-content: center;
-
-      &__close {
+      &__icon {
+        cursor: pointer;
+        color: $white-color;
         font-size: 28px;
+        display: flex;
+        align-items: center;
       }
     }
   }

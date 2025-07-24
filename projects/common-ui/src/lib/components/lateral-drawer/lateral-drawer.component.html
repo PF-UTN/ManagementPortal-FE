@@ -3,10 +3,8 @@
     <div class="drawer-content">
       <div class="drawer-content__header">
         <div class="drawer-content__header__title">
-          <mp-title>{{ config.title }}</mp-title>
-        </div>
-        <div class="drawer-content__header__icon">
-          <span class="material-icons close-icon drawer-content__header__icon__close" 
+          {{ config.title }}
+          <span class="material-icons close-icon drawer-content__header__title__icon" 
             (click)="closeDrawer()"
             (keydown.escape)="closeDrawer()"
             tabindex="-1">close</span>
