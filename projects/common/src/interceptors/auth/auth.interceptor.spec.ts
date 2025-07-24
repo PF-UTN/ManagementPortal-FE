@@ -3,12 +3,11 @@ import {
   HttpRequest,
   HttpEvent,
   HttpErrorResponse,
-  HttpResponse,
 } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { mockDeep } from 'jest-mock-extended';
-import { Observable, of, throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 import { AuthInterceptor } from './auth.interceptor';
 
@@ -27,10 +26,7 @@ describe('AuthInterceptor', () => {
 
     interceptor = TestBed.inject(AuthInterceptor);
     router = TestBed.inject(Router);
-    next = {
-      handle: (req: HttpRequest<unknown>): Observable<HttpEvent<unknown>> =>
-        of(new HttpResponse(req)),
-    };
+    next = mockDeep<HttpHandler>();
   });
 
   describe('intercept', () => {
@@ -43,14 +39,12 @@ describe('AuthInterceptor', () => {
         setHeaders: { Authorization: `Bearer ${token}` },
       });
 
-      const handleSpy = jest
-        .spyOn(next, 'handle')
-        .mockReturnValue(of({} as HttpEvent<unknown>));
+      jest.spyOn(next, 'handle').mockReturnValue(of({} as HttpEvent<unknown>));
 
       // Act
       interceptor.intercept(request, next).subscribe(() => {
         // Assert
-        expect(handleSpy).toHaveBeenCalledWith(expectedRequest);
+        expect(next.handle).toHaveBeenCalledWith(expectedRequest);
         done();
       });
     });
@@ -60,14 +54,12 @@ describe('AuthInterceptor', () => {
       localStorage.removeItem('token');
       const request = new HttpRequest('GET', '/test');
 
-      const handleSpy = jest
-        .spyOn(next, 'handle')
-        .mockReturnValue(of({} as HttpEvent<unknown>));
+      jest.spyOn(next, 'handle').mockReturnValue(of({} as HttpEvent<unknown>));
 
       // Act
       interceptor.intercept(request, next).subscribe(() => {
         // Assert
-        expect(handleSpy).toHaveBeenCalledWith(request);
+        expect(next.handle).toHaveBeenCalledWith(request);
         done();
       });
     });
@@ -90,7 +82,9 @@ describe('AuthInterceptor', () => {
       interceptor.intercept(request, next).subscribe({
         error: () => {
           // Assert
-          expect(router.navigate).toHaveBeenCalledWith(['autenticacion/inicio-sesion']);
+          expect(router.navigate).toHaveBeenCalledWith([
+            'autenticacion/inicio-sesion',
+          ]);
           done();
         },
       });
@@ -144,7 +138,55 @@ describe('AuthInterceptor', () => {
       });
     });
 
-    it('should not navigate on non-401 errors', (done) => {
+    it('should navigate to unauthorized on 403 error', (done) => {
+      // Arrange
+      const token = 'test-token';
+      localStorage.setItem('token', token);
+      const request = new HttpRequest('GET', '/test');
+      const errorResponse = new HttpErrorResponse({
+        status: 403,
+        statusText: 'Forbidden',
+      });
+
+      jest
+        .spyOn(next, 'handle')
+        .mockReturnValue(throwError(() => errorResponse));
+
+      // Act
+      interceptor.intercept(request, next).subscribe({
+        error: () => {
+          // Assert
+          expect(router.navigate).toHaveBeenCalledWith(['unauthorized']);
+          done();
+        },
+      });
+    });
+
+    it('should propagate the 403 error', (done) => {
+      // Arrange
+      const token = 'test-token';
+      localStorage.setItem('token', token);
+      const request = new HttpRequest('GET', '/test');
+      const errorResponse = new HttpErrorResponse({
+        status: 403,
+        statusText: 'Forbidden',
+      });
+
+      jest
+        .spyOn(next, 'handle')
+        .mockReturnValue(throwError(() => errorResponse));
+
+      // Act
+      interceptor.intercept(request, next).subscribe({
+        error: (error) => {
+          // Assert
+          expect(error).toBe(errorResponse);
+          done();
+        },
+      });
+    });
+
+    it('should not navigate on non-401/403 errors', (done) => {
       // Arrange
       const token = 'test-token';
       localStorage.setItem('token', token);
@@ -192,7 +234,7 @@ describe('AuthInterceptor', () => {
       });
     });
 
-    it('should propagate non-401 error', (done) => {
+    it('should propagate non-401/403 error', (done) => {
       // Arrange
       const token = 'test-token';
       localStorage.setItem('token', token);

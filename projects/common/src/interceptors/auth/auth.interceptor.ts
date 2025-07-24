@@ -32,6 +32,10 @@ export class AuthInterceptor {
           this.router.navigate(['autenticacion/inicio-sesion']);
           localStorage.removeItem('token');
         }
+
+        if (error.status === 403) {
+          this.router.navigate(['unauthorized']);
+        }
         return throwError(() => error);
       }),
     );
