@@ -347,8 +347,8 @@ export class CreateUpdateSupplierLateralDrawerComponent
             duration: 3000,
           },
         );
-        this.closeDrawer();
         this.emitSuccess();
+        this.closeDrawer();
       },
       error: (err) => {
         console.error('Error al guardar proveedor', err);

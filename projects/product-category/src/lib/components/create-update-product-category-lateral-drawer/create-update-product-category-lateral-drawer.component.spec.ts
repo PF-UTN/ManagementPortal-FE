@@ -1,6 +1,11 @@
 import { LateralDrawerService } from '@Common-UI';
 
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+} from '@angular/core/testing';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { mockDeep } from 'jest-mock-extended';
@@ -137,129 +142,159 @@ describe('CreateUpdateProductCategoryLateralDrawerComponent', () => {
         mockProductCategoryService.postCreateOrUpdateProductCategoryAsync,
       ).toHaveBeenCalledWith(mockProductCategory);
     });
-  });
-  it('should close the drawer after submitting', () => {
-    // Arrange
-    component.isCreating.set(true);
-    component.productCategoryForm.controls.name.setValue(
-      mockNewProductCategory.name,
-    );
-    component.productCategoryForm.controls.description.setValue(
-      mockNewProductCategory.description,
-    );
-    jest
-      .spyOn(
-        mockProductCategoryService,
-        'postCreateOrUpdateProductCategoryAsync',
-      )
-      .mockReturnValue(of(mockProductCategory));
-    jest.spyOn(lateralDrawerService, 'close');
-
-    // Act
-    component.onSubmit();
-
-    // Assert
-    expect(lateralDrawerService.close).toHaveBeenCalled();
-  });
-  describe('onCategorySelected', () => {
-    it('should set isUpdating to true when selecting an existing category', () => {
+    it('should emit successEvent after successful submit', fakeAsync(() => {
       // Arrange
-      const event = {
-        option: { value: mockProductCategory },
-      } as unknown as MatAutocompleteSelectedEvent;
-      // Act
-      component.onCategorySelected(event);
-      // Assert
-      expect(component.isUpdating()).toBe(true);
-    });
-
-    it('should set isCreating to true when selecting NEW_CATEGORY_OPTION', () => {
-      // Arrange
-      const event = {
-        option: { value: component.NEW_CATEGORY_OPTION },
-      } as unknown as MatAutocompleteSelectedEvent;
-      // Act
-      component.onCategorySelected(event);
-      // Assert
-      expect(component.isCreating()).toBe(true);
-    });
-
-    it('should set the form name control value when selecting an existing category', () => {
-      // Arrange
-      const event = {
-        option: { value: mockProductCategory },
-      } as unknown as MatAutocompleteSelectedEvent;
-      // Act
-      component.onCategorySelected(event);
-      // Assert
-      expect(component.productCategoryForm.controls.name.value).toEqual(
-        mockProductCategory,
-      );
-    });
-
-    it('should reset the form name control value when selecting NEW_CATEGORY_OPTION', () => {
-      // Arrange
-      const event = {
-        option: { value: component.NEW_CATEGORY_OPTION },
-      } as unknown as MatAutocompleteSelectedEvent;
-
-      // Act
-      component.onCategorySelected(event);
-
-      // Assert
-      expect(component.productCategoryForm.controls.name.value).toBeNull();
-    });
-    it('should patch form values when selecting an existing category', () => {
-      // Arrange
-      const event = {
-        option: { value: mockProductCategory },
-      } as unknown as MatAutocompleteSelectedEvent;
-
-      // Act
-      component.onCategorySelected(event);
-
-      // Assert
-      expect(component.idCategory).toEqual(mockProductCategory.id);
-      expect(component.productCategoryForm.controls.name.value).toEqual(
-        mockProductCategory,
-      );
-      expect(component.productCategoryForm.controls.description.value).toBe(
-        mockProductCategory.description,
-      );
-    });
-  });
-  describe('name control invalidCategory error', () => {
-    it('should set invalidCategory error when name does not match any category and not creating', () => {
-      // Arrange
-      component.isCreating.set(false);
-      component.categories = [mockProductCategory];
+      const emitSpy = jest.spyOn(component.successEvent, 'emit');
+      component.isCreating.set(true);
       component.productCategoryForm.controls.name.setValue(
-        'Nonexistent Category',
+        mockNewProductCategory.name,
       );
-      component.productCategoryForm.controls.name.updateValueAndValidity();
+      component.productCategoryForm.controls.description.setValue(
+        mockNewProductCategory.description,
+      );
+
+      jest
+        .spyOn(
+          mockProductCategoryService,
+          'postCreateOrUpdateProductCategoryAsync',
+        )
+        .mockReturnValue(of(mockProductCategory));
 
       // Act
-      const hasInvalidCategoryError =
-        component.productCategoryForm.controls.name.hasError('invalidCategory');
+      component.onSubmit();
+      tick();
 
       // Assert
-      expect(hasInvalidCategoryError).toBe(true);
-    });
+      expect(emitSpy).toHaveBeenCalled();
+    }));
 
-    it('should not set invalidCategory error when is creating', () => {
+    it('should close the drawer after submitting', () => {
       // Arrange
       component.isCreating.set(true);
-      component.categories = [mockProductCategory];
       component.productCategoryForm.controls.name.setValue(
-        mockProductCategory.name,
+        mockNewProductCategory.name,
       );
-      component.productCategoryForm.controls.name.updateValueAndValidity();
+      component.productCategoryForm.controls.description.setValue(
+        mockNewProductCategory.description,
+      );
+      jest
+        .spyOn(
+          mockProductCategoryService,
+          'postCreateOrUpdateProductCategoryAsync',
+        )
+        .mockReturnValue(of(mockProductCategory));
+      jest.spyOn(lateralDrawerService, 'close');
+
       // Act
-      const hasInvalidCategoryError =
-        component.productCategoryForm.controls.name.hasError('invalidCategory');
+      component.onSubmit();
 
       // Assert
-      expect(hasInvalidCategoryError).toBe(false);
+      expect(lateralDrawerService.close).toHaveBeenCalled();
+    });
+    describe('onCategorySelected', () => {
+      it('should set isUpdating to true when selecting an existing category', () => {
+        // Arrange
+        const event = {
+          option: { value: mockProductCategory },
+        } as unknown as MatAutocompleteSelectedEvent;
+        // Act
+        component.onCategorySelected(event);
+        // Assert
+        expect(component.isUpdating()).toBe(true);
+      });
+
+      it('should set isCreating to true when selecting NEW_CATEGORY_OPTION', () => {
+        // Arrange
+        const event = {
+          option: { value: component.NEW_CATEGORY_OPTION },
+        } as unknown as MatAutocompleteSelectedEvent;
+        // Act
+        component.onCategorySelected(event);
+        // Assert
+        expect(component.isCreating()).toBe(true);
+      });
+
+      it('should set the form name control value when selecting an existing category', () => {
+        // Arrange
+        const event = {
+          option: { value: mockProductCategory },
+        } as unknown as MatAutocompleteSelectedEvent;
+        // Act
+        component.onCategorySelected(event);
+        // Assert
+        expect(component.productCategoryForm.controls.name.value).toEqual(
+          mockProductCategory,
+        );
+      });
+
+      it('should reset the form name control value when selecting NEW_CATEGORY_OPTION', () => {
+        // Arrange
+        const event = {
+          option: { value: component.NEW_CATEGORY_OPTION },
+        } as unknown as MatAutocompleteSelectedEvent;
+
+        // Act
+        component.onCategorySelected(event);
+
+        // Assert
+        expect(component.productCategoryForm.controls.name.value).toBeNull();
+      });
+      it('should patch form values when selecting an existing category', () => {
+        // Arrange
+        const event = {
+          option: { value: mockProductCategory },
+        } as unknown as MatAutocompleteSelectedEvent;
+
+        // Act
+        component.onCategorySelected(event);
+
+        // Assert
+        expect(component.idCategory).toEqual(mockProductCategory.id);
+        expect(component.productCategoryForm.controls.name.value).toEqual(
+          mockProductCategory,
+        );
+        expect(component.productCategoryForm.controls.description.value).toBe(
+          mockProductCategory.description,
+        );
+      });
+    });
+    describe('name control invalidCategory error', () => {
+      it('should set invalidCategory error when name does not match any category and not creating', () => {
+        // Arrange
+        component.isCreating.set(false);
+        component.categories = [mockProductCategory];
+        component.productCategoryForm.controls.name.setValue(
+          'Nonexistent Category',
+        );
+        component.productCategoryForm.controls.name.updateValueAndValidity();
+
+        // Act
+        const hasInvalidCategoryError =
+          component.productCategoryForm.controls.name.hasError(
+            'invalidCategory',
+          );
+
+        // Assert
+        expect(hasInvalidCategoryError).toBe(true);
+      });
+
+      it('should not set invalidCategory error when is creating', () => {
+        // Arrange
+        component.isCreating.set(true);
+        component.categories = [mockProductCategory];
+        component.productCategoryForm.controls.name.setValue(
+          mockProductCategory.name,
+        );
+        component.productCategoryForm.controls.name.updateValueAndValidity();
+        // Act
+        const hasInvalidCategoryError =
+          component.productCategoryForm.controls.name.hasError(
+            'invalidCategory',
+          );
+
+        // Assert
+        expect(hasInvalidCategoryError).toBe(false);
+      });
     });
   });
 });
