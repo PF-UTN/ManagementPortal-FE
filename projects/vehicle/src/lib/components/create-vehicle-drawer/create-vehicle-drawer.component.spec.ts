@@ -155,6 +155,49 @@ describe('CreateVehicleDrawerComponent', () => {
         { duration: 5000 },
       );
     }));
+
+    it('should call updateVehicleAsync and show success snackbar on edit', fakeAsync(() => {
+      // Arrange
+      const updateSpy = jest.fn().mockReturnValue(of({}));
+      component['vehicleService'].updateVehicleAsync = updateSpy;
+
+      component.data = {
+        id: 1,
+        licensePlate: 'ABC123',
+        brand: 'Toyota',
+        model: 'Corolla',
+        kmTraveled: 10000,
+        admissionDate: new Date('2025-07-19'),
+        enabled: true,
+      };
+
+      component.ngOnInit();
+      component.form.patchValue({
+        brand: 'Toyota',
+        model: 'Corolla',
+        kmTraveled: 25000,
+        admissionDate: new Date('1990-01-15'),
+        enabled: true,
+      });
+
+      // Act
+      component.onSubmit();
+      tick();
+
+      // Assert
+      expect(updateSpy).toHaveBeenCalledWith(1, {
+        brand: 'Toyota',
+        model: 'Corolla',
+        kmTraveled: 25000,
+        admissionDate: '1990-01-15',
+        enabled: true,
+      });
+      expect(snackBarMock.open).toHaveBeenCalledWith(
+        'Vehículo actualizado correctamente',
+        'Cerrar',
+        { duration: 3000 },
+      );
+    }));
   });
 
   describe('licensePlate uppercase', () => {

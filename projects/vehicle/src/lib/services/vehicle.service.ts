@@ -7,6 +7,7 @@ import { Observable } from 'rxjs';
 import { SearchVehicleResponse } from '../models/search-vehicle-response.model';
 import { VehicleCreate } from '../models/vehicle-create.model';
 import { VehicleParams } from '../models/vehicle-params.model';
+import { VehicleUpdate } from '../models/vehicle-update.model';
 
 @Injectable({
   providedIn: 'root',
@@ -30,5 +31,10 @@ export class VehicleService {
   createVehicleAsync(vehicle: VehicleCreate): Observable<void> {
     const url = `${this.baseUrl}`;
     return this.http.post<void>(url, vehicle);
+  }
+
+  updateVehicleAsync(id: number, vehicle: VehicleUpdate): Observable<void> {
+    const url = `${this.baseUrl}/${id}`;
+    return this.http.put<void>(url, vehicle);
   }
 }

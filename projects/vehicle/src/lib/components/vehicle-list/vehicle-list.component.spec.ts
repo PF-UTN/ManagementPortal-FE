@@ -306,6 +306,50 @@ describe('VehicleListComponent', () => {
       // Assert
       expect(lateralDrawerService.close).toHaveBeenCalled();
     });
+
+    it('should open the drawer with data when Editar is clicked and refresh the list after closing', () => {
+      // Arrange
+      const lateralDrawerService = {
+        open: jest.fn().mockReturnValue(of({})),
+        close: jest.fn(),
+      };
+      Object.defineProperty(component, 'lateralDrawerService', {
+        value: lateralDrawerService,
+        writable: true,
+      });
+      jest.spyOn(component.doSearchSubject$, 'next');
+      const vehicle: VehicleListItem = {
+        id: 1,
+        licensePlate: 'ABC123',
+        brand: 'Toyota',
+        model: 'Test',
+        enabled: true,
+        kmTraveled: 100,
+        admissionDate: new Date(),
+      };
+
+      // Act
+      const actionsColumn = component.columns.find(
+        (c) => c.columnDef === 'actions',
+      );
+      expect(actionsColumn).toBeDefined();
+      expect(actionsColumn?.actions).toBeDefined();
+      const editAction = actionsColumn?.actions?.find(
+        (a) => a.description === 'Editar',
+      );
+      expect(editAction).toBeDefined();
+      editAction?.action(vehicle);
+
+      // Assert
+      expect(lateralDrawerService.open).toHaveBeenCalledWith(
+        expect.any(Function),
+        { data: vehicle },
+        expect.objectContaining({
+          title: 'Editar Vehículo',
+        }),
+      );
+      expect(component.doSearchSubject$.next).toHaveBeenCalled();
+    });
   });
 
   describe('onButtonKeyDown', () => {

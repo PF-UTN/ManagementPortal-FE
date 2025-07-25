@@ -122,7 +122,6 @@ describe('VehicleService', () => {
   describe('createVehicleAsync', () => {
     it('should send a POST request with the correct vehicle and return void', () => {
       const vehicle: VehicleCreate = {
-        // Completa con los campos requeridos por tu modelo
         licensePlate: 'ABC123',
         brand: 'Toyota',
         model: 'Corolla',
@@ -140,7 +139,7 @@ describe('VehicleService', () => {
       const req = httpMock.expectOne(url);
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(vehicle);
-      req.flush(null); // void response
+      req.flush(null);
     });
 
     it('should handle HTTP errors', () => {
@@ -167,6 +166,62 @@ describe('VehicleService', () => {
 
       const req = httpMock.expectOne(url);
       expect(req.request.method).toBe('POST');
+      req.error(mockError);
+    });
+  });
+
+  describe('updateVehicleAsync', () => {
+    it('should send a PUT request with the correct vehicle and return void', () => {
+      // Arrange
+      const vehicleId = 123;
+      const vehicleUpdate = {
+        brand: 'Toyota',
+        model: 'Corolla',
+        kmTraveled: 25000,
+        admissionDate: '1990-01-15',
+        enabled: true,
+      };
+      const url = `${baseUrl}/${vehicleId}`;
+
+      // Act && Assert
+      service
+        .updateVehicleAsync(vehicleId, vehicleUpdate)
+        .subscribe((response) => {
+          expect(response).toBeUndefined();
+        });
+
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('PUT');
+      expect(req.request.body).toEqual(vehicleUpdate);
+      req.flush(null);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const vehicleId = 123;
+      const vehicleUpdate = {
+        brand: 'Toyota',
+        model: 'Corolla',
+        kmTraveled: 25000,
+        admissionDate: '1990-01-15',
+        enabled: true,
+      };
+      const mockError = new ErrorEvent('Network error');
+      const url = `${baseUrl}/${vehicleId}`;
+
+      // Act
+      service.updateVehicleAsync(vehicleId, vehicleUpdate).subscribe({
+        next: () => {
+          fail('Expected an error, but got a successful response');
+        },
+        error: (error) => {
+          expect(error.error).toBe(mockError);
+        },
+      });
+
+      // Assert
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('PUT');
       req.error(mockError);
     });
   });
