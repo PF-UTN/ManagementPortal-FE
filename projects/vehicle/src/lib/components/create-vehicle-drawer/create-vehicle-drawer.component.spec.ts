@@ -10,17 +10,22 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
 
 import { CreateVehicleDrawerComponent } from './create-vehicle-drawer.component';
+import { VehicleListItem } from '../../models/vehicle-item.model';
 import { VehicleService } from '../../services/vehicle.service';
 
 describe('CreateVehicleDrawerComponent', () => {
   let component: CreateVehicleDrawerComponent;
   let fixture: ComponentFixture<CreateVehicleDrawerComponent>;
-  let vehicleServiceMock: { createVehicleAsync: jest.Mock };
+  let vehicleServiceMock: {
+    createVehicleAsync: jest.Mock;
+    updateVehicleAsync: jest.Mock;
+  };
   let snackBarMock: { open: jest.Mock };
 
   beforeEach(async () => {
     vehicleServiceMock = {
       createVehicleAsync: jest.fn(),
+      updateVehicleAsync: jest.fn(),
     };
     snackBarMock = { open: jest.fn() };
 
@@ -198,6 +203,78 @@ describe('CreateVehicleDrawerComponent', () => {
         { duration: 3000 },
       );
     }));
+
+    it('should patch admissionDate as Date when data.admissionDate is a string', () => {
+      // Arrange
+      component.data = {
+        id: 1,
+        licensePlate: 'ABC123',
+        brand: 'Toyota',
+        model: 'Corolla',
+        kmTraveled: 10000,
+        admissionDate: '2025-07-19' as unknown as Date,
+        enabled: true,
+      };
+
+      // Act
+      component.ngOnInit();
+
+      // Assert
+      expect(component.form.value.admissionDate).toEqual(
+        new Date('2025-07-19'),
+      );
+    });
+
+    it('should patch enabled as false when data.enabled is undefined', () => {
+      // Arrange
+      component.data = {
+        id: 1,
+        licensePlate: 'ABC123',
+        brand: 'Toyota',
+        model: 'Corolla',
+        kmTraveled: 10000,
+        admissionDate: new Date('2025-07-19'),
+        deleted: false,
+        enabled: undefined,
+      } as unknown as VehicleListItem;
+
+      // Act
+      component.ngOnInit();
+
+      // Assert
+      expect(component.form.value.enabled).toBe(false);
+    });
+
+    it('should not call createVehicleAsync or updateVehicleAsync if form is invalid', () => {
+      // Arrange
+      component.form.patchValue({
+        licensePlate: '',
+        brand: '',
+        model: '',
+        kmTraveled: null,
+        admissionDate: null,
+        enabled: null,
+        deleted: null,
+      });
+
+      const createSpy = jest.spyOn(
+        component['vehicleService'],
+        'createVehicleAsync',
+      );
+      const updateSpy = jest.spyOn(
+        component['vehicleService'],
+        'updateVehicleAsync',
+      );
+      const loadingSpy = jest.spyOn(component.isLoading, 'set');
+
+      // Act
+      component.onSubmit();
+
+      // Assert
+      expect(createSpy).not.toHaveBeenCalled();
+      expect(updateSpy).not.toHaveBeenCalled();
+      expect(loadingSpy).toHaveBeenCalledWith(false);
+    });
   });
 
   describe('licensePlate uppercase', () => {
