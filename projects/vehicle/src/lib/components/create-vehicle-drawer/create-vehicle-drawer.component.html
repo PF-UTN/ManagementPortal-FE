@@ -10,15 +10,11 @@
   <mp-input 
     label="Marca" 
     formControlName="brand" 
-    [icon]="'close'"
-    [errorMessages]="{
-    }" />
+    [icon]="'close'" />
   <mp-input 
     label="Modelo" 
     formControlName="model" 
-    [icon]="'close'"
-    [errorMessages]="{
-    }" />
+    [icon]="'close'" />
   <mp-input 
     label="Kilometraje actual" 
     formControlName="kmTraveled" 
@@ -33,10 +29,10 @@
     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>
     <button type="button" matSuffix mat-icon-button aria-label="Limpiar fecha"
-      (click)="form.get('admissionDate')?.reset()">
+      (click)="form.controls['admissionDate'].reset()">
       <mat-icon>close</mat-icon>
     </button>
-    <mat-error *ngIf="form.get('admissionDate')?.hasError('required') && form.get('admissionDate')?.touched">
+    <mat-error *ngIf="form.controls['admissionDate']?.hasError('required') && form.controls['admissionDate']?.touched">
       La fecha de ingreso es requerida.
     </mat-error>
 </mat-form-field>

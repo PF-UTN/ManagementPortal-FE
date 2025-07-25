@@ -109,9 +109,9 @@ export class CreateVehicleDrawerComponent
       deleted: [null as boolean | null],
     });
 
-    this.form.controls['licensePlate']?.valueChanges.subscribe((value) => {
+    this.form.controls.licensePlate.valueChanges.subscribe((value) => {
       if (value && value !== value.toUpperCase()) {
-        this.form.controls['licensePlate']?.setValue(value.toUpperCase(), {
+        this.form.controls.licensePlate.setValue(value.toUpperCase(), {
           emitEvent: false,
         });
       }
@@ -151,7 +151,7 @@ export class CreateVehicleDrawerComponent
         let msg = 'Error al crear el vehículo.';
         if (err?.error?.message?.includes('license plate')) {
           msg = 'Ya existe un vehículo con esa patente.';
-          this.form.controls['licensePlate']?.setErrors({ exists: true });
+          this.form.controls.licensePlate.setErrors({ exists: true });
         }
         this.snackBar.open(msg, 'Cerrar', { duration: 5000 });
         this.isLoading.set(false);
