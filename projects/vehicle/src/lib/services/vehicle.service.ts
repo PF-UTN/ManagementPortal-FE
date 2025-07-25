@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { SearchVehicleResponse } from '../models/search-vehicle-response.model';
+import { VehicleCreate } from '../models/vehicle-create.model';
 import { VehicleParams } from '../models/vehicle-params.model';
 
 @Injectable({
@@ -24,5 +25,10 @@ export class VehicleService {
   deleteVehicleAsync(id: number): Observable<void> {
     const url = `${this.baseUrl}/${id}`;
     return this.http.delete<void>(url);
+  }
+
+  createVehicleAsync(vehicle: VehicleCreate): Observable<void> {
+    const url = `${this.baseUrl}`;
+    return this.http.post<void>(url, vehicle);
   }
 }
