@@ -156,8 +156,8 @@ export class VehicleListComponent implements OnInit {
     private readonly vehicleService: VehicleService,
     private readonly lateralDrawerService: LateralDrawerService,
     private readonly router: Router,
-    private dialog: MatDialog,
-    private snackBar: MatSnackBar,
+    private readonly dialog: MatDialog,
+    private readonly snackBar: MatSnackBar,
   ) {}
   ngOnInit(): void {
     this.doSearchSubject$
