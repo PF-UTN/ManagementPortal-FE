@@ -1,4 +1,4 @@
-import { AuthInterceptor } from '@Common';
+import { AuthInterceptor, HttpErrorInterceptor } from '@Common';
 
 import {
   HTTP_INTERCEPTORS,
@@ -22,6 +22,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(withInterceptorsFromDi()),
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
     provideAnimationsAsync(),
     importProvidersFrom(BrowserAnimationsModule),
   ],

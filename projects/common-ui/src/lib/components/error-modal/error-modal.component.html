@@ -1,0 +1,21 @@
+<h2 mat-dialog-title>Error</h2>
+<mat-dialog-content>
+    <div>
+    <strong>Mensaje:</strong>
+    <p>{{ data.message }}</p>
+    </div>
+    <div>
+    <strong>Stacktrace:</strong>
+    <textarea readonly style="width:100%;height:120px">{{ data.stack }}</textarea>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <div class="d-flex w-100">
+        <div class="col p-1">
+            <mp-button (onClick)="goHome()" type="secondary">Ir al inicio</mp-button>
+        </div>
+        <div class="col p-1">
+            <mp-button (onClick)="sendError()">Enviar error</mp-button>
+        </div>
+    </div>
+</mat-dialog-actions>
