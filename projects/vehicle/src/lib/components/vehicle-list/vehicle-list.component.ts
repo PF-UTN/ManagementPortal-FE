@@ -110,8 +110,27 @@ export class VehicleListComponent implements OnInit {
         {
           description: 'Editar',
           action: (element: VehicleListItem) => {
-            // Implement delete action here
-            console.log('Edit vehicle:', element);
+            this.lateralDrawerService
+              .open(
+                CreateVehicleDrawerComponent,
+                { data: element },
+                {
+                  title: 'Editar Vehículo',
+                  footer: {
+                    firstButton: {
+                      text: 'Guardar',
+                      click: () => {},
+                    },
+                    secondButton: {
+                      text: 'Cancelar',
+                      click: () => {
+                        this.lateralDrawerService.close();
+                      },
+                    },
+                  },
+                },
+              )
+              .subscribe(() => this.doSearchSubject$.next());
           },
         },
         {
