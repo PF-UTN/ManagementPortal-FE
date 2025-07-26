@@ -3,7 +3,7 @@
         (keydown)="onCardKeyDown($event)"
         [ngClass]="{'product-card--disabled': product.stock === 0}"
         apparence="outlined"
-        (click)="canOpenProductDrawer(product) && openProductDrawer(product.id)">
+        (click)="openProductDrawer(product.id)">
     <mat-card-header class="mat-card__header">
         <img 
             class="product-card__image" 
@@ -21,9 +21,9 @@
                     type="icon"
                     icon="remove"
                     ariaLabel="Restar"
-                    [disabled]="quantities[product.id] <= 1"
-                    (onClick)="decreaseQuantity(product.id)"
-                    (keydown.enter)="decreaseQuantity(product.id)"
+                    [disabled]="quantities[product.id] <= 1 || product.stock === 0"
+                    (onClick)="product.stock > 0 && decreaseQuantity(product.id)"
+                    (keydown.enter)="product.stock > 0 && decreaseQuantity(product.id)"
                     (click)="$event.stopPropagation()">
                 </mp-button>
                 <input 
@@ -40,11 +40,11 @@
                     type="icon"
                     icon="add"
                     ariaLabel="Sumar"
-                    [disabled]="quantities[product.id] >= product.stock"
+                    [disabled]="quantities[product.id] >= product.stock || product.stock === 0"
                     [tooltip]="quantities[product.id] >= product.stock ? 'No hay más stock disponible' : ''"
                     tooltipPosition="above"
-                    (onClick)="increaseQuantity(product.id)"
-                    (keydown.enter)="decreaseQuantity(product.id)"
+                    (onClick)="product.stock > 0 && increaseQuantity(product.id)"
+                    (keydown.enter)="product.stock > 0 && increaseQuantity(product.id)"
                     (click)="$event.stopPropagation()">
                 </mp-button>
             </div>
