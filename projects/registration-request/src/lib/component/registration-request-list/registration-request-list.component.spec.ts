@@ -37,7 +37,7 @@ describe('RegistrationRequestListComponent', () => {
           zipCode: '12345',
         },
       },
-      status: 'Pending',
+      status: 'Pendiente',
       requestDate: '2025-03-28T00:00:00Z',
     },
     {
@@ -55,7 +55,7 @@ describe('RegistrationRequestListComponent', () => {
           zipCode: '12345',
         },
       },
-      status: 'Approved',
+      status: 'Aprobada',
       requestDate: '2025-03-27T00:00:00Z',
     },
   ];
@@ -145,7 +145,7 @@ describe('RegistrationRequestListComponent', () => {
   });
 
   describe('getRowClass', () => {
-    it('should return "table__pending-row" for rows with status "Pending"', () => {
+    it('should return "table__pending-row" for rows with status "Pendiente"', () => {
       // Act
       const rowClass = component.getRowClass(mockData[0]);
 
