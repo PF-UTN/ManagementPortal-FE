@@ -1,4 +1,6 @@
+import { downloadFileFromResponse } from '@Common';
 import {
+  ButtonComponent,
   ColumnTypeEnum,
   LateralDrawerService,
   TableColumn,
@@ -8,15 +10,13 @@ import {
 import { CommonModule } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 
 import { ActionsRequest } from '../../constants/actions.enum';
+import { DownloadRegistrationRequestRequest } from '../../models/download-registration-request.request';
 import { RegistrationRequestListItem } from '../../models/registration-request-item.model';
 import { RegistrationRequestParams } from '../../models/registration-request-param.model';
 import { RegistrationRequestService } from '../../services/registration-request.service';
@@ -29,9 +29,7 @@ import { RejectLateralDrawerComponent } from '../reject-lateral-drawer/reject-la
   imports: [
     TableComponent,
     CommonModule,
-    MatIconModule,
-    MatMenuModule,
-    MatButtonModule,
+    ButtonComponent,
     MatFormFieldModule,
     MatSelectModule,
     FormsModule,
@@ -118,15 +116,8 @@ export class RegistrationRequestListComponent implements OnInit {
           this.isLoading = true;
         }),
         switchMap(() => {
-          const params: RegistrationRequestParams = {
-            page: this.pageIndex + 1,
-            pageSize: this.pageSize,
-            searchText: '',
-            filters: {},
-          };
-          if (this.selectedStatus && this.selectedStatus.length > 0) {
-            params.filters = { status: this.selectedStatus };
-          }
+          const params = this.getRegistrationRequestParams();
+
           return this.registrationRequestService.postSearchRegistrationRequest(
             params,
           );
@@ -144,6 +135,21 @@ export class RegistrationRequestListComponent implements OnInit {
         },
       });
     this.doSearchSubject$.next();
+  }
+
+  private getRegistrationRequestParams(): RegistrationRequestParams {
+    const params: RegistrationRequestParams = {
+      page: this.pageIndex + 1,
+      pageSize: this.pageSize,
+      searchText: '',
+      filters: {},
+    };
+
+    if (this.selectedStatus && this.selectedStatus.length > 0) {
+      params.filters = { status: this.selectedStatus };
+    }
+
+    return params;
   }
 
   onStatusFilterChange(): void {
@@ -208,6 +214,21 @@ export class RegistrationRequestListComponent implements OnInit {
   closeDrawer(): void {
     this.isDrawerApproveOpen = false;
     this.isDrawerRejectOpen = false;
+  }
+
+  handleDownloadClick(): void {
+    const searchParams = this.getRegistrationRequestParams();
+
+    const downloadRequest: DownloadRegistrationRequestRequest = {
+      searchText: searchParams.searchText,
+      filters: searchParams.filters,
+    };
+
+    this.registrationRequestService
+      .postDownloadRegistrationRequest(downloadRequest)
+      .subscribe((response) => {
+        downloadFileFromResponse(response, 'solicitudes_registro.xlsx');
+      });
   }
 
   getRowClass = (row: RegistrationRequestListItem): string => {

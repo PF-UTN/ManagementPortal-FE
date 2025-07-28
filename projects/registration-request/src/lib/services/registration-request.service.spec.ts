@@ -5,6 +5,7 @@ import {
 import { TestBed } from '@angular/core/testing';
 
 import { RegistrationRequestService } from './registration-request.service';
+import { DownloadRegistrationRequestRequest } from '../models/download-registration-request.request';
 import { RegistrationRequestParams } from '../models/registration-request-param.model';
 
 describe('RegistrationRequestService', () => {
@@ -108,6 +109,105 @@ describe('RegistrationRequestService', () => {
         'https://dev-management-portal-be.vercel.app/registration-request/search',
       );
       expect(req.request.method).toBe('POST');
+      req.error(mockError);
+    });
+  });
+
+  describe('postDownloadRegistrationRequest', () => {
+    it('should call the correct mocked URL', () => {
+      // Arrange
+      const params: DownloadRegistrationRequestRequest = {
+        searchText: '',
+        filters: {},
+      };
+
+      // Act
+      service.postDownloadRegistrationRequest(params).subscribe();
+      const req = httpMock.expectOne(
+        'https://dev-management-portal-be.vercel.app/registration-request/download',
+      );
+
+      // Assert
+      expect(req.request.url).toBe(
+        'https://dev-management-portal-be.vercel.app/registration-request/download',
+      );
+      req.flush(new Blob());
+    });
+
+    it('should send the correct request body', () => {
+      // Arrange
+      const params: DownloadRegistrationRequestRequest = {
+        searchText: 'test',
+        filters: { status: ['Pending'] },
+      };
+
+      // Act
+      service.postDownloadRegistrationRequest(params).subscribe();
+      const req = httpMock.expectOne(
+        'https://dev-management-portal-be.vercel.app/registration-request/download',
+      );
+
+      // Assert
+      expect(req.request.body).toEqual(params);
+      req.flush(new Blob());
+    });
+
+    it('should send request with responseType as blob', () => {
+      // Arrange
+      const params: DownloadRegistrationRequestRequest = {
+        searchText: '',
+        filters: {},
+      };
+
+      // Act
+      service.postDownloadRegistrationRequest(params).subscribe();
+      const req = httpMock.expectOne(
+        'https://dev-management-portal-be.vercel.app/registration-request/download',
+      );
+
+      // Assert
+      expect(req.request.responseType).toBe('blob');
+      req.flush(new Blob());
+    });
+
+    it('should return HttpResponse<Blob> with the correct body', () => {
+      // Arrange
+      const params: DownloadRegistrationRequestRequest = {
+        searchText: '',
+        filters: {},
+      };
+      const mockBlob = new Blob(['file']);
+
+      // Act
+      service.postDownloadRegistrationRequest(params).subscribe((response) => {
+        // Assert
+        expect(response.body).toEqual(mockBlob);
+      });
+      const req = httpMock.expectOne(
+        'https://dev-management-portal-be.vercel.app/registration-request/download',
+      );
+      req.flush(mockBlob);
+    });
+
+    it('should handle HTTP error correctly', () => {
+      // Arrange
+      const params: DownloadRegistrationRequestRequest = {
+        searchText: '',
+        filters: {},
+      };
+      const mockError = new ErrorEvent('Network error');
+
+      // Act
+      service.postDownloadRegistrationRequest(params).subscribe({
+        next: () => fail('Should have failed'),
+        error: (err) => {
+          // Assert
+          expect(err.error).toBe(mockError);
+        },
+      });
+      const req = httpMock.expectOne(
+        'https://dev-management-portal-be.vercel.app/registration-request/download',
+      );
       req.error(mockError);
     });
   });
