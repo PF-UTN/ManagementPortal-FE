@@ -28,7 +28,7 @@ import {
 } from '../../models/product-param.model';
 import { SearchProductResponse } from '../../models/search-product-response.model';
 import { ProductService } from '../../services/product.service';
-import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-lateral-drawer.component';
+import { DetailLateralClientDrawerComponent } from '../detail-lateral-client-drawer/detail-lateral-client-drawer.component';
 import { ProductCardComponent } from '../product-card/product-card.component';
 
 @Component({
@@ -148,7 +148,7 @@ export class ProductListClientComponent {
   }
 
   clearSearch() {
-    this.filterForm.get('searchText')?.setValue('');
+    this.filterForm.controls['searchText']?.setValue('');
   }
 
   onCardKeyDown(event: KeyboardEvent) {
@@ -207,15 +207,28 @@ export class ProductListClientComponent {
   }
 
   openProductDrawer(productId: number) {
+    const product = this.products.find((p) => p.id === productId);
+    const quantityAvailable = product ? product.stock > 0 : false;
+
     this.lateralDrawerService.open(
-      DetailLateralDrawerComponent,
-      { productId },
+      DetailLateralClientDrawerComponent,
+      {
+        productId,
+        quantity: this.quantities[productId] || 1,
+      },
       {
         title: 'Detalle del Producto',
         footer: {
           firstButton: {
-            text: 'Cerrar',
+            text: 'Agregar al carrito',
+            disabled: !quantityAvailable,
             click: () => this.lateralDrawerService.close(),
+          },
+          secondButton: {
+            text: 'Cancelar',
+            click: () => {
+              this.lateralDrawerService.close();
+            },
           },
         },
       },

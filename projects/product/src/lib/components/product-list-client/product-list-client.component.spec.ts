@@ -15,7 +15,7 @@ import {
   mockProductListItems,
   mockProductCategories,
 } from '../../testing/mock-data.model';
-import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-lateral-drawer.component';
+import { DetailLateralClientDrawerComponent } from '../detail-lateral-client-drawer/detail-lateral-client-drawer.component';
 
 describe('ProductListClientComponent', () => {
   let component: ProductListClientComponent;
@@ -274,18 +274,39 @@ describe('ProductListClientComponent', () => {
 
   describe('Drawer', () => {
     it('should open product drawer', () => {
+      // Arrange
+      component.products = [
+        {
+          id: 1,
+          stock: 2,
+          name: 'Test',
+          price: 10,
+          weight: 1,
+          description: '',
+          categoryName: '',
+          supplierBusinessName: '',
+          enabled: true,
+        },
+      ];
+      component.quantities = { 1: 2 };
+
       // Act
       component.openProductDrawer(1);
 
       // Assert
       expect(lateralDrawerService.open).toHaveBeenCalledWith(
-        DetailLateralDrawerComponent,
-        { productId: 1 },
+        DetailLateralClientDrawerComponent,
+        { productId: 1, quantity: 2 },
         expect.objectContaining({
           title: 'Detalle del Producto',
           footer: expect.objectContaining({
             firstButton: expect.objectContaining({
-              text: 'Cerrar',
+              text: 'Agregar al carrito',
+              disabled: false,
+              click: expect.any(Function),
+            }),
+            secondButton: expect.objectContaining({
+              text: 'Cancelar',
               click: expect.any(Function),
             }),
           }),

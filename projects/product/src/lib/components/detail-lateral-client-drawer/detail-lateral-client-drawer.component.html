@@ -1,0 +1,90 @@
+<ng-container *ngIf="isLoading(); else loaded">
+  <mp-loading></mp-loading>
+</ng-container>
+
+<ng-template #loaded>
+  <ng-container *ngIf="!error(); else errorContent">
+    <ng-container *ngIf="data() as product">
+      <div class="container py-3">
+        <div class="container__body">
+          <img class="container__image" 
+            mat-card-image src="https://material.angular.dev/assets/img/examples/shiba2.jpg"
+            alt="Shiba Inu"
+          >
+
+          <div class="row mb-3 mt-3">
+            <div class="col-12">
+              <strong>Nombre</strong>
+              <p>{{ product.name }}</p>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-12">
+              <strong>Descripción</strong>
+              <p>{{ product.description }}</p>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-12">
+              <strong>Stock Disponible</strong>
+              <p>{{ product.stock.quantityAvailable }}</p>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-12">
+              <strong>Peso</strong>
+              <p>{{ product.weight }} kg</p>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-12">
+              <strong>Precio Unitario</strong>
+              <p>${{ product.price }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="container__actions">
+          <div class="container__actions__quantity">
+            <mp-button 
+              type="icon" 
+              icon="remove" 
+              ariaLabel="Restar"
+              [disabled]="product.stock.quantityAvailable === 0 || quantity <= 1" 
+              (onClick)="decreaseQuantity()">
+            </mp-button>
+            <input 
+              type="number" 
+              min="1" 
+              [max]="product.stock.quantityAvailable" 
+              [value]="quantity"
+              (input)="onQuantityInput($event)" [disabled]="product.stock.quantityAvailable === 0" 
+            />
+            <mp-button 
+              type="icon" 
+              icon="add" 
+              ariaLabel="Sumar"
+              [disabled]="product.stock.quantityAvailable === 0 || quantity >= product.stock.quantityAvailable"
+              (onClick)="increaseQuantity()">
+            </mp-button>
+          </div>
+          <div class="container__actions__subtotal">
+            <strong>Subtotal</strong>
+            <br>
+            ${{ (product.price * quantity) | number:'1.2-2' }}
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+
+  <ng-template #errorContent>
+    <div class="container py-3">
+      <p class="text-danger">{{ error() }}</p>
+    </div>
+  </ng-template>
+</ng-template>
