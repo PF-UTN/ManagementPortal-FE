@@ -45,8 +45,8 @@ import { ProductCardComponent } from '../product-card/product-card.component';
     MatSelectModule,
     MatButtonModule,
     LoadingComponent,
-    ProductCardComponent,
     InputComponent,
+    ProductCardComponent,
     ReactiveFormsModule,
     MatTooltipModule,
   ],
@@ -57,8 +57,6 @@ export class ProductListClientComponent {
   products: ProductListItem[] = [];
   categories: ProductCategoryResponse[] = [];
   selectedCategories: string[] = [];
-  quantities: { [productId: number]: number } = {};
-  stockError: { [productId: number]: boolean } = {};
 
   sort: string = '';
   searchText: string = '';
@@ -153,68 +151,22 @@ export class ProductListClientComponent {
 
   onCardKeyDown(event: KeyboardEvent) {
     if (event.key === 'Enter' && this.selectedProductId !== undefined) {
-      this.openProductDrawer(this.selectedProductId);
+      this.openProductDrawer({
+        productId: this.selectedProductId,
+        quantity: 1,
+      });
     }
   }
 
-  canOpenProductDrawer(item: ProductListItem): boolean {
-    return item.stock > 0 && (this.quantities[item.id] || 1) < item.stock;
-  }
-
-  private updateStockError(productId: number): void {
-    const product = this.products.find(
-      (p) => p.id.toString() === productId.toString(),
-    );
-    this.stockError[productId] =
-      !!product && this.quantities[productId] > product.stock;
-  }
-
-  increaseQuantity(productId: number) {
-    if (!this.quantities[productId]) {
-      this.quantities[productId] = 1;
-    }
-    this.quantities[productId]++;
-    this.updateStockError(productId);
-  }
-
-  decreaseQuantity(productId: number) {
-    if (!this.quantities[productId]) {
-      this.quantities[productId] = 1;
-    }
-    if (this.quantities[productId] > 1) {
-      this.quantities[productId]--;
-    }
-    this.updateStockError(productId);
-  }
-
-  onQuantityInput(productId: number, event: Event) {
-    const input = event.target as HTMLInputElement;
-    let value = parseInt(input.value, 10);
-
-    if (isNaN(value) || value < 1) value = 1;
-
-    const product = this.products.find(
-      (p) => p.id.toString() === productId.toString(),
-    );
-    if (product && value > product.stock) {
-      value = product.stock;
-    }
-
-    this.quantities[productId] = value;
-    input.value = value.toString();
-
-    this.updateStockError(productId);
-  }
-
-  openProductDrawer(productId: number) {
-    const product = this.products.find((p) => p.id === productId);
+  openProductDrawer(event: { productId: number; quantity: number }) {
+    const product = this.products.find((p) => p.id === event.productId);
     const quantityAvailable = product ? product.stock > 0 : false;
 
     this.lateralDrawerService.open(
       DetailLateralClientDrawerComponent,
       {
-        productId,
-        quantity: this.quantities[productId] || 1,
+        productId: event.productId,
+        quantity: event.quantity,
       },
       {
         title: 'Detalle del Producto',
@@ -226,9 +178,7 @@ export class ProductListClientComponent {
           },
           secondButton: {
             text: 'Cancelar',
-            click: () => {
-              this.lateralDrawerService.close();
-            },
+            click: () => this.lateralDrawerService.close(),
           },
         },
       },

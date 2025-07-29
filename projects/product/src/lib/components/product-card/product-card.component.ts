@@ -7,7 +7,7 @@ import { MatCardModule } from '@angular/material/card';
 import { ProductListItem } from '../../models/product-item.model';
 
 @Component({
-  selector: 'lib-product-card',
+  selector: 'mp-product-card',
   standalone: true,
   imports: [MatCardModule, CommonModule, ButtonComponent],
   templateUrl: './product-card.component.html',
@@ -15,38 +15,54 @@ import { ProductListItem } from '../../models/product-item.model';
 })
 export class ProductCardComponent {
   @Input() product!: ProductListItem;
-  @Input() quantities!: { [productId: number]: number };
-  @Input() stockError!: { [productId: number]: boolean };
+  @Input() initialQuantity: number = 1;
 
-  @Output() openDrawer = new EventEmitter<number>();
-  @Output() increase = new EventEmitter<number>();
-  @Output() decrease = new EventEmitter<number>();
-  @Output() addToCart = new EventEmitter<void>();
-  @Output() quantityInput = new EventEmitter<{
+  @Output() openDrawer = new EventEmitter<{
     productId: number;
-    event: Event;
+    quantity: number;
   }>();
+  @Output() addToCart = new EventEmitter<void>();
+
+  quantity: number = 1;
 
   onCardKeyDown(event: KeyboardEvent) {
     if (event.key === 'Enter') {
-      this.openDrawer.emit(this.product.id);
+      this.openDrawer.emit({
+        productId: this.product.id,
+        quantity: this.quantity,
+      });
     }
   }
 
-  openProductDrawer(productId: number) {
-    this.openDrawer.emit(productId);
+  ngOnInit() {
+    this.quantity = this.initialQuantity;
   }
 
-  increaseQuantity(productId: number) {
-    this.increase.emit(productId);
+  openProductDrawer() {
+    this.openDrawer.emit({
+      productId: this.product.id,
+      quantity: this.quantity,
+    });
   }
 
-  decreaseQuantity(productId: number) {
-    this.decrease.emit(productId);
+  onQuantityChange(newQuantity: number) {
+    this.quantity = newQuantity;
   }
 
-  onQuantityInput(productId: number, event: Event) {
-    this.quantityInput.emit({ productId, event });
+  onQuantityInput(event: Event) {
+    const input = event.target as HTMLInputElement | null;
+    if (input) {
+      let value = input.valueAsNumber;
+      if (value > this.product.stock) {
+        value = this.product.stock;
+        input.value = String(value);
+      }
+      if (value < 1) {
+        value = 1;
+        input.value = String(value);
+      }
+      this.onQuantityChange(value);
+    }
   }
 
   onAddToCartKeyDown() {
