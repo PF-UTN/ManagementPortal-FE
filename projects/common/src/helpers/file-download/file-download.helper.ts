@@ -13,7 +13,7 @@ export function downloadFileFromResponse(
       contentDisposition,
     );
     if (match && match[1]) {
-      fileName = decodeURIComponent(match[1].replace(/['"]/g, '')); // ✅ decode in case it's URL encoded
+      fileName = decodeURIComponent(match[1].replace(/['"]/g, ''));
     }
   }
 
