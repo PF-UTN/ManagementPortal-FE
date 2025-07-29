@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ProductCardComponent } from './product-card.component';
-import { ProductListItem } from '../../models/product-item.model';
 
 describe('ProductCardComponent', () => {
   let component: ProductCardComponent;
@@ -45,44 +44,6 @@ describe('ProductCardComponent', () => {
     component.openProductDrawer(productId);
     // Assert
     expect(spy).toHaveBeenCalledWith(productId);
-  });
-
-  it('should return true in canOpenProductDrawer if stock > 0', () => {
-    // Arrange
-    const item: ProductListItem = {
-      id: 1,
-      stock: 2,
-      name: '',
-      price: 0,
-      weight: 0,
-      description: '',
-      categoryName: '',
-      supplierBusinessName: '',
-      enabled: true,
-    };
-    // Act
-    const result = component.canOpenProductDrawer(item);
-    // Assert
-    expect(result).toBe(true);
-  });
-
-  it('should return false in canOpenProductDrawer if stock is 0', () => {
-    // Arrange
-    const item: ProductListItem = {
-      id: 1,
-      stock: 0,
-      name: '',
-      price: 0,
-      weight: 0,
-      description: '',
-      categoryName: '',
-      supplierBusinessName: '',
-      enabled: true,
-    };
-    // Act
-    const result = component.canOpenProductDrawer(item);
-    // Assert
-    expect(result).toBe(false);
   });
 
   it('should emit increase when increaseQuantity is called', () => {

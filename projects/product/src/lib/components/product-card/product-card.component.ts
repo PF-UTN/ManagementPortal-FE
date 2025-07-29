@@ -37,10 +37,6 @@ export class ProductCardComponent {
     this.openDrawer.emit(productId);
   }
 
-  canOpenProductDrawer(item: ProductListItem): boolean {
-    return item.stock > 0;
-  }
-
   increaseQuantity(productId: number) {
     this.increase.emit(productId);
   }
