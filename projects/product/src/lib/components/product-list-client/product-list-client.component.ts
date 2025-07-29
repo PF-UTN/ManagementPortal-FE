@@ -8,7 +8,12 @@ import {
 
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormControl,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -28,7 +33,7 @@ import {
 } from '../../models/product-param.model';
 import { SearchProductResponse } from '../../models/search-product-response.model';
 import { ProductService } from '../../services/product.service';
-import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-lateral-drawer.component';
+import { DetailLateralClientDrawerComponent } from '../detail-lateral-client-drawer/detail-lateral-client-drawer.component';
 import { ProductCardComponent } from '../product-card/product-card.component';
 
 @Component({
@@ -45,8 +50,8 @@ import { ProductCardComponent } from '../product-card/product-card.component';
     MatSelectModule,
     MatButtonModule,
     LoadingComponent,
-    ProductCardComponent,
     InputComponent,
+    ProductCardComponent,
     ReactiveFormsModule,
     MatTooltipModule,
   ],
@@ -57,15 +62,18 @@ export class ProductListClientComponent {
   products: ProductListItem[] = [];
   categories: ProductCategoryResponse[] = [];
   selectedCategories: string[] = [];
-  quantities: { [productId: number]: number } = {};
-  stockError: { [productId: number]: boolean } = {};
 
   sort: string = '';
   searchText: string = '';
   selectedProductId?: number;
   isLoading: boolean = true;
-  filterForm: FormGroup;
   private filters$ = new Subject<void>();
+
+  filterForm: FormGroup<{
+    searchText: FormControl<string>;
+    selectedCategories: FormControl<string[]>;
+    sort: FormControl<string>;
+  }>;
 
   constructor(
     private readonly fb: FormBuilder,
@@ -73,9 +81,9 @@ export class ProductListClientComponent {
     private readonly lateralDrawerService: LateralDrawerService,
   ) {
     this.filterForm = this.fb.group({
-      searchText: [''],
-      selectedCategories: [[]],
-      sort: [''],
+      searchText: this.fb.control('', { nonNullable: true }),
+      selectedCategories: this.fb.control<string[]>([], { nonNullable: true }),
+      sort: this.fb.control('', { nonNullable: true }),
     });
   }
 
@@ -148,73 +156,38 @@ export class ProductListClientComponent {
   }
 
   clearSearch() {
-    this.filterForm.get('searchText')?.setValue('');
+    this.filterForm.controls.searchText?.setValue('');
   }
 
   onCardKeyDown(event: KeyboardEvent) {
     if (event.key === 'Enter' && this.selectedProductId !== undefined) {
-      this.openProductDrawer(this.selectedProductId);
+      this.openProductDrawer({
+        productId: this.selectedProductId,
+        quantity: 1,
+      });
     }
   }
 
-  canOpenProductDrawer(item: ProductListItem): boolean {
-    return item.stock > 0 && (this.quantities[item.id] || 1) < item.stock;
-  }
+  openProductDrawer(event: { productId: number; quantity: number }) {
+    const product = this.products.find((p) => p.id === event.productId);
+    const quantityAvailable = (product?.stock ?? 0) > 0;
 
-  private updateStockError(productId: number): void {
-    const product = this.products.find(
-      (p) => p.id.toString() === productId.toString(),
-    );
-    this.stockError[productId] =
-      !!product && this.quantities[productId] > product.stock;
-  }
-
-  increaseQuantity(productId: number) {
-    if (!this.quantities[productId]) {
-      this.quantities[productId] = 1;
-    }
-    this.quantities[productId]++;
-    this.updateStockError(productId);
-  }
-
-  decreaseQuantity(productId: number) {
-    if (!this.quantities[productId]) {
-      this.quantities[productId] = 1;
-    }
-    if (this.quantities[productId] > 1) {
-      this.quantities[productId]--;
-    }
-    this.updateStockError(productId);
-  }
-
-  onQuantityInput(productId: number, event: Event) {
-    const input = event.target as HTMLInputElement;
-    let value = parseInt(input.value, 10);
-
-    if (isNaN(value) || value < 1) value = 1;
-
-    const product = this.products.find(
-      (p) => p.id.toString() === productId.toString(),
-    );
-    if (product && value > product.stock) {
-      value = product.stock;
-    }
-
-    this.quantities[productId] = value;
-    input.value = value.toString();
-
-    this.updateStockError(productId);
-  }
-
-  openProductDrawer(productId: number) {
     this.lateralDrawerService.open(
-      DetailLateralDrawerComponent,
-      { productId },
+      DetailLateralClientDrawerComponent,
+      {
+        productId: event.productId,
+        quantity: event.quantity,
+      },
       {
         title: 'Detalle del Producto',
         footer: {
           firstButton: {
-            text: 'Cerrar',
+            text: 'Agregar al carrito',
+            disabled: !quantityAvailable,
+            click: () => this.lateralDrawerService.close(),
+          },
+          secondButton: {
+            text: 'Cancelar',
             click: () => this.lateralDrawerService.close(),
           },
         },

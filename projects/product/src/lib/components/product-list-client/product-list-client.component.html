@@ -48,18 +48,13 @@
                 <p>Probá cambiando los filtros o el texto de búsqueda</p>
             </div>
             <div class="main-container__grid" *ngIf="products.length > 0">
-                <lib-product-card
+                <mp-product-card
                 class="main-container__grid__card"
-                    *ngFor="let product of products"
-                    [product]="product"
-                    [quantities]="quantities"
-                    [stockError]="stockError"
-                    (increase)="increaseQuantity($event)"
-                    (decrease)="decreaseQuantity($event)"
-                    (quantityInput)="onQuantityInput($event.productId, $event.event)"
-                    (addToCart)="onAddToCartKeyDown()"
-                    (openDrawer)="openProductDrawer($event)">
-                </lib-product-card>
+                      *ngFor="let product of products"
+                        [product]="product"
+                        [initialQuantity]="1"
+                        (openDrawer)="openProductDrawer($event)">
+                </mp-product-card>
             </div>
         </ng-container>
     </div>

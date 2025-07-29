@@ -3,7 +3,7 @@
         (keydown)="onCardKeyDown($event)"
         [ngClass]="{'product-card--disabled': product.stock === 0}"
         apparence="outlined"
-        (click)="openProductDrawer(product.id)">
+        (click)="openProductDrawer()">
     <mat-card-header class="mat-card__header">
         <img 
             class="product-card__image" 
@@ -21,9 +21,9 @@
                     type="icon"
                     icon="remove"
                     ariaLabel="Restar"
-                    [disabled]="quantities[product.id] <= 1 || product.stock === 0"
-                    (onClick)="product.stock > 0 && decreaseQuantity(product.id)"
-                    (keydown.enter)="product.stock > 0 && decreaseQuantity(product.id)"
+                    [disabled]="quantity <= 1 || product.stock === 0"
+                    (onClick)="product.stock > 0 && onQuantityChange(quantity - 1)"
+                    (keydown.enter)="product.stock > 0 && onQuantityChange(quantity - 1)"
                     (click)="$event.stopPropagation()">
                 </mp-button>
                 <input 
@@ -31,20 +31,20 @@
                     min="1" 
                     [max]="product.stock"
                     class="mx-2 mat-card__content-input" 
-                    [value]="quantities[product.id] || 1"
+                    [value]="quantity"
                     (click)="$event.stopPropagation()" 
-                    (input)="onQuantityInput(product.id, $event)"
+                    (input)="onQuantityInput($event)"
                     (click)="$event.stopPropagation()"
                 />
                 <mp-button 
                     type="icon"
                     icon="add"
                     ariaLabel="Sumar"
-                    [disabled]="quantities[product.id] >= product.stock || product.stock === 0"
-                    [tooltip]="quantities[product.id] >= product.stock ? 'No hay más stock disponible' : ''"
+                    [disabled]="quantity >= product.stock || product.stock === 0"
+                    [tooltip]="quantity >= product.stock ? 'No hay más stock disponible' : ''"
                     tooltipPosition="above"
-                    (onClick)="product.stock > 0 && increaseQuantity(product.id)"
-                    (keydown.enter)="product.stock > 0 && increaseQuantity(product.id)"
+                    (onClick)="product.stock > 0 && onQuantityChange(quantity + 1)"
+                    (keydown.enter)="product.stock > 0 && onQuantityChange(quantity + 1)"
                     (click)="$event.stopPropagation()">
                 </mp-button>
             </div>
@@ -55,7 +55,7 @@
   <ng-container *ngIf="product.stock > 0">
     <mp-button 
       class="w-100"
-      [disabled]="stockError[product.id]"
+      [disabled]="quantity > product.stock"
       (keydown.enter)="onAddToCartKeyDown()" 
       (onClick)="onAddToCartKeyDown()"
       (click)="$event.stopPropagation()">
