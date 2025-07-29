@@ -8,7 +8,12 @@ import {
 
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  FormControl,
+  ReactiveFormsModule,
+} from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -62,8 +67,13 @@ export class ProductListClientComponent {
   searchText: string = '';
   selectedProductId?: number;
   isLoading: boolean = true;
-  filterForm: FormGroup;
   private filters$ = new Subject<void>();
+
+  filterForm: FormGroup<{
+    searchText: FormControl<string>;
+    selectedCategories: FormControl<string[]>;
+    sort: FormControl<string>;
+  }>;
 
   constructor(
     private readonly fb: FormBuilder,
@@ -71,9 +81,9 @@ export class ProductListClientComponent {
     private readonly lateralDrawerService: LateralDrawerService,
   ) {
     this.filterForm = this.fb.group({
-      searchText: [''],
-      selectedCategories: [[]],
-      sort: [''],
+      searchText: this.fb.control('', { nonNullable: true }),
+      selectedCategories: this.fb.control<string[]>([], { nonNullable: true }),
+      sort: this.fb.control('', { nonNullable: true }),
     });
   }
 
@@ -146,7 +156,7 @@ export class ProductListClientComponent {
   }
 
   clearSearch() {
-    this.filterForm.controls['searchText']?.setValue('');
+    this.filterForm.controls.searchText?.setValue('');
   }
 
   onCardKeyDown(event: KeyboardEvent) {
@@ -160,7 +170,7 @@ export class ProductListClientComponent {
 
   openProductDrawer(event: { productId: number; quantity: number }) {
     const product = this.products.find((p) => p.id === event.productId);
-    const quantityAvailable = product ? product.stock > 0 : false;
+    const quantityAvailable = (product?.stock ?? 0) > 0;
 
     this.lateralDrawerService.open(
       DetailLateralClientDrawerComponent,
