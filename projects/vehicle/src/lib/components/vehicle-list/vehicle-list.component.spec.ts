@@ -405,6 +405,54 @@ describe('VehicleListComponent', () => {
       expect(kmValue).toBe('300.000 km');
     });
 
+    it('should format kmTraveled with thousands separator and unit when kmTraveled is a number', () => {
+      // Arrange
+      const item: VehicleListItem = {
+        id: 1,
+        licensePlate: 'ABC123',
+        brand: 'Toyota',
+        model: 'Test',
+        enabled: true,
+        kmTraveled: 300000,
+        admissionDate: new Date(),
+      };
+      const kmColumn = component.columns.find(
+        (c) => c.columnDef === 'kmTraveled',
+      );
+      expect(kmColumn).toBeDefined();
+      expect(kmColumn?.value).toBeDefined();
+
+      // Act
+      const kmValue = kmColumn!.value!(item);
+
+      // Assert
+      expect(kmValue).toBe('300.000 km');
+    });
+
+    it('should return empty string when kmTraveled is not a number', () => {
+      // Arrange
+      const item: VehicleListItem = {
+        id: 2,
+        licensePlate: 'XYZ789',
+        brand: 'Ford',
+        model: 'Focus',
+        enabled: true,
+        kmTraveled: NaN,
+        admissionDate: new Date(),
+      };
+      const kmColumn = component.columns.find(
+        (c) => c.columnDef === 'kmTraveled',
+      );
+      expect(kmColumn).toBeDefined();
+      expect(kmColumn?.value).toBeDefined();
+
+      // Act
+      const kmValue = kmColumn!.value!(item);
+
+      // Assert
+      expect(kmValue).toBe('');
+    });
+
     it('should format admissionDate as DD/MM/YYYY', () => {
       // Arrange
       const date = new Date(2024, 0, 1);
@@ -413,5 +461,23 @@ describe('VehicleListComponent', () => {
       // Assert
       expect(formatted).toBe('01/01/2024');
     });
+  });
+
+  it('should parse string date and format as DD/MM/YYYY', () => {
+    // Arrange
+    const dateStr = new Date(2024, 0, 1);
+    // Act
+    const formatted = component.formatDate(dateStr);
+    // Assert
+    expect(formatted).toBe('01/01/2024');
+  });
+
+  it('should return empty string for invalid date', () => {
+    // Arrange
+    const invalidDate = 'not-a-date';
+    // Act
+    const formatted = component.formatDate(invalidDate);
+    // Assert
+    expect(formatted).toBe('');
   });
 });

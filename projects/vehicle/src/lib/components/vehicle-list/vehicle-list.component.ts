@@ -53,7 +53,7 @@ export class VehicleListComponent implements OnInit {
       header: 'Kilometraje actual',
       type: ColumnTypeEnum.VALUE,
       value: (element: VehicleListItem) =>
-        typeof element.kmTraveled === 'number'
+        typeof element.kmTraveled === 'number' && !isNaN(element.kmTraveled)
           ? `${element.kmTraveled.toLocaleString('de-DE')} km`
           : '',
     },
