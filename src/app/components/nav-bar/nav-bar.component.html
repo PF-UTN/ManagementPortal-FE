@@ -12,6 +12,7 @@
             *ngIf="item.shouldRender"
             [routerLink]="'/' + item.route"
             routerLinkActive="active-link"
+            [routerLinkActiveOptions]="{ exact: true }"
             class="container__body__menu__item"
             [class.closed]="!isOpen"
           >
