@@ -52,13 +52,17 @@ export class VehicleListComponent implements OnInit {
       columnDef: 'kmTraveled',
       header: 'Kilometraje actual',
       type: ColumnTypeEnum.VALUE,
-      value: (element: VehicleListItem) => element.kmTraveled.toString(),
+      value: (element: VehicleListItem) =>
+        typeof element.kmTraveled === 'number'
+          ? `${element.kmTraveled.toLocaleString('de-DE')} km`
+          : '',
     },
     {
       columnDef: 'admissionDate',
       header: 'Fecha de ingreso',
       type: ColumnTypeEnum.VALUE,
-      value: (element: VehicleListItem) => element.admissionDate.toString(),
+      value: (element: VehicleListItem) =>
+        this.formatDate(element.admissionDate),
     },
     {
       columnDef: 'enabled',
@@ -151,6 +155,16 @@ export class VehicleListComponent implements OnInit {
   pageSize: number = 10;
   doSearchSubject$ = new Subject<void>();
   searchText: string = '';
+
+  public formatDate(date: string | Date): string {
+    const d = typeof date === 'string' ? new Date(date) : date;
+    if (isNaN(d.getTime())) return '';
+    return d.toLocaleDateString('es-AR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+  }
 
   constructor(
     private readonly vehicleService: VehicleService,

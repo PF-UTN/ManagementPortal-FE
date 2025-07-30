@@ -379,4 +379,39 @@ describe('VehicleListComponent', () => {
       expect(openSpy).not.toHaveBeenCalled();
     });
   });
+
+  describe('Column formatting', () => {
+    it('should format kmTraveled with thousands separator and unit', () => {
+      // Arrange
+      const item: VehicleListItem = {
+        id: 1,
+        licensePlate: 'ABC123',
+        brand: 'Toyota',
+        model: 'Test',
+        enabled: true,
+        kmTraveled: 300000,
+        admissionDate: new Date(),
+      };
+      const kmColumn = component.columns.find(
+        (c) => c.columnDef === 'kmTraveled',
+      );
+      expect(kmColumn).toBeDefined();
+      expect(kmColumn?.value).toBeDefined();
+
+      // Act
+      const kmValue = kmColumn?.value?.(item);
+
+      // Assert
+      expect(kmValue).toBe('300.000 km');
+    });
+
+    it('should format admissionDate as DD/MM/YYYY', () => {
+      // Arrange
+      const date = new Date(2024, 0, 1);
+      // Act
+      const formatted = component.formatDate(date);
+      // Assert
+      expect(formatted).toBe('01/01/2024');
+    });
+  });
 });
