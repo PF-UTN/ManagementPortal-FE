@@ -35,6 +35,9 @@
     <mat-error *ngIf="form.controls['admissionDate']?.hasError('required') && form.controls['admissionDate']?.touched">
       La fecha de ingreso es requerida.
     </mat-error>
+    <mat-error *ngIf="form.controls['admissionDate']?.hasError('maxYear')">
+      El año debe ser menor o igual a 9999.
+    </mat-error>
 </mat-form-field>
   <div class="container__toggle">
     <mat-slide-toggle color="primary" formControlName="enabled">

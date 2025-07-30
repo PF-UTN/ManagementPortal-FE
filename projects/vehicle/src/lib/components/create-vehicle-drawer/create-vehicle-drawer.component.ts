@@ -11,6 +11,9 @@ import {
   Validators,
   ReactiveFormsModule,
   FormControl,
+  ValidatorFn,
+  AbstractControl,
+  ValidationErrors,
 } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
 import {
@@ -104,7 +107,10 @@ export class CreateVehicleDrawerComponent
         Validators.required,
         Validators.min(0),
       ]),
-      admissionDate: new FormControl<Date | null>(null, Validators.required),
+      admissionDate: new FormControl<Date | null>(null, [
+        Validators.required,
+        this.admissionDateYearValidator(),
+      ]),
       enabled: new FormControl<boolean | null>(null),
       deleted: new FormControl<boolean | null>(null),
     });
@@ -209,5 +215,15 @@ export class CreateVehicleDrawerComponent
 
   closeDrawer() {
     this.lateralDrawerService.close();
+  }
+
+  admissionDateYearValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const value = control.value;
+      if (value instanceof Date && value.getFullYear() > 9999) {
+        return { maxYear: true };
+      }
+      return null;
+    };
   }
 }

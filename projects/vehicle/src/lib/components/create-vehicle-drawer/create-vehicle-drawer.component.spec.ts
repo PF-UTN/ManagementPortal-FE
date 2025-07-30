@@ -76,6 +76,26 @@ describe('CreateVehicleDrawerComponent', () => {
       // Assert
       expect(valid).toBe(true);
     });
+
+    it('should be invalid and show maxYear error when admissionDate year is greater than 9999', () => {
+      // Arrange
+      component.form.patchValue({
+        licensePlate: 'ABC123',
+        brand: 'Toyota',
+        model: 'Corolla',
+        kmTraveled: 10000,
+        admissionDate: new Date('10000-01-01'),
+        enabled: true,
+        deleted: false,
+      });
+      // Act
+      const valid = component.form.valid;
+      // Assert
+      expect(valid).toBe(false);
+      expect(component.form.get('admissionDate')?.hasError('maxYear')).toBe(
+        true,
+      );
+    });
   });
 
   describe('onSubmit', () => {
