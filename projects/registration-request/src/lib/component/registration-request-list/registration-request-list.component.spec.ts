@@ -1,8 +1,14 @@
+import { downloadFileFromResponse } from '@Common';
 import { LateralDrawerService } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
-import { fakeAsync, tick } from '@angular/core/testing';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpResponse } from '@angular/common/http';
+import {
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick,
+} from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -14,6 +20,10 @@ import { of, throwError } from 'rxjs';
 import { RegistrationRequestListComponent } from './registration-request-list.component';
 import { RegistrationRequestListItem } from '../../models/registration-request-item.model';
 import { RegistrationRequestService } from '../../services/registration-request.service';
+
+jest.mock('@Common', () => ({
+  downloadFileFromResponse: jest.fn(),
+}));
 
 describe('RegistrationRequestListComponent', () => {
   let component: RegistrationRequestListComponent;
@@ -270,5 +280,63 @@ describe('RegistrationRequestListComponent', () => {
       // Assert
       expect(spy).toHaveBeenCalledTimes(1);
     }));
+  });
+
+  describe('handleDownloadClick', () => {
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('should call postDownloadRegistrationRequest with params built by the component', () => {
+      // Arrange
+      const { filters, searchText } =
+        component['getRegistrationRequestParams']();
+      const response = new HttpResponse<Blob>({
+        body: new Blob(['']),
+        status: 200,
+      });
+      service.postDownloadRegistrationRequest.mockReturnValue(of(response));
+
+      // Act
+      component.handleDownloadClick();
+
+      // Assert
+      expect(service.postDownloadRegistrationRequest).toHaveBeenCalledWith({
+        filters,
+        searchText,
+      });
+    });
+
+    it('should call downloadFileFromResponse with the response and default filename', () => {
+      // Arrange
+      const response = new HttpResponse<Blob>({
+        body: new Blob(['file']),
+        status: 200,
+      });
+      service.postDownloadRegistrationRequest.mockReturnValue(of(response));
+
+      // Act
+      component.handleDownloadClick();
+
+      // Assert
+      expect(downloadFileFromResponse).toHaveBeenCalledWith(
+        response,
+        'solicitudes_registro.xlsx',
+      );
+    });
+
+    it('should not call downloadFileFromResponse when the service emits an error', () => {
+      // Arrange
+      const error = new Error('Network error');
+      service.postDownloadRegistrationRequest.mockReturnValue(
+        throwError(() => error),
+      );
+
+      // Act
+      component.handleDownloadClick();
+
+      // Assert
+      expect(downloadFileFromResponse).not.toHaveBeenCalled();
+    });
   });
 });

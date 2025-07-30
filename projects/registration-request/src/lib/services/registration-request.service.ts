@@ -1,9 +1,10 @@
 import { environment } from '@Common';
 
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
+import { DownloadRegistrationRequestRequest } from '../models/download-registration-request.request';
 import { RegistrationRequestListItem } from '../models/registration-request-item.model';
 import { RegistrationRequestParams } from '../models/registration-request-param.model';
 
@@ -25,6 +26,16 @@ export class RegistrationRequestService {
   ): Observable<SearchRegistrationRequestResponse> {
     const url = `${this.baseUrl}/search`;
     return this.http.post<SearchRegistrationRequestResponse>(url, params);
+  }
+
+  postDownloadRegistrationRequest(
+    params: DownloadRegistrationRequestRequest,
+  ): Observable<HttpResponse<Blob>> {
+    const url = `${this.baseUrl}/download`;
+    return this.http.post(url, params, {
+      observe: 'response',
+      responseType: 'blob',
+    });
   }
 
   approveRegistrationRequest(id: number, note: string): Observable<void> {
