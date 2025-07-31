@@ -22,7 +22,7 @@ import { of, throwError } from 'rxjs';
 
 import { VehicleListComponent } from './vehicle-list.component';
 import { VehicleListItem } from '../../models/vehicle-item.model';
-import { mockVehicleListItems } from '../../testing/mock-data,model';
+import { mockVehicleListItems } from '../../testing/mock-data.model';
 
 describe('VehicleListComponent', () => {
   let component: VehicleListComponent;
