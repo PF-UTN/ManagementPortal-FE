@@ -145,12 +145,6 @@ export class ProductListComponent implements OnInit {
       label: 'Crear/Editar proveedor',
       action: () => this.onCreateUpdateSupplierDrawer(),
     },
-    {
-      label: 'Ver como cliente',
-      action: () => {
-        void this.router.navigate(['/productos/cliente']);
-      },
-    },
   ];
 
   doSearchSubject$ = new Subject<void>();

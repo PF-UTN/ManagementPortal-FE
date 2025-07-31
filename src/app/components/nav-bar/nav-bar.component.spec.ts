@@ -66,9 +66,15 @@ describe('NavBarComponent', () => {
           shouldRender: true,
         },
         {
-          title: 'Productos',
+          title: 'Inventario',
           icon: 'inventory_2',
           route: 'productos',
+          shouldRender: true,
+        },
+        {
+          title: 'Productos',
+          icon: 'storefront',
+          route: 'productos/cliente',
           shouldRender: true,
         },
         {
@@ -109,9 +115,15 @@ describe('NavBarComponent', () => {
           shouldRender: true,
         },
         {
-          title: 'Productos',
+          title: 'Inventario',
           icon: 'inventory_2',
           route: 'productos',
+          shouldRender: true,
+        },
+        {
+          title: 'Productos',
+          icon: 'storefront',
+          route: 'productos/cliente',
           shouldRender: true,
         },
         {
@@ -153,10 +165,16 @@ describe('NavBarComponent', () => {
         shouldRender: false,
       },
       {
-        title: 'Productos',
+        title: 'Inventario',
         icon: 'inventory_2',
         route: 'productos',
         shouldRender: false,
+      },
+      {
+        title: 'Productos',
+        icon: 'storefront',
+        route: 'productos/cliente',
+        shouldRender: true,
       },
       {
         title: 'Vehiculos',
