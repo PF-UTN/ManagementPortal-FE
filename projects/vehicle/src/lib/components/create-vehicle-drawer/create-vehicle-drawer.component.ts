@@ -138,7 +138,7 @@ export class CreateVehicleDrawerComponent
           : null,
         enabled: this.data.enabled ?? false,
       });
-      this.form.controls['licensePlate']?.disable();
+      this.form.controls.licensePlate?.disable();
     }
   }
 
@@ -151,7 +151,7 @@ export class CreateVehicleDrawerComponent
 
     const admissionDateValue = this.form.value.admissionDate;
     const payload = {
-      licensePlate: this.form.controls['licensePlate']?.getRawValue() ?? '',
+      licensePlate: this.form.controls.licensePlate?.getRawValue() ?? '',
       brand: this.form.value.brand ?? '',
       model: this.form.value.model ?? '',
       kmTraveled: this.form.value.kmTraveled ?? 0,
