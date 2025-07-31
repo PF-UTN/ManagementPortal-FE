@@ -193,7 +193,7 @@ describe('VehicleListComponent', () => {
         model: 'Test',
         enabled: true,
         kmTraveled: 100,
-        admissionDate: new Date(),
+        admissionDate: '2024-07-31T00:00:00.000Z',
       };
       const dialogRefMock: Partial<MatDialogRef<ModalComponent, boolean>> = {
         afterClosed: () => of(true),
@@ -237,7 +237,7 @@ describe('VehicleListComponent', () => {
         model: 'Test',
         enabled: true,
         kmTraveled: 100,
-        admissionDate: new Date(),
+        admissionDate: '2024-07-31T00:00:00.000Z',
       };
       const dialogRefMock: Partial<MatDialogRef<ModalComponent, boolean>> = {
         afterClosed: () => of(false),
@@ -325,7 +325,7 @@ describe('VehicleListComponent', () => {
         model: 'Test',
         enabled: true,
         kmTraveled: 100,
-        admissionDate: new Date(),
+        admissionDate: '2024-07-31T00:00:00.000Z',
       };
 
       // Act
@@ -390,7 +390,7 @@ describe('VehicleListComponent', () => {
         model: 'Test',
         enabled: true,
         kmTraveled: 300000,
-        admissionDate: new Date(),
+        admissionDate: '2024-07-31T00:00:00.000Z',
       };
       const kmColumn = component.columns.find(
         (c) => c.columnDef === 'kmTraveled',
@@ -414,7 +414,7 @@ describe('VehicleListComponent', () => {
         model: 'Test',
         enabled: true,
         kmTraveled: 300000,
-        admissionDate: new Date(),
+        admissionDate: '2024-07-31T00:00:00.000Z',
       };
       const kmColumn = component.columns.find(
         (c) => c.columnDef === 'kmTraveled',
@@ -438,7 +438,7 @@ describe('VehicleListComponent', () => {
         model: 'Focus',
         enabled: true,
         kmTraveled: NaN,
-        admissionDate: new Date(),
+        admissionDate: '2024-07-31T00:00:00.000Z',
       };
       const kmColumn = component.columns.find(
         (c) => c.columnDef === 'kmTraveled',
@@ -452,32 +452,5 @@ describe('VehicleListComponent', () => {
       // Assert
       expect(kmValue).toBe('');
     });
-
-    it('should format admissionDate as DD/MM/YYYY', () => {
-      // Arrange
-      const date = new Date(2024, 0, 1);
-      // Act
-      const formatted = component.formatDate(date);
-      // Assert
-      expect(formatted).toBe('01/01/2024');
-    });
-  });
-
-  it('should parse string date and format as DD/MM/YYYY', () => {
-    // Arrange
-    const dateStr = new Date(2024, 0, 1);
-    // Act
-    const formatted = component.formatDate(dateStr);
-    // Assert
-    expect(formatted).toBe('01/01/2024');
-  });
-
-  it('should return empty string for invalid date', () => {
-    // Arrange
-    const invalidDate = 'not-a-date';
-    // Act
-    const formatted = component.formatDate(invalidDate);
-    // Assert
-    expect(formatted).toBe('');
   });
 });

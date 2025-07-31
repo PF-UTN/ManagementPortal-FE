@@ -9,7 +9,7 @@ export const mockVehicleListItems: VehicleListItem[] = [
     model: 'Corolla',
     enabled: true,
     kmTraveled: 21000,
-    admissionDate: new Date('2012-01-01'),
+    admissionDate: '2024-07-31T00:00:00.000Z',
   },
   {
     id: 2,
@@ -18,7 +18,7 @@ export const mockVehicleListItems: VehicleListItem[] = [
     model: 'Corolla',
     enabled: true,
     kmTraveled: 25000,
-    admissionDate: new Date('2012-07-01'),
+    admissionDate: '2024-07-31T00:00:00.000Z',
   },
 ];
 

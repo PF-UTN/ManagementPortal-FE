@@ -172,7 +172,7 @@ describe('CreateVehicleDrawerComponent', () => {
         brand: 'Toyota',
         model: 'Corolla',
         kmTraveled: 10000,
-        admissionDate: new Date('2025-07-19'),
+        admissionDate: '2024-07-31T00:00:00.000Z',
         enabled: true,
       };
 
@@ -212,7 +212,7 @@ describe('CreateVehicleDrawerComponent', () => {
         brand: 'Toyota',
         model: 'Corolla',
         kmTraveled: 10000,
-        admissionDate: '2025-07-19' as unknown as Date,
+        admissionDate: '2025-07-31T00:00:00.000Z',
         enabled: true,
       };
 
@@ -221,7 +221,7 @@ describe('CreateVehicleDrawerComponent', () => {
 
       // Assert
       expect(component.form.value.admissionDate).toEqual(
-        new Date('2025-07-19'),
+        new Date('2025-07-31'),
       );
     });
 
