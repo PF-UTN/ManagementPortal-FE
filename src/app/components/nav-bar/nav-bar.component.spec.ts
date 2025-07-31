@@ -73,7 +73,7 @@ describe('NavBarComponent', () => {
         },
         {
           title: 'Productos',
-          icon: 'emoji_people',
+          icon: 'storefront',
           route: 'productos/cliente',
           shouldRender: true,
         },
@@ -122,7 +122,7 @@ describe('NavBarComponent', () => {
         },
         {
           title: 'Productos',
-          icon: 'emoji_people',
+          icon: 'storefront',
           route: 'productos/cliente',
           shouldRender: true,
         },
@@ -172,7 +172,7 @@ describe('NavBarComponent', () => {
       },
       {
         title: 'Productos',
-        icon: 'emoji_people',
+        icon: 'storefront',
         route: 'productos/cliente',
         shouldRender: true,
       },
