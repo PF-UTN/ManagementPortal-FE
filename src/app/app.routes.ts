@@ -33,6 +33,13 @@ export const routes: Routes = [
     data: { admittedRoles: [RolesEnum.Employee] },
   },
   {
+    path: 'orden-compra',
+    loadChildren: () =>
+      import('@PurchaseOrder').then((m) => m.PurchaseOrderRoutingModule),
+    canActivate: [RoleGuard],
+    data: { admittedRoles: [RolesEnum.Employee] },
+  },
+  {
     path: 'vehiculos',
     loadChildren: () => import('@Vehicle').then((m) => m.VehicleRoutingModule),
     canActivate: [RoleGuard],
