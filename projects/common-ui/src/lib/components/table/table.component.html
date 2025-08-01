@@ -11,12 +11,7 @@
             <ng-container [ngSwitch]="column.type">
               <ng-container *ngSwitchCase="ROW_TYPES.VALUE">
                 <div class="value__item">
-                  <ng-container *ngIf="column.columnDef === 'admissionDate'; else normalValue">
-                    {{ column?.value(element) | date:'dd/MM/yyyy'}}
-                  </ng-container>
-                  <ng-template #normalValue>
-                    {{ column?.value(element) }}
-                  </ng-template>
+                  {{ column?.value(element) }}
                 </div>
               </ng-container>
               <ng-container *ngSwitchCase="ROW_TYPES.MULTI_VALUE">
