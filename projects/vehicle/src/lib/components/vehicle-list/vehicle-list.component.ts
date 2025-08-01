@@ -25,7 +25,7 @@ import { CreateVehicleDrawerComponent } from '../create-vehicle-drawer/create-ve
   selector: 'mp-vehicle-list',
   standalone: true,
   imports: [TableComponent, FormsModule, InputComponent, ButtonComponent],
-  providers: [DecimalPipe, DatePipe],
+  providers: [DatePipe, DecimalPipe],
   templateUrl: './vehicle-list.component.html',
   styleUrl: './vehicle-list.component.scss',
 })
