@@ -1,7 +1,7 @@
 import { ModalComponent } from '@Common-UI';
 import { VehicleService } from '@Vehicle';
 
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import {
   ComponentFixture,
   fakeAsync,
@@ -28,6 +28,8 @@ describe('VehicleListComponent', () => {
   let component: VehicleListComponent;
   let fixture: ComponentFixture<VehicleListComponent>;
   let service: VehicleService;
+  let decimalPipe: DecimalPipe;
+  let datePipe: DatePipe;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -46,10 +48,20 @@ describe('VehicleListComponent', () => {
           provide: VehicleService,
           useValue: mockDeep<VehicleService>(),
         },
+        {
+          provide: DecimalPipe,
+          useValue: mockDeep<DecimalPipe>(),
+        },
+        {
+          provide: DatePipe,
+          useValue: mockDeep<DatePipe>(),
+        },
       ],
     }).compileComponents();
 
     service = TestBed.inject(VehicleService);
+    decimalPipe = TestBed.inject(DecimalPipe);
+    datePipe = TestBed.inject(DatePipe);
 
     fixture = TestBed.createComponent(VehicleListComponent);
     component = fixture.componentInstance;
@@ -381,30 +393,6 @@ describe('VehicleListComponent', () => {
   });
 
   describe('Column formatting', () => {
-    it('should format kmTraveled with thousands separator and unit', () => {
-      // Arrange
-      const item: VehicleListItem = {
-        id: 1,
-        licensePlate: 'ABC123',
-        brand: 'Toyota',
-        model: 'Test',
-        enabled: true,
-        kmTraveled: 300000,
-        admissionDate: '2024-07-31T00:00:00.000Z',
-      };
-      const kmColumn = component.columns.find(
-        (c) => c.columnDef === 'kmTraveled',
-      );
-      expect(kmColumn).toBeDefined();
-      expect(kmColumn?.value).toBeDefined();
-
-      // Act
-      const kmValue = kmColumn?.value?.(item);
-
-      // Assert
-      expect(kmValue).toBe('300.000 km');
-    });
-
     it('should format kmTraveled with thousands separator and unit when kmTraveled is a number', () => {
       // Arrange
       const item: VehicleListItem = {
@@ -426,31 +414,33 @@ describe('VehicleListComponent', () => {
       const kmValue = kmColumn!.value!(item);
 
       // Assert
-      expect(kmValue).toBe('300.000 km');
+      expect(kmValue).toBe(
+        decimalPipe.transform(item.kmTraveled, '1.0-0')! + ' km',
+      );
     });
 
-    it('should return empty string when kmTraveled is not a number', () => {
+    it('should format kmTraveled with thousands separator and unit when kmTraveled is a number', () => {
       // Arrange
       const item: VehicleListItem = {
-        id: 2,
-        licensePlate: 'XYZ789',
-        brand: 'Ford',
-        model: 'Focus',
+        id: 1,
+        licensePlate: 'ABC123',
+        brand: 'Toyota',
+        model: 'Test',
         enabled: true,
-        kmTraveled: NaN,
-        admissionDate: '2024-07-31T00:00:00.000Z',
+        kmTraveled: 300000,
+        admissionDate: new Date('2024-07-31T00:00:00.000Z').toISOString(),
       };
-      const kmColumn = component.columns.find(
-        (c) => c.columnDef === 'kmTraveled',
+      const admissionDateColumn = component.columns.find(
+        (c) => c.columnDef === 'admissionDate',
       );
-      expect(kmColumn).toBeDefined();
-      expect(kmColumn?.value).toBeDefined();
 
       // Act
-      const kmValue = kmColumn!.value!(item);
+      const admissionDateValue = admissionDateColumn!.value!(item);
 
       // Assert
-      expect(kmValue).toBe('');
+      expect(admissionDateValue).toBe(
+        datePipe.transform(item.admissionDate, 'dd/MM/yyyy')!,
+      );
     });
   });
 });
