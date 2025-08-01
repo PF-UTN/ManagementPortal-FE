@@ -1,7 +1,7 @@
 import { ModalComponent } from '@Common-UI';
 import { VehicleService } from '@Vehicle';
 
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import {
   ComponentFixture,
   fakeAsync,
@@ -22,12 +22,14 @@ import { of, throwError } from 'rxjs';
 
 import { VehicleListComponent } from './vehicle-list.component';
 import { VehicleListItem } from '../../models/vehicle-item.model';
-import { mockVehicleListItems } from '../../testing/mock-data,model';
+import { mockVehicleListItems } from '../../testing/mock-data.model';
 
 describe('VehicleListComponent', () => {
   let component: VehicleListComponent;
   let fixture: ComponentFixture<VehicleListComponent>;
   let service: VehicleService;
+  let decimalPipe: DecimalPipe;
+  let datePipe: DatePipe;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -46,10 +48,14 @@ describe('VehicleListComponent', () => {
           provide: VehicleService,
           useValue: mockDeep<VehicleService>(),
         },
+        DecimalPipe,
+        DatePipe,
       ],
     }).compileComponents();
 
     service = TestBed.inject(VehicleService);
+    decimalPipe = TestBed.inject(DecimalPipe);
+    datePipe = TestBed.inject(DatePipe);
 
     fixture = TestBed.createComponent(VehicleListComponent);
     component = fixture.componentInstance;
@@ -193,7 +199,7 @@ describe('VehicleListComponent', () => {
         model: 'Test',
         enabled: true,
         kmTraveled: 100,
-        admissionDate: new Date(),
+        admissionDate: '2024-07-31T00:00:00.000Z',
       };
       const dialogRefMock: Partial<MatDialogRef<ModalComponent, boolean>> = {
         afterClosed: () => of(true),
@@ -237,7 +243,7 @@ describe('VehicleListComponent', () => {
         model: 'Test',
         enabled: true,
         kmTraveled: 100,
-        admissionDate: new Date(),
+        admissionDate: '2024-07-31T00:00:00.000Z',
       };
       const dialogRefMock: Partial<MatDialogRef<ModalComponent, boolean>> = {
         afterClosed: () => of(false),
@@ -325,7 +331,7 @@ describe('VehicleListComponent', () => {
         model: 'Test',
         enabled: true,
         kmTraveled: 100,
-        admissionDate: new Date(),
+        admissionDate: '2024-07-31T00:00:00.000Z',
       };
 
       // Act
@@ -377,6 +383,58 @@ describe('VehicleListComponent', () => {
 
       // Assert
       expect(openSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('Column formatting', () => {
+    it('should format kmTraveled with thousands separator and unit when kmTraveled is a number', () => {
+      // Arrange
+      const item: VehicleListItem = {
+        id: 1,
+        licensePlate: 'ABC123',
+        brand: 'Toyota',
+        model: 'Test',
+        enabled: true,
+        kmTraveled: 300000,
+        admissionDate: '2024-07-31T00:00:00.000Z',
+      };
+      const kmColumn = component.columns.find(
+        (c) => c.columnDef === 'kmTraveled',
+      );
+      expect(kmColumn).toBeDefined();
+      expect(kmColumn?.value).toBeDefined();
+
+      // Act
+      const kmValue = kmColumn!.value!(item);
+
+      // Assert
+      expect(kmValue).toBe(
+        decimalPipe.transform(item.kmTraveled, '1.0-0')! + ' km',
+      );
+    });
+
+    it('should format kmTraveled with thousands separator and unit when kmTraveled is a number', () => {
+      // Arrange
+      const item: VehicleListItem = {
+        id: 1,
+        licensePlate: 'ABC123',
+        brand: 'Toyota',
+        model: 'Test',
+        enabled: true,
+        kmTraveled: 300000,
+        admissionDate: new Date('2024-07-31T00:00:00.000Z').toISOString(),
+      };
+      const admissionDateColumn = component.columns.find(
+        (c) => c.columnDef === 'admissionDate',
+      );
+
+      // Act
+      const admissionDateValue = admissionDateColumn!.value!(item);
+
+      // Assert
+      expect(admissionDateValue).toBe(
+        datePipe.transform(item.admissionDate, 'dd/MM/yyyy')!,
+      );
     });
   });
 });

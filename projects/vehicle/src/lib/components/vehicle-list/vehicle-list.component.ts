@@ -9,11 +9,11 @@ import {
   ModalConfig,
 } from '@Common-UI';
 
+import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
 import { BehaviorSubject, debounceTime, Subject, switchMap, tap } from 'rxjs';
 
 import { VehicleListItem } from '../../models/vehicle-item.model';
@@ -25,6 +25,7 @@ import { CreateVehicleDrawerComponent } from '../create-vehicle-drawer/create-ve
   selector: 'mp-vehicle-list',
   standalone: true,
   imports: [TableComponent, FormsModule, InputComponent, ButtonComponent],
+  providers: [DatePipe, DecimalPipe],
   templateUrl: './vehicle-list.component.html',
   styleUrl: './vehicle-list.component.scss',
 })
@@ -52,13 +53,15 @@ export class VehicleListComponent implements OnInit {
       columnDef: 'kmTraveled',
       header: 'Kilometraje actual',
       type: ColumnTypeEnum.VALUE,
-      value: (element: VehicleListItem) => element.kmTraveled.toString(),
+      value: (element: VehicleListItem) =>
+        this.decimalPipe.transform(element.kmTraveled, '1.0-0')! + ' km',
     },
     {
       columnDef: 'admissionDate',
       header: 'Fecha de ingreso',
       type: ColumnTypeEnum.VALUE,
-      value: (element: VehicleListItem) => element.admissionDate.toString(),
+      value: (element: VehicleListItem) =>
+        this.datePipe.transform(element.admissionDate, 'dd/MM/yyyy')!,
     },
     {
       columnDef: 'enabled',
@@ -155,10 +158,12 @@ export class VehicleListComponent implements OnInit {
   constructor(
     private readonly vehicleService: VehicleService,
     private readonly lateralDrawerService: LateralDrawerService,
-    private readonly router: Router,
     private readonly dialog: MatDialog,
     private readonly snackBar: MatSnackBar,
+    private readonly decimalPipe: DecimalPipe,
+    private readonly datePipe: DatePipe,
   ) {}
+
   ngOnInit(): void {
     this.doSearchSubject$
       .pipe(

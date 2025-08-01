@@ -1,14 +1,16 @@
 import { NavBarService } from '@Common';
 import { LateralDrawerComponent } from '@Common-UI';
 
-import { CommonModule } from '@angular/common';
-import { Component, computed, Signal } from '@angular/core';
+import { CommonModule, registerLocaleData } from '@angular/common';
+import localeEsAr from '@angular/common/locales/es-AR';
+import { Component, computed, LOCALE_ID, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
 
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 
+registerLocaleData(localeEsAr);
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -18,7 +20,7 @@ import { NavBarComponent } from './components/nav-bar/nav-bar.component';
     NavBarComponent,
     LateralDrawerComponent,
   ],
-  providers: [NavBarService],
+  providers: [NavBarService, { provide: LOCALE_ID, useValue: 'es-AR' }],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })

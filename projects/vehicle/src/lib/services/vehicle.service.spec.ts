@@ -10,7 +10,7 @@ import { TestBed } from '@angular/core/testing';
 import { VehicleCreate } from '../models/vehicle-create.model';
 import { VehicleParams } from '../models/vehicle-params.model';
 import { VehicleService } from '../services/vehicle.service';
-import { mockVehicleListItems } from '../testing/mock-data,model';
+import { mockVehicleListItems } from '../testing/mock-data.model';
 
 const baseUrl = environment.apiBaseUrl + '/vehicle';
 describe('VehicleService', () => {
