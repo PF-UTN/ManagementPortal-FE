@@ -72,9 +72,9 @@ describe('NavBarComponent', () => {
           shouldRender: true,
         },
         {
-          title: 'Orden de Compra',
+          title: 'Ordenes de Compra',
           icon: 'shopping_bag',
-          route: 'orden-compra',
+          route: 'ordenes-compra',
           shouldRender: true,
         },
         {
@@ -127,9 +127,9 @@ describe('NavBarComponent', () => {
           shouldRender: true,
         },
         {
-          title: 'Orden de Compra',
+          title: 'Ordenes de Compra',
           icon: 'shopping_bag',
-          route: 'orden-compra',
+          route: 'ordenes-compra',
           shouldRender: true,
         },
         {
@@ -183,9 +183,9 @@ describe('NavBarComponent', () => {
         shouldRender: false,
       },
       {
-        title: 'Orden de Compra',
+        title: 'Ordenes de Compra',
         icon: 'shopping_bag',
-        route: 'orden-compra',
+        route: 'ordenes-compra',
         shouldRender: false,
       },
       {

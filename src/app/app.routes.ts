@@ -33,7 +33,7 @@ export const routes: Routes = [
     data: { admittedRoles: [RolesEnum.Employee] },
   },
   {
-    path: 'orden-compra',
+    path: 'ordenes-compra',
     loadChildren: () =>
       import('@PurchaseOrder').then((m) => m.PurchaseOrderRoutingModule),
     canActivate: [RoleGuard],
