@@ -72,6 +72,12 @@ describe('NavBarComponent', () => {
           shouldRender: true,
         },
         {
+          title: 'Ordenes de Compra',
+          icon: 'shopping_bag',
+          route: 'ordenes-compra',
+          shouldRender: true,
+        },
+        {
           title: 'Productos',
           icon: 'storefront',
           route: 'productos/cliente',
@@ -118,6 +124,12 @@ describe('NavBarComponent', () => {
           title: 'Inventario',
           icon: 'inventory_2',
           route: 'productos',
+          shouldRender: true,
+        },
+        {
+          title: 'Ordenes de Compra',
+          icon: 'shopping_bag',
+          route: 'ordenes-compra',
           shouldRender: true,
         },
         {
@@ -168,6 +180,12 @@ describe('NavBarComponent', () => {
         title: 'Inventario',
         icon: 'inventory_2',
         route: 'productos',
+        shouldRender: false,
+      },
+      {
+        title: 'Ordenes de Compra',
+        icon: 'shopping_bag',
+        route: 'ordenes-compra',
         shouldRender: false,
       },
       {
