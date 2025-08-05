@@ -1,5 +1,3 @@
-import { ColumnTypeEnum } from '@Common-UI';
-
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,7 +6,9 @@ import { MatTableModule } from '@angular/material/table';
 import { of } from 'rxjs';
 
 import { TableComponent } from './table.component';
+import { ColumnTypeEnum } from '../../constants';
 import { TableColumn } from '../../models/table-column.model';
+import { PillComponent } from '../pill';
 
 interface MockData {
   id: number;
@@ -43,6 +43,7 @@ describe('TableComponent', () => {
     await TestBed.configureTestingModule({
       imports: [
         TableComponent,
+        PillComponent,
         MatTableModule,
         MatMenuModule,
         MatIconModule,

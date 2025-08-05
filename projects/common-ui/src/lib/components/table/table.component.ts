@@ -1,5 +1,3 @@
-import { ColumnTypeEnum, PillComponent } from '@Common-UI';
-
 import { CommonModule } from '@angular/common';
 import {
   OnInit,
@@ -22,8 +20,10 @@ import {
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Observable } from 'rxjs';
 
+import { ColumnTypeEnum } from '../../constants';
 import { TableColumn } from '../../models/table-column.model';
 import { LoadingComponent } from '../loading/loading.component';
+import { PillComponent } from '../pill';
 
 @Component({
   selector: 'mp-table',
