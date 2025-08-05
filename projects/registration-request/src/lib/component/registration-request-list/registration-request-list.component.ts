@@ -3,6 +3,7 @@ import {
   ButtonComponent,
   ColumnTypeEnum,
   LateralDrawerService,
+  PillStatusEnum,
   TableColumn,
   TableComponent,
 } from '@Common-UI';
@@ -57,8 +58,20 @@ export class RegistrationRequestListComponent implements OnInit {
     {
       columnDef: 'status',
       header: 'Estado',
-      type: ColumnTypeEnum.VALUE,
+      type: ColumnTypeEnum.PILL,
       value: (element: RegistrationRequestListItem) => element.status,
+      pillStatus: (element: RegistrationRequestListItem) => {
+        switch (element.status) {
+          case 'Pendiente':
+            return PillStatusEnum.Initial;
+          case 'Aprobada':
+            return PillStatusEnum.Done;
+          case 'Rechazada':
+            return PillStatusEnum.Cancelled;
+          default:
+            throw new Error(`Unhandled status: ${element.status}`);
+        }
+      },
       width: '100px',
     },
     {
