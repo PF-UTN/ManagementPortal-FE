@@ -14,6 +14,13 @@
                   {{ column?.value(element) }}
                 </div>
               </ng-container>
+              <ng-container *ngSwitchCase="ROW_TYPES.PILL">
+                <div class="value__item">
+                  <mp-pill [status]="column?.pillStatus(element)!">
+                    {{column?.value(element)}}
+                  </mp-pill>
+                </div>
+              </ng-container>
               <ng-container *ngSwitchCase="ROW_TYPES.MULTI_VALUE">
                 <div class="multi-value__container">
                   <p *ngFor="let item of column?.multiValue(element)" class="multi-value__item">

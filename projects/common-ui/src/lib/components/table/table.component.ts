@@ -1,4 +1,4 @@
-import { ColumnTypeEnum } from '@Common-UI';
+import { ColumnTypeEnum, PillComponent } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
 import {
@@ -37,6 +37,7 @@ import { LoadingComponent } from '../loading/loading.component';
     MatGridListModule,
     MatPaginatorModule,
     LoadingComponent,
+    PillComponent,
   ],
   templateUrl: './table.component.html',
   styleUrl: './table.component.scss',
