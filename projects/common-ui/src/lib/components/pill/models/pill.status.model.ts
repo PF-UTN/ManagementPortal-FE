@@ -1,10 +1,3 @@
-export type PillStatus =
-  | 'initial'
-  | 'inprogress'
-  | 'warning'
-  | 'done'
-  | 'cancelled';
-
 export enum PillStatusEnum {
   Initial = 'initial',
   InProgress = 'inprogress',
@@ -12,3 +5,5 @@ export enum PillStatusEnum {
   Done = 'done',
   Cancelled = 'cancelled',
 }
+
+export type PillStatus = PillStatusEnum;
