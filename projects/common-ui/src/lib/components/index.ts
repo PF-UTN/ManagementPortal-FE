@@ -4,6 +4,7 @@ export * from './input/input.component';
 export * from './lateral-drawer';
 export * from './loading/loading.component';
 export * from './modal';
+export * from './pill';
 export * from './subtitle/subtitle.component';
 export * from './back-arrow/back-arrow.component';
 export * from './table/table.component';
