@@ -7,6 +7,7 @@ import {
   TableComponent,
   ModalComponent,
   ModalConfig,
+  PillStatusEnum,
 } from '@Common-UI';
 
 import { DatePipe, DecimalPipe } from '@angular/common';
@@ -66,21 +67,17 @@ export class VehicleListComponent implements OnInit {
     {
       columnDef: 'enabled',
       header: 'Estado',
-      type: ColumnTypeEnum.VALUE,
+      type: ColumnTypeEnum.PILL,
       value: (element: VehicleListItem) =>
         element.enabled ? 'Habilitado' : 'No habilitado',
+      pillStatus: (element: VehicleListItem) =>
+        element.enabled ? PillStatusEnum.Done : PillStatusEnum.Cancelled,
     },
     {
       columnDef: 'actions',
       header: 'Acciones',
       type: ColumnTypeEnum.ACTIONS,
       actions: [
-        {
-          description: 'Ver Detalle',
-          action: (element: VehicleListItem) => {
-            console.log('View details for vehicle:', element);
-          },
-        },
         {
           description: 'Eliminar',
           action: (element: VehicleListItem) => {
@@ -94,19 +91,20 @@ export class VehicleListComponent implements OnInit {
               } as ModalConfig,
             });
             dialogRef.afterClosed().subscribe((result: boolean) => {
-              if (result) {
-                this.doSearchSubject$.next();
-                this.snackBar.open(
-                  'Vehículo eliminado correctamente',
-                  'Cerrar',
-                  {
-                    duration: 3000,
-                  },
-                );
-                this.vehicleService
-                  .deleteVehicleAsync(element.id)
-                  .subscribe({});
+              if (!result) {
+                return;
               }
+
+              this.vehicleService
+                .deleteVehicleAsync(element.id)
+                .subscribe(() => {
+                  this.doSearchSubject$.next();
+                  this.snackBar.open(
+                    'Vehículo eliminado correctamente',
+                    'Cerrar',
+                    { duration: 3000 },
+                  );
+                });
             });
           },
         },
@@ -134,13 +132,6 @@ export class VehicleListComponent implements OnInit {
                 },
               )
               .subscribe(() => this.doSearchSubject$.next());
-          },
-        },
-        {
-          description: 'Deshabilitar',
-          action: (element: VehicleListItem) => {
-            // Implement disable action here
-            console.log('Disable vehicle:', element);
           },
         },
       ],

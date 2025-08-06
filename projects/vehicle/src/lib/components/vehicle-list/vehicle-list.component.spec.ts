@@ -1,4 +1,4 @@
-import { ModalComponent } from '@Common-UI';
+import { LateralDrawerService, ModalComponent } from '@Common-UI';
 import { VehicleService } from '@Vehicle';
 
 import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
@@ -28,6 +28,7 @@ describe('VehicleListComponent', () => {
   let component: VehicleListComponent;
   let fixture: ComponentFixture<VehicleListComponent>;
   let service: VehicleService;
+  let lateralDrawerService: LateralDrawerService;
   let decimalPipe: DecimalPipe;
   let datePipe: DatePipe;
 
@@ -48,6 +49,10 @@ describe('VehicleListComponent', () => {
           provide: VehicleService,
           useValue: mockDeep<VehicleService>(),
         },
+        {
+          provide: LateralDrawerService,
+          useValue: mockDeep<LateralDrawerService>(),
+        },
         DecimalPipe,
         DatePipe,
       ],
@@ -56,6 +61,9 @@ describe('VehicleListComponent', () => {
     service = TestBed.inject(VehicleService);
     decimalPipe = TestBed.inject(DecimalPipe);
     datePipe = TestBed.inject(DatePipe);
+    lateralDrawerService = TestBed.inject(LateralDrawerService);
+
+    jest.spyOn(lateralDrawerService, 'open').mockReturnValue(of(void 0));
 
     fixture = TestBed.createComponent(VehicleListComponent);
     component = fixture.componentInstance;
@@ -65,6 +73,7 @@ describe('VehicleListComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
   describe('ngOnInit', () => {
     it('should fetch data on init and update dataSource$', fakeAsync(() => {
       //Arrange
@@ -201,14 +210,17 @@ describe('VehicleListComponent', () => {
         kmTraveled: 100,
         admissionDate: '2024-07-31T00:00:00.000Z',
       };
+
       const dialogRefMock: Partial<MatDialogRef<ModalComponent, boolean>> = {
         afterClosed: () => of(true),
       };
+
       jest
         .spyOn(component['dialog'], 'open')
         .mockReturnValue(
           dialogRefMock as MatDialogRef<ModalComponent, boolean>,
         );
+
       const deleteSpy = jest
         .spyOn(service, 'deleteVehicleAsync')
         .mockReturnValue(of(void 0));
@@ -219,10 +231,9 @@ describe('VehicleListComponent', () => {
       const actionsColumn = component.columns.find(
         (c) => c.columnDef === 'actions',
       );
-      expect(actionsColumn).toBeDefined();
-      expect(actionsColumn?.actions).toBeDefined();
-      actionsColumn?.actions?.[1].action(vehicle);
+      actionsColumn?.actions?.[0].action(vehicle);
       tick();
+      fixture.detectChanges();
 
       // Assert
       expect(deleteSpy).toHaveBeenCalledWith(vehicle.id);
@@ -245,25 +256,27 @@ describe('VehicleListComponent', () => {
         kmTraveled: 100,
         admissionDate: '2024-07-31T00:00:00.000Z',
       };
+
       const dialogRefMock: Partial<MatDialogRef<ModalComponent, boolean>> = {
         afterClosed: () => of(false),
       };
+
       jest
         .spyOn(component['dialog'], 'open')
         .mockReturnValue(
           dialogRefMock as MatDialogRef<ModalComponent, boolean>,
         );
+
       const deleteSpy = jest.spyOn(service, 'deleteVehicleAsync');
       const snackSpy = jest.spyOn(component['snackBar'], 'open');
       const reloadSpy = jest.spyOn(component.doSearchSubject$, 'next');
+      reloadSpy.mockClear();
 
-      // Act
+      // Act → call delete action (index 0)
       const actionsColumn = component.columns.find(
         (c) => c.columnDef === 'actions',
       );
-      expect(actionsColumn).toBeDefined();
-      expect(actionsColumn?.actions).toBeDefined();
-      actionsColumn?.actions?.[1].action(vehicle);
+      actionsColumn?.actions?.[0].action(vehicle);
       tick();
 
       // Assert
@@ -276,14 +289,6 @@ describe('VehicleListComponent', () => {
   describe('openCreateVehicleDrawer', () => {
     it('should open the drawer and refresh the list after closing', () => {
       // Arrange
-      const lateralDrawerService = {
-        open: jest.fn().mockReturnValue(of({})),
-        close: jest.fn(),
-      };
-      Object.defineProperty(component, 'lateralDrawerService', {
-        value: lateralDrawerService,
-        writable: true,
-      });
       jest.spyOn(component.doSearchSubject$, 'next');
 
       // Act
@@ -293,21 +298,13 @@ describe('VehicleListComponent', () => {
       expect(lateralDrawerService.open).toHaveBeenCalled();
       expect(component.doSearchSubject$.next).toHaveBeenCalled();
     });
+
     it('should call lateralDrawerService.close when Cancelar is clicked', () => {
       // Arrange
-      const lateralDrawerService = {
-        open: jest.fn().mockReturnValue(of({})),
-        close: jest.fn(),
-      };
-      Object.defineProperty(component, 'lateralDrawerService', {
-        value: lateralDrawerService,
-        writable: true,
-      });
-
       // Act
       component.openCreateVehicleDrawer();
-      const config = lateralDrawerService.open.mock.calls[0][2];
-      config.footer.secondButton.click();
+      const config = jest.spyOn(lateralDrawerService, 'open').mock.calls[0][2];
+      config?.footer.secondButton?.click();
 
       // Assert
       expect(lateralDrawerService.close).toHaveBeenCalled();
@@ -315,14 +312,6 @@ describe('VehicleListComponent', () => {
 
     it('should open the drawer with data when Editar is clicked and refresh the list after closing', () => {
       // Arrange
-      const lateralDrawerService = {
-        open: jest.fn().mockReturnValue(of({})),
-        close: jest.fn(),
-      };
-      Object.defineProperty(component, 'lateralDrawerService', {
-        value: lateralDrawerService,
-        writable: true,
-      });
       jest.spyOn(component.doSearchSubject$, 'next');
       const vehicle: VehicleListItem = {
         id: 1,
