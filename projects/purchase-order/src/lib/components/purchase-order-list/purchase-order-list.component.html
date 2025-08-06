@@ -1,1 +1,29 @@
-<p>purchase-order-list works!</p>
+<div class="container-fluid">
+  <div class="filters-container">
+    <div class="filters-container__selector col">
+      <mp-input
+        label="Buscar ordenes de compra"
+        [placeholder]="'Buscar por proveedor o estado...'"
+        [(ngModel)]="searchText"
+        icon="close"
+        [iconPosition]="'suffix'"
+        [iconAction]="onClearSearch.bind(this)"
+        (input)="onSearchTextChange()"
+      />
+    </div>
+    <div class="filters-container__button">
+      <mp-button type="primary">+ Nuevo</mp-button>
+    </div>
+  </div>
+  <mp-table
+    [columns]="columns"
+    [dataSource$]="dataSource$"
+    [isLoading]="isLoading"
+    noDataMessage="No existen ordenes de compra disponibles"
+    [itemsNumber]="itemsNumber"
+    [pageSize]="pageSize"
+    [pageIndex]="pageIndex"
+    (pageChange)="handlePageChange($event)"
+  >
+  </mp-table>
+</div>
