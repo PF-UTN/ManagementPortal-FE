@@ -7,6 +7,7 @@ import {
   TableComponent,
   ModalComponent,
   ModalConfig,
+  PillStatusEnum,
 } from '@Common-UI';
 
 import { DatePipe, DecimalPipe } from '@angular/common';
@@ -66,9 +67,11 @@ export class VehicleListComponent implements OnInit {
     {
       columnDef: 'enabled',
       header: 'Estado',
-      type: ColumnTypeEnum.VALUE,
+      type: ColumnTypeEnum.PILL,
       value: (element: VehicleListItem) =>
         element.enabled ? 'Habilitado' : 'No habilitado',
+      pillStatus: (element: VehicleListItem) =>
+        element.enabled ? PillStatusEnum.Done : PillStatusEnum.Cancelled,
     },
     {
       columnDef: 'actions',

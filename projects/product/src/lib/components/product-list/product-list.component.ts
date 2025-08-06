@@ -5,6 +5,7 @@ import {
   TableColumn,
   TableComponent,
   DropdownItem,
+  PillStatusEnum,
 } from '@Common-UI';
 import {
   CreateUpdateProductCategoryLateralDrawerComponent,
@@ -91,9 +92,11 @@ export class ProductListComponent implements OnInit {
     {
       columnDef: 'enabled',
       header: 'Estado',
-      type: ColumnTypeEnum.VALUE,
+      type: ColumnTypeEnum.PILL,
       value: (element: ProductListItem) =>
         element.enabled ? 'Activo' : 'Pausado',
+      pillStatus: (element: ProductListItem) =>
+        element.enabled ? PillStatusEnum.Done : PillStatusEnum.Cancelled,
     },
     {
       columnDef: 'actions',
