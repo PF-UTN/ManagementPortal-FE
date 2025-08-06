@@ -76,12 +76,6 @@ export class VehicleListComponent implements OnInit {
       type: ColumnTypeEnum.ACTIONS,
       actions: [
         {
-          description: 'Ver Detalle',
-          action: (element: VehicleListItem) => {
-            console.log('View details for vehicle:', element);
-          },
-        },
-        {
           description: 'Eliminar',
           action: (element: VehicleListItem) => {
             const dialogRef = this.dialog.open(ModalComponent, {
@@ -94,19 +88,20 @@ export class VehicleListComponent implements OnInit {
               } as ModalConfig,
             });
             dialogRef.afterClosed().subscribe((result: boolean) => {
-              if (result) {
-                this.doSearchSubject$.next();
-                this.snackBar.open(
-                  'Vehículo eliminado correctamente',
-                  'Cerrar',
-                  {
-                    duration: 3000,
-                  },
-                );
-                this.vehicleService
-                  .deleteVehicleAsync(element.id)
-                  .subscribe({});
+              if (!result) {
+                return;
               }
+
+              this.vehicleService
+                .deleteVehicleAsync(element.id)
+                .subscribe(() => {
+                  this.doSearchSubject$.next();
+                  this.snackBar.open(
+                    'Vehículo eliminado correctamente',
+                    'Cerrar',
+                    { duration: 3000 },
+                  );
+                });
             });
           },
         },
@@ -134,13 +129,6 @@ export class VehicleListComponent implements OnInit {
                 },
               )
               .subscribe(() => this.doSearchSubject$.next());
-          },
-        },
-        {
-          description: 'Deshabilitar',
-          action: (element: VehicleListItem) => {
-            // Implement disable action here
-            console.log('Disable vehicle:', element);
           },
         },
       ],
