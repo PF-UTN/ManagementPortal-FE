@@ -1,0 +1,25 @@
+<div class="mp-list__wrapper">
+  <div class="mp-list__header" *ngIf="columns.length">
+    <span class="mp-list__cell" *ngFor="let col of columns" [ngClass]="col.bootstrapCol || 'col'">{{ col.header }}</span>
+  </div>
+  <div *ngIf="isLoading" class="mp-list__loading">Cargando...</div>
+  <div *ngIf="!isLoading && items.length === 0" class="mp-list__no-data">{{ noDataMessage }}</div>
+  <div *ngFor="let item of items" class="mp-list__row">
+    <span class="mp-list__cell" *ngFor="let col of columns" [ngClass]="col.bootstrapCol || 'col'">
+      <ng-container *ngIf="col.template">
+        <ng-container *ngTemplateOutlet="col.template; context: { $implicit: item }"></ng-container>
+      </ng-container>
+      <ng-container *ngIf="col.actions?.length && !col.template">
+        <span class="mp-list__actions">
+          <mat-icon *ngFor="let action of col.actions" style="cursor:pointer; margin-right:8px;"
+            (click)="action.action(item)">
+            {{ action.icon }}
+          </mat-icon>
+        </span>
+      </ng-container>
+      <ng-container *ngIf="!col.template && !col.actions?.length">
+        {{ col.value ? col.value(item) : '' }}
+      </ng-container>
+    </span>
+  </div>
+</div>
