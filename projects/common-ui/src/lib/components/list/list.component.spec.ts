@@ -44,7 +44,7 @@ describe('ListComponent', () => {
     fixture.detectChanges();
     // Assert
     const headers = fixture.nativeElement.querySelectorAll(
-      '.mp-list__header span',
+      '.mp-list__header .mp-list__cell',
     );
     expect(headers.length).toBe(2);
     expect(headers[0].textContent).toContain('Nombre');
