@@ -71,15 +71,14 @@ describe('ListComponent', () => {
     expect(noData.textContent).toContain('Sin datos');
   });
 
-  it('should show loading message when isLoading is true', () => {
+  it('should show loading component when isLoading is true', () => {
     // Arrange
     component.isLoading = true;
     // Act
     fixture.detectChanges();
     // Assert
-    const loading = fixture.nativeElement.querySelector('.mp-list__loading');
+    const loading = fixture.nativeElement.querySelector('mp-loading');
     expect(loading).toBeTruthy();
-    expect(loading.textContent).toContain('Cargando');
   });
 
   it('should render actions and call action handler', () => {
@@ -157,5 +156,52 @@ describe('ListComponent', () => {
 
     // Assert
     expect(cell.classList).toContain('col-4');
+  });
+
+  it('should return true for hasActions if any column has actions', () => {
+    // Arrange
+    component.columns = [
+      { key: 'name', header: 'Nombre', value: (i: MockItem) => i.name },
+      {
+        key: 'actions',
+        header: '',
+        actions: [{ description: 'Borrar', icon: 'delete', action: jest.fn() }],
+      },
+    ];
+    // Act & Assert
+    expect(component.hasActions).toBe(true);
+  });
+
+  it('should return false for hasActions if no column has actions', () => {
+    // Arrange
+    component.columns = [
+      { key: 'name', header: 'Nombre', value: (i: MockItem) => i.name },
+    ];
+    // Act & Assert
+    expect(component.hasActions).toBe(false);
+  });
+
+  it('should return the actions column for actionsColumn', () => {
+    // Arrange
+    const actionsCol = {
+      key: 'actions',
+      header: '',
+      actions: [{ description: 'Borrar', icon: 'delete', action: jest.fn() }],
+    };
+    component.columns = [
+      { key: 'name', header: 'Nombre', value: (i: MockItem) => i.name },
+      actionsCol,
+    ];
+    // Act & Assert
+    expect(component.actionsColumn).toBe(actionsCol);
+  });
+
+  it('should return undefined for actionsColumn if no column has actions', () => {
+    // Arrange
+    component.columns = [
+      { key: 'name', header: 'Nombre', value: (i: MockItem) => i.name },
+    ];
+    // Act & Assert
+    expect(component.actionsColumn).toBeUndefined();
   });
 });

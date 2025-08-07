@@ -1,9 +1,16 @@
 <div class="mp-list__wrapper">
   <div class="mp-list__header" *ngIf="columns.length">
-    <span class="mp-list__cell" *ngFor="let col of columns" [ngClass]="col.bootstrapCol || 'col'">{{ col.header }}</span>
+    <span class="mp-list__cell" *ngFor="let col of columns" 
+      [ngClass]="col.bootstrapCol || 'col'">
+      {{ col.header}}
+    </span>
   </div>
-  <div *ngIf="isLoading" class="mp-list__loading">Cargando...</div>
-  <div *ngIf="!isLoading && items.length === 0" class="mp-list__no-data">{{ noDataMessage }}</div>
+  <div *ngIf="isLoading">
+    <mp-loading></mp-loading>
+  </div>
+  <div *ngIf="!isLoading && items.length === 0" class="mp-list__no-data">
+    {{ noDataMessage }}
+  </div>
   <div *ngFor="let item of items" class="mp-list__row">
     <span class="mp-list__cell" *ngFor="let col of columns" [ngClass]="col.bootstrapCol || 'col'">
       <ng-container *ngIf="col.template">
@@ -11,9 +18,13 @@
       </ng-container>
       <ng-container *ngIf="col.actions?.length && !col.template">
         <span class="mp-list__actions">
-          <mat-icon *ngFor="let action of col.actions" style="cursor:pointer; margin-right:8px;"
-            (click)="action.action(item)">
-            {{ action.icon }}
+          <mat-icon *ngFor="let action of col.actions" style="cursor:pointer; margin-right:8px;" tabindex="0"
+            (click)="action.action(item)" 
+            (keydown.enter)="action.action(item)" 
+            (keydown.space)="action.action(item)"
+            role="button" 
+            [attr.aria-label]="action.description">
+              {{ action.icon }}
           </mat-icon>
         </span>
       </ng-container>

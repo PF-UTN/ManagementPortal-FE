@@ -1,3 +1,5 @@
+import { LoadingComponent } from '@Common-UI';
+
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -10,7 +12,7 @@ import { ListColumn } from '../../models/list-column.model';
   templateUrl: './list.component.html',
   styleUrls: ['./list.component.scss'],
   standalone: true,
-  imports: [CommonModule, MatIconModule, FormsModule],
+  imports: [CommonModule, MatIconModule, FormsModule, LoadingComponent],
 })
 export class ListComponent<T> {
   @Input() columns: ListColumn<T>[] = [];
