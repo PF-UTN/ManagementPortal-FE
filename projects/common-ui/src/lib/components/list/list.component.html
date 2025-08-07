@@ -1,9 +1,8 @@
 <div class="mp-list__wrapper">
-  <div class="mp-list__header" *ngIf="columns.length">
-    <span class="mp-list__cell" *ngFor="let col of columns" 
-      [ngClass]="col.bootstrapCol || 'col'">
-      {{ col.header}}
-    </span>
+  <div class="mp-list__header row" *ngIf="columns.length">
+    <div class="mp-list__cell" *ngFor="let col of columns" [ngClass]="col.bootstrapCol || 'col'">
+      {{ col.header }}
+    </div>
   </div>
   <div *ngIf="isLoading">
     <mp-loading></mp-loading>
@@ -11,26 +10,31 @@
   <div *ngIf="!isLoading && items.length === 0" class="mp-list__no-data">
     {{ noDataMessage }}
   </div>
-  <div *ngFor="let item of items" class="mp-list__row">
-    <span class="mp-list__cell" *ngFor="let col of columns" [ngClass]="col.bootstrapCol || 'col'">
+  <div *ngFor="let item of items" class="mp-list__row row">
+    <div class="mp-list__cell" *ngFor="let col of columns" [ngClass]="col.bootstrapCol || 'col'">
       <ng-container *ngIf="col.template">
         <ng-container *ngTemplateOutlet="col.template; context: { $implicit: item }"></ng-container>
       </ng-container>
       <ng-container *ngIf="col.actions?.length && !col.template">
         <span class="mp-list__actions">
-          <mat-icon *ngFor="let action of col.actions" style="cursor:pointer; margin-right:8px;" tabindex="0"
-            (click)="action.action(item)" 
-            (keydown.enter)="action.action(item)" 
+          <mat-icon
+            *ngFor="let action of col.actions"
+            class="mp-list__action__icon"
+            tabindex="0"
+            role="button"
+            (click)="action.action(item)"
+            (keydown.enter)="action.action(item)"
             (keydown.space)="action.action(item)"
-            role="button" 
-            [attr.aria-label]="action.description">
-              {{ action.icon }}
+            [attr.aria-label]="action.description"
+            style="cursor:pointer; margin-right:8px;"
+          >
+            {{ action.icon }}
           </mat-icon>
         </span>
       </ng-container>
       <ng-container *ngIf="!col.template && !col.actions?.length">
         {{ col.value ? col.value(item) : '' }}
       </ng-container>
-    </span>
+    </div>
   </div>
 </div>
