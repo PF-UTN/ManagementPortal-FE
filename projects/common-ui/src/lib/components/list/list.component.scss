@@ -1,0 +1,43 @@
+@import '../../../../../../src/styles/varibles';
+
+.mp-list {
+  &__wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  &__header,
+  &__row {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  &__cell {
+    min-width: 0;
+    box-sizing: border-box;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  &__header {
+    font-weight: bold;
+    border-bottom: 1px solid $lavander-color;
+    padding: 0.5rem 0;
+  }
+
+  &__row {
+    border-bottom: 1px solid $lavander-color;
+  }
+
+  &__no-data {
+    padding: 2rem;
+    text-align: center;
+    color: $color-grey;
+  }
+}
