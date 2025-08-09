@@ -1,3 +1,6 @@
+import { OrderDirection } from '@Common';
+import { PillStatusEnum } from '@Common-UI';
+
 import { CommonModule } from '@angular/common';
 import {
   ComponentFixture,
@@ -14,6 +17,8 @@ import { mockDeep } from 'jest-mock-extended';
 import { of, throwError } from 'rxjs';
 
 import { PurchaseOrderListComponent } from './purchase-order-list.component';
+import { PurchaseOrderStatusOptions } from '../../constants/status.enum';
+import { PurchaseOrderOrderField } from '../../models/purchase-order-param.model';
 import { PurchaseOrderService } from '../../services/purchase-order.service';
 import { mockPurchaseOrderListItems } from '../../testing/mock-data.model';
 
@@ -330,6 +335,115 @@ describe('PurchaseOrderListComponent', () => {
 
       //Assert
       expect(component.doSearchSubject$.next).toHaveBeenCalledWith();
+    });
+  });
+  describe('onOrderByChange', () => {
+    it('should set pageIndex to 0 when order by changes', () => {
+      //Arrange
+      const mockOrderBy: {
+        label: string;
+        field: PurchaseOrderOrderField;
+        direction: OrderDirection;
+      } = {
+        label: 'Created At - asc',
+        field: PurchaseOrderOrderField.CreatedAt,
+        direction: OrderDirection.ASC,
+      };
+      component.pageIndex = 2;
+      component.selectedOrderBy = mockOrderBy;
+
+      //Act
+      component.onOrderByChange();
+
+      //Assert
+      expect(component.pageIndex).toBe(0);
+    });
+    it('should call doSearchSubject$ when order by changes', () => {
+      //Arrange
+      const mockOrderBy: {
+        label: string;
+        field: PurchaseOrderOrderField;
+        direction: OrderDirection;
+      } = {
+        label: 'Created At - asc',
+        field: PurchaseOrderOrderField.CreatedAt,
+        direction: OrderDirection.ASC,
+      };
+      jest.spyOn(component.doSearchSubject$, 'next');
+      component.selectedOrderBy = mockOrderBy;
+
+      //Act
+      component.onOrderByChange();
+
+      //Assert
+      expect(component.doSearchSubject$.next).toHaveBeenCalledWith();
+    });
+  });
+  describe('mapStatusToPillStatus', () => {
+    it('should return PillStatusEnum.Initial for Draft status', () => {
+      // Arrange
+      const status = PurchaseOrderStatusOptions.Draft;
+
+      // Act
+      const result = component.mapStatusToPillStatus(status);
+
+      // Assert
+      expect(result).toBe(PillStatusEnum.Initial);
+    });
+
+    it('should return PillStatusEnum.InProgress for Pending status', () => {
+      // Arrange
+      const status = PurchaseOrderStatusOptions.Pending;
+
+      // Act
+      const result = component.mapStatusToPillStatus(status);
+
+      // Assert
+      expect(result).toBe(PillStatusEnum.InProgress);
+    });
+
+    it('should return PillStatusEnum.Cancelled for Cancelled status', () => {
+      // Arrange
+      const status = PurchaseOrderStatusOptions.Cancelled;
+
+      // Act
+      const result = component.mapStatusToPillStatus(status);
+
+      // Assert
+      expect(result).toBe(PillStatusEnum.Cancelled);
+    });
+
+    it('should return PillStatusEnum.Done for Ordered status', () => {
+      // Arrange
+      const status = PurchaseOrderStatusOptions.Ordered;
+
+      // Act
+      const result = component.mapStatusToPillStatus(status);
+
+      // Assert
+      expect(result).toBe(PillStatusEnum.Done);
+    });
+
+    it('should return PillStatusEnum.Done for Received status', () => {
+      // Arrange
+      const status = PurchaseOrderStatusOptions.Received;
+
+      // Act
+      const result = component.mapStatusToPillStatus(status);
+
+      // Assert
+      expect(result).toBe(PillStatusEnum.Done);
+    });
+
+    it('should return PillStatusEnum.Initial for unknown status', () => {
+      // Arrange
+      const status = 'UNKNOWN_STATUS' as PurchaseOrderStatusOptions;
+
+      // Act
+      const result = component.mapStatusToPillStatus(status);
+
+      // Assert
+      expect(result).toBe(PillStatusEnum.Initial);
     });
   });
 });
