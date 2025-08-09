@@ -3,6 +3,7 @@ export interface PurchaseOrderItem {
   supplierBussinesName: string;
   purchaseOrderStatusName: string;
   createdAt: Date;
+  estimatedDeliveryDate: Date | null;
   effectiveDeliveryDate: Date | null;
   totalAmount: number;
 }

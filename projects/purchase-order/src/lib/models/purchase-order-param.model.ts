@@ -1,16 +1,19 @@
+import { OrderDirection } from 'projects/common/src/constants/order-direction.enum';
+
 export enum PurchaseOrderOrderField {
   CreatedAt = 'createdAt',
   totalAmount = 'totalAmount',
 }
 
-export enum PurchaseOrderOrderDirection {
-  Asc = 'asc',
-  Desc = 'desc',
-}
-
 export interface PurchaseOrderOrderBy {
   field: PurchaseOrderOrderField;
-  direction: PurchaseOrderOrderDirection;
+  direction: OrderDirection;
+}
+
+export interface PurchaseOrderOrderOption {
+  label: string;
+  field: PurchaseOrderOrderField;
+  direction: OrderDirection;
 }
 
 export interface PurchaseOrderParams {
@@ -18,12 +21,12 @@ export interface PurchaseOrderParams {
   page: number;
   pageSize: number;
   filters: {
-    statusId?: string[];
+    statusName?: string[];
     supplierBusinessName?: string[];
     fromDate?: Date | null;
     toDate?: Date | null;
-    fromEffectiveDeliveryDate?: Date | null;
-    toEffectiveDeliveryDate?: Date | null;
+    fromEstimatedDeliveryDate?: Date | null;
+    toEstimatedDeliveryDate?: Date | null;
   };
-  orderBy?: PurchaseOrderOrderBy;
+  orderBy: PurchaseOrderOrderBy;
 }
