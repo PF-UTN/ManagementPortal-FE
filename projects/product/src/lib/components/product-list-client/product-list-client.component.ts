@@ -193,5 +193,13 @@ export class ProductListClientComponent {
         },
       },
     );
+    setTimeout(() => {
+      const firstButton = document.querySelector(
+        'button.mat-button:first-child',
+      ) as HTMLButtonElement;
+      if (firstButton) {
+        firstButton.focus();
+      }
+    }, 100);
   }
 }
