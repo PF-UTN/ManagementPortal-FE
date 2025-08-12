@@ -26,11 +26,10 @@ import {
   MatAutocompleteModule,
   MatAutocompleteSelectedEvent,
 } from '@angular/material/autocomplete';
-import { MatIconButton, MatButtonModule } from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialog } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatStepperModule } from '@angular/material/stepper';
@@ -60,21 +59,18 @@ interface PurchaseOrderForm {
   selector: 'mp-purchase-order-created',
   standalone: true,
   imports: [
+    CommonModule,
     LoadingComponent,
     TitleComponent,
     InputComponent,
     ListComponent,
     ButtonComponent,
-    CommonModule,
-    MatIconModule,
-    MatIconButton,
     ReactiveFormsModule,
     FormsModule,
     MatButtonModule,
-    MatFormFieldModule,
     MatInputModule,
+    MatIconModule,
     MatTableModule,
-    MatButtonModule,
     MatStepperModule,
     MatAutocompleteModule,
     MatDatepickerModule,
