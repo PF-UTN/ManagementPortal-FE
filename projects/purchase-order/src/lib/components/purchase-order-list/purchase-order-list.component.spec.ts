@@ -399,7 +399,7 @@ describe('PurchaseOrderListComponent', () => {
       const result = component.mapStatusToPillStatus(status);
 
       // Assert
-      expect(result).toBe(PillStatusEnum.InProgress);
+      expect(result).toBe(PillStatusEnum.Initial);
     });
 
     it('should return PillStatusEnum.Cancelled for Cancelled status', () => {
@@ -421,7 +421,7 @@ describe('PurchaseOrderListComponent', () => {
       const result = component.mapStatusToPillStatus(status);
 
       // Assert
-      expect(result).toBe(PillStatusEnum.Done);
+      expect(result).toBe(PillStatusEnum.InProgress);
     });
 
     it('should return PillStatusEnum.Done for Received status', () => {
