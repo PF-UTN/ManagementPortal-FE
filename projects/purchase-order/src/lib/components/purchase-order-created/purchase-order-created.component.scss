@@ -1,90 +1,21 @@
 @import '../../../../../../src/styles/varibles';
 
 .purchase-order {
-  &__wrapper {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    min-width: 320px;
-    border-radius: 3px;
-    overflow: hidden;
-  }
-
-  &__loading-message {
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-    height: 400px;
-    font-size: 17.6px;
-    padding: 48px;
-    gap: 48px;
-  }
-
-  &__header {
-    display: flex;
-    align-items: center;
-
-    &__title {
-      margin-left: 16px;
-    }
-  }
-
-  &__stepper {
-    margin-top: 16px;
-  }
-
   &__form-field {
     width: 100%;
-
-    &__input {
-      font-size: 12px;
-    }
   }
 
-  &__list {
-    margin-bottom: 32px;
-  }
-
-  &__table {
-    table-layout: fixed;
-    width: 100%;
-    margin-top: 20px;
-
-    &__scrollable {
-      max-height: 400px;
-      overflow-y: auto;
-      border: none;
-    }
-
-    &__cell {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      border: none;
-      vertical-align: middle;
-    }
-
-    &__subtotal {
-      text-align: end; /* Centra el subtotal al final de la celda */
-    }
-
-    &__col-3 {
-      width: 30%;
-    }
-
-    &__col-2 {
-      width: 20%;
-    }
-
-    &__col-1 {
-      width: 10%;
-    }
+  &__empty-message {
+    text-align: center;
+    color: $color-grey;
+    padding: 16px 0;
   }
 
   &__total {
     font-weight: bold;
     font-size: 18px;
     text-align: end;
+    padding: 24px 0;
   }
 
   &__buttons {
@@ -99,13 +30,37 @@
     }
   }
 
-  &__actions {
-    &__item {
-      color: $black;
+  &__table {
+    table-layout: fixed;
+    width: 100%;
+    margin-top: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+    border: none;
 
-      &:hover {
-        color: $color-grey;
-        background: $lavander-color;
+    &__col-3 {
+      width: 30%;
+    }
+
+    &__col-2 {
+      width: 20%;
+    }
+
+    &__col-1 {
+      width: 10%;
+    }
+
+    &__cell {
+      max-width: 150px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      border: none;
+      vertical-align: middle;
+      padding: 12px 2px;
+
+      &__subtotal {
+        text-align: end;
       }
     }
   }

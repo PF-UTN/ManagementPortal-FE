@@ -102,7 +102,7 @@ export class PurchaseOrderCreatedComponent {
 
   productColumns: ListColumn<ProductListItem>[] = [
     {
-      key: 'name', // Identificador único para la columna
+      key: 'name',
       header: 'Nombre Producto',
       value: (item: ProductListItem) => item.name,
       bootstrapCol: 'col-8',
@@ -126,11 +126,13 @@ export class PurchaseOrderCreatedComponent {
       key: 'name',
       header: 'Producto',
       value: (item) => this.getProductName(item.controls.productId.value),
+      bootstrapCol: 'col-6',
     },
     {
       key: 'quantity',
       header: 'Cantidad',
-      value: (item) => (item.controls.quantity.value || 0).toString(), // Convertir a string
+      value: (item) => (item.controls.quantity.value || 0).toString(),
+      bootstrapCol: 'col-2',
     },
     {
       key: 'unitPrice',
@@ -140,6 +142,7 @@ export class PurchaseOrderCreatedComponent {
           style: 'currency',
           currency: 'ARS',
         }).format(item.controls.unitPrice.value || 0),
+      bootstrapCol: 'col-2',
     },
     {
       key: 'subtotal',
@@ -152,11 +155,12 @@ export class PurchaseOrderCreatedComponent {
           (item.controls.quantity.value || 0) *
             (item.controls.unitPrice.value || 0),
         ),
+      bootstrapCol: 'col-2',
     },
   ];
 
   constructor(
-    private router: Router,
+    public router: Router,
     private supplierService: SupplierService,
     private productService: ProductService,
     private dialog: MatDialog,
@@ -173,14 +177,14 @@ export class PurchaseOrderCreatedComponent {
         estimatedDeliveryDate: new FormControl<string | null>(null),
         observation: new FormControl<string | null>(null),
       }),
-      items: new FormArray<FormGroup<PurchaseOrderItemForm>>([]), // Especificar el tipo correcto
+      items: new FormArray<FormGroup<PurchaseOrderItemForm>>([]),
       searchText: new FormControl<string | null>(null),
     });
 
     this.initSuppliers();
   }
 
-  private initSuppliers(): void {
+  public initSuppliers(): void {
     this.supplierService.getSuppliers().subscribe((suppliers) => {
       this.suppliers = suppliers;
       this.filteredSuppliers$ =
@@ -203,7 +207,6 @@ export class PurchaseOrderCreatedComponent {
       supplier: supplier,
     });
 
-    // Llamar al método para cargar los productos del proveedor seleccionado
     this.loadProductsBySupplier(supplier.businessName);
   }
 
@@ -237,14 +240,14 @@ export class PurchaseOrderCreatedComponent {
     return supplier?.businessName || '';
   }
 
-  private loadProductsBySupplier(supplierBusinessName: string): void {
+  public loadProductsBySupplier(supplierBusinessName: string): void {
     this.isLoadingProducts.set(true);
-    const searchText = this.form.controls.searchText.value || ''; // Usar cadena vacía si es null
+    const searchText = this.form.controls.searchText.value || '';
     const params: ProductParams = {
       page: 1,
-      pageSize: 100, // Traer todos los productos del proveedor
+      pageSize: 100,
       filters: { supplierBusinessName: [supplierBusinessName] },
-      searchText, // Asegurar que searchText sea válido
+      searchText,
     };
 
     this.productService.postSearchProduct(params).subscribe({
@@ -267,7 +270,7 @@ export class PurchaseOrderCreatedComponent {
 
   onSearchProducts(): void {
     const searchTextLower =
-      this.form.controls.searchText.value?.toLowerCase() || ''; // Manejar null
+      this.form.controls.searchText.value?.toLowerCase() || '';
     this.filteredProducts = this.products.filter((product) =>
       product.name.toLowerCase().includes(searchTextLower),
     );
@@ -291,34 +294,14 @@ export class PurchaseOrderCreatedComponent {
         quantity: new FormControl<number | null>(null, [
           Validators.required,
           Validators.min(1),
-        ]), // Cantidad inicial vacía
+        ]),
         unitPrice: new FormControl<number | null>(null, [
           Validators.required,
           Validators.min(1),
-        ]), // Precio inicial vacío
+        ]),
       });
 
       this.items.push(newItem);
-    }
-  }
-
-  updateQuantity(productId: number, value: number): void {
-    const item = this.items.controls.find(
-      (item) => item.controls.productId.value === productId,
-    );
-
-    if (item) {
-      item.controls.quantity.setValue(value);
-    }
-  }
-
-  updatePrice(productId: number, value: number): void {
-    const item = this.items.controls.find(
-      (item) => item.controls.productId.value === productId,
-    );
-
-    if (item) {
-      item.controls.unitPrice.setValue(value);
     }
   }
 
@@ -333,34 +316,27 @@ export class PurchaseOrderCreatedComponent {
   }
 
   onClearOrder(): void {
-    // Verifica si hay productos seleccionados
     if (this.items.length > 0) {
-      // Abre el modal de confirmación
       const dialogRef = this.dialog.open(ModalComponent, {
         data: {
           title: 'Confirmación',
           message:
-            '¿Está seguro de que desea limpiar la orden de compra en curso? Esto eliminará todos los datos ingresados.',
-          confirmText: 'Aceptar',
-          cancelText: 'Cancelar',
+            'Si cambia de proveedor se eliminará la orden de compra actual. ¿Desea continuar?',
+          confirmText: 'Continuar',
+          cancelText: 'Volver',
         },
       });
-
-      // Maneja la respuesta del modal
       dialogRef.afterClosed().subscribe((result) => {
         if (result) {
-          // Si el usuario confirma, reinicia los formularios
           this.resetForms();
         }
       });
     } else {
-      // Si no hay productos seleccionados, simplemente reinicia los formularios
       this.resetForms();
     }
   }
 
   resetForms(): void {
-    // Reinicia todos los formularios como si se entrara a la página de cero
     this.form.reset();
     this.items.clear();
   }
@@ -387,7 +363,6 @@ export class PurchaseOrderCreatedComponent {
     };
 
     console.log(purchaseOrder);
-    // Aquí podrías enviar el objeto al backend
   }
 
   goBack() {
