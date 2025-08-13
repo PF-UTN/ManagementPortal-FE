@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
+import { PurchaseOrderDetail } from '../models/purchase-order-detail.model';
 import { PurchaseOrderParams } from '../models/purchase-order-param.model';
 import { SearchPurchaseOrderResponse } from '../models/search-purchase-order-response.model';
 
@@ -19,5 +20,10 @@ export class PurchaseOrderService {
   ): Observable<SearchPurchaseOrderResponse> {
     const url = `${this.baseUrl}/search`;
     return this.http.post<SearchPurchaseOrderResponse>(url, params);
+  }
+
+  getPurchaseOrderById(id: number): Observable<PurchaseOrderDetail> {
+    const url = `${this.baseUrl}/${id}`;
+    return this.http.get<PurchaseOrderDetail>(url);
   }
 }

@@ -1,0 +1,93 @@
+<ng-container *ngIf="isLoading(); else loaded">
+  <mp-loading></mp-loading>
+</ng-container>
+
+<ng-template #loaded>
+  <ng-container *ngIf="!error(); else errorContent">
+    <ng-container *ngIf="data() as purchaseOrder">
+      <div class="container py-4">
+        <div class="card shadow-sm mb-4">
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Detalles de la orden de compra</h5>
+          </div>
+          <div class="card-body">
+            <div class="row gy-3">
+              <div class="col-md-6">
+                <strong>Número de orden</strong>
+                <p class="mb-0">{{ purchaseOrder.id }}</p>
+              </div>
+              <div class="col-md-6">
+                <strong>Estado</strong>
+                <p class="mb-0">{{ purchaseOrder.status.name }}</p>
+              </div>
+              <div class="col-md-6">
+                <strong>Fecha de emisión</strong>
+                <p class="mb-0">
+                  {{ purchaseOrder.createdAt | date: 'dd/MM/yyyy' }}
+                </p>
+              </div>
+              <div class="col-md-6">
+                <strong>Fecha estimada de entrega</strong>
+                <p class="mb-0">
+                  {{ purchaseOrder.estimatedDeliveryDate | date: 'dd/MM/yyyy' }}
+                </p>
+              </div>
+              <div class="col-md-6">
+                <strong>Fecha efectiva de entrega</strong>
+                <p class="mb-0">
+                  {{
+                    purchaseOrder.effectiveDeliveryDate
+                      ? (purchaseOrder.effectiveDeliveryDate
+                        | date: 'dd/MM/yyyy')
+                      : 'N/A'
+                  }}
+                </p>
+              </div>
+
+              <div class="col-md-6">
+                <strong>Proveedor</strong>
+                <p class="mb-0">{{ purchaseOrder.supplier }}</p>
+              </div>
+              <div class="col-12">
+                <strong>Observación</strong>
+                <p class="mb-0">{{ purchaseOrder.observation || '—' }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card shadow-sm">
+          <div class="card-header bg-secondary text-white">
+            <h6 class="mb-0">Productos</h6>
+          </div>
+          <div class="table-responsive">
+            <table class="table table-striped mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Producto</th>
+                  <th class="text-end">Cantidad</th>
+                  <th class="text-end">Precio unitario</th>
+                  <th class="text-end">Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of purchaseOrder.purchaseOrderItems">
+                  <td>{{ item.productName }}</td>
+                  <td class="text-end">{{ item.quantity }}</td>
+                  <td class="text-end">{{ item.unitPrice | currency }}</td>
+                  <td class="text-end">{{ item.subtotalPrice | currency }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+
+  <ng-template #errorContent>
+    <div class="container py-3">
+      <p class="text-danger">{{ error() }}</p>
+    </div>
+  </ng-template>
+</ng-template>
