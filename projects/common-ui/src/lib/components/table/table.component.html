@@ -36,7 +36,7 @@
                   <mat-menu #menu="matMenu">
                     <div *ngFor="let item of column?.actions" class="actions__mat-menu__item">
                       <ng-container *ngIf="item?.action">
-                        <button mat-menu-item (click)="item.action(element)">
+                        <button mat-menu-item (click)="item.action(element)" [disabled]="item.disabled?.(element)">
                           {{ item.description }}
                         </button>
                       </ng-container>
