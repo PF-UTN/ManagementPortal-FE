@@ -19,6 +19,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
+import { Router } from '@angular/router';
 import { BehaviorSubject, debounceTime, Subject, switchMap, tap } from 'rxjs';
 
 import { PurchaseOrderStatusOptions } from '../../constants/status.enum';
@@ -185,6 +186,7 @@ export class PurchaseOrderListComponent implements OnInit {
   constructor(
     private readonly purchaseOrderService: PurchaseOrderService,
     private readonly datePipe: DatePipe,
+    public readonly router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -296,5 +298,9 @@ export class PurchaseOrderListComponent implements OnInit {
       default:
         return PillStatusEnum.Initial;
     }
+  }
+
+  openCreatePurchaseOrder() {
+    this.router.navigate(['/ordenes-compra/crear']);
   }
 }

@@ -446,4 +446,17 @@ describe('PurchaseOrderListComponent', () => {
       expect(result).toBe(PillStatusEnum.Initial);
     });
   });
+
+  describe('openCreatePurchaseOrder', () => {
+    it('should navigate to /ordenes-compra/crear when called', () => {
+      // Arrange
+      const spy = jest.spyOn(component.router, 'navigate');
+
+      // Act
+      component.openCreatePurchaseOrder();
+
+      // Assert
+      expect(spy).toHaveBeenCalledWith(['/ordenes-compra/crear']);
+    });
+  });
 });
