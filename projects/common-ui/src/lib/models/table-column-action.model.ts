@@ -1,4 +1,5 @@
 export interface TableColumnAction<T> {
-    description: string;
-    action: (element: T) => void;
+  description: string;
+  disabled?: (element: T) => boolean;
+  action: (element: T) => void;
 }
