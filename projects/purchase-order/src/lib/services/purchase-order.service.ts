@@ -20,4 +20,9 @@ export class PurchaseOrderService {
     const url = `${this.baseUrl}/search`;
     return this.http.post<SearchPurchaseOrderResponse>(url, params);
   }
+
+  deletePurchaseOrderAsync(id: number): Observable<void> {
+    const url = `${this.baseUrl}/${id}`;
+    return this.http.delete<void>(url);
+  }
 }
