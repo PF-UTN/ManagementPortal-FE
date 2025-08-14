@@ -4,7 +4,10 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { PurchaseOrderParams } from '../models/purchase-order-param.model';
+import {
+  PurchaseOrderParams,
+  PurchaseOrder,
+} from '../models/purchase-order-param.model';
 import { SearchPurchaseOrderResponse } from '../models/search-purchase-order-response.model';
 
 @Injectable({
@@ -24,5 +27,10 @@ export class PurchaseOrderService {
   deletePurchaseOrderAsync(id: number): Observable<void> {
     const url = `${this.baseUrl}/${id}`;
     return this.http.delete<void>(url);
+  }
+
+  createPurchaseOrder(purchaseOrder: PurchaseOrder) {
+    const url = `${this.baseUrl}`;
+    return this.http.post(url, purchaseOrder);
   }
 }

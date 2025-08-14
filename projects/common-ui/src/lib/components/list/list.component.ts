@@ -1,11 +1,10 @@
-import { LoadingComponent } from '@Common-UI';
-
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 
-import { ListColumn } from '../../models/list-column.model';
+import { ListColumn } from '../../models';
+import { LoadingComponent } from '../loading/loading.component';
 
 @Component({
   selector: 'mp-list',

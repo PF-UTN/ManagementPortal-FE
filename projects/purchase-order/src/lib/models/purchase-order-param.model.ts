@@ -30,3 +30,14 @@ export interface PurchaseOrderParams {
   };
   orderBy: PurchaseOrderOrderBy;
 }
+
+export interface PurchaseOrder {
+  supplierId: number;
+  estimatedDeliveryDate: string;
+  observation: string;
+  purchaseOrderItems: {
+    productId: number;
+    quantity: number;
+    unitPrice: number;
+  }[];
+}

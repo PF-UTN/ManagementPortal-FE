@@ -23,6 +23,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { BehaviorSubject, debounceTime, Subject, switchMap, tap } from 'rxjs';
 
 import {
@@ -198,6 +199,7 @@ export class PurchaseOrderListComponent implements OnInit {
     private readonly datePipe: DatePipe,
     private readonly snackBar: MatSnackBar,
     private readonly dialog: MatDialog,
+    public readonly router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -341,5 +343,9 @@ export class PurchaseOrderListComponent implements OnInit {
         });
       }
     });
+  }
+
+  openCreatePurchaseOrder() {
+    this.router.navigate(['/ordenes-compra/crear']);
   }
 }
