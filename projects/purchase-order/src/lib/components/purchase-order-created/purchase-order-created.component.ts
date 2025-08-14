@@ -167,7 +167,7 @@ export class PurchaseOrderCreatedComponent {
     private supplierService: SupplierService,
     private productService: ProductService,
     public purchaseOrderService: PurchaseOrderService,
-    private dialog: MatDialog,
+    public dialog: MatDialog,
     public snackBar: MatSnackBar,
   ) {}
 
@@ -259,10 +259,6 @@ export class PurchaseOrderCreatedComponent {
       next: (response) => {
         this.products = response.results;
         this.filteredProducts = [...this.products];
-        this.isLoadingProducts.set(false);
-      },
-      error: (err) => {
-        console.error('Error al cargar productos del proveedor:', err);
         this.isLoadingProducts.set(false);
       },
     });
@@ -376,11 +372,10 @@ export class PurchaseOrderCreatedComponent {
         });
         this.router.navigate(['/ordenes-compra']);
       },
-      error: (err) => {
+      error: () => {
         this.snackBar.open('Error al crear la orden de compra', 'Cerrar', {
           duration: 3000,
         });
-        console.error(err);
       },
     });
   }

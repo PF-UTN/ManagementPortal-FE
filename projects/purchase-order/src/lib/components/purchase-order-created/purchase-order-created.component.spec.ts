@@ -1,4 +1,10 @@
-import { ProductService, ProductListItem } from '@Product';
+import { ModalComponent } from '@Common-UI';
+import {
+  ProductService,
+  ProductListItem,
+  ProductParams,
+  SearchProductResponse,
+} from '@Product';
 import { SupplierResponse, SupplierService } from '@Supplier';
 
 import { HttpClientTestingModule } from '@angular/common/http/testing';
@@ -8,8 +14,15 @@ import {
   fakeAsync,
   tick,
 } from '@angular/core/testing';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import {
+  ReactiveFormsModule,
+  FormsModule,
+  FormGroup,
+  FormControl,
+  AbstractControl,
+} from '@angular/forms';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
@@ -44,7 +57,14 @@ describe('PurchaseOrderCreatedComponent', () => {
           provide: PurchaseOrderService,
           useValue: { createPurchaseOrder: jest.fn() },
         },
-        { provide: MatDialog, useValue: { open: jest.fn() } },
+        {
+          provide: MatDialog,
+          useValue: {
+            open: jest.fn().mockReturnValue({
+              afterClosed: () => of(true),
+            }),
+          },
+        },
         { provide: MatSnackBar, useValue: { open: jest.fn() } },
       ],
     }).compileComponents();
@@ -70,14 +90,12 @@ describe('PurchaseOrderCreatedComponent', () => {
         } as SupplierResponse,
       ]),
     );
-    jest
-      .spyOn(productService, 'postSearchProduct')
-      .mockReturnValue(
-        of({
-          total: 1,
-          results: [{ id: 1, name: 'Producto Test' } as ProductListItem],
-        }),
-      );
+    jest.spyOn(productService, 'postSearchProduct').mockReturnValue(
+      of({
+        total: 1,
+        results: [{ id: 1, name: 'Producto Test' } as ProductListItem],
+      }),
+    );
     jest
       .spyOn(purchaseOrderService, 'createPurchaseOrder')
       .mockReturnValue(of({}));
@@ -135,6 +153,414 @@ describe('PurchaseOrderCreatedComponent', () => {
         { id: 1, businessName: 'Proveedor A' } as SupplierResponse,
       ]);
     }));
+
+    it('should update the form with the selected supplier and load products by supplier', fakeAsync(() => {
+      // Arrange
+      const mockSupplier: SupplierResponse = {
+        id: 1,
+        businessName: 'Proveedor Test',
+        documentType: 'CUIT',
+        documentNumber: '123456789',
+        email: 'test@proveedor.com',
+        phone: '123456789',
+        addressId: 1,
+      };
+      const mockEvent = {
+        option: { value: mockSupplier },
+      } as MatAutocompleteSelectedEvent;
+      const spyLoadProducts = jest.spyOn(component, 'loadProductsBySupplier');
+
+      // Act
+      component.onSupplierSelected(mockEvent);
+      tick();
+
+      // Assert
+      expect(component.form.controls.header.value.supplierId).toBe(
+        mockSupplier.id,
+      );
+      expect(component.form.controls.header.value.supplier).toEqual(
+        mockSupplier,
+      );
+      expect(spyLoadProducts).toHaveBeenCalledWith(mockSupplier.businessName);
+    }));
+  });
+
+  describe('List columns', () => {
+    it('should return the product name for the product column', () => {
+      // Arrange
+      const mockProduct: ProductListItem = {
+        id: 1,
+        name: 'Producto Test',
+        description: 'Descripción del producto',
+        price: 100,
+        categoryName: 'Categoría Test',
+        supplierBusinessName: 'Proveedor Test',
+        stock: 50,
+        weight: 1.5,
+        enabled: true,
+      };
+
+      const column = component.productColumns.find((col) => col.key === 'name');
+      // Act
+      const value = column?.value?.(mockProduct);
+      // Assert
+      expect(value).toBe(mockProduct.name);
+    });
+
+    it('should call onAddProduct when the action is triggered', () => {
+      // Arrange
+      const mockProduct: ProductListItem = {
+        id: 1,
+        name: 'Producto Test',
+        description: 'Descripción del producto',
+        price: 100,
+        categoryName: 'Categoría Test',
+        supplierBusinessName: 'Proveedor Test',
+        stock: 50,
+        weight: 1.5,
+        enabled: true,
+      };
+
+      const column = component.productColumns.find(
+        (col) => col.key === 'actions',
+      );
+      const spy = jest.spyOn(component, 'onAddProduct');
+      // Act
+      column?.actions?.[0].action(mockProduct);
+      // Assert
+      expect(spy).toHaveBeenCalledWith(mockProduct);
+    });
+
+    it('should return the product name for the items column', () => {
+      // Arrange
+      const mockProduct: ProductListItem = {
+        id: 1,
+        name: 'Producto Test',
+        description: 'Descripción del producto',
+        price: 100,
+        categoryName: 'Categoría Test',
+        supplierBusinessName: 'Proveedor Test',
+        stock: 50,
+        weight: 1.5,
+        enabled: true,
+      };
+
+      const mockItem = new FormGroup({
+        productId: new FormControl(mockProduct.id),
+        quantity: new FormControl(2),
+        unitPrice: new FormControl(100),
+      });
+
+      const column = component.listColumns.find((col) => col.key === 'name');
+      jest.spyOn(component, 'getProductName').mockReturnValue(mockProduct.name);
+      // Act
+      const value = column?.value?.(mockItem);
+      // Assert
+      expect(value).toBe(mockProduct.name);
+    });
+
+    it('should return the quantity as a string for the quantity column', () => {
+      // Arrange
+      const mockItem = new FormGroup({
+        productId: new FormControl(1),
+        quantity: new FormControl(2),
+        unitPrice: new FormControl(100),
+      });
+
+      const column = component.listColumns.find(
+        (col) => col.key === 'quantity',
+      );
+      // Act
+      const value = column?.value?.(mockItem);
+      // Assert
+      expect(value).toBe('2');
+    });
+  });
+
+  describe('SupplierObjectValidator', () => {
+    it('should return null if the supplier exists in the list', () => {
+      // Arrange
+      component.suppliers = [
+        { id: 1, businessName: 'Proveedor A' } as SupplierResponse,
+        { id: 2, businessName: 'Proveedor B' } as SupplierResponse,
+      ];
+      const mockControl: AbstractControl = {
+        value: { id: 1, businessName: 'Proveedor A' },
+      } as AbstractControl;
+
+      // Act
+      const validatorFn = component.supplierObjectValidator();
+      const result = validatorFn(mockControl);
+
+      // Assert
+      expect(result).toBeNull();
+    });
+
+    it('should return { invalidSupplier: true } if the supplier does not exist in the list', () => {
+      // Arrange
+      component.suppliers = [
+        { id: 1, businessName: 'Proveedor A' } as SupplierResponse,
+        { id: 2, businessName: 'Proveedor B' } as SupplierResponse,
+      ];
+      const mockControl: AbstractControl = {
+        value: { id: 3, businessName: 'Proveedor C' },
+      } as AbstractControl;
+
+      // Act
+      const validatorFn = component.supplierObjectValidator();
+      const result = validatorFn(mockControl);
+
+      // Assert
+      expect(result).toEqual({ invalidSupplier: true });
+    });
+  });
+
+  describe('loadProductsBySupplier', () => {
+    it('should set isLoadingProducts to true and call ProductService with correct params', () => {
+      // Arrange
+      const supplierBusinessName = 'Proveedor Test';
+      const searchText = 'Producto Test';
+      component.form.controls.searchText.setValue(searchText);
+      const spySetLoading = jest.spyOn(component.isLoadingProducts, 'set');
+      const spyPostSearchProduct = jest.spyOn(
+        productService,
+        'postSearchProduct',
+      );
+
+      const expectedParams: ProductParams = {
+        page: 1,
+        pageSize: 100,
+        filters: { supplierBusinessName: [supplierBusinessName] },
+        searchText,
+      };
+
+      // Act
+      component.loadProductsBySupplier(supplierBusinessName);
+
+      // Assert
+      expect(spySetLoading).toHaveBeenCalledWith(true);
+      expect(spyPostSearchProduct).toHaveBeenCalledWith(expectedParams);
+    });
+
+    it('should update products and filteredProducts on successful response', fakeAsync(() => {
+      // Arrange
+      const supplierBusinessName = 'Proveedor Test';
+      const mockResponse: SearchProductResponse = {
+        total: 2,
+        results: [
+          { id: 1, name: 'Producto A' } as ProductListItem,
+          { id: 2, name: 'Producto B' } as ProductListItem,
+        ],
+      };
+      jest
+        .spyOn(productService, 'postSearchProduct')
+        .mockReturnValue(of(mockResponse));
+      const spySetLoading = jest.spyOn(component.isLoadingProducts, 'set');
+
+      // Act
+      component.loadProductsBySupplier(supplierBusinessName);
+      tick();
+
+      // Assert
+      expect(component.products).toEqual(mockResponse.results);
+      expect(component.filteredProducts).toEqual(mockResponse.results);
+      expect(spySetLoading).toHaveBeenCalledWith(false);
+    }));
+  });
+
+  describe('getProductName', () => {
+    it('should return the product name if the product exists', () => {
+      // Arrange
+      component.products = [
+        { id: 1, name: 'Producto A' } as ProductListItem,
+        { id: 2, name: 'Producto B' } as ProductListItem,
+      ];
+
+      // Act
+      const productName = component.getProductName(1);
+
+      // Assert
+      expect(productName).toBe('Producto A');
+    });
+
+    it('should return "Producto desconocido" if the product does not exist', () => {
+      // Arrange
+      component.products = [
+        { id: 1, name: 'Producto A' } as ProductListItem,
+        { id: 2, name: 'Producto B' } as ProductListItem,
+      ];
+
+      // Act
+      const productName = component.getProductName(3);
+
+      // Assert
+      expect(productName).toBe('Producto desconocido');
+    });
+
+    it('should return "Producto desconocido" if productId is null', () => {
+      // Arrange
+      component.products = [
+        { id: 1, name: 'Producto A' } as ProductListItem,
+        { id: 2, name: 'Producto B' } as ProductListItem,
+      ];
+
+      // Act
+      const productName = component.getProductName(null);
+
+      // Assert
+      expect(productName).toBe('Producto desconocido');
+    });
+  });
+
+  describe('onSearchProducts', () => {
+    it('should filter products based on search text', () => {
+      // Arrange
+      component.products = [
+        { id: 1, name: 'Producto A' } as ProductListItem,
+        { id: 2, name: 'Producto B' } as ProductListItem,
+        { id: 3, name: 'Producto C' } as ProductListItem,
+      ];
+      component.form.controls.searchText.setValue('Producto B');
+
+      // Act
+      component.onSearchProducts();
+
+      // Assert
+      expect(component.filteredProducts).toEqual([
+        { id: 2, name: 'Producto B' } as ProductListItem,
+      ]);
+    });
+
+    it('should return all products if search text is empty', () => {
+      // Arrange
+      component.products = [
+        { id: 1, name: 'Producto A' } as ProductListItem,
+        { id: 2, name: 'Producto B' } as ProductListItem,
+        { id: 3, name: 'Producto C' } as ProductListItem,
+      ];
+      component.form.controls.searchText.setValue('');
+
+      // Act
+      component.onSearchProducts();
+
+      // Assert
+      expect(component.filteredProducts).toEqual(component.products);
+    });
+
+    it('should handle case-insensitive search', () => {
+      // Arrange
+      component.products = [
+        { id: 1, name: 'Producto A' } as ProductListItem,
+        { id: 2, name: 'Producto B' } as ProductListItem,
+        { id: 3, name: 'Producto C' } as ProductListItem,
+      ];
+      component.form.controls.searchText.setValue('producto b');
+
+      // Act
+      component.onSearchProducts();
+
+      // Assert
+      expect(component.filteredProducts).toEqual([
+        { id: 2, name: 'Producto B' } as ProductListItem,
+      ]);
+    });
+  });
+
+  describe('onClearOrder', () => {
+    it('should open confirmation dialog when there are items in the order', () => {
+      // Arrange
+      const spyDialog = jest.spyOn(component.dialog, 'open');
+      component.items.push(
+        new FormGroup({
+          productId: new FormControl(1),
+          quantity: new FormControl(2),
+          unitPrice: new FormControl(100),
+        }),
+      );
+
+      // Act
+      component.onClearOrder();
+
+      // Assert
+      expect(spyDialog).toHaveBeenCalledWith(ModalComponent, {
+        data: {
+          title: 'Confirmación',
+          message:
+            'Si cambia de proveedor se eliminará la orden de compra actual. ¿Desea continuar?',
+          confirmText: 'Continuar',
+          cancelText: 'Volver',
+        },
+      });
+    });
+
+    it('should reset forms if dialog result is true', () => {
+      // Arrange
+      const spyResetForms = jest.spyOn(component, 'resetForms');
+      jest.spyOn(component.dialog, 'open').mockReturnValue({
+        afterClosed: () => of(true),
+      } as MatDialogRef<ModalComponent>);
+
+      component.items.push(
+        new FormGroup({
+          productId: new FormControl(1),
+          quantity: new FormControl(2),
+          unitPrice: new FormControl(100),
+        }),
+      );
+
+      // Act
+      component.onClearOrder();
+
+      // Assert
+      expect(spyResetForms).toHaveBeenCalled();
+    });
+
+    it('should reset forms directly if there are no items in the order', () => {
+      // Arrange
+      const spyResetForms = jest.spyOn(component, 'resetForms');
+
+      // Act
+      component.onClearOrder();
+
+      // Assert
+      expect(spyResetForms).toHaveBeenCalled();
+    });
+  });
+
+  describe('resetForms', () => {
+    it('should reset the form and clear items', () => {
+      // Arrange
+      component.items.push(
+        new FormGroup({
+          productId: new FormControl(1),
+          quantity: new FormControl(2),
+          unitPrice: new FormControl(100),
+        }),
+      );
+
+      component.form.controls.header.patchValue({
+        supplierId: 1,
+        supplier: { id: 1, businessName: 'Proveedor Test' } as SupplierResponse,
+        estimatedDeliveryDate: '2025-08-14',
+        observation: 'Test observation',
+      });
+
+      // Act
+      component.resetForms();
+
+      // Assert
+      expect(component.form.value).toEqual({
+        header: {
+          supplierId: null,
+          supplier: null,
+          estimatedDeliveryDate: null,
+          observation: null,
+        },
+        items: [],
+        searchText: null,
+      });
+      expect(component.items.length).toBe(0);
+    });
   });
 
   describe('Product management', () => {
