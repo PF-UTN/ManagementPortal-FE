@@ -215,7 +215,7 @@ export class PurchaseOrderCreatedComponent {
     this.loadProductsBySupplier(supplier.businessName);
   }
 
-  private filterSuppliers(name: string): SupplierResponse[] {
+  public filterSuppliers(name: string): SupplierResponse[] {
     const filterValue = name.toLowerCase();
     return this.suppliers.filter((supplier) =>
       supplier.businessName.toLowerCase().includes(filterValue),
