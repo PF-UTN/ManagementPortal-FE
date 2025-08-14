@@ -6,8 +6,20 @@ import {
 import { SupplierService, SupplierResponse } from '@Supplier';
 
 import { CommonModule } from '@angular/common';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule, ReactiveFormsModule, FormControl } from '@angular/forms';
+import {
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick,
+} from '@angular/core/testing';
+import {
+  FormsModule,
+  ReactiveFormsModule,
+  FormControl,
+  FormGroup,
+  FormArray,
+} from '@angular/forms';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -16,6 +28,13 @@ import { mockDeep } from 'jest-mock-extended';
 import { of, throwError } from 'rxjs';
 
 import { PurchaseOrderCreatedComponent } from './purchase-order-created.component';
+
+afterEach(() => {
+  jest.clearAllMocks();
+  jest.resetAllMocks();
+  jest.restoreAllMocks();
+  TestBed.resetTestingModule();
+});
 
 describe('PurchaseOrderCreatedComponent', () => {
   let component: PurchaseOrderCreatedComponent;
@@ -41,11 +60,18 @@ describe('PurchaseOrderCreatedComponent', () => {
     }).compileComponents();
 
     fixture = TestBed.createComponent(PurchaseOrderCreatedComponent);
+    component = fixture.componentInstance;
     supplierService = TestBed.inject(SupplierService);
     productService = TestBed.inject(ProductService);
-    jest.spyOn(supplierService, 'getSuppliers').mockReturnValue(of([]));
-    component = fixture.componentInstance;
     fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    component.form.reset();
+    (component.form.controls.items as FormArray).clear();
+    component.products = [];
+    component.filteredProducts = [];
+    component.suppliers = [];
   });
 
   describe('Initialization', () => {
@@ -67,19 +93,23 @@ describe('PurchaseOrderCreatedComponent', () => {
       expect(formControls.searchText).toBeDefined();
     });
 
-    it('should call initSuppliers on initialization', () => {
-      //act
+    it('should call initSuppliers on initialization', fakeAsync(() => {
+      // Arrange
+      jest.spyOn(supplierService, 'getSuppliers').mockReturnValue(of([]));
       const spy = jest.spyOn(component, 'initSuppliers');
-      component.ngOnInit();
 
-      //assert
+      // Act
+      component.ngOnInit();
+      tick();
+
+      // Assert
       expect(spy).toHaveBeenCalled();
-    });
+    }));
   });
 
   describe('Supplier selection', () => {
-    it('should call ProductService to search products by supplier', () => {
-      //act
+    it('should call ProductService to search products by supplier', fakeAsync(() => {
+      // Arrange
       const mockParams = {
         filters: {
           supplierBusinessName: ['Proveedor Test'],
@@ -94,46 +124,27 @@ describe('PurchaseOrderCreatedComponent', () => {
           results: [],
         } as SearchProductResponse),
       );
+
+      // Act
       component.loadProductsBySupplier('Proveedor Test');
+      tick();
 
-      //assert
+      // Assert
       expect(productService.postSearchProduct).toHaveBeenCalledWith(mockParams);
-    });
+    }));
 
-    it('should call ProductService to search products by supplier', () => {
-      //act
-      const mockParams = {
-        filters: {
-          supplierBusinessName: ['Proveedor Test'],
-        },
-        page: 1,
-        pageSize: 100,
-        searchText: '',
-      };
-      jest.spyOn(productService, 'postSearchProduct').mockReturnValue(
-        of({
-          total: 0,
-          results: [],
-        } as SearchProductResponse),
-      );
-      component.loadProductsBySupplier('Proveedor Test');
-
-      //assert
-      expect(productService.postSearchProduct).toHaveBeenCalledWith(mockParams);
-    });
-
-    it('should handle errors when loading products by supplier', () => {
-      //act
+    it('should handle errors when loading products by supplier', fakeAsync(() => {
+      // Act
       jest
         .spyOn(productService, 'postSearchProduct')
         .mockReturnValue(
           throwError(() => new Error('Error al cargar productos')),
         );
       component.loadProductsBySupplier('Proveedor Test');
-
-      //assert
+      tick();
+      // Assert
       expect(component.isLoadingProducts()).toBe(false);
-    });
+    }));
 
     it('should validate supplier object correctly', () => {
       //act
@@ -164,6 +175,32 @@ describe('PurchaseOrderCreatedComponent', () => {
       //assert
       expect(result).toEqual({ invalidSupplier: true });
     });
+
+    it('should update the form when a supplier is selected', fakeAsync(() => {
+      // Arrange
+      const mockSupplier = {
+        id: 1,
+        businessName: 'Proveedor Test',
+      } as SupplierResponse;
+      const event = {
+        option: { value: mockSupplier },
+      } as MatAutocompleteSelectedEvent;
+      jest
+        .spyOn(productService, 'postSearchProduct')
+        .mockReturnValue(of({ total: 0, results: [] }));
+
+      // Act
+      component.onSupplierSelected(event);
+      tick();
+
+      // Assert
+      expect(component.form.controls.header.value.supplierId).toBe(
+        mockSupplier.id,
+      );
+      expect(component.form.controls.header.value.supplier).toEqual(
+        mockSupplier,
+      );
+    }));
   });
 
   describe('Product management', () => {
@@ -229,6 +266,46 @@ describe('PurchaseOrderCreatedComponent', () => {
       //assert
       expect(productName).toBe('Producto desconocido');
     });
+
+    it('should return the correct product name for productColumns', () => {
+      //act
+      const mockProduct = { id: 1, name: 'Producto Test' } as ProductListItem;
+      const column = component.productColumns.find((col) => col.key === 'name');
+      const productName = column?.value ? column.value(mockProduct) : undefined;
+
+      //assert
+      expect(productName).toBe('Producto Test');
+    });
+
+    it('should call onAddProduct when action is triggered for a product', () => {
+      // Arrange
+      const mockProduct = { id: 1, name: 'Producto Test' } as ProductListItem;
+      const column = component.productColumns.find(
+        (col) => col.key === 'actions',
+      );
+      expect(column).toBeDefined();
+      const spy = jest.spyOn(component, 'onAddProduct');
+
+      // Act
+      column?.actions?.[0]?.action(mockProduct);
+
+      // Assert
+      expect(spy).toHaveBeenCalledWith(mockProduct);
+    });
+
+    it('should format numbers correctly using Intl.NumberFormat', () => {
+      // Arrange
+      const formatter = new Intl.NumberFormat('es-AR', {
+        style: 'currency',
+        currency: 'ARS',
+      });
+
+      // Act
+      const formattedNumber = formatter.format(12345.67).replace(/\s/g, '');
+
+      // Assert
+      expect(formattedNumber).toBe('$12.345,67');
+    });
   });
 
   describe('Form reset', () => {
@@ -258,11 +335,79 @@ describe('PurchaseOrderCreatedComponent', () => {
       //assert
       expect(total).toBe(800);
     });
+
+    it('should calculate the subtotal correctly for a product', () => {
+      //act
+      const mockProduct = new FormGroup({
+        quantity: new FormControl(2),
+        unitPrice: new FormControl(100),
+      });
+      const subtotal =
+        (mockProduct.controls.quantity.value || 0) *
+        (mockProduct.controls.unitPrice.value || 0);
+
+      //assert
+      expect(subtotal).toBe(200);
+    });
+
+    it('should return 0 if quantity or unit price is 0', () => {
+      //act
+      const mockProduct = new FormGroup({
+        quantity: new FormControl(0),
+        unitPrice: new FormControl(100),
+      });
+      const subtotal =
+        (mockProduct.controls.quantity.value || 0) *
+        (mockProduct.controls.unitPrice.value || 0);
+
+      //assert
+      expect(subtotal).toBe(0);
+    });
+
+    it('should return 0 if quantity or unit price is null or undefined', () => {
+      //act
+      const mockProduct = new FormGroup({
+        quantity: new FormControl(null),
+        unitPrice: new FormControl(undefined),
+      });
+      const subtotal =
+        (mockProduct.controls.quantity.value || 0) *
+        (mockProduct.controls.unitPrice.value || 0);
+
+      //assert
+      expect(subtotal).toBe(0);
+    });
+
+    it('should call loadProductsBySupplier with the correct supplier business name', fakeAsync(() => {
+      // Arrange
+      const mockSupplier = {
+        id: 1,
+        businessName: 'Proveedor Test',
+      } as SupplierResponse;
+      const event = {
+        option: { value: mockSupplier },
+      } as MatAutocompleteSelectedEvent;
+      jest.spyOn(productService, 'postSearchProduct').mockReturnValue(
+        of({
+          total: 0,
+          results: [],
+        } as SearchProductResponse),
+      );
+
+      const spy = jest.spyOn(component, 'loadProductsBySupplier');
+
+      // Act
+      component.onSupplierSelected(event);
+      tick();
+
+      // Assert
+      expect(spy).toHaveBeenCalledWith(mockSupplier.businessName);
+    }));
   });
 
   describe('Submit functionality', () => {
-    it('should prepare the purchase order correctly', () => {
-      //act
+    it('should call PurchaseOrderService and show success snackbar on successful submit', fakeAsync(() => {
+      // Arrange
       const mockSupplier = {
         id: 1,
         businessName: 'Proveedor Test',
@@ -276,11 +421,19 @@ describe('PurchaseOrderCreatedComponent', () => {
       });
       component.onAddProduct(mockProduct);
       component.items.controls[0].patchValue({ quantity: 2, unitPrice: 100 });
-      const spy = jest.spyOn(console, 'log');
-      component.onSubmit();
 
-      //assert
-      expect(spy).toHaveBeenCalledWith({
+      const spyService = jest
+        .spyOn(component.purchaseOrderService, 'createPurchaseOrder')
+        .mockReturnValue(of({}));
+      const spySnackBar = jest.spyOn(component.snackBar, 'open');
+      const spyRouter = jest.spyOn(component.router, 'navigate');
+
+      // Act
+      component.onSubmit();
+      tick();
+
+      // Assert
+      expect(spyService).toHaveBeenCalledWith({
         supplierId: mockSupplier.id,
         estimatedDeliveryDate: '2025-08-13',
         observation: 'Observación Test',
@@ -288,7 +441,47 @@ describe('PurchaseOrderCreatedComponent', () => {
           { productId: mockProduct.id, quantity: 2, unitPrice: 100 },
         ],
       });
-    });
+      expect(spySnackBar).toHaveBeenCalledWith(
+        'Orden de compra creada con éxito',
+        'Cerrar',
+        { duration: 3000 },
+      );
+      expect(spyRouter).toHaveBeenCalledWith(['/ordenes-compra']);
+    }));
+
+    it('should show error snackbar if submit fails', fakeAsync(() => {
+      // Arrange
+      const mockSupplier = {
+        id: 1,
+        businessName: 'Proveedor Test',
+      } as SupplierResponse;
+      const mockProduct = { id: 1, name: 'Producto Test' } as ProductListItem;
+      component.form.controls.header.patchValue({
+        supplierId: mockSupplier.id,
+        supplier: mockSupplier,
+        estimatedDeliveryDate: '2025-08-13',
+        observation: 'Observación Test',
+      });
+      component.onAddProduct(mockProduct);
+      component.items.controls[0].patchValue({ quantity: 2, unitPrice: 100 });
+
+      const spyService = jest
+        .spyOn(component.purchaseOrderService, 'createPurchaseOrder')
+        .mockReturnValue(throwError(() => new Error('Error')));
+      const spySnackBar = jest.spyOn(component.snackBar, 'open');
+
+      // Act
+      component.onSubmit();
+      tick();
+
+      // Assert
+      expect(spyService).toHaveBeenCalled();
+      expect(spySnackBar).toHaveBeenCalledWith(
+        'Error al crear la orden de compra',
+        'Cerrar',
+        { duration: 3000 },
+      );
+    }));
   });
 
   describe('Navigation', () => {

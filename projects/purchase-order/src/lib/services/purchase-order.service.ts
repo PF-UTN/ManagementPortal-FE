@@ -4,7 +4,10 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { PurchaseOrderParams } from '../models/purchase-order-param.model';
+import {
+  PurchaseOrderParams,
+  PurchaseOrder,
+} from '../models/purchase-order-param.model';
 import { SearchPurchaseOrderResponse } from '../models/search-purchase-order-response.model';
 
 @Injectable({
@@ -19,5 +22,10 @@ export class PurchaseOrderService {
   ): Observable<SearchPurchaseOrderResponse> {
     const url = `${this.baseUrl}/search`;
     return this.http.post<SearchPurchaseOrderResponse>(url, params);
+  }
+
+  createPurchaseOrder(purchaseOrder: PurchaseOrder) {
+    const url = 'https://dev-management-portal-be.vercel.app/purchase-order';
+    return this.http.post(url, purchaseOrder);
   }
 }

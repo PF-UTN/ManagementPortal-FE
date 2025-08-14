@@ -32,10 +32,13 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Observable, of, startWith, map } from 'rxjs';
+
+import { PurchaseOrderService } from '../../services/purchase-order.service';
 
 interface PurchaseOrderItemForm {
   productId: FormControl<number | null>;
@@ -45,7 +48,7 @@ interface PurchaseOrderItemForm {
 interface PurchaseHeaderForm {
   supplierId: FormControl<number | null>;
   supplier: FormControl<SupplierResponse | null>;
-  estimatedDeliveryDate: FormControl<string | null>; // formato ISO YYYY-MM-DD
+  estimatedDeliveryDate: FormControl<string | null>;
   observation: FormControl<string | null>;
 }
 
@@ -163,7 +166,9 @@ export class PurchaseOrderCreatedComponent {
     public router: Router,
     private supplierService: SupplierService,
     private productService: ProductService,
+    public purchaseOrderService: PurchaseOrderService,
     private dialog: MatDialog,
+    public snackBar: MatSnackBar,
   ) {}
 
   ngOnInit(): void {
@@ -350,19 +355,34 @@ export class PurchaseOrderCreatedComponent {
   }
 
   onSubmit(): void {
+    this.isLoading.set(true);
+
     const purchaseOrder = {
-      supplierId: this.form.controls.header.controls.supplierId.value,
+      supplierId: this.form.controls.header.value.supplierId!,
       estimatedDeliveryDate:
-        this.form.controls.header.controls.estimatedDeliveryDate.value,
-      observation: this.form.controls.header.controls.observation.value,
+        this.form.controls.header.value.estimatedDeliveryDate!,
+      observation: this.form.controls.header.value.observation!,
       purchaseOrderItems: this.items.controls.map((item) => ({
-        productId: item.controls.productId.value,
-        quantity: item.controls.quantity.value,
-        unitPrice: item.controls.unitPrice.value,
+        productId: item.value.productId!,
+        quantity: item.value.quantity!,
+        unitPrice: item.value.unitPrice!,
       })),
     };
 
-    console.log(purchaseOrder);
+    this.purchaseOrderService.createPurchaseOrder(purchaseOrder).subscribe({
+      next: () => {
+        this.snackBar.open('Orden de compra creada con éxito', 'Cerrar', {
+          duration: 3000,
+        });
+        this.router.navigate(['/ordenes-compra']);
+      },
+      error: (err) => {
+        this.snackBar.open('Error al crear la orden de compra', 'Cerrar', {
+          duration: 3000,
+        });
+        console.error(err);
+      },
+    });
   }
 
   goBack() {
