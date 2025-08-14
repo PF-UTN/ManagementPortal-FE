@@ -282,7 +282,7 @@ export class PurchaseOrderListComponent implements OnInit {
       DetailLateralDrawerComponent,
       { purchaseOrderId: request.id },
       {
-        title: 'Detalle de la Orden de Compra',
+        title: 'Detalle Orden de Compra',
         footer: {
           firstButton: {
             text: 'Cerrar',

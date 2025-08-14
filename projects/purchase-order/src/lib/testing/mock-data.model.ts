@@ -29,6 +29,7 @@ export const mockurchaseOrderListItemResponse = {
 export const mockPurchaseOrderDetailItems = [
   {
     id: 1,
+    productId: 102,
     productName: 'Product 1',
     quantity: 2,
     unitPrice: 500,
@@ -36,6 +37,7 @@ export const mockPurchaseOrderDetailItems = [
   },
   {
     id: 2,
+    productId: 101,
     productName: 'Product 2',
     quantity: 1,
     unitPrice: 2000,
@@ -46,7 +48,7 @@ export const mockPurchaseOrderDetailItems = [
 export const mockPurchaseOrderDetail = {
   id: 1,
   supplier: 'Supplier 1',
-  statusName: 'Pending',
+  status: { id: 1, name: 'Pending' },
   createdAt: new Date('2023-01-01'),
   estimatedDeliveryDate: new Date('2023-01-15'),
   effectiveDeliveryDate: new Date('2023-01-20'),

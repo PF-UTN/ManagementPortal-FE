@@ -7,8 +7,8 @@
     <ng-container *ngIf="data() as purchaseOrder">
       <div class="container py-4">
         <div class="card shadow-sm mb-4">
-          <div class="card-header bg-primary text-white">
-            <h5 class="mb-0">Detalles de la orden de compra</h5>
+          <div class="card-header custom-header text-white">
+            <h5 class="mb-0">Detalles generales</h5>
           </div>
           <div class="card-body">
             <div class="row gy-3">
@@ -56,29 +56,20 @@
           </div>
         </div>
 
-        <div class="card shadow-sm">
-          <div class="card-header bg-secondary text-white">
-            <h6 class="mb-0">Productos</h6>
-          </div>
-          <div class="table-responsive">
-            <table class="table table-striped mb-0">
-              <thead class="table-light">
-                <tr>
-                  <th>Producto</th>
-                  <th class="text-end">Cantidad</th>
-                  <th class="text-end">Precio unitario</th>
-                  <th class="text-end">Subtotal</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let item of purchaseOrder.purchaseOrderItems">
-                  <td>{{ item.productName }}</td>
-                  <td class="text-end">{{ item.quantity }}</td>
-                  <td class="text-end">{{ item.unitPrice | currency }}</td>
-                  <td class="text-end">{{ item.subtotalPrice | currency }}</td>
-                </tr>
-              </tbody>
-            </table>
+        <div class="py-4">
+          <div class="card shadow-sm mb-4 mx-auto">
+            <div class="card-header custom-header-products text-white">
+              <h5 class="mb-0">Productos</h5>
+            </div>
+            <div class="table-scroll p-3">
+              <mp-list
+                [columns]="productColumns"
+                [items]="purchaseOrder.purchaseOrderItems || []"
+                [isLoading]="false"
+                noDataMessage="No hay productos en esta orden"
+              >
+              </mp-list>
+            </div>
           </div>
         </div>
       </div>
