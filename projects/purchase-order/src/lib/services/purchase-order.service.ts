@@ -24,8 +24,13 @@ export class PurchaseOrderService {
     return this.http.post<SearchPurchaseOrderResponse>(url, params);
   }
 
+  deletePurchaseOrderAsync(id: number): Observable<void> {
+    const url = `${this.baseUrl}/${id}`;
+    return this.http.delete<void>(url);
+  }
+
   createPurchaseOrder(purchaseOrder: PurchaseOrder) {
-    const url = 'https://dev-management-portal-be.vercel.app/purchase-order';
+    const url = `${this.baseUrl}`;
     return this.http.post(url, purchaseOrder);
   }
 }
