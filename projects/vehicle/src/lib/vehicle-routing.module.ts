@@ -8,6 +8,10 @@ const routes: Routes = [
     path: '',
     component: VehicleListComponent,
   },
+  {
+    path: ':id/mantenimiento',
+    component: VehicleListComponent, // change it for VehicleMaintenanceComponent
+  },
 ];
 
 @NgModule({
