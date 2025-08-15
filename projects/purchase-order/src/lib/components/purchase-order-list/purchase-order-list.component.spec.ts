@@ -8,16 +8,15 @@ import {
   TestBed,
   tick,
 } from '@angular/core/testing';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { mockDeep } from 'jest-mock-extended';
 import { of, throwError } from 'rxjs';
 
 import { PurchaseOrderListComponent } from './purchase-order-list.component';
-import { PurchaseOrderStatusOptions } from '../../constants/status.enum';
+import { PurchaseOrderStatusOptions } from '../../constants/purchase-order-status.enum';
+import { PurchaseOrderItem } from '../../models/purchase-order-item.model';
 import { PurchaseOrderOrderField } from '../../models/purchase-order-param.model';
 import { PurchaseOrderService } from '../../services/purchase-order.service';
 import { mockPurchaseOrderListItems } from '../../testing/mock-data.model';
@@ -26,27 +25,29 @@ describe('PurchaseOrderListComponent', () => {
   let component: PurchaseOrderListComponent;
   let fixture: ComponentFixture<PurchaseOrderListComponent>;
   let service: PurchaseOrderService;
+  let matDialog: MatDialog;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        PurchaseOrderListComponent,
-        BrowserAnimationsModule,
-        MatPaginatorModule,
-        CommonModule,
-        MatIconModule,
-        MatMenuModule,
-        MatButtonModule,
-      ],
+      imports: [PurchaseOrderListComponent, CommonModule, NoopAnimationsModule],
       providers: [
         {
           provide: PurchaseOrderService,
           useValue: mockDeep<PurchaseOrderService>(),
         },
+        {
+          provide: MatSnackBar,
+          useValue: { open: jest.fn() },
+        },
+        {
+          provide: MatDialog,
+          useValue: mockDeep<MatDialog>(),
+        },
       ],
     }).compileComponents();
 
     service = TestBed.inject(PurchaseOrderService);
+    matDialog = TestBed.inject(MatDialog);
     fixture = TestBed.createComponent(PurchaseOrderListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -444,6 +445,67 @@ describe('PurchaseOrderListComponent', () => {
 
       // Assert
       expect(result).toBe(PillStatusEnum.Initial);
+    });
+  });
+
+  describe('confirmDelete', () => {
+    beforeEach(() => {
+      jest.spyOn(matDialog, 'open').mockReturnValue({
+        afterClosed: () => of(true),
+      } as MatDialogRef<unknown, boolean>);
+
+      jest
+        .spyOn(service, 'deletePurchaseOrderAsync')
+        .mockReturnValue(of(void 0));
+    });
+
+    it('should open the confirmation dialog', () => {
+      // Arrange
+      const row = mockDeep<PurchaseOrderItem>({ id: 123 });
+
+      // Act
+      component.confirmDelete(row);
+
+      // Assert
+      expect(matDialog.open).toHaveBeenCalled();
+    });
+
+    it('should call deletePurchaseOrderAsync with the row id', () => {
+      // Arrange
+      const row = mockDeep<PurchaseOrderItem>({ id: 123 });
+
+      // Act
+      component.confirmDelete(row);
+
+      // Assert
+      expect(service.deletePurchaseOrderAsync).toHaveBeenCalledWith(123);
+    });
+
+    it('should set isLoading to true', () => {
+      // Arrange
+      const row = mockDeep<PurchaseOrderItem>({ id: 123 });
+
+      // Act
+      component.confirmDelete(row);
+
+      // Assert
+      expect(component.isLoading).toBe(true);
+    });
+
+    it('should not call deletePurchaseOrderAsync on modal cancel', () => {
+      // Arrange
+      const row = mockDeep<PurchaseOrderItem>({ id: 123 });
+      jest.spyOn(matDialog, 'open').mockReturnValue(
+        mockDeep<MatDialogRef<unknown, unknown>>({
+          afterClosed: () => of(false),
+        }),
+      );
+
+      // Act
+      component.confirmDelete(row);
+
+      // Assert
+      expect(service.deletePurchaseOrderAsync).not.toHaveBeenCalled();
     });
   });
 });

@@ -3,6 +3,8 @@ import {
   ButtonComponent,
   ColumnTypeEnum,
   InputComponent,
+  ModalComponent,
+  ModalConfig,
   LateralDrawerService,
   PillStatusEnum,
   TableColumn,
@@ -16,13 +18,18 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { BehaviorSubject, debounceTime, Subject, switchMap, tap } from 'rxjs';
 
-import { PurchaseOrderStatusOptions } from '../../constants/status.enum';
+import {
+  PurchaseOrderStatusEnabledForDeletion,
+  PurchaseOrderStatusOptions,
+} from '../../constants/purchase-order-status.enum';
 import { PurchaseOrderItem } from '../../models/purchase-order-item.model';
 import {
   PurchaseOrderOrderField,
@@ -49,6 +56,7 @@ import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-la
     ButtonComponent,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatSnackBarModule,
     TitleComponent,
   ],
   providers: [DatePipe],
@@ -119,8 +127,11 @@ export class PurchaseOrderListComponent implements OnInit {
         },
         {
           description: 'Eliminar',
-          action: (element: PurchaseOrderItem) =>
-            console.log('Eliminar', element),
+          disabled: (element: PurchaseOrderItem) =>
+            !PurchaseOrderStatusEnabledForDeletion.includes(
+              element.purchaseOrderStatusName,
+            ),
+          action: (element: PurchaseOrderItem) => this.confirmDelete(element),
         },
         {
           description: 'Cancelar',
@@ -186,6 +197,8 @@ export class PurchaseOrderListComponent implements OnInit {
   constructor(
     private readonly purchaseOrderService: PurchaseOrderService,
     private readonly datePipe: DatePipe,
+    private readonly snackBar: MatSnackBar,
+    private readonly dialog: MatDialog,
     private readonly lateralDrawerService: LateralDrawerService,
   ) {}
 
@@ -314,5 +327,37 @@ export class PurchaseOrderListComponent implements OnInit {
       default:
         return PillStatusEnum.Initial;
     }
+  }
+
+  confirmDelete(row: PurchaseOrderItem) {
+    const config: ModalConfig = {
+      title: 'Confirmar eliminación',
+      message: '¿Estás seguro que deseas eliminar esta Orden de Compra?',
+      confirmText: 'Sí, eliminar',
+      cancelText: 'No',
+    };
+
+    const dialogRef = this.dialog.open(ModalComponent, {
+      data: config,
+      autoFocus: false,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.isLoading = true;
+        this.purchaseOrderService.deletePurchaseOrderAsync(row.id).subscribe({
+          next: () => {
+            this.snackBar.open(
+              'Orden de Compra eliminada correctamente',
+              'Cerrar',
+              {
+                duration: 5000,
+              },
+            );
+            this.doSearchSubject$.next();
+          },
+        });
+      }
+    });
   }
 }

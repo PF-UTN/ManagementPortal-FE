@@ -26,4 +26,9 @@ export class PurchaseOrderService {
     const url = `${this.baseUrl}/${id}`;
     return this.http.get<PurchaseOrderDetail>(url);
   }
+
+  deletePurchaseOrderAsync(id: number): Observable<void> {
+    const url = `${this.baseUrl}/${id}`;
+    return this.http.delete<void>(url);
+  }
 }
