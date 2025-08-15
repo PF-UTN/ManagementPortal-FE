@@ -21,6 +21,16 @@ export const mockPurchaseOrderListItems: PurchaseOrderItem[] = [
   },
 ];
 
+export const mockPurchaseOrderListItem: PurchaseOrderItem = {
+  id: 1,
+  supplierBussinesName: 'Supplier 1',
+  purchaseOrderStatusName: 'Pending',
+  createdAt: new Date('2023-01-01'),
+  estimatedDeliveryDate: new Date('2023-01-15'),
+  effectiveDeliveryDate: new Date('2023-01-20'),
+  totalAmount: 1000,
+};
+
 export const mockurchaseOrderListItemResponse = {
   total: mockPurchaseOrderListItems.length,
   results: mockPurchaseOrderListItems,
