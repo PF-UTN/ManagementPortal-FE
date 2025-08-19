@@ -5,6 +5,7 @@ import {
   InputComponent,
   ModalComponent,
   ModalConfig,
+  LateralDrawerService,
   PillStatusEnum,
   TableColumn,
   TableComponent,
@@ -37,6 +38,7 @@ import {
   PurchaseOrderParams,
 } from '../../models/purchase-order-param.model';
 import { PurchaseOrderService } from '../../services/purchase-order.service';
+import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-lateral-drawer.component';
 
 @Component({
   selector: 'mp-purchase-order-list',
@@ -117,8 +119,7 @@ export class PurchaseOrderListComponent implements OnInit {
       actions: [
         {
           description: 'Ver Detalle',
-          action: (element: PurchaseOrderItem) =>
-            console.log('Ver Detalle', element),
+          action: (element: PurchaseOrderItem) => this.onDetailDrawer(element),
         },
         {
           description: 'Modificar',
@@ -199,6 +200,7 @@ export class PurchaseOrderListComponent implements OnInit {
     private readonly datePipe: DatePipe,
     private readonly snackBar: MatSnackBar,
     private readonly dialog: MatDialog,
+    private readonly lateralDrawerService: LateralDrawerService,
     public readonly router: Router,
   ) {}
 
@@ -288,6 +290,22 @@ export class PurchaseOrderListComponent implements OnInit {
   onOrderByChange(): void {
     this.pageIndex = 0;
     this.doSearchSubject$.next();
+  }
+
+  onDetailDrawer(request: PurchaseOrderItem): void {
+    this.lateralDrawerService.open(
+      DetailLateralDrawerComponent,
+      { purchaseOrderId: request.id },
+      {
+        title: 'Detalle Orden de Compra',
+        footer: {
+          firstButton: {
+            text: 'Cerrar',
+            click: () => this.lateralDrawerService.close(),
+          },
+        },
+      },
+    );
   }
 
   handlePageChange(event: { pageIndex: number; pageSize: number }): void {

@@ -3,8 +3,8 @@ import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 
-import { ListColumn } from '../../models';
-import { LoadingComponent } from '../loading/loading.component';
+import { LoadingComponent } from './../loading/loading.component';
+import { ListColumn } from '../../models/list-column.model';
 
 @Component({
   selector: 'mp-list',

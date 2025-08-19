@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
+import { PurchaseOrderDetail } from '../models/purchase-order-detail.model';
 import {
   PurchaseOrderParams,
   PurchaseOrder,
@@ -22,6 +23,11 @@ export class PurchaseOrderService {
   ): Observable<SearchPurchaseOrderResponse> {
     const url = `${this.baseUrl}/search`;
     return this.http.post<SearchPurchaseOrderResponse>(url, params);
+  }
+
+  getPurchaseOrderById(id: number): Observable<PurchaseOrderDetail> {
+    const url = `${this.baseUrl}/${id}`;
+    return this.http.get<PurchaseOrderDetail>(url);
   }
 
   deletePurchaseOrderAsync(id: number): Observable<void> {
