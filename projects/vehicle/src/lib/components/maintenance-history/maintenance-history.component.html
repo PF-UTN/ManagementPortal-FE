@@ -1,0 +1,19 @@
+<div class="container-fluid">
+    <div class="header">
+        <div class="header__title">
+            <mp-back-arrow [backTo]="''"></mp-back-arrow>
+            <mp-title>Historial de Mantenimiento Id:{{vehicleId}}</mp-title>
+        </div>
+        <div class="header__dropdown">
+            <mp-dropdown-button type="primary" [items]="dropdownItems">
+                Nuevo
+            </mp-dropdown-button>
+        </div>
+    </div>
+    <hr />
+    <mat-tab-group animationDuration="0ms">
+        <mat-tab label="Plan de Mantenimiento"><mp-maintenance-plan-list></mp-maintenance-plan-list></mat-tab>
+        <mat-tab label="Mantenimientos"><mp-maintenance-list></mp-maintenance-list></mat-tab>
+        <mat-tab label="Reparaciónes"><mp-maintenance-repair-list></mp-maintenance-repair-list></mat-tab>
+    </mat-tab-group>
+</div>
