@@ -317,24 +317,26 @@ export class PurchaseOrderCreatedComponent {
   }
 
   onClearOrder(): void {
-    if (this.items.length > 0) {
-      const dialogRef = this.dialog.open(ModalComponent, {
-        data: {
-          title: 'Confirmación',
-          message:
-            'Si cambia de proveedor se eliminará la orden de compra actual. ¿Desea continuar?',
-          confirmText: 'Continuar',
-          cancelText: 'Volver',
-        },
-      });
-      dialogRef.afterClosed().subscribe((result) => {
-        if (result) {
-          this.resetForms();
-        }
-      });
-    } else {
+    if (this.items.length === 0) {
       this.resetForms();
+      return;
     }
+
+    const dialogRef = this.dialog.open(ModalComponent, {
+      data: {
+        title: 'Confirmación',
+        message:
+          'Si cambia de proveedor se eliminará la orden de compra actual. ¿Desea continuar?',
+        confirmText: 'Continuar',
+        cancelText: 'Volver',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.resetForms();
+      }
+    });
   }
 
   resetForms(): void {
@@ -376,6 +378,7 @@ export class PurchaseOrderCreatedComponent {
         this.snackBar.open('Error al crear la orden de compra', 'Cerrar', {
           duration: 3000,
         });
+        this.isLoading.set(false);
       },
     });
   }

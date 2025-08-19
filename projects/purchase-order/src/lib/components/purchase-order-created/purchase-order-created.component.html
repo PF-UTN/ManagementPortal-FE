@@ -76,7 +76,6 @@
                                     [textarea]="true"
                                     [formControl]="form.controls.header.controls.observation"
                                     placeholder="Escriba sus observaciones"
-                                    [errorMessages]="{ maxlength: 'No puede superar los 100 caracteres.' }" 
                                     icon="close"
                                     class="purchase-order__form-field__input">
                                 </mp-input>
@@ -131,10 +130,10 @@
                                     <table>
                                         <thead>
                                             <tr>
-                                                <th class="purchase-order__table__col-3">Nombre del Producto</th>
-                                                <th class="purchase-order__table__col-3">Cantidad</th>
-                                                <th class="purchase-order__table__col-3">Precio</th>
-                                                <th class="purchase-order__table__col-2">Subtotal</th>
+                                                <th class="purchase-order__table__col-4">Nombre del Producto</th>
+                                                <th class="purchase-order__table__col-2">Cantidad</th>
+                                                <th class="purchase-order__table__col-2">Precio</th>
+                                                <th class="purchase-order__table__col-3">Subtotal</th>
                                                 <th class="purchase-order__table__col-1"></th>
                                             </tr>
                                         </thead>
@@ -144,33 +143,22 @@
                                                     getProductName(item.controls.productId.value) }}
                                                     </td>
                                                 <td class="purchase-order__table__cell">
-                                                    <mat-form-field appearance="outline" class="purchase-order__form-field">
-                                                        <mat-label>Cantidad</mat-label>
-                                                        <input 
-                                                            matInput 
-                                                            type="number" 
-                                                            formControlName="quantity"
-                                                            placeholder="Cantidad"
-                                                            class="purchase-order__form-field__input" />
-                                                        <mat-error *ngIf="item.controls.quantity?.hasError('min')">
-                                                            Cantidad debe ser mayor a 0
-                                                        </mat-error>
-                                                    </mat-form-field>
+                                                    <mp-input
+                                                        label="Cantidad"
+                                                        type="number"
+                                                        [formControl]="item.controls.quantity"
+                                                        placeholder="Cantidad"
+                                                        class="purchase-order__form-field__input">
+                                                    </mp-input>
                                                 </td>
                                                 <td class="purchase-order__table__cell">
-                                                    <mat-form-field appearance="outline" class="purchase-order__form-field">
-                                                        <mat-label>Precio</mat-label>
-                                                        <span matTextPrefix>$&nbsp;</span>
-                                                        <input 
-                                                            matInput 
-                                                            type="number" 
-                                                            formControlName="unitPrice"
-                                                            placeholder="Precio"
-                                                            class="purchase-order__form-field__input" />
-                                                        <mat-error *ngIf="item.controls.unitPrice?.hasError('min')">
-                                                            Precio debe ser mayor a 0.
-                                                        </mat-error>
-                                                    </mat-form-field>
+                                                    <mp-input
+                                                        label="Precio"
+                                                        type="number"
+                                                        [formControl]="item.controls.unitPrice"
+                                                        placeholder="Precio"
+                                                        class="purchase-order__form-field__input">
+                                                    </mp-input>
                                                 </td>
                                                 <td class="purchase-order__table__cell__subtotal">
                                                     {{ (item.controls.quantity.value || 0) * (item.controls.unitPrice.value || 0) | currency:'ARS':'symbol':'1.2-2' }}

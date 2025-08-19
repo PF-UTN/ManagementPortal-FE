@@ -38,6 +38,10 @@
     overflow-y: auto;
     border: none;
 
+    &__col-4 {
+      width: 40%;
+    }
+
     &__col-3 {
       width: 30%;
     }
@@ -60,6 +64,10 @@
       padding: 12px 2px;
 
       &__subtotal {
+        max-width: 80px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
         text-align: end;
       }
     }
