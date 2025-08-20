@@ -43,10 +43,7 @@ export class MaintenanceHistoryComponent implements OnInit {
 
   constructor(private route: ActivatedRoute) {}
 
-  ngOnInit(): void {
-    this.vehicleId = this.route.snapshot.paramMap.get('vehicleId')!;
-    console.log('Vehicle ID:', this.vehicleId);
-  }
+  ngOnInit(): void {}
 
   onCreateMaintenancePlanDrawer() {
     // Logic to open the create/update maintenance plan drawer

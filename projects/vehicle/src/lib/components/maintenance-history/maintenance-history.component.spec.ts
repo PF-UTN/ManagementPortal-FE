@@ -34,13 +34,6 @@ describe('MaintenanceHistoryComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should set vehicleId from route params on init', () => {
-    // Act
-    const result = component.vehicleId;
-    // Assert
-    expect(result).toBe('123');
-  });
-
   it('should have dropdown items with correct labels', () => {
     // Act
     const labels = component.dropdownItems.map((item) => item.label);
