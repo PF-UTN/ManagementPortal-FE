@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
+import { MaintenanceHistoryComponent } from './components/maintenance-history/maintenance-history.component';
 import { VehicleListComponent } from './components/vehicle-list/vehicle-list.component';
 
 const routes: Routes = [
@@ -9,8 +10,8 @@ const routes: Routes = [
     component: VehicleListComponent,
   },
   {
-    path: ':id/mantenimiento',
-    component: VehicleListComponent, // change it for VehicleMaintenanceComponent
+    path: ':vehicleId/mantenimiento',
+    component: MaintenanceHistoryComponent,
   },
 ];
 
