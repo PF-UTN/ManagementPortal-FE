@@ -2,7 +2,12 @@
   <div class="main-container__header">
     <mp-title>Ordenes de Compra</mp-title>
     <div class="filters-container__dropdown">
-      <mp-button type="primary"> Nuevo </mp-button>
+      <mp-button 
+        type="primary" 
+        (click)="openCreatePurchaseOrder()" 
+        (keydown.enter)="openCreatePurchaseOrder()">
+          Nuevo 
+      </mp-button>
     </div>
   </div>
 

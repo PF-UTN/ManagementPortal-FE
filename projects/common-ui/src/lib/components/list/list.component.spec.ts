@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
 import { ListComponent } from './list.component';
-import { ListColumn } from '../../models/list-column.model';
+import { ListColumn } from '../../models';
 
 type MockItem = { name: string; age?: number };
 
