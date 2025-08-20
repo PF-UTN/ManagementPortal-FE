@@ -1,5 +1,13 @@
 @import '../../../../../../src/styles/varibles';
 
 .back-arrow {
-  color: $muted-purple;
+  color: $white-color;
+
+  &.black {
+    color: $color-black;
+  }
+
+  &.muted-purple {
+    color: $muted-purple;
+  }
 }
