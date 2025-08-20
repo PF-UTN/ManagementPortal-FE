@@ -1,0 +1,75 @@
+@import '../../../../../../src/styles/varibles';
+
+.purchase-order {
+  &__form-field {
+    width: 100%;
+  }
+
+  &__empty-message {
+    text-align: center;
+    color: $color-grey;
+    padding: 16px 0;
+  }
+
+  &__total {
+    font-weight: bold;
+    font-size: 18px;
+    text-align: end;
+    padding: 24px 0;
+  }
+
+  &__buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+
+    &__item {
+      min-width: 150px;
+      text-align: center;
+    }
+  }
+
+  &__table {
+    table-layout: fixed;
+    width: 100%;
+    margin-top: 20px;
+    max-height: 400px;
+    overflow-y: auto;
+    border: none;
+
+    &__col-4 {
+      width: 40%;
+    }
+
+    &__col-3 {
+      width: 30%;
+    }
+
+    &__col-2 {
+      width: 20%;
+    }
+
+    &__col-1 {
+      width: 10%;
+    }
+
+    &__cell {
+      max-width: 150px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      border: none;
+      vertical-align: middle;
+      padding: 12px 2px;
+
+      &__subtotal {
+        max-width: 80px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        text-align: end;
+      }
+    }
+  }
+}

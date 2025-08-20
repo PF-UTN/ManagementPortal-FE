@@ -1,1 +1,227 @@
-<p>purchase-order-created works!</p>
+<mp-loading *ngIf="isLoading()"></mp-loading>
+
+<div *ngIf="!isLoading()">
+    <div class="d-flex align-items-center mb-2">
+        <button mat-icon-button (click)="goBack()" aria-label="Volver">
+            <mat-icon>arrow_back</mat-icon>
+        </button>
+        <mp-title>Nueva Orden de Compra</mp-title>
+    </div>
+    <hr />
+
+    <div class="container">
+        <mat-stepper orientation="vertical" [linear]="true" #stepper class="mt-2">
+            <div class="purchase-order__header">
+                <mat-step [stepControl]="form.controls.header">
+                    <form [formGroup]="form.controls.header">
+                        <ng-template matStepLabel>Datos de la Orden</ng-template>
+                        <div class="row mt-2">
+                            <div class="col-8">
+                                <mat-form-field appearance="outline" class="purchase-order__form-field">
+                                    <mat-label>Proveedor</mat-label>
+                                    <input 
+                                        type="text" 
+                                        matInput 
+                                        formControlName="supplier"
+                                        [matAutocomplete]="autoSupplier" 
+                                        placeholder="Seleccionar proveedor"
+                                        [attr.autocomplete]="'off'"
+                                    />
+                                    <button 
+                                        type="button" 
+                                        matSuffix
+                                        mat-icon-button 
+                                        aria-label="Clear"
+                                        (click)="onClearOrder()">
+                                        <mat-icon aria-hidden="false" fontIcon="close"></mat-icon>
+                                    </button>
+                                    <mat-autocomplete 
+                                        #autoSupplier="matAutocomplete"
+                                        [displayWith]="displaySupplierName"
+                                        (optionSelected)="onSupplierSelected($event)">
+                                        <mat-option *ngFor="let supplier of filteredSuppliers$ | async"
+                                            [value]="supplier">
+                                            {{ supplier.businessName }}
+                                        </mat-option>
+                                    </mat-autocomplete>
+                                    <mat-error
+                                        *ngIf="form.controls.header.controls.supplier?.hasError('required') && form.controls.header.controls.supplier?.touched">
+                                        El proveedor es requerido
+                                    </mat-error>
+                                    <mat-error
+                                        *ngIf="form.controls.header.controls.supplier?.hasError('invalidSupplier') && form.controls.header.controls.supplier?.touched">
+                                        Debe seleccionar un proveedor de la lista.
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+
+                            <div class="col-4">
+                                <mat-form-field appearance="outline" class="purchase-order__form-field">
+                                    <mat-label>Fecha estimada de entrega</mat-label>
+                                    <input 
+                                        matInput 
+                                        [matDatepicker]="picker" 
+                                        formControlName="estimatedDeliveryDate"
+                                        required
+                                    >
+                                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                    <mat-datepicker #picker></mat-datepicker>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <mp-input 
+                                    label="Observaciones" 
+                                    [textarea]="true"
+                                    [formControl]="form.controls.header.controls.observation"
+                                    placeholder="Escriba sus observaciones"
+                                    icon="close"
+                                    class="purchase-order__form-field__input">
+                                </mp-input>
+                            </div>
+                        </div>
+
+                        <div>
+                            <button mat-button matStepperNext [disabled]="!form.controls.header.valid">
+                                Siguiente
+                            </button>
+                        </div>
+                    </form>
+                </mat-step>
+            </div>
+            <div class="purchase-order__body">
+                <mat-step [stepControl]="form.controls.items">
+                    <form [formGroup]="form">
+                        <ng-template matStepLabel>Productos</ng-template>
+                        <div class="row mt-2">
+                            <div class="col-4">
+                                <mat-form-field appearance="fill" class="purchase-order__form-field mb-3">
+                                    <mat-label>Buscar productos</mat-label>
+                                    <input 
+                                        matInput 
+                                        formControlName="searchText" 
+                                        (input)="onSearchProducts()"
+                                        placeholder="Buscar producto">
+                                    <button 
+                                        type="button" 
+                                        matSuffix 
+                                        mat-icon-button 
+                                        aria-label="Clear"
+                                        (click)="form.controls.searchText.reset(); onSearchProducts()"
+                                        class="purchase-order__actions__item">
+                                        <mat-icon aria-hidden="false" fontIcon="close"></mat-icon>
+                                    </button>
+                                </mat-form-field>
+                                <mp-list 
+                                    [columns]="productColumns" 
+                                    [items]="filteredProducts"
+                                    [noDataMessage]="'No hay productos disponibles para este proveedor.'"
+                                    [isLoading]="isLoadingProducts()">
+                                </mp-list>
+                            </div>
+
+                            <div class="col-8">
+                                <mp-title>Productos seleccionados</mp-title>
+                                <div *ngIf="items.length === 0" class="purchase-order__empty-message">
+                                    No se han agregado productos aún
+                                </div>
+                                <div class="purchase-order__table" *ngIf="items.length > 0">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th class="purchase-order__table__col-4">Nombre del Producto</th>
+                                                <th class="purchase-order__table__col-2">Cantidad</th>
+                                                <th class="purchase-order__table__col-2">Precio</th>
+                                                <th class="purchase-order__table__col-3">Subtotal</th>
+                                                <th class="purchase-order__table__col-1"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let item of items.controls; let i = index" [formGroup]="item">
+                                                <td class="purchase-order__table__cell">{{
+                                                    getProductName(item.controls.productId.value) }}
+                                                    </td>
+                                                <td class="purchase-order__table__cell">
+                                                    <mp-input
+                                                        label="Cantidad"
+                                                        type="number"
+                                                        [formControl]="item.controls.quantity"
+                                                        placeholder="Cantidad"
+                                                        class="purchase-order__form-field__input">
+                                                    </mp-input>
+                                                </td>
+                                                <td class="purchase-order__table__cell">
+                                                    <mp-input
+                                                        label="Precio"
+                                                        type="number"
+                                                        [formControl]="item.controls.unitPrice"
+                                                        placeholder="Precio"
+                                                        class="purchase-order__form-field__input">
+                                                    </mp-input>
+                                                </td>
+                                                <td class="purchase-order__table__cell__subtotal">
+                                                    {{ (item.controls.quantity.value || 0) * (item.controls.unitPrice.value || 0) | currency:'ARS':'symbol':'1.2-2' }}
+                                                </td>
+                                                <td class="purchase-order__table__cell">
+                                                    <button mat-icon-button
+                                                        (click)="removeProduct(item.controls.productId.value ?? -1)">
+                                                        <mat-icon>delete</mat-icon>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="purchase-order__total mt-3">
+                                <span><strong>Total: {{ calculateTotal() | currency:'ARS':'symbol':'1.2-2'}}</strong></span>
+                            </div>
+                            <div class="purchase-order__buttons">
+                                <button mat-button matStepperPrevious>Anterior</button>
+                                <button 
+                                    mat-button matStepperNext
+                                    [disabled]="!form.controls.items.valid || items.length === 0">
+                                    Siguiente
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </mat-step>
+            </div>
+
+            <div class="purchase-order__footer">
+                <mat-step [stepControl]="form">
+                        <ng-template matStepLabel>Detalle</ng-template>
+                        <div class="purchase-order__footer__header">
+                            <mp-title>Resumen de la Orden de Compra</mp-title>
+                            <p><strong>Proveedor: </strong>{{ form.controls.header.value.supplier?.businessName }}</p>
+                            <p><strong>Fecha: </strong>{{ form.controls.header.value.estimatedDeliveryDate |
+                                date:'dd/MM/yyyy' }}</p>
+                        </div>
+                        <div class="purchase-order__footer__list">
+                            <mp-list 
+                                [columns]="listColumns" 
+                                [items]="items.controls"
+                                [noDataMessage]="'No se han agregado productos.'">
+                            </mp-list>
+                        </div>
+                        <div class="purchase-order__total">
+                                <span><strong>Total: {{ calculateTotal() | currency:'ARS':'symbol':'1.2-2'}}</strong></span>
+                        </div>
+                        <div class="purchase-order__buttons">
+                            <button mat-button matStepperPrevious>Anterior</button>
+                            <mp-button 
+                                type="primary" 
+                                (onClick)="onSubmit()" 
+                                [disabled]="!form.valid">
+                                Guardar
+                            </mp-button>
+                        </div>
+                </mat-step>
+            </div>
+        </mat-stepper>
+    </div>
+</div>
