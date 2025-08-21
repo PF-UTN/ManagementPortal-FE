@@ -402,17 +402,6 @@ describe('PurchaseOrderListComponent', () => {
       expect(result).toBe(PillStatusEnum.Initial);
     });
 
-    it('should return PillStatusEnum.InProgress for Pending status', () => {
-      // Arrange
-      const status = PurchaseOrderStatusOptions.Pending;
-
-      // Act
-      const result = component.mapStatusToPillStatus(status);
-
-      // Assert
-      expect(result).toBe(PillStatusEnum.Initial);
-    });
-
     it('should return PillStatusEnum.Cancelled for Cancelled status', () => {
       // Arrange
       const status = PurchaseOrderStatusOptions.Cancelled;

@@ -316,8 +316,6 @@ export class PurchaseOrderListComponent implements OnInit {
     switch (status) {
       case PurchaseOrderStatusOptions.Draft:
         return PillStatusEnum.Initial;
-      case PurchaseOrderStatusOptions.Pending:
-        return PillStatusEnum.Initial;
       case PurchaseOrderStatusOptions.Ordered:
         return PillStatusEnum.InProgress;
       case PurchaseOrderStatusOptions.Received:
