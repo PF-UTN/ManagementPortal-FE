@@ -3,6 +3,7 @@ import {
   ButtonComponent,
   ColumnTypeEnum,
   InputComponent,
+  LateralDrawerService,
   ModalComponent,
   ModalConfig,
   PillStatusEnum,
@@ -36,6 +37,7 @@ import {
   PurchaseOrderParams,
 } from '../../models/purchase-order-param.model';
 import { PurchaseOrderService } from '../../services/purchase-order.service';
+import { CancelLateralDrawerComponent } from '../cancel-lateral-drawer/cancel-lateral-drawer.component';
 
 @Component({
   selector: 'mp-purchase-order-list',
@@ -134,8 +136,7 @@ export class PurchaseOrderListComponent implements OnInit {
         },
         {
           description: 'Cancelar',
-          action: (element: PurchaseOrderItem) =>
-            console.log('Cancelar', element),
+          action: (element: PurchaseOrderItem) => this.onCancelDrawer(element),
         },
         {
           description: 'Ejecutar',
@@ -198,6 +199,7 @@ export class PurchaseOrderListComponent implements OnInit {
     private readonly datePipe: DatePipe,
     private readonly snackBar: MatSnackBar,
     private readonly dialog: MatDialog,
+    private readonly lateralDrawerService: LateralDrawerService,
   ) {}
 
   ngOnInit(): void {
@@ -341,5 +343,29 @@ export class PurchaseOrderListComponent implements OnInit {
         });
       }
     });
+  }
+
+  onCancelDrawer(rowItem: PurchaseOrderItem): void {
+    this.lateralDrawerService
+      .open(
+        CancelLateralDrawerComponent,
+        { data: rowItem },
+        {
+          title: 'Cancelar Orden de Compra',
+          footer: {
+            firstButton: {
+              text: 'Confirmar',
+              click: () => {},
+            },
+            secondButton: {
+              text: 'Cancelar',
+              click: () => {
+                this.lateralDrawerService.close();
+              },
+            },
+          },
+        },
+      )
+      .subscribe(() => this.doSearchSubject$.next());
   }
 }

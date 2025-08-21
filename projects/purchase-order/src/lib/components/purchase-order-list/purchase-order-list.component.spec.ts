@@ -1,5 +1,5 @@
 import { OrderDirection } from '@Common';
-import { PillStatusEnum } from '@Common-UI';
+import { LateralDrawerService, PillStatusEnum } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
 import {
@@ -25,6 +25,7 @@ describe('PurchaseOrderListComponent', () => {
   let component: PurchaseOrderListComponent;
   let fixture: ComponentFixture<PurchaseOrderListComponent>;
   let service: PurchaseOrderService;
+  let lateralDrawerService: LateralDrawerService;
   let matDialog: MatDialog;
 
   beforeEach(async () => {
@@ -43,10 +44,18 @@ describe('PurchaseOrderListComponent', () => {
           provide: MatDialog,
           useValue: mockDeep<MatDialog>(),
         },
+        {
+          provide: LateralDrawerService,
+          useValue: {
+            open: jest.fn().mockReturnValue(of(void 0)),
+            close: jest.fn(),
+          },
+        },
       ],
     }).compileComponents();
 
     service = TestBed.inject(PurchaseOrderService);
+    lateralDrawerService = TestBed.inject(LateralDrawerService);
     matDialog = TestBed.inject(MatDialog);
     fixture = TestBed.createComponent(PurchaseOrderListComponent);
     component = fixture.componentInstance;
@@ -507,5 +516,42 @@ describe('PurchaseOrderListComponent', () => {
       // Assert
       expect(service.deletePurchaseOrderAsync).not.toHaveBeenCalled();
     });
+  });
+
+  describe('onCancelDrawer', () => {
+    it('should open the CancelLateralDrawerComponent with correct configuration', () => {
+      // Arrange
+      const rowItem = mockDeep<PurchaseOrderItem>({ id: 456 });
+
+      // Act
+      component.onCancelDrawer(rowItem);
+
+      // Assert
+      expect(lateralDrawerService.open).toHaveBeenCalledWith(
+        expect.any(Function),
+        { data: rowItem },
+        expect.objectContaining({
+          title: 'Cancelar Orden de Compra',
+          footer: expect.objectContaining({
+            firstButton: expect.objectContaining({ text: 'Confirmar' }),
+            secondButton: expect.objectContaining({ text: 'Cancelar' }),
+          }),
+        }),
+      );
+    });
+
+    it('should trigger a search after the drawer closes', fakeAsync(() => {
+      // Arrange
+      const doSearchSpy = jest.spyOn(component.doSearchSubject$, 'next');
+      const rowItem = mockDeep<PurchaseOrderItem>({ id: 456 });
+      jest.spyOn(lateralDrawerService, 'open').mockReturnValue(of(void 0));
+
+      // Act
+      component.onCancelDrawer(rowItem);
+      tick();
+
+      // Assert
+      expect(doSearchSpy).toHaveBeenCalled();
+    }));
   });
 });
