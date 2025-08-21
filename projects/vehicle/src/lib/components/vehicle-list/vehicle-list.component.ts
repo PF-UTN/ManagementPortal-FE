@@ -15,6 +15,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { BehaviorSubject, debounceTime, Subject, switchMap, tap } from 'rxjs';
 
 import { VehicleListItem } from '../../models/vehicle-item.model';
@@ -134,6 +135,12 @@ export class VehicleListComponent implements OnInit {
               .subscribe(() => this.doSearchSubject$.next());
           },
         },
+        {
+          description: 'Mantenimiento',
+          action: (element: VehicleListItem) => {
+            this.router.navigate(['vehiculos', element.id, 'mantenimiento']);
+          },
+        },
       ],
     },
   ];
@@ -153,6 +160,7 @@ export class VehicleListComponent implements OnInit {
     private readonly snackBar: MatSnackBar,
     private readonly decimalPipe: DecimalPipe,
     private readonly datePipe: DatePipe,
+    private readonly router: Router,
   ) {}
 
   ngOnInit(): void {

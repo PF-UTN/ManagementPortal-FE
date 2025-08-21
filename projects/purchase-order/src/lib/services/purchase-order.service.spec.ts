@@ -10,8 +10,12 @@ import { PurchaseOrderService } from './purchase-order.service';
 import {
   PurchaseOrderOrderField,
   PurchaseOrderParams,
+  PurchaseOrder,
 } from '../models/purchase-order-param.model';
-import { mockPurchaseOrderListItems } from '../testing/mock-data.model';
+import {
+  mockPurchaseOrderDetail,
+  mockPurchaseOrderListItems,
+} from '../testing/mock-data.model';
 
 const baseUrl = 'https://dev-management-portal-be.vercel.app/purchase-order';
 
@@ -92,6 +96,104 @@ describe('PurchaseOrderService', () => {
           expect(error.error).toBe(mockError);
         },
       });
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
+      req.error(mockError);
+    });
+  });
+  describe('getPurchaseOrderById', () => {
+    it('should send a GET request and return the purchase order detail', () => {
+      // Arrange
+      const purchaseOrderId = 1;
+      const url = `${baseUrl}/${purchaseOrderId}`;
+
+      // Act & Assert
+      service.getPurchaseOrderById(purchaseOrderId).subscribe((response) => {
+        expect(response).toEqual(mockPurchaseOrderDetail);
+      });
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('GET');
+      req.flush(mockPurchaseOrderDetail);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const purchaseOrderId = 1;
+      const url = `${baseUrl}/${purchaseOrderId}`;
+      const mockError = new ErrorEvent('Network error');
+
+      // Act & Assert
+      service.getPurchaseOrderById(purchaseOrderId).subscribe({
+        next: () => {
+          fail('Expected an error, but got a successful response');
+        },
+        error: (error) => {
+          expect(error.error).toBe(mockError);
+        },
+      });
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('GET');
+      req.error(mockError);
+    });
+  });
+
+  describe('createPurchaseOrder', () => {
+    it('should send a POST request with the correct body and return success', () => {
+      // Arrange
+      const mockPurchaseOrder: PurchaseOrder = {
+        supplierId: 1,
+        estimatedDeliveryDate: '1990-01-15',
+        observation: 'Purchase order for office supplies',
+        purchaseOrderItems: [
+          {
+            productId: 1,
+            quantity: 2,
+            unitPrice: 100.5,
+          },
+        ],
+      };
+      const url = `${baseUrl}`;
+
+      // Act
+      service.createPurchaseOrder(mockPurchaseOrder).subscribe((response) => {
+        expect(response).toEqual({});
+      });
+
+      // Assert
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(mockPurchaseOrder);
+      req.flush({});
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const mockPurchaseOrder: PurchaseOrder = {
+        supplierId: 1,
+        estimatedDeliveryDate: '1990-01-15',
+        observation: 'Purchase order for office supplies',
+        purchaseOrderItems: [
+          {
+            productId: 1,
+            quantity: 2,
+            unitPrice: 100.5,
+          },
+        ],
+      };
+      const url = `${baseUrl}`;
+      const mockError = new ErrorEvent('Network error');
+
+      // Act
+      service.createPurchaseOrder(mockPurchaseOrder).subscribe({
+        next: () => {
+          fail('Expected an error, but got a successful response');
+        },
+        error: (error) => {
+          expect(error.error).toBe(mockError);
+        },
+      });
+
+      // Assert
       const req = httpMock.expectOne(url);
       expect(req.request.method).toBe('POST');
       req.error(mockError);

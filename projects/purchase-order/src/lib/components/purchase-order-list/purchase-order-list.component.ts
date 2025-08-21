@@ -24,6 +24,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { BehaviorSubject, debounceTime, Subject, switchMap, tap } from 'rxjs';
 
 import {
@@ -38,6 +39,7 @@ import {
 } from '../../models/purchase-order-param.model';
 import { PurchaseOrderService } from '../../services/purchase-order.service';
 import { CancelLateralDrawerComponent } from '../cancel-lateral-drawer/cancel-lateral-drawer.component';
+import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-lateral-drawer.component';
 
 @Component({
   selector: 'mp-purchase-order-list',
@@ -118,8 +120,7 @@ export class PurchaseOrderListComponent implements OnInit {
       actions: [
         {
           description: 'Ver Detalle',
-          action: (element: PurchaseOrderItem) =>
-            console.log('Ver Detalle', element),
+          action: (element: PurchaseOrderItem) => this.onDetailDrawer(element),
         },
         {
           description: 'Modificar',
@@ -200,6 +201,7 @@ export class PurchaseOrderListComponent implements OnInit {
     private readonly snackBar: MatSnackBar,
     private readonly dialog: MatDialog,
     private readonly lateralDrawerService: LateralDrawerService,
+    public readonly router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -290,6 +292,22 @@ export class PurchaseOrderListComponent implements OnInit {
     this.doSearchSubject$.next();
   }
 
+  onDetailDrawer(request: PurchaseOrderItem): void {
+    this.lateralDrawerService.open(
+      DetailLateralDrawerComponent,
+      { purchaseOrderId: request.id },
+      {
+        title: 'Detalle Orden de Compra',
+        footer: {
+          firstButton: {
+            text: 'Cerrar',
+            click: () => this.lateralDrawerService.close(),
+          },
+        },
+      },
+    );
+  }
+
   handlePageChange(event: { pageIndex: number; pageSize: number }): void {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
@@ -343,6 +361,10 @@ export class PurchaseOrderListComponent implements OnInit {
         });
       }
     });
+  }
+
+  openCreatePurchaseOrder() {
+    this.router.navigate(['/ordenes-compra/crear']);
   }
 
   onCancelDrawer(rowItem: PurchaseOrderItem): void {

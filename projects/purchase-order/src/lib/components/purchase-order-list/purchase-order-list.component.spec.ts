@@ -20,6 +20,7 @@ import { PurchaseOrderItem } from '../../models/purchase-order-item.model';
 import { PurchaseOrderOrderField } from '../../models/purchase-order-param.model';
 import { PurchaseOrderService } from '../../services/purchase-order.service';
 import { mockPurchaseOrderListItems } from '../../testing/mock-data.model';
+import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-lateral-drawer.component';
 
 describe('PurchaseOrderListComponent', () => {
   let component: PurchaseOrderListComponent;
@@ -54,6 +55,7 @@ describe('PurchaseOrderListComponent', () => {
       ],
     }).compileComponents();
 
+    lateralDrawerService = TestBed.inject(LateralDrawerService);
     service = TestBed.inject(PurchaseOrderService);
     lateralDrawerService = TestBed.inject(LateralDrawerService);
     matDialog = TestBed.inject(MatDialog);
@@ -515,6 +517,44 @@ describe('PurchaseOrderListComponent', () => {
 
       // Assert
       expect(service.deletePurchaseOrderAsync).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('onDetailDrawer', () => {
+    it('should open drawer with productId and correct config', () => {
+      //Arrange
+      const openSpy = jest.spyOn(lateralDrawerService, 'open');
+
+      // Act
+      component.onDetailDrawer(mockPurchaseOrderListItems[0]);
+
+      // Assert
+      expect(openSpy).toHaveBeenCalledWith(
+        DetailLateralDrawerComponent,
+        { purchaseOrderId: mockPurchaseOrderListItems[0].id },
+        expect.objectContaining({
+          title: 'Detalle Orden de Compra',
+          footer: expect.objectContaining({
+            firstButton: expect.objectContaining({
+              text: 'Cerrar',
+              click: expect.any(Function),
+            }),
+          }),
+        }),
+      );
+    });
+  });
+
+  describe('openCreatePurchaseOrder', () => {
+    it('should navigate to /ordenes-compra/crear when called', () => {
+      // Arrange
+      const spy = jest.spyOn(component.router, 'navigate');
+
+      // Act
+      component.openCreatePurchaseOrder();
+
+      // Assert
+      expect(spy).toHaveBeenCalledWith(['/ordenes-compra/crear']);
     });
   });
 

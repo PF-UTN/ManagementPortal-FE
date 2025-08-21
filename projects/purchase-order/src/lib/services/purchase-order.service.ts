@@ -5,7 +5,11 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { PostUpdatePurchaseOrderStatusRequest } from '../models/post-cancel-purchase-order-request.model';
-import { PurchaseOrderParams } from '../models/purchase-order-param.model';
+import { PurchaseOrderDetail } from '../models/purchase-order-detail.model';
+import {
+  PurchaseOrderParams,
+  PurchaseOrder,
+} from '../models/purchase-order-param.model';
 import { SearchPurchaseOrderResponse } from '../models/search-purchase-order-response.model';
 
 @Injectable({
@@ -22,9 +26,19 @@ export class PurchaseOrderService {
     return this.http.post<SearchPurchaseOrderResponse>(url, params);
   }
 
+  getPurchaseOrderById(id: number): Observable<PurchaseOrderDetail> {
+    const url = `${this.baseUrl}/${id}`;
+    return this.http.get<PurchaseOrderDetail>(url);
+  }
+
   deletePurchaseOrderAsync(id: number): Observable<void> {
     const url = `${this.baseUrl}/${id}`;
     return this.http.delete<void>(url);
+  }
+
+  createPurchaseOrder(purchaseOrder: PurchaseOrder) {
+    const url = `${this.baseUrl}`;
+    return this.http.post(url, purchaseOrder);
   }
 
   updatePurchaseOrderStatusAsync(
