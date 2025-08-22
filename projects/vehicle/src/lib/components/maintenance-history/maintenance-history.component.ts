@@ -29,7 +29,7 @@ import { MaintenanceRepairListComponent } from '../maintenance-repair-list/maint
   styleUrl: './maintenance-history.component.scss',
 })
 export class MaintenanceHistoryComponent implements OnInit {
-  vehicleId!: string;
+  vehicleId!: number;
   dropdownItems: DropdownItem[] = [
     {
       label: 'Crear Mantenimiento',
@@ -43,7 +43,9 @@ export class MaintenanceHistoryComponent implements OnInit {
 
   constructor(private route: ActivatedRoute) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.vehicleId = Number(this.route.snapshot.paramMap.get('vehicleId'));
+  }
 
   onCreateMaintenancePlanDrawer() {
     // Logic to open the create/update maintenance plan drawer

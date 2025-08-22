@@ -225,4 +225,46 @@ describe('VehicleService', () => {
       req.error(mockError);
     });
   });
+
+  describe('postSearchMaintenanceVehicle', () => {
+    it('should send a POST request with the correct vehicleId and params and return data', () => {
+      // Arrange
+      const vehicleId = 123;
+      const params = { searchText: 'aceite', page: 1, pageSize: 10 };
+      const mockResponse = { results: [], total: 0 };
+      const url = `${baseUrl}/${vehicleId}/maintenance/search`;
+
+      // Act & Assert
+      service
+        .postSearchMaintenanceVehicle(vehicleId, params)
+        .subscribe((response) => {
+          expect(response).toEqual(mockResponse);
+        });
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(params);
+      req.flush(mockResponse);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const vehicleId = 123;
+      const params = { searchText: 'aceite', page: 1, pageSize: 10 };
+      const mockError = new ErrorEvent('Network error');
+      const url = `${baseUrl}/${vehicleId}/maintenance/search`;
+
+      // Act
+      service.postSearchMaintenanceVehicle(vehicleId, params).subscribe({
+        next: () => {
+          fail('Expected an error, but got a successful response');
+        },
+        error: (error) => {
+          expect(error.error).toBe(mockError);
+        },
+      });
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
+      req.error(mockError);
+    });
+  });
 });
