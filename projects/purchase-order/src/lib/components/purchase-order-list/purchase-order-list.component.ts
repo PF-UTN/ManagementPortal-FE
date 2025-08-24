@@ -3,9 +3,9 @@ import {
   ButtonComponent,
   ColumnTypeEnum,
   InputComponent,
+  LateralDrawerService,
   ModalComponent,
   ModalConfig,
-  LateralDrawerService,
   PillStatusEnum,
   TableColumn,
   TableComponent,
@@ -38,6 +38,7 @@ import {
   PurchaseOrderParams,
 } from '../../models/purchase-order-param.model';
 import { PurchaseOrderService } from '../../services/purchase-order.service';
+import { CancelLateralDrawerComponent } from '../cancel-lateral-drawer/cancel-lateral-drawer.component';
 import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-lateral-drawer.component';
 
 @Component({
@@ -136,8 +137,7 @@ export class PurchaseOrderListComponent implements OnInit {
         },
         {
           description: 'Cancelar',
-          action: (element: PurchaseOrderItem) =>
-            console.log('Cancelar', element),
+          action: (element: PurchaseOrderItem) => this.onCancelDrawer(element),
         },
         {
           description: 'Ejecutar',
@@ -365,5 +365,29 @@ export class PurchaseOrderListComponent implements OnInit {
 
   openCreatePurchaseOrder() {
     this.router.navigate(['/ordenes-compra/crear']);
+  }
+
+  onCancelDrawer(rowItem: PurchaseOrderItem): void {
+    this.lateralDrawerService
+      .open(
+        CancelLateralDrawerComponent,
+        { data: rowItem },
+        {
+          title: 'Cancelar Orden de Compra',
+          footer: {
+            firstButton: {
+              text: 'Confirmar',
+              click: () => {},
+            },
+            secondButton: {
+              text: 'Cancelar',
+              click: () => {
+                this.lateralDrawerService.close();
+              },
+            },
+          },
+        },
+      )
+      .subscribe(() => this.doSearchSubject$.next());
   }
 }

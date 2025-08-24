@@ -19,18 +19,15 @@ import { PurchaseOrderStatusOptions } from '../../constants/purchase-order-statu
 import { PurchaseOrderItem } from '../../models/purchase-order-item.model';
 import { PurchaseOrderOrderField } from '../../models/purchase-order-param.model';
 import { PurchaseOrderService } from '../../services/purchase-order.service';
-import {
-  mockPurchaseOrderListItem,
-  mockPurchaseOrderListItems,
-} from '../../testing/mock-data.model';
+import { mockPurchaseOrderListItems } from '../../testing/mock-data.model';
 import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-lateral-drawer.component';
 
 describe('PurchaseOrderListComponent', () => {
   let component: PurchaseOrderListComponent;
   let fixture: ComponentFixture<PurchaseOrderListComponent>;
   let service: PurchaseOrderService;
-  let matDialog: MatDialog;
   let lateralDrawerService: LateralDrawerService;
+  let matDialog: MatDialog;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -50,13 +47,17 @@ describe('PurchaseOrderListComponent', () => {
         },
         {
           provide: LateralDrawerService,
-          useValue: mockDeep<LateralDrawerService>(),
+          useValue: {
+            open: jest.fn().mockReturnValue(of(void 0)),
+            close: jest.fn(),
+          },
         },
       ],
     }).compileComponents();
 
     lateralDrawerService = TestBed.inject(LateralDrawerService);
     service = TestBed.inject(PurchaseOrderService);
+    lateralDrawerService = TestBed.inject(LateralDrawerService);
     matDialog = TestBed.inject(MatDialog);
     fixture = TestBed.createComponent(PurchaseOrderListComponent);
     component = fixture.componentInstance;
@@ -518,18 +519,19 @@ describe('PurchaseOrderListComponent', () => {
       expect(service.deletePurchaseOrderAsync).not.toHaveBeenCalled();
     });
   });
+
   describe('onDetailDrawer', () => {
     it('should open drawer with productId and correct config', () => {
       //Arrange
       const openSpy = jest.spyOn(lateralDrawerService, 'open');
 
       // Act
-      component.onDetailDrawer(mockPurchaseOrderListItem);
+      component.onDetailDrawer(mockPurchaseOrderListItems[0]);
 
       // Assert
       expect(openSpy).toHaveBeenCalledWith(
         DetailLateralDrawerComponent,
-        { purchaseOrderId: mockPurchaseOrderListItem.id },
+        { purchaseOrderId: mockPurchaseOrderListItems[0].id },
         expect.objectContaining({
           title: 'Detalle Orden de Compra',
           footer: expect.objectContaining({
@@ -554,5 +556,42 @@ describe('PurchaseOrderListComponent', () => {
       // Assert
       expect(spy).toHaveBeenCalledWith(['/ordenes-compra/crear']);
     });
+  });
+
+  describe('onCancelDrawer', () => {
+    it('should open the CancelLateralDrawerComponent with correct configuration', () => {
+      // Arrange
+      const rowItem = mockDeep<PurchaseOrderItem>({ id: 456 });
+
+      // Act
+      component.onCancelDrawer(rowItem);
+
+      // Assert
+      expect(lateralDrawerService.open).toHaveBeenCalledWith(
+        expect.any(Function),
+        { data: rowItem },
+        expect.objectContaining({
+          title: 'Cancelar Orden de Compra',
+          footer: expect.objectContaining({
+            firstButton: expect.objectContaining({ text: 'Confirmar' }),
+            secondButton: expect.objectContaining({ text: 'Cancelar' }),
+          }),
+        }),
+      );
+    });
+
+    it('should trigger a search after the drawer closes', fakeAsync(() => {
+      // Arrange
+      const doSearchSpy = jest.spyOn(component.doSearchSubject$, 'next');
+      const rowItem = mockDeep<PurchaseOrderItem>({ id: 456 });
+      jest.spyOn(lateralDrawerService, 'open').mockReturnValue(of(void 0));
+
+      // Act
+      component.onCancelDrawer(rowItem);
+      tick();
+
+      // Assert
+      expect(doSearchSpy).toHaveBeenCalled();
+    }));
   });
 });
