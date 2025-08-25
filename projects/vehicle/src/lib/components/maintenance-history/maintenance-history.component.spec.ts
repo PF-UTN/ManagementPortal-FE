@@ -1,3 +1,4 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
@@ -10,7 +11,11 @@ describe('MaintenanceHistoryComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MaintenanceHistoryComponent, NoopAnimationsModule],
+      imports: [
+        MaintenanceHistoryComponent,
+        NoopAnimationsModule,
+        HttpClientTestingModule,
+      ],
       providers: [
         {
           provide: ActivatedRoute,
@@ -32,6 +37,12 @@ describe('MaintenanceHistoryComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should set vehicleId from route params on init', () => {
+    // Arrange & Act: hecho en beforeEach
+    // Assert
+    expect(component.vehicleId).toBe(123);
   });
 
   it('should have dropdown items with correct labels', () => {
