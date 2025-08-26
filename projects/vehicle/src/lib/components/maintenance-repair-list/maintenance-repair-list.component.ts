@@ -110,12 +110,9 @@ export class MaintenanceRepairListComponent implements OnInit {
           this.isLoading = false;
         },
         error: () => {
-          this.dataSource$.next([]);
-          this.itemsNumber = 0;
           this.isLoading = false;
         },
       });
-
     this.doSearchSubject$.next();
   }
 

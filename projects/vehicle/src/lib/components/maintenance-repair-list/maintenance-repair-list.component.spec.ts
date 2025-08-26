@@ -2,8 +2,9 @@ import { VehicleService } from '@Vehicle';
 
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { fakeAsync, tick } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { throwError, of } from 'rxjs';
+import { throwError, of, firstValueFrom } from 'rxjs';
 
 import { MaintenanceRepairListComponent } from './maintenance-repair-list.component';
 import { MaintenanceRepairItem } from '../../models/maintenance-rapir-item.model';
@@ -176,6 +177,74 @@ describe('MaintenanceRepairListComponent', () => {
       expect(component.itemsNumber).toBe(0);
       expect(component.isLoading).toBe(false);
     });
+
+    it('should build params correctly and call the service with vehicleId and params', fakeAsync(() => {
+      // Arrange
+      const apiResponse = { results: [], total: 0 };
+      vehicleService.postSearchRepairVehicle.mockReturnValue(of(apiResponse));
+      component.vehicleId = 77;
+      component.searchText = 'something';
+      component.pageIndex = 2;
+      component.pageSize = 15;
+      component.ngOnInit();
+      // Act
+      component.doSearchSubject$.next();
+      tick(500);
+      // Assert
+      expect(vehicleService.postSearchRepairVehicle).toHaveBeenCalledWith(77, {
+        searchText: 'something',
+        page: 3,
+        pageSize: 15,
+      });
+    }));
+
+    it('should map the results and update dataSource$, itemsNumber and isLoading on success', fakeAsync(async () => {
+      // Arrange
+      const apiResponse = {
+        results: [
+          {
+            id: 1,
+            date: '2023-01-01',
+            description: 'Change',
+            kmPerformed: 1000,
+          },
+          {
+            id: 2,
+            date: '2023-01-02',
+            description: 'Other',
+            kmPerformed: 2000,
+          },
+        ],
+        total: 2,
+      };
+      vehicleService.postSearchRepairVehicle.mockReturnValue(of(apiResponse));
+      component.ngOnInit();
+      // Act
+      component.doSearchSubject$.next();
+      tick(500);
+      // Assert
+      const data = await firstValueFrom(component.dataSource$);
+      expect(data).toEqual([
+        { date: '2023-01-01', description: 'Change', kmPerformed: 1000 },
+        { date: '2023-01-02', description: 'Other', kmPerformed: 2000 },
+      ]);
+      expect(component.itemsNumber).toBe(2);
+      expect(component.isLoading).toBe(false);
+    }));
+
+    it('should clear dataSource$, itemsNumber and isLoading on error', fakeAsync(async () => {
+      // Arrange
+      vehicleService.postSearchRepairVehicle.mockReturnValue(
+        throwError(() => new Error('fail')),
+      );
+      component.isLoading = true;
+      component.ngOnInit();
+      // Act
+      component.doSearchSubject$.next();
+      tick(500);
+      // Assert
+      expect(component.isLoading).toBe(false);
+    }));
   });
 
   describe('handlePageChange', () => {
