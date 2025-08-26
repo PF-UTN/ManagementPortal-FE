@@ -24,7 +24,7 @@ describe('PurchaseOrderService', () => {
   let httpMock: HttpTestingController;
 
   beforeEach(async () => {
-    await TestBed.configureTestingModule({
+    TestBed.configureTestingModule({
       providers: [
         PurchaseOrderService,
         provideHttpClient(),

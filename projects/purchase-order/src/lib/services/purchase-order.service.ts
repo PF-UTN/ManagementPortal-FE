@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
+import { PostUpdatePurchaseOrderStatusRequest } from '../models/post-cancel-purchase-order-request.model';
 import { PurchaseOrderDetail } from '../models/purchase-order-detail.model';
 import {
   PurchaseOrderParams,
@@ -38,5 +39,13 @@ export class PurchaseOrderService {
   createPurchaseOrder(purchaseOrder: PurchaseOrder) {
     const url = `${this.baseUrl}`;
     return this.http.post(url, purchaseOrder);
+  }
+
+  updatePurchaseOrderStatusAsync(
+    id: number,
+    request: PostUpdatePurchaseOrderStatusRequest,
+  ): Observable<void> {
+    const url = `${this.baseUrl}/${id}`;
+    return this.http.patch<void>(url, request);
   }
 }
