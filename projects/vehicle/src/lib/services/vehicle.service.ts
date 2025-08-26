@@ -47,4 +47,12 @@ export class VehicleService {
     const url = `${this.baseUrl}/${vehicleId}/maintenance/search`;
     return this.http.post<SearchMaintenanceRepairResponse>(url, param);
   }
+
+  postSearchRepairVehicle(
+    vehicleId: number,
+    param: MaintenanceRepairParams,
+  ): Observable<SearchMaintenanceRepairResponse> {
+    const url = `${this.baseUrl}/${vehicleId}/repair/search`;
+    return this.http.post<SearchMaintenanceRepairResponse>(url, param);
+  }
 }
