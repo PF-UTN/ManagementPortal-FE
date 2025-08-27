@@ -4,13 +4,13 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
+import { SearchMaintenancePlanResponse } from '../models/maintenance-plan-response.model';
 import { MaintenanceRepairParams } from '../models/maintenance-repair-param.model';
 import { SearchMaintenanceRepairResponse } from '../models/maintenance-repair-responde.model';
 import { SearchVehicleResponse } from '../models/search-vehicle-response.model';
 import { VehicleCreate } from '../models/vehicle-create.model';
 import { VehicleParams } from '../models/vehicle-params.model';
 import { VehicleUpdate } from '../models/vehicle-update.model';
-
 @Injectable({
   providedIn: 'root',
 })
@@ -38,6 +38,14 @@ export class VehicleService {
   updateVehicleAsync(id: number, vehicle: VehicleUpdate): Observable<void> {
     const url = `${this.baseUrl}/${id}`;
     return this.http.put<void>(url, vehicle);
+  }
+
+  postSearchMaintenancePlanItemVehicle(
+    vehicleId: number,
+    param: MaintenanceRepairParams,
+  ): Observable<SearchMaintenancePlanResponse> {
+    const url = `${this.baseUrl}/${vehicleId}/maintenance-plan-item/search`;
+    return this.http.post<SearchMaintenancePlanResponse>(url, param);
   }
 
   postSearchMaintenanceVehicle(
