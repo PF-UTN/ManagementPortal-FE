@@ -151,6 +151,7 @@ describe('PurchaseOrderService', () => {
             unitPrice: 100.5,
           },
         ],
+        purchaseOrderStatusId: 1,
       };
       const url = `${baseUrl}`;
 
@@ -179,6 +180,7 @@ describe('PurchaseOrderService', () => {
             unitPrice: 100.5,
           },
         ],
+        purchaseOrderStatusId: 1,
       };
       const url = `${baseUrl}`;
       const mockError = new ErrorEvent('Network error');

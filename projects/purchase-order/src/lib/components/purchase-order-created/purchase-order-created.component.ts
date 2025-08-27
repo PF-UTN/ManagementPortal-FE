@@ -38,6 +38,7 @@ import { MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { Observable, of, startWith, map } from 'rxjs';
 
+import { PurchaseOrderStatusOptionsId } from '../../constants/purchase-order-status-ids.enum';
 import { PurchaseOrderService } from '../../services/purchase-order.service';
 
 interface PurchaseOrderItemForm {
@@ -86,6 +87,10 @@ export class PurchaseOrderCreatedComponent {
   isLoading = signal(false);
   isLoadingProducts = signal(false);
   searchText = '';
+
+  readonly STATUS_DRAFT = PurchaseOrderStatusOptionsId.Draft;
+  readonly STATUS_ORDERED = PurchaseOrderStatusOptionsId.Ordered;
+  readonly minDate = new Date();
 
   suppliers: SupplierResponse[] = [];
   filteredSuppliers$: Observable<SupplierResponse[]> = of([]);
@@ -352,7 +357,7 @@ export class PurchaseOrderCreatedComponent {
     }, 0);
   }
 
-  onSubmit(): void {
+  onSubmit(statusId: number): void {
     this.isLoading.set(true);
 
     const purchaseOrder = {
@@ -365,11 +370,16 @@ export class PurchaseOrderCreatedComponent {
         quantity: item.value.quantity!,
         unitPrice: item.value.unitPrice!,
       })),
+      purchaseOrderStatusId: statusId,
     };
 
     this.purchaseOrderService.createPurchaseOrder(purchaseOrder).subscribe({
       next: () => {
-        this.snackBar.open('Orden de compra creada con éxito', 'Cerrar', {
+        let message = 'Orden de compra creada con éxito';
+        if (statusId === this.STATUS_DRAFT) {
+          message = 'Orden de compra guardada como borrador';
+        }
+        this.snackBar.open(message, 'Cerrar', {
           duration: 3000,
         });
         this.router.navigate(['/ordenes-compra']);
