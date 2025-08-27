@@ -28,14 +28,18 @@ export class MaintenancePlanListComponent implements OnInit {
       header: 'Intervalo KM',
       type: ColumnTypeEnum.VALUE,
       value: (element: MaintenancePlanListItem) =>
-        this.decimalPipe.transform(element.kmInterval, '1.0-0')! + ' km',
+        element.kmInterval == null
+          ? '-'
+          : this.decimalPipe.transform(element.kmInterval, '1.0-0')! + ' km',
     },
     {
       columnDef: 'timeInterval',
       header: 'Intervalo tiempo',
       type: ColumnTypeEnum.VALUE,
       value: (element: MaintenancePlanListItem) =>
-        element.timeInterval.toString() + ' Meses',
+        element.timeInterval == 0
+          ? '-'
+          : element.timeInterval.toString() + ' Meses',
     },
     {
       columnDef: 'actions',

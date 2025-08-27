@@ -117,6 +117,40 @@ describe('MaintenancePlanListComponent', () => {
     spyRealizar.mockRestore();
   });
 
+  it('should show "-" for kmInterval when null', () => {
+    // Arrange
+    const item: MaintenancePlanListItem = {
+      description: 'Sin km',
+      kmInterval: null,
+      timeInterval: 12,
+    };
+    const kmColumn = component.columns.find(
+      (col) => col.columnDef === 'kmInterval',
+    );
+    // Act
+    const result =
+      kmColumn && kmColumn.value ? kmColumn.value(item) : undefined;
+    // Assert
+    expect(result).toBe('-');
+  });
+
+  it('should show "-" for timeInterval when null', () => {
+    // Arrange
+    const item: MaintenancePlanListItem = {
+      description: 'Sin meses',
+      kmInterval: 10000,
+      timeInterval: 0,
+    };
+    const timeColumn = component.columns.find(
+      (col) => col.columnDef === 'timeInterval',
+    );
+    // Act
+    const result =
+      timeColumn && timeColumn.value ? timeColumn.value(item) : undefined;
+    // Assert
+    expect(result).toBe('-');
+  });
+
   describe('ngOnInit', () => {
     it('should fetch data and update dataSource$, itemsNumber and isLoading on success', async () => {
       // Arrange
