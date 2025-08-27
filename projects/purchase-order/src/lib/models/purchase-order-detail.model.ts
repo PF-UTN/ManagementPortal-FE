@@ -9,7 +9,7 @@ export interface PurchaseOrderDetail {
     id: number;
     name: string;
   };
-  supplier: string;
+  supplier: PurchaseOrderDetalSupplierDto;
   purchaseOrderItems: PurchaseOrderItemDetail[];
 }
 
@@ -19,4 +19,9 @@ export interface PurchaseOrderItemDetail {
   quantity: number;
   unitPrice: number;
   subtotalPrice: number;
+}
+
+export interface PurchaseOrderDetalSupplierDto {
+  id: number;
+  businessName: string;
 }
