@@ -11,7 +11,7 @@ import { ProductListItem, ProductParams, ProductService } from '@Product';
 import { SupplierResponse, SupplierService } from '@Supplier';
 
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, signal, OnInit } from '@angular/core';
 import {
   FormGroup,
   FormControl,
@@ -88,7 +88,7 @@ interface PurchaseOrderForm {
   templateUrl: './purchase-order-created.component.html',
   styleUrls: ['./purchase-order-created.component.scss'],
 })
-export class PurchaseOrderCreatedComponent {
+export class PurchaseOrderCreatedComponent implements OnInit {
   isLoadingInitialData = signal(false);
   isLoading = signal(false);
   isLoadingProducts = signal(false);
@@ -179,9 +179,9 @@ export class PurchaseOrderCreatedComponent {
 
   constructor(
     public router: Router,
-    private supplierService: SupplierService,
-    private productService: ProductService,
-    private route: ActivatedRoute,
+    private readonly supplierService: SupplierService,
+    private readonly productService: ProductService,
+    private readonly route: ActivatedRoute,
     public purchaseOrderService: PurchaseOrderService,
     public dialog: MatDialog,
     public snackBar: MatSnackBar,
@@ -278,7 +278,7 @@ export class PurchaseOrderCreatedComponent {
   }
 
   onSupplierSelected(event: MatAutocompleteSelectedEvent): void {
-    const supplier = event.option.value as SupplierResponse;
+    const supplier = event.option.value;
     this.form.controls.header.patchValue({
       supplierId: supplier.id,
       supplier: supplier,
