@@ -1,3 +1,4 @@
+import { PurchaseOrderDetail } from '../models/purchase-order-detail.model';
 import { PurchaseOrderItem } from '../models/purchase-order-item.model';
 
 export const mockPurchaseOrderListItems: PurchaseOrderItem[] = [
@@ -57,7 +58,7 @@ export const mockPurchaseOrderDetailItems = [
 
 export const mockPurchaseOrderDetail = {
   id: 1,
-  supplier: 'Supplier 1',
+  supplier: { id: 1, businessName: 'Supplier 1' },
   status: { id: 1, name: 'Pending' },
   createdAt: new Date('2023-01-01'),
   estimatedDeliveryDate: new Date('2023-01-15'),
@@ -65,4 +66,4 @@ export const mockPurchaseOrderDetail = {
   totalAmount: 1000,
   observation: 'No observations',
   purchaseOrderItems: mockPurchaseOrderDetailItems,
-};
+} as PurchaseOrderDetail;

@@ -125,7 +125,7 @@ export class PurchaseOrderListComponent implements OnInit {
         {
           description: 'Modificar',
           action: (element: PurchaseOrderItem) =>
-            console.log('Modificar', element),
+            this.router.navigate([`/ordenes-compra/modificar/${element.id}`]),
         },
         {
           description: 'Eliminar',

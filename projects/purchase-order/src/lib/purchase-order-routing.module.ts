@@ -13,6 +13,10 @@ const routes: Routes = [
     path: 'crear',
     component: PurchaseOrderCreatedComponent,
   },
+  {
+    path: 'modificar/:id',
+    component: PurchaseOrderCreatedComponent,
+  },
 ];
 
 @NgModule({

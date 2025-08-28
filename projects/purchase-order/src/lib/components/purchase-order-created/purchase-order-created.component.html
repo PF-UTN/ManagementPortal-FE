@@ -1,6 +1,6 @@
-<mp-loading *ngIf="isLoading()"></mp-loading>
+<mp-loading *ngIf="isLoading() || isLoadingInitialData()"></mp-loading>
 
-<div *ngIf="!isLoading()">
+<div *ngIf="!isLoading() && !isLoadingInitialData()">
     <div class="d-flex align-items-center mb-2">
         <button mat-icon-button (click)="goBack()" aria-label="Volver">
             <mat-icon>arrow_back</mat-icon>

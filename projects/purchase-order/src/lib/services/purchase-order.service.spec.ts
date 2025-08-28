@@ -201,4 +201,75 @@ describe('PurchaseOrderService', () => {
       req.error(mockError);
     });
   });
+
+  describe('updatePurchaseOrderAsync', () => {
+    it('should send a PUT request with the correct body and return success', () => {
+      // Arrange
+      const purchaseOrderId = 1;
+      const mockUpdateRequest = {
+        purchaseOrderStatusId: 1,
+        observation: 'Purchase order for office supplies',
+        estimatedDeliveryDate: new Date('1990-01-15'),
+        effectiveDeliveryDate: new Date('1990-01-15'),
+        purchaseOrderItems: [
+          {
+            productId: 1,
+            quantity: 2,
+            unitPrice: 100.5,
+          },
+        ],
+      };
+      const url = `${baseUrl}/${purchaseOrderId}`;
+
+      // Act
+      service
+        .updatePurchaseOrderAsync(purchaseOrderId, mockUpdateRequest)
+        .subscribe((response) => {
+          expect(response).toBeUndefined();
+        });
+
+      // Assert
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('PUT');
+      expect(req.request.body).toEqual(mockUpdateRequest);
+      req.flush({});
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const purchaseOrderId = 1;
+      const mockUpdateRequest = {
+        purchaseOrderStatusId: 1,
+        observation: 'Purchase order for office supplies',
+        estimatedDeliveryDate: new Date('1990-01-15'),
+        effectiveDeliveryDate: new Date('1990-01-15'),
+        purchaseOrderItems: [
+          {
+            productId: 1,
+            quantity: 2,
+            unitPrice: 100.5,
+          },
+        ],
+      };
+      const url = `${baseUrl}/${purchaseOrderId}`;
+      const mockError = new ErrorEvent('Network error');
+
+      // Act
+      service
+        .updatePurchaseOrderAsync(purchaseOrderId, mockUpdateRequest)
+        .subscribe({
+          next: () => {
+            fail('Expected an error, but got a successful response');
+          },
+          error: (error) => {
+            expect(error.error).toBe(mockError);
+          },
+        });
+
+      // Assert
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('PUT');
+      req.error(mockError);
+    });
+  });
 });
