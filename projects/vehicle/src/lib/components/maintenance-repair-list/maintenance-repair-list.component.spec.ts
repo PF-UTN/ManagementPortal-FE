@@ -8,7 +8,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { throwError, of, firstValueFrom } from 'rxjs';
 
 import { MaintenanceRepairListComponent } from './maintenance-repair-list.component';
-import { MaintenanceRepairItem } from '../../models/maintenance-rapair-item.model';
+import { RepairItem } from '../../models/repair-item.model';
 
 @Component({
   template: `<mp-maintenance-repair-list
@@ -55,7 +55,7 @@ describe('MaintenanceRepairListComponent', () => {
   describe('columns', () => {
     it('should format maintenanceDate using datePipe', () => {
       // Arrange
-      const item: MaintenanceRepairItem = {
+      const item: RepairItem = {
         date: '2023-01-01',
         description: 'Reparación',
         kmPerformed: 15000,
@@ -71,7 +71,7 @@ describe('MaintenanceRepairListComponent', () => {
 
     it('should return description as is', () => {
       // Arrange
-      const item: MaintenanceRepairItem = {
+      const item: RepairItem = {
         date: '2023-01-02',
         description: 'Cambio de correa',
         kmPerformed: 20000,
@@ -85,7 +85,7 @@ describe('MaintenanceRepairListComponent', () => {
 
     it('should format repairKm using decimalPipe', () => {
       // Arrange
-      const item: MaintenanceRepairItem = {
+      const item: RepairItem = {
         date: '2023-01-03',
         description: 'Cambio de bujías',
         kmPerformed: 12345,
@@ -99,7 +99,7 @@ describe('MaintenanceRepairListComponent', () => {
 
     it('should call action handlers for actions column', () => {
       // Arrange
-      const item: MaintenanceRepairItem = {
+      const item: RepairItem = {
         date: '2023-01-04',
         description: 'Cambio de filtro',
         kmPerformed: 30000,

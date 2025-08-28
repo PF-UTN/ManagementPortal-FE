@@ -11,7 +11,7 @@ import { Component, input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BehaviorSubject, debounceTime, Subject, switchMap, tap } from 'rxjs';
 
-import { MaintenanceRepairItem } from '../../models/maintenance-rapair-item.model';
+import { RepairItem } from '../../models/repair-item.model';
 
 @Component({
   selector: 'mp-maintenance-repair-list',
@@ -22,25 +22,25 @@ import { MaintenanceRepairItem } from '../../models/maintenance-rapair-item.mode
   styleUrl: './maintenance-repair-list.component.scss',
 })
 export class MaintenanceRepairListComponent implements OnInit {
-  columns: TableColumn<MaintenanceRepairItem>[] = [
+  columns: TableColumn<RepairItem>[] = [
     {
       columnDef: 'maintenanceDate',
       header: 'Fecha de reparación',
       type: ColumnTypeEnum.VALUE,
-      value: (element: MaintenanceRepairItem) =>
+      value: (element: RepairItem) =>
         this.datePipe.transform(element.date, 'dd/MM/yyyy')!,
     },
     {
       columnDef: 'description',
       header: 'Descripcion',
       type: ColumnTypeEnum.VALUE,
-      value: (element: MaintenanceRepairItem) => element.description,
+      value: (element: RepairItem) => element.description,
     },
     {
       columnDef: 'repairKm',
       header: 'Kilometraje',
       type: ColumnTypeEnum.VALUE,
-      value: (element: MaintenanceRepairItem) =>
+      value: (element: RepairItem) =>
         this.decimalPipe.transform(element.kmPerformed, '1.0-0')! + ' km',
     },
     {
@@ -50,13 +50,11 @@ export class MaintenanceRepairListComponent implements OnInit {
       actions: [
         {
           description: 'Modificar',
-          action: (element: MaintenanceRepairItem) =>
-            console.log('Modificar', element),
+          action: (element: RepairItem) => console.log('Modificar', element),
         },
         {
           description: 'Eliminar',
-          action: (element: MaintenanceRepairItem) =>
-            console.log('Eliminar', element),
+          action: (element: RepairItem) => console.log('Eliminar', element),
         },
       ],
     },
@@ -68,7 +66,7 @@ export class MaintenanceRepairListComponent implements OnInit {
   isLoading: boolean = false;
   pageIndex: number = 0;
   pageSize: number = 10;
-  dataSource$ = new BehaviorSubject<MaintenanceRepairItem[]>([]);
+  dataSource$ = new BehaviorSubject<RepairItem[]>([]);
   doSearchSubject$ = new Subject<void>();
 
   constructor(
@@ -98,13 +96,11 @@ export class MaintenanceRepairListComponent implements OnInit {
       )
       .subscribe({
         next: (response) => {
-          const mappedResults: MaintenanceRepairItem[] = response.results.map(
-            (item) => ({
-              date: item.date,
-              description: item.description,
-              kmPerformed: item.kmPerformed,
-            }),
-          );
+          const mappedResults: RepairItem[] = response.results.map((item) => ({
+            date: item.date,
+            description: item.description,
+            kmPerformed: item.kmPerformed,
+          }));
           this.dataSource$.next(mappedResults);
           this.itemsNumber = response.total;
           this.isLoading = false;

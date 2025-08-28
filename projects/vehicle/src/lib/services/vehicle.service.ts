@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 
 import { SearchMaintenancePlanResponse } from '../models/maintenance-plan-response.model';
 import { MaintenanceRepairParams } from '../models/maintenance-repair-param.model';
-import { SearchMaintenanceRepairResponse } from '../models/maintenance-repair-responde.model';
+import { SearchMaintenanceRepairResponse } from '../models/maintenance-response.model';
 import { SearchVehicleResponse } from '../models/search-vehicle-response.model';
 import { VehicleCreate } from '../models/vehicle-create.model';
 import { VehicleParams } from '../models/vehicle-params.model';

@@ -11,7 +11,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BehaviorSubject, debounceTime, Subject, switchMap, tap } from 'rxjs';
 
-import { MaintenanceListItem } from '../../models/maintenance-item.model';
+import { MaintenanceListItem } from '../../models/maintenance-item-list.model';
 
 @Component({
   selector: 'mp-maintenance-list',

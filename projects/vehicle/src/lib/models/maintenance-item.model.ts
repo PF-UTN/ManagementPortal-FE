@@ -1,5 +1,5 @@
-export interface MaintenanceListItem {
-  maintenanceDate: string;
+export interface MaintenanceItem {
+  date: string;
   description: string;
-  maintenanceKm: number;
+  kmPerformed: number;
 }
