@@ -37,11 +37,7 @@ export class MaintenancePlanListComponent implements OnInit {
       header: 'Intervalo tiempo',
       type: ColumnTypeEnum.VALUE,
       value: (element: MaintenancePlanListItem) =>
-        element.timeInterval == null
-          ? '-'
-          : element.timeInterval === 0
-            ? '-'
-            : element.timeInterval.toString() + ' Meses',
+        this.formatTimeInterval(element.timeInterval),
     },
     {
       columnDef: 'actions',
@@ -78,6 +74,13 @@ export class MaintenancePlanListComponent implements OnInit {
     private readonly decimalPipe: DecimalPipe,
     private readonly vechicleService: VehicleService,
   ) {}
+
+  private formatTimeInterval(timeInterval: number | null | undefined): string {
+    if (timeInterval == null || timeInterval === 0) {
+      return '-';
+    }
+    return `${timeInterval} Meses`;
+  }
 
   ngOnInit(): void {
     this.isLoading = true;
