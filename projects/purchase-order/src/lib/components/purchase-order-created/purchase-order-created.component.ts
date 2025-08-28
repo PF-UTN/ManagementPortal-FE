@@ -35,9 +35,14 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTableModule } from '@angular/material/table';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, of, startWith, map } from 'rxjs';
 
+import {
+  PurchaseOrderDetail,
+  PurchaseOrderItemDetail,
+} from '../../models/purchase-order-detail.model';
+import { PutUpdatePurchaseOrderRequest } from '../../models/put-update-purchase-order-request.model';
 import { PurchaseOrderService } from '../../services/purchase-order.service';
 
 interface PurchaseOrderItemForm {
@@ -83,8 +88,10 @@ interface PurchaseOrderForm {
   styleUrls: ['./purchase-order-created.component.scss'],
 })
 export class PurchaseOrderCreatedComponent {
+  isLoadingInitialData = signal(false);
   isLoading = signal(false);
   isLoadingProducts = signal(false);
+  isModification = false;
   searchText = '';
 
   suppliers: SupplierResponse[] = [];
@@ -92,8 +99,11 @@ export class PurchaseOrderCreatedComponent {
   products: ProductListItem[] = [];
   filteredProducts: ProductListItem[] = [];
   selectedProducts: ProductListItem[] = [];
+  initialPurchaseOrder: PurchaseOrderDetail;
 
   form!: FormGroup<PurchaseOrderForm>;
+
+  existingPurchaseOrderId: number | null = null;
 
   displayedColumns: string[] = [
     'name',
@@ -166,12 +176,16 @@ export class PurchaseOrderCreatedComponent {
     public router: Router,
     private supplierService: SupplierService,
     private productService: ProductService,
+    private route: ActivatedRoute,
     public purchaseOrderService: PurchaseOrderService,
     public dialog: MatDialog,
     public snackBar: MatSnackBar,
   ) {}
 
   ngOnInit(): void {
+    this.existingPurchaseOrderId = this.route.snapshot.params['id'];
+    this.isModification = !!this.existingPurchaseOrderId;
+
     this.form = new FormGroup<PurchaseOrderForm>({
       header: new FormGroup<PurchaseHeaderForm>({
         supplier: new FormControl<SupplierResponse | null>(null, [
@@ -187,6 +201,59 @@ export class PurchaseOrderCreatedComponent {
     });
 
     this.initSuppliers();
+
+    if (this.existingPurchaseOrderId) {
+      this.loadInitialData();
+    }
+  }
+
+  public loadInitialData(): void {
+    this.isLoadingInitialData.set(true);
+    this.purchaseOrderService
+      .getPurchaseOrderById(this.existingPurchaseOrderId!)
+      .subscribe({
+        next: (purchaseOrder) => {
+          this.initialPurchaseOrder = purchaseOrder;
+          this.patchFormWithInitialData(purchaseOrder);
+          this.loadProductsBySupplier(purchaseOrder.supplier.businessName);
+          this.isLoadingInitialData.set(false);
+        },
+        error: () => {
+          this.snackBar.open('Error al cargar la orden de compra', 'Cerrar', {
+            duration: 3000,
+          });
+          this.isLoadingInitialData.set(false);
+        },
+      });
+  }
+
+  private patchFormWithInitialData(purchaseOrder: PurchaseOrderDetail): void {
+    this.form.controls.header.patchValue({
+      supplier: this.suppliers.find((s) => s.id === purchaseOrder.supplier.id),
+      supplierId: purchaseOrder.supplier.id,
+      estimatedDeliveryDate: purchaseOrder.estimatedDeliveryDate.toString(),
+      observation: purchaseOrder.observation,
+    });
+
+    purchaseOrder.purchaseOrderItems.forEach(
+      (item: PurchaseOrderItemDetail) => {
+        const newItem: FormGroup<PurchaseOrderItemForm> = new FormGroup({
+          productId: new FormControl<number | null>(item.productId, [
+            Validators.required,
+          ]),
+          quantity: new FormControl<number | null>(item.quantity, [
+            Validators.required,
+            Validators.min(1),
+          ]),
+          unitPrice: new FormControl<number | null>(item.unitPrice, [
+            Validators.required,
+            Validators.min(1),
+          ]),
+        });
+
+        this.items.push(newItem);
+      },
+    );
   }
 
   public initSuppliers(): void {
@@ -355,7 +422,51 @@ export class PurchaseOrderCreatedComponent {
   onSubmit(): void {
     this.isLoading.set(true);
 
-    const purchaseOrder = {
+    if (this.isModification) {
+      const purchaseOrderUpdateRequest: PutUpdatePurchaseOrderRequest = {
+        purchaseOrderStatusId: this.initialPurchaseOrder.status.id,
+        estimatedDeliveryDate: new Date(
+          this.form.controls.header.value.estimatedDeliveryDate!,
+        ),
+        observation: this.form.controls.header.value.observation!,
+        purchaseOrderItems: this.items.controls.map((item) => ({
+          productId: item.value.productId!,
+          quantity: item.value.quantity!,
+          unitPrice: item.value.unitPrice!,
+        })),
+      };
+
+      this.purchaseOrderService
+        .updatePurchaseOrderStatusAsync(
+          this.existingPurchaseOrderId!,
+          purchaseOrderUpdateRequest,
+        )
+        .subscribe({
+          next: () => {
+            this.snackBar.open(
+              'Orden de compra modificada con éxito',
+              'Cerrar',
+              {
+                duration: 3000,
+              },
+            );
+            this.router.navigate(['/ordenes-compra']);
+          },
+          error: () => {
+            this.snackBar.open(
+              'Error al modificar la orden de compra',
+              'Cerrar',
+              {
+                duration: 3000,
+              },
+            );
+            this.isLoading.set(false);
+          },
+        });
+      return;
+    }
+
+    const purchaseOrderCreationRequest = {
       supplierId: this.form.controls.header.value.supplierId!,
       estimatedDeliveryDate:
         this.form.controls.header.value.estimatedDeliveryDate!,
@@ -367,20 +478,22 @@ export class PurchaseOrderCreatedComponent {
       })),
     };
 
-    this.purchaseOrderService.createPurchaseOrder(purchaseOrder).subscribe({
-      next: () => {
-        this.snackBar.open('Orden de compra creada con éxito', 'Cerrar', {
-          duration: 3000,
-        });
-        this.router.navigate(['/ordenes-compra']);
-      },
-      error: () => {
-        this.snackBar.open('Error al crear la orden de compra', 'Cerrar', {
-          duration: 3000,
-        });
-        this.isLoading.set(false);
-      },
-    });
+    this.purchaseOrderService
+      .createPurchaseOrder(purchaseOrderCreationRequest)
+      .subscribe({
+        next: () => {
+          this.snackBar.open('Orden de compra creada con éxito', 'Cerrar', {
+            duration: 3000,
+          });
+          this.router.navigate(['/ordenes-compra']);
+        },
+        error: () => {
+          this.snackBar.open('Error al crear la orden de compra', 'Cerrar', {
+            duration: 3000,
+          });
+          this.isLoading.set(false);
+        },
+      });
   }
 
   goBack() {

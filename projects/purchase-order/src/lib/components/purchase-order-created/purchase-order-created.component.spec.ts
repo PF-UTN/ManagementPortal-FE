@@ -25,11 +25,14 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { mockDeep } from 'jest-mock-extended';
 import { of, throwError } from 'rxjs';
 
 import { PurchaseOrderCreatedComponent } from './purchase-order-created.component';
+import { PurchaseOrderDetail } from '../../models/purchase-order-detail.model';
 import { PurchaseOrderService } from '../../services/purchase-order.service';
+import { mockPurchaseOrderDetail } from '../../testing/mock-data.model';
 
 describe('PurchaseOrderCreatedComponent', () => {
   let component: PurchaseOrderCreatedComponent;
@@ -39,6 +42,7 @@ describe('PurchaseOrderCreatedComponent', () => {
   let purchaseOrderService: PurchaseOrderService;
   let router: Router;
   let snackBar: MatSnackBar;
+  let activatedRoute: ActivatedRoute;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -55,7 +59,7 @@ describe('PurchaseOrderCreatedComponent', () => {
         { provide: ProductService, useValue: { postSearchProduct: jest.fn() } },
         {
           provide: PurchaseOrderService,
-          useValue: { createPurchaseOrder: jest.fn() },
+          useValue: mockDeep<PurchaseOrderService>(),
         },
         {
           provide: MatDialog,
@@ -66,6 +70,7 @@ describe('PurchaseOrderCreatedComponent', () => {
           },
         },
         { provide: MatSnackBar, useValue: { open: jest.fn() } },
+        { provide: ActivatedRoute, useValue: { snapshot: { params: {} } } },
       ],
     }).compileComponents();
 
@@ -76,6 +81,7 @@ describe('PurchaseOrderCreatedComponent', () => {
     purchaseOrderService = TestBed.inject(PurchaseOrderService);
     router = TestBed.inject(Router);
     snackBar = TestBed.inject(MatSnackBar);
+    activatedRoute = TestBed.inject(ActivatedRoute);
 
     jest.spyOn(supplierService, 'getSuppliers').mockReturnValue(
       of([
@@ -136,6 +142,33 @@ describe('PurchaseOrderCreatedComponent', () => {
       // Assert
       expect(spy).toHaveBeenCalled();
     }));
+
+    it('should NOT call loadInitialData if existingPurchaseOrderId is not set', () => {
+      // Arrange
+      const getPurchaseOrderByIdSpy = jest
+        .spyOn(purchaseOrderService, 'getPurchaseOrderById')
+        .mockReturnValue(of(mockPurchaseOrderDetail));
+
+      // Act
+      component.ngOnInit();
+
+      // Assert
+      expect(getPurchaseOrderByIdSpy).not.toHaveBeenCalled();
+    });
+
+    it('should call loadInitialData if existingPurchaseOrderId is set', () => {
+      // Arrange
+      activatedRoute.snapshot.params = { id: 1 };
+      const getPurchaseOrderByIdSpy = jest
+        .spyOn(purchaseOrderService, 'getPurchaseOrderById')
+        .mockReturnValue(of(mockPurchaseOrderDetail));
+
+      // Act
+      component.ngOnInit();
+
+      // Assert
+      expect(getPurchaseOrderByIdSpy).toHaveBeenCalled();
+    });
   });
 
   describe('Supplier selection', () => {
@@ -639,7 +672,7 @@ describe('PurchaseOrderCreatedComponent', () => {
     });
   });
 
-  describe('Submit functionality', () => {
+  describe('onSubmit', () => {
     it('should call PurchaseOrderService and show success snackbar on successful submit', fakeAsync(() => {
       //Arrange
       const spyService = jest.spyOn(
@@ -677,6 +710,125 @@ describe('PurchaseOrderCreatedComponent', () => {
         { duration: 3000 },
       );
     }));
+
+    it('should call updatePurchaseOrderStatusAsync and show success snackbar on successful modification', fakeAsync(() => {
+      // Arrange
+      component.isModification = true;
+      component.existingPurchaseOrderId = 123;
+      component.initialPurchaseOrder = {
+        id: 123,
+        supplier: { id: 1, businessName: 'Proveedor Test' },
+        estimatedDeliveryDate: new Date('2025-08-14'),
+        observation: 'Test observation',
+        status: { id: 2, name: 'Modificada' },
+        purchaseOrderItems: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        effectiveDeliveryDate: null,
+        totalAmount: 0,
+      } as PurchaseOrderDetail;
+      component.form.controls.header.patchValue({
+        supplierId: 1,
+        supplier: {
+          id: 1,
+          businessName: 'Proveedor Test',
+          addressId: 1,
+          documentNumber: '123456789',
+          documentType: 'CUIT',
+          email: '',
+          phone: '',
+        },
+        estimatedDeliveryDate: '2025-08-14',
+        observation: 'Test observation',
+      });
+      component.items.push(
+        new FormGroup({
+          productId: new FormControl(1),
+          quantity: new FormControl(2),
+          unitPrice: new FormControl(100),
+        }),
+      );
+      const spyUpdate = jest
+        .spyOn(purchaseOrderService, 'updatePurchaseOrderStatusAsync')
+        .mockReturnValue(of(void 0));
+      const spySnackBar = jest.spyOn(snackBar, 'open');
+      const spyRouter = jest.spyOn(router, 'navigate');
+
+      // Act
+      component.onSubmit();
+      tick();
+
+      // Assert
+      expect(spyUpdate).toHaveBeenCalledWith(
+        123,
+        expect.objectContaining({
+          purchaseOrderStatusId: 2,
+          observation: 'Test observation',
+          purchaseOrderItems: [{ productId: 1, quantity: 2, unitPrice: 100 }],
+        }),
+      );
+      expect(spySnackBar).toHaveBeenCalledWith(
+        'Orden de compra modificada con éxito',
+        'Cerrar',
+        { duration: 3000 },
+      );
+      expect(spyRouter).toHaveBeenCalledWith(['/ordenes-compra']);
+    }));
+
+    it('should show error snackbar if update fails in modification mode', fakeAsync(() => {
+      // Arrange
+      component.isModification = true;
+      component.existingPurchaseOrderId = 123;
+      component.initialPurchaseOrder = {
+        id: 123,
+        supplier: { id: 1, businessName: 'Proveedor Test' },
+        estimatedDeliveryDate: new Date('2025-08-14'),
+        observation: 'Test observation',
+        status: { id: 2, name: 'Modificada' },
+        purchaseOrderItems: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        effectiveDeliveryDate: null,
+        totalAmount: 0,
+      } as PurchaseOrderDetail;
+      component.form.controls.header.patchValue({
+        supplierId: 1,
+        supplier: {
+          id: 1,
+          businessName: 'Proveedor Test',
+          addressId: 1,
+          documentNumber: '123456789',
+          documentType: 'CUIT',
+          email: '',
+          phone: '',
+        },
+        estimatedDeliveryDate: '2025-08-14',
+        observation: 'Test observation',
+      });
+      component.items.push(
+        new FormGroup({
+          productId: new FormControl(1),
+          quantity: new FormControl(2),
+          unitPrice: new FormControl(100),
+        }),
+      );
+      jest
+        .spyOn(purchaseOrderService, 'updatePurchaseOrderStatusAsync')
+        .mockReturnValue(throwError(() => new Error('Error')));
+      const spySnackBar = jest.spyOn(snackBar, 'open');
+
+      // Act
+      component.onSubmit();
+      tick();
+
+      // Assert
+      expect(spySnackBar).toHaveBeenCalledWith(
+        'Error al modificar la orden de compra',
+        'Cerrar',
+        { duration: 3000 },
+      );
+      expect(component.isLoading()).toBe(false);
+    }));
   });
 
   describe('Navigation', () => {
@@ -688,5 +840,43 @@ describe('PurchaseOrderCreatedComponent', () => {
       // Assert
       expect(spy).toHaveBeenCalledWith(['/ordenes-compra']);
     });
+  });
+
+  describe('loadInitialData', () => {
+    it('should set initialPurchaseOrder and patch form when existingPurchaseOrderId is set', fakeAsync(() => {
+      // Arrange
+      const mockPurchaseOrder = {
+        id: 123,
+        supplier: { id: 1, businessName: 'Proveedor Test' },
+        estimatedDeliveryDate: new Date('2025-08-14'),
+        observation: 'Test observation',
+        status: { id: 2, name: 'Modificada' },
+        purchaseOrderItems: [
+          { productId: 1, quantity: 2, unitPrice: 100 },
+          { productId: 2, quantity: 3, unitPrice: 200 },
+        ],
+      } as PurchaseOrderDetail;
+      jest
+        .spyOn(purchaseOrderService, 'getPurchaseOrderById')
+        .mockReturnValue(of(mockPurchaseOrder));
+      component.existingPurchaseOrderId = mockPurchaseOrder.id;
+      component.isModification = true;
+
+      // Act
+      component.loadInitialData();
+      tick();
+
+      // Assert
+      expect(component.initialPurchaseOrder).toEqual(mockPurchaseOrder);
+      expect(component.form.controls.header.value.supplierId).toBe(
+        mockPurchaseOrder.supplier.id,
+      );
+      expect(component.form.controls.header.value.observation).toBe(
+        mockPurchaseOrder.observation,
+      );
+      expect(component.items.length).toBe(2);
+      expect(component.items.at(0).value.productId).toBe(1);
+      expect(component.items.at(1).value.productId).toBe(2);
+    }));
   });
 });

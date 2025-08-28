@@ -10,6 +10,7 @@ import {
   PurchaseOrderParams,
   PurchaseOrder,
 } from '../models/purchase-order-param.model';
+import { PutUpdatePurchaseOrderRequest } from '../models/put-update-purchase-order-request.model';
 import { SearchPurchaseOrderResponse } from '../models/search-purchase-order-response.model';
 
 @Injectable({
@@ -47,5 +48,13 @@ export class PurchaseOrderService {
   ): Observable<void> {
     const url = `${this.baseUrl}/${id}`;
     return this.http.patch<void>(url, request);
+  }
+
+  updatePurchaseOrderAsync(
+    id: number,
+    request: PutUpdatePurchaseOrderRequest,
+  ): Observable<void> {
+    const url = `${this.baseUrl}/${id}`;
+    return this.http.put<void>(url, request);
   }
 }
