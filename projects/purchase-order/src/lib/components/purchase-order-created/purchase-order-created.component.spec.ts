@@ -755,7 +755,7 @@ describe('PurchaseOrderCreatedComponent', () => {
       const spyRouter = jest.spyOn(router, 'navigate');
 
       // Act
-      component.onSubmit();
+      component.onSubmit(component.STATUS_DRAFT);
       tick();
 
       // Assert
@@ -818,7 +818,7 @@ describe('PurchaseOrderCreatedComponent', () => {
       const spySnackBar = jest.spyOn(snackBar, 'open');
 
       // Act
-      component.onSubmit();
+      component.onSubmit(component.STATUS_DRAFT);
       tick();
 
       // Assert
