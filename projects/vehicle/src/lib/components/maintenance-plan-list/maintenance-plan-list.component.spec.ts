@@ -2,15 +2,28 @@ import { VehicleService } from '@Vehicle';
 
 import { DecimalPipe } from '@angular/common';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of, throwError, firstValueFrom } from 'rxjs';
 
 import { MaintenancePlanListComponent } from './maintenance-plan-list.component';
 import { MaintenancePlanListItem } from '../../models/maintenance-plan.model';
 
+@Component({
+  template: `<mp-maintenance-plan-list
+    [vehicleId]="vehicleId"
+  ></mp-maintenance-plan-list>`,
+  standalone: true,
+  imports: [MaintenancePlanListComponent],
+})
+class HostComponent {
+  vehicleId = 1;
+}
+
 describe('MaintenancePlanListComponent', () => {
+  let hostFixture: ComponentFixture<HostComponent>;
+  let hostComponent: HostComponent;
   let component: MaintenancePlanListComponent;
-  let fixture: ComponentFixture<MaintenancePlanListComponent>;
 
   beforeEach(async () => {
     const vehicleServiceMock = {
@@ -20,7 +33,7 @@ describe('MaintenancePlanListComponent', () => {
     } as unknown as jest.Mocked<VehicleService>;
 
     await TestBed.configureTestingModule({
-      imports: [MaintenancePlanListComponent],
+      imports: [HostComponent],
       providers: [
         DecimalPipe,
         provideHttpClientTesting(),
@@ -28,10 +41,11 @@ describe('MaintenancePlanListComponent', () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(MaintenancePlanListComponent);
-    component = fixture.componentInstance;
-    component.vehicleId = 1;
-    fixture.detectChanges();
+    hostFixture = TestBed.createComponent(HostComponent);
+    hostComponent = hostFixture.componentInstance;
+    hostFixture.detectChanges();
+    const childDebugElement = hostFixture.debugElement.children[0];
+    component = childDebugElement.componentInstance;
   });
 
   it('should create', () => {
@@ -173,7 +187,7 @@ describe('MaintenancePlanListComponent', () => {
       jest
         .spyOn(vehicleService, 'postSearchMaintenancePlanItemVehicle')
         .mockReturnValue(of(mockResponse));
-      component.vehicleId = 1;
+      hostComponent.vehicleId = 1;
       // Act
       component.ngOnInit();
       // Assert
@@ -191,7 +205,7 @@ describe('MaintenancePlanListComponent', () => {
         .mockReturnValue(throwError(() => new Error('fail')));
       component.itemsNumber = 5;
       component.isLoading = true;
-      component.vehicleId = 1;
+      hostComponent.vehicleId = 1;
       // Act
       component.ngOnInit();
       // Assert

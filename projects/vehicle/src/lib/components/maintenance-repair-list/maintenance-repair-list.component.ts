@@ -7,11 +7,11 @@ import {
 import { VehicleService } from '@Vehicle';
 
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BehaviorSubject, debounceTime, Subject, switchMap, tap } from 'rxjs';
 
-import { MaintenanceRepairItem } from '../../models/maintenance-rapir-item.model';
+import { MaintenanceRepairItem } from '../../models/maintenance-rapair-item.model';
 
 @Component({
   selector: 'mp-maintenance-repair-list',
@@ -62,7 +62,7 @@ export class MaintenanceRepairListComponent implements OnInit {
     },
   ];
 
-  @Input() vehicleId!: number;
+  vehicleId = input.required<number>();
   searchText: string = '';
   itemsNumber: number = 0;
   isLoading: boolean = false;
@@ -91,7 +91,7 @@ export class MaintenanceRepairListComponent implements OnInit {
             pageSize: this.pageSize,
           };
           return this.vehicleService.postSearchRepairVehicle(
-            this.vehicleId,
+            this.vehicleId(),
             params,
           );
         }),

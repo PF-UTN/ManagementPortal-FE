@@ -2,7 +2,7 @@ import { TableComponent, TableColumn, ColumnTypeEnum } from '@Common-UI';
 import { VehicleService } from '@Vehicle';
 
 import { DecimalPipe } from '@angular/common';
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, input } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
 import { MaintenancePlanListItem } from '../../models/maintenance-plan.model';
@@ -37,9 +37,11 @@ export class MaintenancePlanListComponent implements OnInit {
       header: 'Intervalo tiempo',
       type: ColumnTypeEnum.VALUE,
       value: (element: MaintenancePlanListItem) =>
-        element.timeInterval == 0
+        element.timeInterval == null
           ? '-'
-          : element.timeInterval.toString() + ' Meses',
+          : element.timeInterval === 0
+            ? '-'
+            : element.timeInterval.toString() + ' Meses',
     },
     {
       columnDef: 'actions',
@@ -65,7 +67,7 @@ export class MaintenancePlanListComponent implements OnInit {
     },
   ];
 
-  @Input() vehicleId!: number;
+  vehicleId = input.required<number>();
   dataSource$ = new BehaviorSubject<MaintenancePlanListItem[]>([]);
   itemsNumber: number = 0;
   isLoading: boolean = false;
@@ -85,7 +87,7 @@ export class MaintenancePlanListComponent implements OnInit {
       pageSize: this.pageSize,
     };
     this.vechicleService
-      .postSearchMaintenancePlanItemVehicle(this.vehicleId, params)
+      .postSearchMaintenancePlanItemVehicle(this.vehicleId(), params)
       .subscribe({
         next: (response: {
           results: MaintenancePlanListItem[];

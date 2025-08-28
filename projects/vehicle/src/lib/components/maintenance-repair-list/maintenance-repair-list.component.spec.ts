@@ -1,39 +1,51 @@
 import { VehicleService } from '@Vehicle';
 
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { fakeAsync, tick } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { throwError, of, firstValueFrom } from 'rxjs';
 
 import { MaintenanceRepairListComponent } from './maintenance-repair-list.component';
-import { MaintenanceRepairItem } from '../../models/maintenance-rapir-item.model';
+import { MaintenanceRepairItem } from '../../models/maintenance-rapair-item.model';
+
+@Component({
+  template: `<mp-maintenance-repair-list
+    [vehicleId]="vehicleId"
+  ></mp-maintenance-repair-list>`,
+  standalone: true,
+  imports: [MaintenanceRepairListComponent],
+})
+class HostComponent {
+  vehicleId = 1;
+}
 
 describe('MaintenanceRepairListComponent', () => {
+  let hostFixture: ComponentFixture<HostComponent>;
+  let hostComponent: HostComponent;
   let component: MaintenanceRepairListComponent;
-  let fixture: ComponentFixture<MaintenanceRepairListComponent>;
-  let vehicleService: jest.Mocked<VehicleService>;
+  let vehicleServiceMock: jest.Mocked<VehicleService>;
 
   beforeEach(async () => {
-    const vehicleServiceMock = {
+    vehicleServiceMock = {
       postSearchRepairVehicle: jest.fn(),
     } as unknown as jest.Mocked<VehicleService>;
 
     await TestBed.configureTestingModule({
-      imports: [MaintenanceRepairListComponent, NoopAnimationsModule],
+      imports: [HostComponent, NoopAnimationsModule],
       providers: [
         provideHttpClientTesting(),
         { provide: VehicleService, useValue: vehicleServiceMock },
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(MaintenanceRepairListComponent);
-    component = fixture.componentInstance;
-    vehicleService = TestBed.inject(
-      VehicleService,
-    ) as jest.Mocked<VehicleService>;
-    component.vehicleId = 1;
-    fixture.detectChanges();
+    hostFixture = TestBed.createComponent(HostComponent);
+    hostComponent = hostFixture.componentInstance;
+    hostFixture.detectChanges();
+
+    const childDebugElement = hostFixture.debugElement.children[0];
+    component = childDebugElement.componentInstance;
   });
 
   it('should create', () => {
@@ -146,7 +158,9 @@ describe('MaintenanceRepairListComponent', () => {
         ],
         total: 1,
       };
-      vehicleService.postSearchRepairVehicle.mockReturnValue(of(apiResponse));
+      vehicleServiceMock.postSearchRepairVehicle.mockReturnValue(
+        of(apiResponse),
+      );
       component.ngOnInit();
 
       // Act
@@ -164,7 +178,7 @@ describe('MaintenanceRepairListComponent', () => {
 
     it('should handle error and clear data', () => {
       // Arrange
-      vehicleService.postSearchRepairVehicle.mockReturnValue(
+      vehicleServiceMock.postSearchRepairVehicle.mockReturnValue(
         throwError(() => new Error('fail')),
       );
       // Act
@@ -181,8 +195,11 @@ describe('MaintenanceRepairListComponent', () => {
     it('should build params correctly and call the service with vehicleId and params', fakeAsync(() => {
       // Arrange
       const apiResponse = { results: [], total: 0 };
-      vehicleService.postSearchRepairVehicle.mockReturnValue(of(apiResponse));
-      component.vehicleId = 77;
+      vehicleServiceMock.postSearchRepairVehicle.mockReturnValue(
+        of(apiResponse),
+      );
+      hostComponent.vehicleId = 77;
+      hostFixture.detectChanges();
       component.searchText = 'something';
       component.pageIndex = 2;
       component.pageSize = 15;
@@ -191,11 +208,14 @@ describe('MaintenanceRepairListComponent', () => {
       component.doSearchSubject$.next();
       tick(500);
       // Assert
-      expect(vehicleService.postSearchRepairVehicle).toHaveBeenCalledWith(77, {
-        searchText: 'something',
-        page: 3,
-        pageSize: 15,
-      });
+      expect(vehicleServiceMock.postSearchRepairVehicle).toHaveBeenCalledWith(
+        77,
+        {
+          searchText: 'something',
+          page: 3,
+          pageSize: 15,
+        },
+      );
     }));
 
     it('should map the results and update dataSource$, itemsNumber and isLoading on success', fakeAsync(async () => {
@@ -217,7 +237,9 @@ describe('MaintenanceRepairListComponent', () => {
         ],
         total: 2,
       };
-      vehicleService.postSearchRepairVehicle.mockReturnValue(of(apiResponse));
+      vehicleServiceMock.postSearchRepairVehicle.mockReturnValue(
+        of(apiResponse),
+      );
       component.ngOnInit();
       // Act
       component.doSearchSubject$.next();
@@ -234,7 +256,7 @@ describe('MaintenanceRepairListComponent', () => {
 
     it('should clear dataSource$, itemsNumber and isLoading on error', fakeAsync(async () => {
       // Arrange
-      vehicleService.postSearchRepairVehicle.mockReturnValue(
+      vehicleServiceMock.postSearchRepairVehicle.mockReturnValue(
         throwError(() => new Error('fail')),
       );
       component.isLoading = true;
