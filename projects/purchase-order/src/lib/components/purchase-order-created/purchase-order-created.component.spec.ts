@@ -682,12 +682,33 @@ describe('PurchaseOrderCreatedComponent', () => {
       const spySnackBar = jest.spyOn(snackBar, 'open');
       const spyRouter = jest.spyOn(router, 'navigate');
       // Act
-      component.onSubmit();
+      component.onSubmit(component.STATUS_ORDERED);
       tick();
       // Assert
       expect(spyService).toHaveBeenCalled();
       expect(spySnackBar).toHaveBeenCalledWith(
         'Orden de compra creada con éxito',
+        'Cerrar',
+        { duration: 3000 },
+      );
+      expect(spyRouter).toHaveBeenCalledWith(['/ordenes-compra']);
+    }));
+
+    it('should show draft snackbar message when saving as draft', fakeAsync(() => {
+      // Arrange
+      const spyService = jest.spyOn(
+        purchaseOrderService,
+        'createPurchaseOrder',
+      );
+      const spySnackBar = jest.spyOn(snackBar, 'open');
+      const spyRouter = jest.spyOn(router, 'navigate');
+      // Act
+      component.onSubmit(component.STATUS_DRAFT);
+      tick();
+      // Assert
+      expect(spyService).toHaveBeenCalled();
+      expect(spySnackBar).toHaveBeenCalledWith(
+        'Orden de compra guardada como borrador',
         'Cerrar',
         { duration: 3000 },
       );
@@ -701,7 +722,7 @@ describe('PurchaseOrderCreatedComponent', () => {
         .mockReturnValue(throwError(() => new Error('Error')));
       const spySnackBar = jest.spyOn(snackBar, 'open');
       // Act
-      component.onSubmit();
+      component.onSubmit(component.STATUS_DRAFT);
       tick();
       // Assert
       expect(spySnackBar).toHaveBeenCalledWith(
@@ -755,7 +776,7 @@ describe('PurchaseOrderCreatedComponent', () => {
       const spyRouter = jest.spyOn(router, 'navigate');
 
       // Act
-      component.onSubmit();
+      component.onSubmit(component.STATUS_DRAFT);
       tick();
 
       // Assert
@@ -818,7 +839,7 @@ describe('PurchaseOrderCreatedComponent', () => {
       const spySnackBar = jest.spyOn(snackBar, 'open');
 
       // Act
-      component.onSubmit();
+      component.onSubmit(component.STATUS_DRAFT);
       tick();
 
       // Assert

@@ -40,4 +40,5 @@ export interface PurchaseOrder {
     quantity: number;
     unitPrice: number;
   }[];
+  purchaseOrderStatusId: number;
 }

@@ -11,7 +11,7 @@ import { ProductListItem, ProductParams, ProductService } from '@Product';
 import { SupplierResponse, SupplierService } from '@Supplier';
 
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, signal, OnInit } from '@angular/core';
 import {
   FormGroup,
   FormControl,
@@ -38,6 +38,7 @@ import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, of, startWith, map } from 'rxjs';
 
+import { PurchaseOrderStatusOptionsId } from '../../constants/purchase-order-status-ids.enum';
 import {
   PurchaseOrderDetail,
   PurchaseOrderItemDetail,
@@ -87,12 +88,16 @@ interface PurchaseOrderForm {
   templateUrl: './purchase-order-created.component.html',
   styleUrls: ['./purchase-order-created.component.scss'],
 })
-export class PurchaseOrderCreatedComponent {
+export class PurchaseOrderCreatedComponent implements OnInit {
   isLoadingInitialData = signal(false);
   isLoading = signal(false);
   isLoadingProducts = signal(false);
   isModification = false;
   searchText = '';
+
+  readonly STATUS_DRAFT = PurchaseOrderStatusOptionsId.Draft;
+  readonly STATUS_ORDERED = PurchaseOrderStatusOptionsId.Ordered;
+  readonly minDate = new Date();
 
   suppliers: SupplierResponse[] = [];
   filteredSuppliers$: Observable<SupplierResponse[]> = of([]);
@@ -174,9 +179,9 @@ export class PurchaseOrderCreatedComponent {
 
   constructor(
     public router: Router,
-    private supplierService: SupplierService,
-    private productService: ProductService,
-    private route: ActivatedRoute,
+    private readonly supplierService: SupplierService,
+    private readonly productService: ProductService,
+    private readonly route: ActivatedRoute,
     public purchaseOrderService: PurchaseOrderService,
     public dialog: MatDialog,
     public snackBar: MatSnackBar,
@@ -273,7 +278,7 @@ export class PurchaseOrderCreatedComponent {
   }
 
   onSupplierSelected(event: MatAutocompleteSelectedEvent): void {
-    const supplier = event.option.value as SupplierResponse;
+    const supplier = event.option.value;
     this.form.controls.header.patchValue({
       supplierId: supplier.id,
       supplier: supplier,
@@ -419,7 +424,7 @@ export class PurchaseOrderCreatedComponent {
     }, 0);
   }
 
-  onSubmit(): void {
+  onSubmit(statusId: number): void {
     this.isLoading.set(true);
 
     if (this.isModification) {
@@ -476,13 +481,18 @@ export class PurchaseOrderCreatedComponent {
         quantity: item.value.quantity!,
         unitPrice: item.value.unitPrice!,
       })),
+      purchaseOrderStatusId: statusId,
     };
 
     this.purchaseOrderService
       .createPurchaseOrder(purchaseOrderCreationRequest)
       .subscribe({
         next: () => {
-          this.snackBar.open('Orden de compra creada con éxito', 'Cerrar', {
+          let message = 'Orden de compra creada con éxito';
+          if (statusId === this.STATUS_DRAFT) {
+            message = 'Orden de compra guardada como borrador';
+          }
+          this.snackBar.open(message, 'Cerrar', {
             duration: 3000,
           });
           this.router.navigate(['/ordenes-compra']);
