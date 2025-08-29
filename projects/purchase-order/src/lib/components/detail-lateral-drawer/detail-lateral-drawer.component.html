@@ -74,9 +74,7 @@
           <div class="card-footer d-flex justify-content-end border-top pt-3">
             <h3 class="mb-0">
               Total:
-              <strong
-                >$ {{ purchaseOrder.totalAmount | number: '1.2-2' }}</strong
-              >
+              <strong>{{ purchaseOrder.totalAmount | currency:'ARS':'symbol':'1.2-2' }}</strong>
             </h3>
           </div>
         </div>

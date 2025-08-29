@@ -115,7 +115,6 @@ export class PurchaseOrderListComponent implements OnInit {
         new Intl.NumberFormat('es-AR', {
           style: 'currency',
           currency: 'ARS',
-          minimumFractionDigits: 2,
         }).format(element.totalAmount),
     },
     {
