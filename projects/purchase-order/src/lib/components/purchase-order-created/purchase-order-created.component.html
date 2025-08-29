@@ -215,18 +215,28 @@
                         <div class="purchase-order__buttons">
                             <button mat-button matStepperPrevious>Anterior</button>
                             <div class="purchase-order__buttons__save">
-                                <mp-button 
-                                    type="secondary" 
-                                    (onClick)="onSubmit(STATUS_DRAFT)" 
-                                    [disabled]="!form.valid">
-                                    Guardar
-                                </mp-button>
-                                <mp-button 
-                                    type="primary" 
-                                    (onClick)="onSubmit(STATUS_ORDERED)" 
-                                    [disabled]="!form.valid">
-                                    Enviar
-                                </mp-button>
+                                @if(!isModification){
+                                    <mp-button 
+                                        type="secondary" 
+                                        (onClick)="onCreationSubmit(STATUS_DRAFT)" 
+                                        [disabled]="!form.valid">
+                                        Guardar
+                                    </mp-button>
+                                    <mp-button 
+                                        type="primary" 
+                                        (onClick)="onCreationSubmit(STATUS_ORDERED)" 
+                                        [disabled]="!form.valid">
+                                        Enviar
+                                    </mp-button>
+                                } 
+                                @else{
+                                    <mp-button 
+                                        type="primary" 
+                                        (onClick)="onModifySubmit()" 
+                                        [disabled]="!form.valid">
+                                        Guardar
+                                    </mp-button>
+                                } 
                             </div>
                         </div>
                 </mat-step>
