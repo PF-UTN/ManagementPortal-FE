@@ -111,7 +111,11 @@ export class PurchaseOrderListComponent implements OnInit {
       columnDef: 'totalAmount',
       header: 'TOTAL',
       type: ColumnTypeEnum.VALUE,
-      value: (element: PurchaseOrderItem) => element.totalAmount.toString(),
+      value: (element: PurchaseOrderItem) =>
+        new Intl.NumberFormat('es-AR', {
+          style: 'currency',
+          currency: 'ARS',
+        }).format(element.totalAmount),
     },
     {
       columnDef: 'actions',
