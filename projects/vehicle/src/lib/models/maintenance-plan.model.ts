@@ -1,5 +1,5 @@
 export interface MaintenancePlanListItem {
   description: string;
-  kmInterval: number;
-  timeInterval: number;
+  kmInterval: number | null;
+  timeInterval: number | null;
 }

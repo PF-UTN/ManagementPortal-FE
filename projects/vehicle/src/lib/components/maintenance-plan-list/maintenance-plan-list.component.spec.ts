@@ -1,26 +1,55 @@
+import { VehicleService } from '@Vehicle';
+
 import { DecimalPipe } from '@angular/common';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { of, throwError, firstValueFrom } from 'rxjs';
 
 import { MaintenancePlanListComponent } from './maintenance-plan-list.component';
 import { MaintenancePlanListItem } from '../../models/maintenance-plan.model';
 
+@Component({
+  template: `<mp-maintenance-plan-list
+    [vehicleId]="vehicleId"
+  ></mp-maintenance-plan-list>`,
+  standalone: true,
+  imports: [MaintenancePlanListComponent],
+})
+class HostComponent {
+  vehicleId = 1;
+}
+
 describe('MaintenancePlanListComponent', () => {
+  let hostFixture: ComponentFixture<HostComponent>;
+  let hostComponent: HostComponent;
   let component: MaintenancePlanListComponent;
-  let fixture: ComponentFixture<MaintenancePlanListComponent>;
+
+  beforeEach(async () => {
+    const vehicleServiceMock = {
+      postSearchMaintenancePlanItemVehicle: jest
+        .fn()
+        .mockReturnValue(of({ results: [], total: 0 })),
+    } as unknown as jest.Mocked<VehicleService>;
+
+    await TestBed.configureTestingModule({
+      imports: [HostComponent],
+      providers: [
+        DecimalPipe,
+        provideHttpClientTesting(),
+        { provide: VehicleService, useValue: vehicleServiceMock },
+      ],
+    }).compileComponents();
+
+    hostFixture = TestBed.createComponent(HostComponent);
+    hostComponent = hostFixture.componentInstance;
+    hostFixture.detectChanges();
+    const childDebugElement = hostFixture.debugElement.children[0];
+    component = childDebugElement.componentInstance;
+  });
 
   it('should create', () => {
     expect(component).toBeTruthy();
-  });
-
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [MaintenancePlanListComponent],
-      providers: [DecimalPipe],
-    }).compileComponents();
-
-    fixture = TestBed.createComponent(MaintenancePlanListComponent);
-    component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {
@@ -63,7 +92,7 @@ describe('MaintenancePlanListComponent', () => {
     expect(result).toBe('15,000 km');
   });
 
-  it('should return timeInterval as string', () => {
+  it('should return timeInterval as string with "Meses"', () => {
     // Arrange
     const item: MaintenancePlanListItem = {
       description: 'Cambio de filtro',
@@ -77,7 +106,7 @@ describe('MaintenancePlanListComponent', () => {
     const result =
       timeColumn && timeColumn.value ? timeColumn.value(item) : undefined;
     // Assert
-    expect(result).toBe('6');
+    expect(result).toBe('6 Meses');
   });
 
   it('should call action handlers for actions column', () => {
@@ -100,5 +129,90 @@ describe('MaintenancePlanListComponent', () => {
     expect(spyRealizar).toHaveBeenCalledWith('Modificar', item);
     expect(spyRealizar).toHaveBeenCalledWith('Eliminar', item);
     spyRealizar.mockRestore();
+  });
+
+  it('should show "-" for kmInterval when null', () => {
+    // Arrange
+    const item: MaintenancePlanListItem = {
+      description: 'Sin km',
+      kmInterval: null,
+      timeInterval: 12,
+    };
+    const kmColumn = component.columns.find(
+      (col) => col.columnDef === 'kmInterval',
+    );
+    // Act
+    const result =
+      kmColumn && kmColumn.value ? kmColumn.value(item) : undefined;
+    // Assert
+    expect(result).toBe('-');
+  });
+
+  it('should show "-" for timeInterval when null', () => {
+    // Arrange
+    const item: MaintenancePlanListItem = {
+      description: 'Sin meses',
+      kmInterval: 10000,
+      timeInterval: 0,
+    };
+    const timeColumn = component.columns.find(
+      (col) => col.columnDef === 'timeInterval',
+    );
+    // Act
+    const result =
+      timeColumn && timeColumn.value ? timeColumn.value(item) : undefined;
+    // Assert
+    expect(result).toBe('-');
+  });
+
+  describe('ngOnInit', () => {
+    it('should fetch data and update dataSource$, itemsNumber and isLoading on success', async () => {
+      // Arrange
+      const mockResponse = {
+        results: [
+          {
+            description: 'Cambio de aceite',
+            kmInterval: 10000,
+            timeInterval: 6,
+          },
+          {
+            description: 'Cambio de filtro',
+            kmInterval: 15000,
+            timeInterval: 12,
+          },
+        ],
+        total: 2,
+      };
+      const vehicleService = TestBed.inject(VehicleService);
+      jest
+        .spyOn(vehicleService, 'postSearchMaintenancePlanItemVehicle')
+        .mockReturnValue(of(mockResponse));
+      hostComponent.vehicleId = 1;
+      // Act
+      component.ngOnInit();
+      // Assert
+      const data = await firstValueFrom(component.dataSource$);
+      expect(data).toEqual(mockResponse.results);
+      expect(component.itemsNumber).toBe(2);
+      expect(component.isLoading).toBe(false);
+    });
+
+    it('should clear dataSource$, itemsNumber and isLoading on error', async () => {
+      // Arrange
+      const vehicleService = TestBed.inject(VehicleService);
+      jest
+        .spyOn(vehicleService, 'postSearchMaintenancePlanItemVehicle')
+        .mockReturnValue(throwError(() => new Error('fail')));
+      component.itemsNumber = 5;
+      component.isLoading = true;
+      hostComponent.vehicleId = 1;
+      // Act
+      component.ngOnInit();
+      // Assert
+      const data = await firstValueFrom(component.dataSource$);
+      expect(data).toEqual([]);
+      expect(component.itemsNumber).toBe(0);
+      expect(component.isLoading).toBe(false);
+    });
   });
 });

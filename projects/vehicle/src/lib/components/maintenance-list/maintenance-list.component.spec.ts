@@ -6,7 +6,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { throwError } from 'rxjs';
 
 import { MaintenanceListComponent } from './maintenance-list.component';
-import { MaintenanceListItem } from '../../models/maintenance-item.model';
+import { MaintenanceListItem } from '../../models/maintenance-item-list.model';
 
 describe('MaintenanceListComponent', () => {
   let component: MaintenanceListComponent;

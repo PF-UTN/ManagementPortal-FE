@@ -1,1 +1,26 @@
-<p>maintenance-repair-list works!</p>
+<div class="container-fluid">
+
+    <div class="filters-container">
+        <div class="filters-container_selector col">
+            <mp-input
+                label="Buscar reparaciones"
+                [placeholder]="'Buscar por descripción'"
+                [(ngModel)]="searchText"
+                icon="close"
+                [iconAction]="onClearSearch.bind(this)"
+                (input)="onSearchTextChange()"/>
+        </div>
+    </div>
+
+    <mp-table
+        [columns]="columns"
+        [dataSource$]="dataSource$"
+        [isLoading]="isLoading"
+        noDataMessage="No hay reparaciones disponibles"
+        [itemsNumber]="itemsNumber"
+        [pageSize]="pageSize"
+        [pageIndex]="pageIndex"
+        (pageChange)="handlePageChange($event)">
+    </mp-table>
+
+</div>
