@@ -75,7 +75,11 @@ export class ProductListComponent implements OnInit {
       columnDef: 'price',
       header: 'Precio',
       type: ColumnTypeEnum.VALUE,
-      value: (element: ProductListItem) => element.price.toFixed(2),
+      value: (item) =>
+        new Intl.NumberFormat('es-AR', {
+          style: 'currency',
+          currency: 'ARS',
+        }).format(item.price),
     },
     {
       columnDef: 'stock',
@@ -87,7 +91,10 @@ export class ProductListComponent implements OnInit {
       columnDef: 'peso',
       header: 'Peso',
       type: ColumnTypeEnum.VALUE,
-      value: (element: ProductListItem) => element.weight.toString(),
+      value: (element: ProductListItem) =>
+        new Intl.NumberFormat('es-AR', { maximumFractionDigits: 2 }).format(
+          element.weight,
+        ) + ' kg',
     },
     {
       columnDef: 'enabled',
