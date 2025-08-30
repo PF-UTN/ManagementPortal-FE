@@ -1,125 +1,128 @@
 <div class="container-fluid">
   <div class="main-container__header">
     <mp-title>Ordenes de Compra</mp-title>
-    <div class="filters-container__dropdown">
-      <mp-button 
-        type="primary" 
-        (click)="openCreatePurchaseOrder()" 
-        (keydown.enter)="openCreatePurchaseOrder()">
-          Nuevo 
-      </mp-button>
-    </div>
+    <mp-button 
+      type="primary" 
+      (click)="openCreatePurchaseOrder()" 
+      (keydown.enter)="openCreatePurchaseOrder()">
+      Nuevo
+    </mp-button>
   </div>
 
-  <div class="filters-container">
-    <div class="filters-container__search">
-      <mp-input
-        label="Buscar ordenes de compra"
-        [placeholder]="'Buscar por proveedor o estado...'"
-        [(ngModel)]="searchText"
-        icon="close"
-        [iconPosition]="'suffix'"
+  <div class="filters-toolbar">
+    <div class="filters-toolbar__search">
+      <mp-input 
+        label="Buscar órdenes de compra" 
+        [placeholder]="'Buscar por proveedor o numero de orden de compra...'"
+        [(ngModel)]="searchText" 
+        icon="close" 
+        [iconPosition]="'suffix'" 
         [iconAction]="onClearSearch.bind(this)"
-        (input)="onSearchTextChange()"
-      />
+        (input)="onSearchTextChange()" />
     </div>
-
-    <div class="filters-container__selector">
+    <div class="filters-toolbar__actions">
       <mat-form-field appearance="outline" class="w-100">
         <mat-label>Filtrar por estado</mat-label>
-        <mat-select
-          [(ngModel)]="selectedStatus"
-          (selectionChange)="onStatusFilterChange()"
-          multiple
-        >
-          <mat-option
-            *ngFor="let option of statusOptions | keyvalue"
-            [value]="option.key"
-          >
+        <mat-select [(ngModel)]="selectedStatus" (selectionChange)="onStatusFilterChange()" multiple>
+          <mat-option *ngFor="let option of statusOptions | keyvalue" [value]="option.key">
             {{ option.value }}
           </mat-option>
         </mat-select>
       </mat-form-field>
-    </div>
 
-    <div class="filters-container__selector">
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Ordenar por</mat-label>
-        <mat-select
-          [(ngModel)]="selectedOrderBy"
-          (selectionChange)="onOrderByChange()"
-        >
-          <mat-option *ngFor="let option of orderByOptions" [value]="option">
+      <div class="filters-toolbar__actions__icon">
+        <button 
+          mat-icon-button 
+          [matMenuTriggerFor]="filtersMenu" 
+          aria-label="Filtrar por fechas">
+          <mat-icon>today</mat-icon>
+        </button>
+        <button 
+          mat-icon-button 
+          [matMenuTriggerFor]="orderMenu" 
+          aria-label="Ordenar">
+          <mat-icon>sort_by_alpha</mat-icon>
+        </button>
+        <mp-button 
+          type="icon" 
+          icon="download" 
+          ariaLabel="Descargar XLSX">
+        </mp-button>
+      </div>
+        <mat-menu #filtersMenu="matMenu" panelClass="custom-filters-menu">
+          <div class="filters-toolbar__date">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Fecha creación</mat-label>
+              <mat-date-range-input [rangePicker]="creationPicker">
+                <input 
+                  matStartDate 
+                  placeholder="Desde" 
+                  [(ngModel)]="selectedCreationDateRange.start"
+                  name="creationStart" />
+                <input 
+                  matEndDate 
+                  placeholder="Hasta" 
+                  [(ngModel)]="selectedCreationDateRange.end" 
+                  name="creationEnd" />
+              </mat-date-range-input>
+              <mat-datepicker-toggle matSuffix [for]="creationPicker"></mat-datepicker-toggle>
+              <mat-date-range-picker #creationPicker></mat-date-range-picker>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Fecha estimada</mat-label>
+              <mat-date-range-input [rangePicker]="estimatedDeliveryPicker">
+                <input 
+                  matStartDate 
+                  placeholder="Desde" 
+                  [(ngModel)]="selectedEstimatedDeliveryDateRange.start"
+                  name="deliveryStart" />
+                <input 
+                  matEndDate 
+                  placeholder="Hasta" 
+                  [(ngModel)]="selectedEstimatedDeliveryDateRange.end"
+                  name="deliveryEnd" />
+              </mat-date-range-input>
+              <mat-datepicker-toggle matSuffix [for]="estimatedDeliveryPicker"></mat-datepicker-toggle>
+              <mat-date-range-picker #estimatedDeliveryPicker></mat-date-range-picker>
+            </mat-form-field>
+            </div>
+            <div class="filters-toolbar__date__buttons">
+                <mp-button 
+                  type="secondary" 
+                  (click)="clearDateFilters(); 
+                  filtersMenu.closed.emit()">
+                  Limpiar
+                </mp-button>
+                <mp-button 
+                  type="primary" 
+                  (click)="applyFilters(); 
+                  filtersMenu.closed.emit()">
+                  Aplicar
+                </mp-button>
+            </div>
+        </mat-menu>
+
+        <mat-menu #orderMenu="matMenu" panelClass="custom-filters-menu">
+          <button 
+            mat-menu-item 
+            *ngFor="let option of orderByOptions" 
+            (click)="onOrderByChange(option)">
             {{ option.label }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-    </div>
-
-    <div class="filters-container__picker">
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Filtrar por creación</mat-label>
-        <mat-date-range-input [rangePicker]="creationPicker">
-          <input
-            matStartDate
-            placeholder="Desde"
-            [(ngModel)]="selectedCreationDateRange.start"
-            name="creationStart"
-            (ngModelChange)="onCreationDateRangeChange()"
-          />
-          <input
-            matEndDate
-            placeholder="Hasta"
-            [(ngModel)]="selectedCreationDateRange.end"
-            name="creationEnd"
-            (ngModelChange)="onCreationDateRangeChange()"
-          />
-        </mat-date-range-input>
-        <mat-datepicker-toggle
-          matSuffix
-          [for]="creationPicker"
-        ></mat-datepicker-toggle>
-        <mat-date-range-picker #creationPicker></mat-date-range-picker>
-      </mat-form-field>
-    </div>
-
-    <div class="filters-container__picker">
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Filtrar por entrega estimada</mat-label>
-        <mat-date-range-input [rangePicker]="estimatedDeliveryPicker">
-          <input
-            matStartDate
-            placeholder="Desde"
-            [(ngModel)]="selectedEstimatedDeliveryDateRange.start"
-            name="deliveryStart"
-            (ngModelChange)="onEstimatedDeliveryDateRangeChange()"
-          />
-          <input
-            matEndDate
-            placeholder="Hasta"
-            [(ngModel)]="selectedEstimatedDeliveryDateRange.end"
-            name="deliveryEnd"
-            (ngModelChange)="onEstimatedDeliveryDateRangeChange()"
-          />
-        </mat-date-range-input>
-        <mat-datepicker-toggle
-          matSuffix
-          [for]="estimatedDeliveryPicker"
-        ></mat-datepicker-toggle>
-        <mat-date-range-picker #estimatedDeliveryPicker></mat-date-range-picker>
-      </mat-form-field>
+          </button>
+        </mat-menu>
     </div>
   </div>
 
-  <mp-table
-    [columns]="columns"
-    [dataSource$]="dataSource$"
+  <mp-table 
+    [columns]="columns" 
+    [dataSource$]="dataSource$" 
     [isLoading]="isLoading"
-    noDataMessage="No existen ordenes de compra disponibles"
-    [itemsNumber]="itemsNumber"
+    noDataMessage="No existen órdenes de compra disponibles" 
+    [itemsNumber]="itemsNumber" 
     [pageSize]="pageSize"
-    [pageIndex]="pageIndex"
-    (pageChange)="handlePageChange($event)"
-  >
+    [pageIndex]="pageIndex" 
+    (pageChange)="handlePageChange($event)">
   </mp-table>
+
 </div>

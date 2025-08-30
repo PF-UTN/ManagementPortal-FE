@@ -45,10 +45,10 @@ import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-la
   selector: 'mp-purchase-order-list',
   standalone: true,
   imports: [
+    MatIconModule,
     TableComponent,
     FormsModule,
     CommonModule,
-    MatIconModule,
     ReactiveFormsModule,
     MatMenuModule,
     MatButtonModule,
@@ -72,12 +72,14 @@ export class PurchaseOrderListComponent implements OnInit {
       header: 'NÚMERO',
       type: ColumnTypeEnum.VALUE,
       value: (element: PurchaseOrderItem) => element.id.toString(),
+      width: '50px',
     },
     {
       columnDef: 'supplierBussinesName',
       header: 'PROVEEDOR',
       type: ColumnTypeEnum.VALUE,
       value: (element: PurchaseOrderItem) => element.supplierBussinesName,
+      width: '500px',
     },
     {
       columnDef: 'purchaseOrderStatusName',
@@ -88,7 +90,7 @@ export class PurchaseOrderListComponent implements OnInit {
         this.mapStatusToPillStatus(
           element.purchaseOrderStatusName as PurchaseOrderStatusOptions,
         ),
-      width: '150px',
+      width: '250px',
     },
     {
       columnDef: 'createdAt',
@@ -96,16 +98,25 @@ export class PurchaseOrderListComponent implements OnInit {
       type: ColumnTypeEnum.VALUE,
       value: (element: PurchaseOrderItem) =>
         this.datePipe.transform(element.createdAt, 'dd/MM/yyyy')!,
+      width: '250px',
     },
     {
-      columnDef: 'deliveryDates',
-      header: 'FECHA DE ENTREGA',
-      type: ColumnTypeEnum.MULTI_VALUE,
-      width: '200px',
-      multiValue: (element: PurchaseOrderItem) => [
-        `Fecha Estimada: ${this.datePipe.transform(element.estimatedDeliveryDate, 'dd/MM/yyyy') || 'N/A'}`,
-        `Fecha Efectiva: ${this.datePipe.transform(element.effectiveDeliveryDate, 'dd/MM/yyyy') || 'N/A'}`,
-      ],
+      columnDef: 'estimatedDeliveryDate',
+      header: 'FECHA ESTIMADA',
+      type: ColumnTypeEnum.VALUE,
+      width: '225px',
+      value: (element: PurchaseOrderItem) =>
+        this.datePipe.transform(element.estimatedDeliveryDate, 'dd/MM/yyyy') ||
+        'N/A',
+    },
+    {
+      columnDef: 'effectiveDeliveryDate',
+      header: 'FECHA EFECTIVA',
+      type: ColumnTypeEnum.VALUE,
+      width: '225px',
+      value: (element: PurchaseOrderItem) =>
+        this.datePipe.transform(element.effectiveDeliveryDate, 'dd/MM/yyyy') ||
+        'N/A',
     },
     {
       columnDef: 'totalAmount',
@@ -121,6 +132,7 @@ export class PurchaseOrderListComponent implements OnInit {
       columnDef: 'actions',
       header: 'ACCIONES',
       type: ColumnTypeEnum.ACTIONS,
+      width: '100px',
       actions: [
         {
           description: 'Ver Detalle',
@@ -173,22 +185,22 @@ export class PurchaseOrderListComponent implements OnInit {
   statusOptions = PurchaseOrderStatusOptions;
   orderByOptions: PurchaseOrderOrderOption[] = [
     {
-      label: 'Fecha de Creación - Ascendente',
+      label: 'Fecha Creación: Ascendente',
       field: PurchaseOrderOrderField.CreatedAt,
       direction: OrderDirection.ASC,
     },
     {
-      label: 'Fecha de Creación - Descendente',
+      label: 'Fecha Creación: Descendente',
       field: PurchaseOrderOrderField.CreatedAt,
       direction: OrderDirection.DESC,
     },
     {
-      label: 'Total - Ascendente',
+      label: 'Total: Menor a Mayor',
       field: PurchaseOrderOrderField.totalAmount,
       direction: OrderDirection.ASC,
     },
     {
-      label: 'Total - Descendente',
+      label: 'Total: Mayor a Menor',
       field: PurchaseOrderOrderField.totalAmount,
       direction: OrderDirection.DESC,
     },
@@ -265,6 +277,16 @@ export class PurchaseOrderListComponent implements OnInit {
     this.doSearchSubject$.next();
   }
 
+  onEstimatedDeliveryDateRangeChange(): void {
+    this.pageIndex = 0;
+    this.doSearchSubject$.next();
+  }
+
+  onCreationDateRangeChange(): void {
+    this.pageIndex = 0;
+    this.doSearchSubject$.next();
+  }
+
   onSearchTextChange(): void {
     this.pageIndex = 0;
     this.isLoading = true;
@@ -281,17 +303,8 @@ export class PurchaseOrderListComponent implements OnInit {
     this.doSearchSubject$.next();
   }
 
-  onEstimatedDeliveryDateRangeChange(): void {
-    this.pageIndex = 0;
-    this.doSearchSubject$.next();
-  }
-
-  onCreationDateRangeChange(): void {
-    this.pageIndex = 0;
-    this.doSearchSubject$.next();
-  }
-
-  onOrderByChange(): void {
+  onOrderByChange(option: PurchaseOrderOrderOption): void {
+    this.selectedOrderBy = option;
     this.pageIndex = 0;
     this.doSearchSubject$.next();
   }
@@ -310,6 +323,17 @@ export class PurchaseOrderListComponent implements OnInit {
         },
       },
     );
+  }
+
+  clearDateFilters(): void {
+    this.selectedCreationDateRange = { start: null, end: null };
+    this.selectedEstimatedDeliveryDateRange = { start: null, end: null };
+    this.applyFilters();
+  }
+
+  applyFilters(): void {
+    this.pageIndex = 0;
+    this.doSearchSubject$.next();
   }
 
   handlePageChange(event: { pageIndex: number; pageSize: number }): void {
