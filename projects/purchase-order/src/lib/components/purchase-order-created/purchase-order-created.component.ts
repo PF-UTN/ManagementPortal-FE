@@ -97,7 +97,7 @@ export class PurchaseOrderCreatedComponent implements OnInit {
 
   readonly STATUS_DRAFT = PurchaseOrderStatusOptionsId.Draft;
   readonly STATUS_ORDERED = PurchaseOrderStatusOptionsId.Ordered;
-  readonly minDate = new Date();
+  minDate: Date | null = null;
 
   suppliers: SupplierResponse[] = [];
   filteredSuppliers$: Observable<SupplierResponse[]> = of([]);
@@ -191,6 +191,7 @@ export class PurchaseOrderCreatedComponent implements OnInit {
     this.existingPurchaseOrderId = this.route.snapshot.params['id'];
     this.isModification = !!this.existingPurchaseOrderId;
 
+    this.minDate = this.isModification ? null : new Date();
     this.form = new FormGroup<PurchaseOrderForm>({
       header: new FormGroup<PurchaseHeaderForm>({
         supplier: new FormControl<SupplierResponse | null>(null, [
@@ -204,6 +205,13 @@ export class PurchaseOrderCreatedComponent implements OnInit {
       items: new FormArray<FormGroup<PurchaseOrderItemForm>>([]),
       searchText: new FormControl<string | null>(null),
     });
+
+    if (this.isModification) {
+      this.form.controls.header.controls.observation.setValidators([
+        Validators.maxLength(250),
+        Validators.required,
+      ]);
+    }
 
     this.initSuppliers();
 
@@ -424,52 +432,8 @@ export class PurchaseOrderCreatedComponent implements OnInit {
     }, 0);
   }
 
-  onSubmit(statusId: number): void {
+  onCreationSubmit(statusId: number): void {
     this.isLoading.set(true);
-
-    if (this.isModification) {
-      const purchaseOrderUpdateRequest: PutUpdatePurchaseOrderRequest = {
-        purchaseOrderStatusId: this.initialPurchaseOrder.status.id,
-        estimatedDeliveryDate: new Date(
-          this.form.controls.header.value.estimatedDeliveryDate!,
-        ),
-        observation: this.form.controls.header.value.observation!,
-        purchaseOrderItems: this.items.controls.map((item) => ({
-          productId: item.value.productId!,
-          quantity: item.value.quantity!,
-          unitPrice: item.value.unitPrice!,
-        })),
-      };
-
-      this.purchaseOrderService
-        .updatePurchaseOrderStatusAsync(
-          this.existingPurchaseOrderId!,
-          purchaseOrderUpdateRequest,
-        )
-        .subscribe({
-          next: () => {
-            this.snackBar.open(
-              'Orden de compra modificada con éxito',
-              'Cerrar',
-              {
-                duration: 3000,
-              },
-            );
-            this.router.navigate(['/ordenes-compra']);
-          },
-          error: () => {
-            this.snackBar.open(
-              'Error al modificar la orden de compra',
-              'Cerrar',
-              {
-                duration: 3000,
-              },
-            );
-            this.isLoading.set(false);
-          },
-        });
-      return;
-    }
 
     const purchaseOrderCreationRequest = {
       supplierId: this.form.controls.header.value.supplierId!,
@@ -501,6 +465,47 @@ export class PurchaseOrderCreatedComponent implements OnInit {
           this.snackBar.open('Error al crear la orden de compra', 'Cerrar', {
             duration: 3000,
           });
+          this.isLoading.set(false);
+        },
+      });
+  }
+
+  onModifySubmit() {
+    this.isLoading.set(true);
+
+    const purchaseOrderUpdateRequest: PutUpdatePurchaseOrderRequest = {
+      purchaseOrderStatusId: this.initialPurchaseOrder.status.id,
+      estimatedDeliveryDate: new Date(
+        this.form.controls.header.value.estimatedDeliveryDate!,
+      ),
+      observation: this.form.controls.header.value.observation!,
+      purchaseOrderItems: this.items.controls.map((item) => ({
+        productId: item.value.productId!,
+        quantity: item.value.quantity!,
+        unitPrice: item.value.unitPrice!,
+      })),
+    };
+
+    this.purchaseOrderService
+      .updatePurchaseOrderStatusAsync(
+        this.existingPurchaseOrderId!,
+        purchaseOrderUpdateRequest,
+      )
+      .subscribe({
+        next: () => {
+          this.snackBar.open('Orden de compra modificada con éxito', 'Cerrar', {
+            duration: 3000,
+          });
+          this.router.navigate(['/ordenes-compra']);
+        },
+        error: () => {
+          this.snackBar.open(
+            'Error al modificar la orden de compra',
+            'Cerrar',
+            {
+              duration: 3000,
+            },
+          );
           this.isLoading.set(false);
         },
       });
