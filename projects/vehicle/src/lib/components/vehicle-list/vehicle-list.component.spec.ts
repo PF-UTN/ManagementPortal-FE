@@ -231,7 +231,9 @@ describe('VehicleListComponent', () => {
       const actionsColumn = component.columns.find(
         (c) => c.columnDef === 'actions',
       );
-      actionsColumn?.actions?.[0].action(vehicle);
+      actionsColumn?.actions
+        ?.find((action) => action.description === 'Eliminar')
+        ?.action(vehicle);
       tick();
       fixture.detectChanges();
 

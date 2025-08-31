@@ -22,6 +22,7 @@ import { VehicleListItem } from '../../models/vehicle-item.model';
 import { VehicleParams } from '../../models/vehicle-params.model';
 import { VehicleService } from '../../services/vehicle.service';
 import { CreateVehicleDrawerComponent } from '../create-vehicle-drawer/create-vehicle-drawer.component';
+import { DetailVehicleDrawerComponent } from '../detail-vehicle-drawer/detail-vehicle-drawer.component';
 
 @Component({
   selector: 'mp-vehicle-list',
@@ -79,6 +80,26 @@ export class VehicleListComponent implements OnInit {
       header: 'Acciones',
       type: ColumnTypeEnum.ACTIONS,
       actions: [
+        {
+          description: 'Ver Detalle',
+          action: (element: VehicleListItem) => {
+            this.lateralDrawerService.open(
+              DetailVehicleDrawerComponent,
+              { data: element },
+              {
+                title: 'Detalles de Vehículo',
+                footer: {
+                  firstButton: {
+                    text: 'Cerrar',
+                    click: () => {
+                      this.lateralDrawerService.close();
+                    },
+                  },
+                },
+              },
+            );
+          },
+        },
         {
           description: 'Eliminar',
           action: (element: VehicleListItem) => {
