@@ -50,57 +50,59 @@
         </mp-button>
       </div>
         <mat-menu #filtersMenu="matMenu" panelClass="custom-filters-menu">
-          <div class="filters-toolbar__date">
-            <mat-form-field appearance="outline" class="w-100">
-              <mat-label>Fecha creación</mat-label>
-              <mat-date-range-input [rangePicker]="creationPicker">
-                <input 
-                  matStartDate 
-                  placeholder="Desde" 
-                  [(ngModel)]="selectedCreationDateRange.start"
-                  name="creationStart" />
-                <input 
-                  matEndDate 
-                  placeholder="Hasta" 
-                  [(ngModel)]="selectedCreationDateRange.end" 
-                  name="creationEnd" />
-              </mat-date-range-input>
-              <mat-datepicker-toggle matSuffix [for]="creationPicker"></mat-datepicker-toggle>
-              <mat-date-range-picker #creationPicker></mat-date-range-picker>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="w-100">
-              <mat-label>Fecha estimada</mat-label>
-              <mat-date-range-input [rangePicker]="estimatedDeliveryPicker">
-                <input 
-                  matStartDate 
-                  placeholder="Desde" 
-                  [(ngModel)]="selectedEstimatedDeliveryDateRange.start"
-                  name="deliveryStart" />
-                <input 
-                  matEndDate 
-                  placeholder="Hasta" 
-                  [(ngModel)]="selectedEstimatedDeliveryDateRange.end"
-                  name="deliveryEnd" />
-              </mat-date-range-input>
-              <mat-datepicker-toggle matSuffix [for]="estimatedDeliveryPicker"></mat-datepicker-toggle>
-              <mat-date-range-picker #estimatedDeliveryPicker></mat-date-range-picker>
-            </mat-form-field>
+          <div (click)="$event.stopPropagation()">
+            <div class="filters-toolbar__date">
+              <mat-form-field appearance="outline" class="w-100" >
+                <mat-label>Fecha creación</mat-label>
+                <mat-date-range-input [rangePicker]="creationPicker">
+                  <input 
+                    matStartDate 
+                    placeholder="Desde" 
+                    [(ngModel)]="selectedCreationDateRange.start"
+                    name="creationStart" />
+                  <input 
+                    matEndDate 
+                    placeholder="Hasta" 
+                    [(ngModel)]="selectedCreationDateRange.end" 
+                    name="creationEnd" />
+                </mat-date-range-input>
+                <mat-datepicker-toggle matSuffix [for]="creationPicker"></mat-datepicker-toggle>
+                <mat-date-range-picker #creationPicker></mat-date-range-picker>
+              </mat-form-field>
+  
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Fecha estimada</mat-label>
+                <mat-date-range-input [rangePicker]="estimatedDeliveryPicker">
+                  <input 
+                    matStartDate 
+                    placeholder="Desde" 
+                    [(ngModel)]="selectedEstimatedDeliveryDateRange.start"
+                    name="deliveryStart" />
+                  <input 
+                    matEndDate 
+                    placeholder="Hasta" 
+                    [(ngModel)]="selectedEstimatedDeliveryDateRange.end"
+                    name="deliveryEnd" />
+                </mat-date-range-input>
+                <mat-datepicker-toggle matSuffix [for]="estimatedDeliveryPicker"></mat-datepicker-toggle>
+                <mat-date-range-picker #estimatedDeliveryPicker></mat-date-range-picker>
+              </mat-form-field>
             </div>
             <div class="filters-toolbar__date__buttons">
-                <mp-button 
-                  type="secondary" 
-                  (click)="clearDateFilters(); 
-                  filtersMenu.closed.emit()">
-                  Limpiar
-                </mp-button>
-                <mp-button 
-                  type="primary" 
-                  (click)="applyFilters(); 
-                  filtersMenu.closed.emit()">
-                  Aplicar
-                </mp-button>
+              <mp-button 
+                type="secondary" 
+                (click)="clearDateFilters(); 
+                filtersMenu.closed.emit()">
+                Limpiar
+              </mp-button>
+              <mp-button 
+                type="primary" 
+                (click)="applyFilters(); 
+                filtersMenu.closed.emit()">
+                Aplicar
+              </mp-button>
             </div>
+          </div>
         </mat-menu>
 
         <mat-menu #orderMenu="matMenu" panelClass="custom-filters-menu">
