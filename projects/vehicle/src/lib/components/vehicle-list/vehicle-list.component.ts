@@ -20,6 +20,7 @@ import { BehaviorSubject, debounceTime, Subject, switchMap, tap } from 'rxjs';
 
 import { VehicleListItem } from '../../models/vehicle-item.model';
 import { VehicleParams } from '../../models/vehicle-params.model';
+import { VehicleUpdate } from '../../models/vehicle-update.model';
 import { VehicleService } from '../../services/vehicle.service';
 import { CreateVehicleDrawerComponent } from '../create-vehicle-drawer/create-vehicle-drawer.component';
 import { DetailVehicleDrawerComponent } from '../detail-vehicle-drawer/detail-vehicle-drawer.component';
@@ -101,6 +102,70 @@ export class VehicleListComponent implements OnInit {
           },
         },
         {
+          description: 'Editar',
+          action: (element: VehicleListItem) => {
+            this.lateralDrawerService
+              .open(
+                CreateVehicleDrawerComponent,
+                { data: element },
+                {
+                  title: 'Editar Vehículo',
+                  footer: {
+                    firstButton: {
+                      text: 'Guardar',
+                      click: () => {},
+                    },
+                    secondButton: {
+                      text: 'Cancelar',
+                      click: () => {
+                        this.lateralDrawerService.close();
+                      },
+                    },
+                  },
+                },
+              )
+              .subscribe(() => this.doSearchSubject$.next());
+          },
+        },
+        {
+          description: 'Habilitar / Deshabilitar',
+          action: (element: VehicleListItem) => {
+            const dialogRef = this.dialog.open(ModalComponent, {
+              data: {
+                title: `${element.enabled ? 'Deshabilitar' : 'Habilitar'} vehículo`,
+                message: `¿Está seguro que desea ${element.enabled ? 'deshabilitar' : 'habilitar'} este vehículo?`,
+                cancelText: 'Cancelar',
+                confirmText: 'Confirmar',
+              } as ModalConfig,
+            });
+            dialogRef.afterClosed().subscribe((result: boolean) => {
+              if (!result) {
+                return;
+              }
+              this.isLoading = true;
+
+              const request = {
+                brand: element.brand,
+                model: element.model,
+                kmTraveled: element.kmTraveled,
+                admissionDate: element.admissionDate,
+                enabled: !element.enabled,
+              } as VehicleUpdate;
+
+              this.vehicleService
+                .updateVehicleAsync(element.id, request)
+                .subscribe(() => {
+                  this.doSearchSubject$.next();
+                  this.snackBar.open(
+                    `Vehículo ${element.enabled ? 'deshabilitado' : 'habilitado'} correctamente`,
+                    'Cerrar',
+                    { duration: 3000 },
+                  );
+                });
+            });
+          },
+        },
+        {
           description: 'Eliminar',
           action: (element: VehicleListItem) => {
             const dialogRef = this.dialog.open(ModalComponent, {
@@ -128,32 +193,6 @@ export class VehicleListComponent implements OnInit {
                   );
                 });
             });
-          },
-        },
-        {
-          description: 'Editar',
-          action: (element: VehicleListItem) => {
-            this.lateralDrawerService
-              .open(
-                CreateVehicleDrawerComponent,
-                { data: element },
-                {
-                  title: 'Editar Vehículo',
-                  footer: {
-                    firstButton: {
-                      text: 'Guardar',
-                      click: () => {},
-                    },
-                    secondButton: {
-                      text: 'Cancelar',
-                      click: () => {
-                        this.lateralDrawerService.close();
-                      },
-                    },
-                  },
-                },
-              )
-              .subscribe(() => this.doSearchSubject$.next());
           },
         },
         {
