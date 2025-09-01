@@ -18,7 +18,7 @@ import {
   SupplierService,
 } from '@Supplier';
 
-import { CommonModule } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -53,6 +53,7 @@ import { ToggleProductLatearalDrawerComponent } from '../toggle-product-latearal
     ReactiveFormsModule,
     DropdownButtonComponent,
   ],
+  providers: [CurrencyPipe],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.scss',
@@ -76,10 +77,13 @@ export class ProductListComponent implements OnInit {
       header: 'Precio',
       type: ColumnTypeEnum.VALUE,
       value: (item) =>
-        new Intl.NumberFormat('es-AR', {
-          style: 'currency',
-          currency: 'ARS',
-        }).format(item.price),
+        this.currencyPipe.transform(
+          item.price,
+          'ARS',
+          'symbol',
+          '1.2-2',
+          'es-AR',
+        ) ?? '',
     },
     {
       columnDef: 'stock',
@@ -166,6 +170,7 @@ export class ProductListComponent implements OnInit {
     private readonly lateralDrawerService: LateralDrawerService,
     private readonly router: Router,
     private readonly snackBar: MatSnackBar,
+    private currencyPipe: CurrencyPipe,
   ) {}
 
   ngOnInit(): void {
