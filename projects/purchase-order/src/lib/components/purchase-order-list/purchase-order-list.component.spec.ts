@@ -365,7 +365,7 @@ describe('PurchaseOrderListComponent', () => {
       component.selectedOrderBy = mockOrderBy;
 
       //Act
-      component.onOrderByChange();
+      component.onOrderByChange(mockOrderBy);
 
       //Assert
       expect(component.pageIndex).toBe(0);
@@ -385,7 +385,7 @@ describe('PurchaseOrderListComponent', () => {
       component.selectedOrderBy = mockOrderBy;
 
       //Act
-      component.onOrderByChange();
+      component.onOrderByChange(mockOrderBy);
 
       //Assert
       expect(component.doSearchSubject$.next).toHaveBeenCalledWith();
@@ -582,5 +582,49 @@ describe('PurchaseOrderListComponent', () => {
       // Assert
       expect(doSearchSpy).toHaveBeenCalled();
     }));
+  });
+
+  describe('clearDateFilters', () => {
+    it('should clear both date ranges and call applyFilters', () => {
+      // Arrange
+      const spy = jest.spyOn(component, 'applyFilters');
+      component.selectedCreationDateRange = {
+        start: new Date(),
+        end: new Date(),
+      };
+      component.selectedEstimatedDeliveryDateRange = {
+        start: new Date(),
+        end: new Date(),
+      };
+
+      // Act
+      component.clearDateFilters();
+
+      // Assert
+      expect(component.selectedCreationDateRange).toEqual({
+        start: null,
+        end: null,
+      });
+      expect(component.selectedEstimatedDeliveryDateRange).toEqual({
+        start: null,
+        end: null,
+      });
+      expect(spy).toHaveBeenCalled();
+    });
+  });
+
+  describe('applyFilters', () => {
+    it('should reset pageIndex and emit doSearchSubject$', () => {
+      // Arrange
+      component.pageIndex = 5;
+      const spy = jest.spyOn(component.doSearchSubject$, 'next');
+
+      // Act
+      component.applyFilters();
+
+      // Assert
+      expect(component.pageIndex).toBe(0);
+      expect(spy).toHaveBeenCalledWith();
+    });
   });
 });
