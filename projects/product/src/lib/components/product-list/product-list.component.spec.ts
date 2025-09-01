@@ -2,7 +2,9 @@ import { LateralDrawerService } from '@Common-UI';
 import { ProductCategoryService } from '@Product-Category';
 import { SupplierService } from '@Supplier';
 
-import { CommonModule } from '@angular/common';
+import { CommonModule, registerLocaleData } from '@angular/common';
+import localeEsAr from '@angular/common/locales/es-AR';
+registerLocaleData(localeEsAr);
 import {
   ComponentFixture,
   fakeAsync,
