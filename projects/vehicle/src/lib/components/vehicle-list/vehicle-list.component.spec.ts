@@ -428,4 +428,135 @@ describe('VehicleListComponent', () => {
       );
     });
   });
+
+  describe('actions column', () => {
+    it('should open the detail drawer with correct data when "Ver Detalle" is clicked', () => {
+      // Arrange
+      const vehicle: VehicleListItem = {
+        id: 1,
+        licensePlate: 'ABC123',
+        brand: 'Toyota',
+        model: 'Test',
+        enabled: true,
+        kmTraveled: 100,
+        admissionDate: '2024-07-31T00:00:00.000Z',
+      };
+
+      // Act
+      const actionsColumn = component.columns.find(
+        (c) => c.columnDef === 'actions',
+      );
+      expect(actionsColumn).toBeDefined();
+      const detailAction = actionsColumn?.actions?.find(
+        (a) => a.description === 'Ver Detalle',
+      );
+      expect(detailAction).toBeDefined();
+      detailAction?.action(vehicle);
+
+      // Assert
+      expect(lateralDrawerService.open).toHaveBeenCalledWith(
+        expect.any(Function),
+        { data: vehicle },
+        expect.objectContaining({
+          title: 'Detalles de Vehículo',
+        }),
+      );
+    });
+
+    it('should open confirm modal and call updateVehicleAsync with toggled enabled when "Deshabilitar/Habilitar" is clicked and confirmed', fakeAsync(() => {
+      // Arrange
+      const vehicle: VehicleListItem = {
+        id: 1,
+        licensePlate: 'ABC123',
+        brand: 'Toyota',
+        model: 'Test',
+        enabled: true,
+        kmTraveled: 100,
+        admissionDate: '2024-07-31T00:00:00.000Z',
+      };
+
+      const dialogRefMock: Partial<MatDialogRef<ModalComponent, boolean>> = {
+        afterClosed: () => of(true),
+      };
+
+      jest
+        .spyOn(component['dialog'], 'open')
+        .mockReturnValue(
+          dialogRefMock as MatDialogRef<ModalComponent, boolean>,
+        );
+
+      const updateSpy = jest
+        .spyOn(service, 'updateVehicleAsync')
+        .mockReturnValue(of(void 0));
+      const snackSpy = jest.spyOn(component['snackBar'], 'open');
+      const reloadSpy = jest.spyOn(component.doSearchSubject$, 'next');
+
+      // Act
+      const actionsColumn = component.columns.find(
+        (c) => c.columnDef === 'actions',
+      );
+      const enableAction = actionsColumn?.actions?.find(
+        (a) => a.description === 'Habilitar / Deshabilitar',
+      );
+      enableAction?.action(vehicle);
+      tick();
+
+      // Assert
+      expect(updateSpy).toHaveBeenCalledWith(
+        vehicle.id,
+        expect.objectContaining({
+          enabled: false, // toggled value
+        }),
+      );
+      expect(snackSpy).toHaveBeenCalledWith(
+        'Vehículo deshabilitado correctamente',
+        'Cerrar',
+        { duration: 3000 },
+      );
+      expect(reloadSpy).toHaveBeenCalled();
+    }));
+
+    it('should not call updateVehicleAsync if "Deshabilitar/Habilitar" is cancelled', fakeAsync(() => {
+      // Arrange
+      const vehicle: VehicleListItem = {
+        id: 1,
+        licensePlate: 'ABC123',
+        brand: 'Toyota',
+        model: 'Test',
+        enabled: false,
+        kmTraveled: 100,
+        admissionDate: '2024-07-31T00:00:00.000Z',
+      };
+
+      const dialogRefMock: Partial<MatDialogRef<ModalComponent, boolean>> = {
+        afterClosed: () => of(false),
+      };
+
+      jest
+        .spyOn(component['dialog'], 'open')
+        .mockReturnValue(
+          dialogRefMock as MatDialogRef<ModalComponent, boolean>,
+        );
+
+      const updateSpy = jest.spyOn(service, 'updateVehicleAsync');
+      const snackSpy = jest.spyOn(component['snackBar'], 'open');
+      const reloadSpy = jest.spyOn(component.doSearchSubject$, 'next');
+      reloadSpy.mockClear();
+
+      // Act
+      const actionsColumn = component.columns.find(
+        (c) => c.columnDef === 'actions',
+      );
+      const enableAction = actionsColumn?.actions?.find(
+        (a) => a.description === 'Habilitar / Deshabilitar',
+      );
+      enableAction?.action(vehicle);
+      tick();
+
+      // Assert
+      expect(updateSpy).not.toHaveBeenCalled();
+      expect(snackSpy).not.toHaveBeenCalled();
+      expect(reloadSpy).not.toHaveBeenCalled();
+    }));
+  });
 });
