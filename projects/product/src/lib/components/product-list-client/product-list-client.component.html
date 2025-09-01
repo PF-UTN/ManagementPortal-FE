@@ -35,26 +35,29 @@
             </div>
         </div>
     </form>
-    <div class="main-container__bg">
+    <div class="main-container__bg"
+        infinite-scroll
+        [infiniteScrollDistance]="2"
+        [infiniteScrollThrottle]="150"
+        [scrollWindow]="false"
+        (scrolled)="onScroll()">
+        <div *ngIf="products.length === 0 && !hasMoreProducts" class="text-center py-5">
+            <mat-icon>dashboard</mat-icon>
+            <h4>No se encontraron productos para tu búsqueda</h4>
+            <p>Probá cambiando los filtros o el texto de búsqueda</p>
+        </div>
+        <div class="main-container__grid" *ngIf="products.length > 0">
+            <mp-product-card
+            class="main-container__grid__card"
+                    *ngFor="let product of products"
+                    [product]="product"
+                    [initialQuantity]="1"
+                    (openDrawer)="openProductDrawer($event)">
+            </mp-product-card>
+        </div>
         <ng-container *ngIf="isLoading">
             <div class="d-flex justify-content-center align-items-center py-5">
                 <mp-loading></mp-loading>
-            </div>
-        </ng-container>
-        <ng-container *ngIf="!isLoading">
-            <div *ngIf="products.length === 0" class="text-center py-5">
-                <mat-icon>dashboard</mat-icon>
-                <h4>No se encontraron productos para tu búsqueda</h4>
-                <p>Probá cambiando los filtros o el texto de búsqueda</p>
-            </div>
-            <div class="main-container__grid" *ngIf="products.length > 0">
-                <mp-product-card
-                class="main-container__grid__card"
-                      *ngFor="let product of products"
-                        [product]="product"
-                        [initialQuantity]="1"
-                        (openDrawer)="openProductDrawer($event)">
-                </mp-product-card>
             </div>
         </ng-container>
     </div>
