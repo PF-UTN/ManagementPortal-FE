@@ -672,7 +672,7 @@ describe('PurchaseOrderCreatedComponent', () => {
     });
   });
 
-  describe('onSubmit', () => {
+  describe('onCreationSubmit', () => {
     it('should call PurchaseOrderService and show success snackbar on successful submit', fakeAsync(() => {
       //Arrange
       const spyService = jest.spyOn(
@@ -682,7 +682,7 @@ describe('PurchaseOrderCreatedComponent', () => {
       const spySnackBar = jest.spyOn(snackBar, 'open');
       const spyRouter = jest.spyOn(router, 'navigate');
       // Act
-      component.onSubmit(component.STATUS_ORDERED);
+      component.onCreationSubmit(component.STATUS_ORDERED);
       tick();
       // Assert
       expect(spyService).toHaveBeenCalled();
@@ -703,7 +703,7 @@ describe('PurchaseOrderCreatedComponent', () => {
       const spySnackBar = jest.spyOn(snackBar, 'open');
       const spyRouter = jest.spyOn(router, 'navigate');
       // Act
-      component.onSubmit(component.STATUS_DRAFT);
+      component.onCreationSubmit(component.STATUS_DRAFT);
       tick();
       // Assert
       expect(spyService).toHaveBeenCalled();
@@ -722,7 +722,7 @@ describe('PurchaseOrderCreatedComponent', () => {
         .mockReturnValue(throwError(() => new Error('Error')));
       const spySnackBar = jest.spyOn(snackBar, 'open');
       // Act
-      component.onSubmit(component.STATUS_DRAFT);
+      component.onCreationSubmit(component.STATUS_DRAFT);
       tick();
       // Assert
       expect(spySnackBar).toHaveBeenCalledWith(
@@ -731,7 +731,9 @@ describe('PurchaseOrderCreatedComponent', () => {
         { duration: 3000 },
       );
     }));
+  });
 
+  describe('onModifySubmit', () => {
     it('should call updatePurchaseOrderStatusAsync and show success snackbar on successful modification', fakeAsync(() => {
       // Arrange
       component.isModification = true;
@@ -776,7 +778,7 @@ describe('PurchaseOrderCreatedComponent', () => {
       const spyRouter = jest.spyOn(router, 'navigate');
 
       // Act
-      component.onSubmit(component.STATUS_DRAFT);
+      component.onModifySubmit();
       tick();
 
       // Assert
@@ -796,7 +798,7 @@ describe('PurchaseOrderCreatedComponent', () => {
       expect(spyRouter).toHaveBeenCalledWith(['/ordenes-compra']);
     }));
 
-    it('should show error snackbar if update fails in modification mode', fakeAsync(() => {
+    it('should show error snackbar if update fails', fakeAsync(() => {
       // Arrange
       component.isModification = true;
       component.existingPurchaseOrderId = 123;
@@ -839,7 +841,7 @@ describe('PurchaseOrderCreatedComponent', () => {
       const spySnackBar = jest.spyOn(snackBar, 'open');
 
       // Act
-      component.onSubmit(component.STATUS_DRAFT);
+      component.onModifySubmit();
       tick();
 
       // Assert
