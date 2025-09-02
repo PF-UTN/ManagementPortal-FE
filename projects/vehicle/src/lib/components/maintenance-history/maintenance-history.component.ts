@@ -9,6 +9,8 @@ import { Component, OnInit } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute } from '@angular/router';
 
+import { VehicleListItem } from '../../models/vehicle-item.model';
+import { VehicleService } from '../../services/vehicle.service';
 import { MaintenanceListComponent } from '../maintenance-list/maintenance-list.component';
 import { MaintenancePlanListComponent } from '../maintenance-plan-list/maintenance-plan-list.component';
 import { MaintenanceRepairListComponent } from '../maintenance-repair-list/maintenance-repair-list.component';
@@ -30,9 +32,11 @@ import { MaintenanceRepairListComponent } from '../maintenance-repair-list/maint
 })
 export class MaintenanceHistoryComponent implements OnInit {
   vehicleId!: number;
+  vehicle?: VehicleListItem;
+
   dropdownItems: DropdownItem[] = [
     {
-      label: 'Crear Mantenimiento',
+      label: 'Crear Ítem de Mantenimiento',
       action: () => this.onCreateMaintenanceDrawer(),
     },
     {
@@ -41,10 +45,17 @@ export class MaintenanceHistoryComponent implements OnInit {
     },
   ];
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(
+    private route: ActivatedRoute,
+    private vehicleService: VehicleService,
+  ) {}
 
   ngOnInit(): void {
     this.vehicleId = Number(this.route.snapshot.paramMap.get('vehicleId'));
+    this.vehicleService.getVehicleById(this.vehicleId).subscribe({
+      next: (vehicle) => (this.vehicle = vehicle),
+      error: () => (this.vehicle = undefined),
+    });
   }
 
   onCreateMaintenancePlanDrawer() {

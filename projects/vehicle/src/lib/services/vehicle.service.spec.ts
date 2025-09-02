@@ -226,6 +226,53 @@ describe('VehicleService', () => {
     });
   });
 
+  describe('getVehicleById', () => {
+    it('should send a GET request with the correct id and return the vehicle', () => {
+      // Arrange
+      const vehicleId = 123;
+      const mockVehicle = {
+        id: 123,
+        brand: 'Toyota',
+        model: 'Corolla',
+        licensePlate: 'ABC123',
+        enabled: true,
+        kmTraveled: 50000,
+        admissionDate: '2022-01-01',
+      };
+      const url = `${baseUrl}/${vehicleId}`;
+
+      // Act & Assert
+      service.getVehicleById(vehicleId).subscribe((response) => {
+        expect(response).toEqual(mockVehicle);
+      });
+
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('GET');
+      req.flush(mockVehicle);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const vehicleId = 123;
+      const mockError = new ErrorEvent('Network error');
+      const url = `${baseUrl}/${vehicleId}`;
+
+      // Act
+      service.getVehicleById(vehicleId).subscribe({
+        next: () => {
+          fail('Expected an error, but got a successful response');
+        },
+        error: (error) => {
+          expect(error.error).toBe(mockError);
+        },
+      });
+
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('GET');
+      req.error(mockError);
+    });
+  });
+
   describe('postSearchMaintenanceVehicle', () => {
     it('should send a POST request with the correct vehicleId and params and return data', () => {
       // Arrange
