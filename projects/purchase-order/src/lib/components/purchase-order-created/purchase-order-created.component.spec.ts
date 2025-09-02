@@ -734,7 +734,7 @@ describe('PurchaseOrderCreatedComponent', () => {
   });
 
   describe('onModifySubmit', () => {
-    it('should call updatePurchaseOrderStatusAsync and show success snackbar on successful modification', fakeAsync(() => {
+    it('should call updatePurchaseOrderAsync and show success snackbar on successful modification', fakeAsync(() => {
       // Arrange
       component.isModification = true;
       component.existingPurchaseOrderId = 123;
@@ -772,7 +772,7 @@ describe('PurchaseOrderCreatedComponent', () => {
         }),
       );
       const spyUpdate = jest
-        .spyOn(purchaseOrderService, 'updatePurchaseOrderStatusAsync')
+        .spyOn(purchaseOrderService, 'updatePurchaseOrderAsync')
         .mockReturnValue(of(void 0));
       const spySnackBar = jest.spyOn(snackBar, 'open');
       const spyRouter = jest.spyOn(router, 'navigate');
@@ -836,7 +836,7 @@ describe('PurchaseOrderCreatedComponent', () => {
         }),
       );
       jest
-        .spyOn(purchaseOrderService, 'updatePurchaseOrderStatusAsync')
+        .spyOn(purchaseOrderService, 'updatePurchaseOrderAsync')
         .mockReturnValue(throwError(() => new Error('Error')));
       const spySnackBar = jest.spyOn(snackBar, 'open');
 

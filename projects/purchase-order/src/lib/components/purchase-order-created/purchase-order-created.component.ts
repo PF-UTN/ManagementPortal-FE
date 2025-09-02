@@ -97,7 +97,7 @@ export class PurchaseOrderCreatedComponent implements OnInit {
 
   readonly STATUS_DRAFT = PurchaseOrderStatusOptionsId.Draft;
   readonly STATUS_ORDERED = PurchaseOrderStatusOptionsId.Ordered;
-  minDate: Date | null = null;
+  readonly minDate = new Date();
 
   suppliers: SupplierResponse[] = [];
   filteredSuppliers$: Observable<SupplierResponse[]> = of([]);
@@ -191,7 +191,6 @@ export class PurchaseOrderCreatedComponent implements OnInit {
     this.existingPurchaseOrderId = this.route.snapshot.params['id'];
     this.isModification = !!this.existingPurchaseOrderId;
 
-    this.minDate = this.isModification ? null : new Date();
     this.form = new FormGroup<PurchaseOrderForm>({
       header: new FormGroup<PurchaseHeaderForm>({
         supplier: new FormControl<SupplierResponse | null>(null, [
@@ -229,6 +228,7 @@ export class PurchaseOrderCreatedComponent implements OnInit {
           this.initialPurchaseOrder = purchaseOrder;
           this.patchFormWithInitialData(purchaseOrder);
           this.loadProductsBySupplier(purchaseOrder.supplier.businessName);
+          this.form.markAllAsTouched();
           this.isLoadingInitialData.set(false);
         },
         error: () => {
@@ -487,7 +487,7 @@ export class PurchaseOrderCreatedComponent implements OnInit {
     };
 
     this.purchaseOrderService
-      .updatePurchaseOrderStatusAsync(
+      .updatePurchaseOrderAsync(
         this.existingPurchaseOrderId!,
         purchaseOrderUpdateRequest,
       )
