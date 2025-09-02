@@ -4,6 +4,7 @@ import {
   InputComponent,
   LateralDrawerContainer,
   LateralDrawerService,
+  LoadingComponent,
 } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
@@ -45,6 +46,7 @@ const PHONE_REGEX = /^[+]?\d{1,4}?[-.\s]?(\d{1,3}[-.\s]?){1,4}$/;
     MatButtonModule,
     MatAutocompleteModule,
     InputComponent,
+    LoadingComponent,
   ],
   templateUrl: './create-update-supplier-lateral-drawer.component.html',
   styleUrl: './create-update-supplier-lateral-drawer.component.scss',
@@ -54,6 +56,7 @@ export class CreateUpdateSupplierLateralDrawerComponent
   implements OnInit
 {
   isLoading = signal(false);
+  isSearchingSupplier = signal(false);
   isDocumentCompleted = signal(false);
   isCreating = signal(false);
   isUpdating = signal(false);
@@ -227,30 +230,33 @@ export class CreateUpdateSupplierLateralDrawerComponent
       return null;
     };
   }
+
   checkSupplierExists() {
     const documentType = this.supplierForm.controls.documentType.value;
     const documentNumber = this.supplierForm.controls.documentNumber.value;
 
     if (!documentType || !documentNumber) return;
 
+    let requiredLength = null;
     switch (documentType) {
       case DocumentType.CUIT:
-        if (documentNumber.length < 11) return;
-        break;
       case DocumentType.CUIL:
-        if (documentNumber.length < 11) return;
+        requiredLength = 11;
         break;
       case DocumentType.DNI:
-        if (documentNumber.length < 8) return;
-        break;
-      default:
+        requiredLength = 8;
         break;
     }
+
+    if (!requiredLength || documentNumber.length < requiredLength) return;
+
+    this.isSearchingSupplier.set(true);
 
     this.supplierService
       .getSupplierByDocumentAsync(documentType, documentNumber)
       .subscribe({
         next: (supplier) => {
+          this.isSearchingSupplier.set(false);
           if (supplier) {
             this.isUpdating.set(true);
             this.supplierForm.patchValue({
@@ -281,6 +287,7 @@ export class CreateUpdateSupplierLateralDrawerComponent
           this.isCreating.set(true);
           this.enableSupplierFields();
           this.isDocumentCompleted.set(true);
+          this.isSearchingSupplier.set(false);
         },
       });
   }
