@@ -1,0 +1,43 @@
+<div class="container">
+  <div class="row mb-3">
+    <div class="col-12">
+      <strong>Patente</strong>
+      <p>{{ data.licensePlate }}</p>
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-12">
+      <strong>Marca</strong>
+      <p>{{ data.brand }}</p>
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-12">
+      <strong>Modelo</strong>
+      <p>{{ data.model }}</p>
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-12">
+      <strong>Kilómetros recorridos</strong>
+      <p>{{ data.kmTraveled }}</p>
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-12">
+      <strong>Fecha de ingreso</strong>
+      <p>{{ data.admissionDate | date: 'dd/MM/yyyy' }}</p>
+    </div>
+  </div>
+
+  <div class="row mb-3">
+    <div class="col-12">
+      <strong>Estado</strong>
+      <p>{{ data.enabled ? 'Activo' : 'En Pausa' }}</p>
+    </div>
+  </div>
+</div>
