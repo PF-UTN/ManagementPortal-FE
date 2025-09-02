@@ -29,6 +29,7 @@ import { BehaviorSubject, debounceTime, Subject, switchMap, tap } from 'rxjs';
 
 import {
   PurchaseOrderStatusEnabledForDeletion,
+  PurchaseOrderStatusEnabledForModification,
   PurchaseOrderStatusOptions,
 } from '../../constants/purchase-order-status.enum';
 import { PurchaseOrderItem } from '../../models/purchase-order-item.model';
@@ -140,6 +141,10 @@ export class PurchaseOrderListComponent implements OnInit {
         },
         {
           description: 'Modificar',
+          disabled: (element: PurchaseOrderItem) =>
+            !PurchaseOrderStatusEnabledForModification.includes(
+              element.purchaseOrderStatusName,
+            ),
           action: (element: PurchaseOrderItem) =>
             this.router.navigate([`/ordenes-compra/modificar/${element.id}`]),
         },
