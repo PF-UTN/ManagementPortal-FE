@@ -67,6 +67,10 @@
                                     >
                                     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                                     <mat-datepicker #picker></mat-datepicker>
+                                    <mat-error
+                                        *ngIf="form.controls.header.controls.estimatedDeliveryDate?.hasError('matDatepickerMin') && form.controls.header.controls.estimatedDeliveryDate?.touched">
+                                        No puede ser anterior a la fecha actual.
+                                    </mat-error>
                                 </mat-form-field>
                             </div>
                         </div>
