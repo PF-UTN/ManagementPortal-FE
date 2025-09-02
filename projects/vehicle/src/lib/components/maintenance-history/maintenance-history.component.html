@@ -2,7 +2,7 @@
     <div class="header">
         <div class="header__title">
             <mp-back-arrow [backTo]="''" [color]="'muted-purple'"></mp-back-arrow>
-            <mp-title>Historial de Mantenimiento</mp-title>
+                <mp-title>Historial de Mantenimiento - {{ vehicle?.brand }} {{ vehicle?.model }}</mp-title>
         </div>
         <div class="header__dropdown">
             <mp-dropdown-button type="primary" [items]="dropdownItems">

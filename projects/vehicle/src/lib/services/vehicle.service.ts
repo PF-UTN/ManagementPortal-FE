@@ -9,6 +9,7 @@ import { MaintenanceRepairParams } from '../models/maintenance-repair-param.mode
 import { SearchMaintenanceRepairResponse } from '../models/maintenance-response.model';
 import { SearchVehicleResponse } from '../models/search-vehicle-response.model';
 import { VehicleCreate } from '../models/vehicle-create.model';
+import { VehicleListItem } from '../models/vehicle-item.model';
 import { VehicleParams } from '../models/vehicle-params.model';
 import { VehicleUpdate } from '../models/vehicle-update.model';
 @Injectable({
@@ -62,5 +63,9 @@ export class VehicleService {
   ): Observable<SearchMaintenanceRepairResponse> {
     const url = `${this.baseUrl}/${vehicleId}/repair/search`;
     return this.http.post<SearchMaintenanceRepairResponse>(url, param);
+  }
+
+  getVehicleById(id: number): Observable<VehicleListItem> {
+    return this.http.get<VehicleListItem>(`${this.baseUrl}/${id}`);
   }
 }
