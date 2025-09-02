@@ -21,8 +21,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
 import { Subject } from 'rxjs';
-import { switchMap, debounceTime, startWith } from 'rxjs/operators';
+import { debounceTime } from 'rxjs/operators';
 
 import { ProductCategoryResponse } from '../../models/product-category-response.model';
 import { ProductListItem } from '../../models/product-item.model';
@@ -54,6 +55,7 @@ import { ProductCardComponent } from '../product-card/product-card.component';
     ProductCardComponent,
     ReactiveFormsModule,
     MatTooltipModule,
+    InfiniteScrollDirective,
   ],
   templateUrl: './product-list-client.component.html',
   styleUrls: ['./product-list-client.component.scss'],
@@ -62,11 +64,13 @@ export class ProductListClientComponent {
   products: ProductListItem[] = [];
   categories: ProductCategoryResponse[] = [];
   selectedCategories: string[] = [];
-
   sort: string = '';
   searchText: string = '';
   selectedProductId?: number;
   isLoading: boolean = true;
+  hasMoreProducts: boolean = true;
+  currentPage: number = 1;
+  pageSize: number = 5;
   private filters$ = new Subject<void>();
 
   filterForm: FormGroup<{
@@ -95,60 +99,68 @@ export class ProductListClientComponent {
     });
 
     this.filterForm.valueChanges.pipe(debounceTime(400)).subscribe(() => {
-      this.filters$.next();
+      this.currentPage = 1;
+      this.products = [];
+      this.hasMoreProducts = true;
+      this.doSearch();
     });
 
-    this.filters$.next();
-    this.filters$
-      .pipe(
-        startWith(null),
-        switchMap(() => {
-          this.isLoading = true;
-          const { searchText, selectedCategories, sort } =
-            this.filterForm.value;
-          const selectedCategoryNames =
-            selectedCategories && selectedCategories.length > 0
-              ? this.categories
-                  .filter((category) =>
-                    selectedCategories.includes(String(category.id)),
-                  )
-                  .map((category) => category.name)
-              : undefined;
+    this.doSearch();
+  }
 
-          const filters: Pick<ProductParams['filters'], 'categoryName'> = {
-            categoryName: selectedCategoryNames,
-          };
+  private doSearch(): void {
+    this.isLoading = true;
+    const { searchText, selectedCategories, sort } = this.filterForm.value;
+    const selectedCategoryNames =
+      selectedCategories && selectedCategories.length > 0
+        ? this.categories
+            .filter((category) =>
+              selectedCategories.includes(String(category.id)),
+            )
+            .map((category) => category.name)
+        : undefined;
 
-          let orderBy;
-          if (sort && typeof sort === 'string' && sort.includes('-')) {
-            const [field, direction] = sort.split('-');
-            orderBy = {
-              field: field as ProductOrderField,
-              direction: direction as ProductOrderDirection,
-            };
-          }
+    const filters: Pick<ProductParams['filters'], 'categoryName'> = {
+      categoryName: selectedCategoryNames,
+    };
 
-          const params: ProductParams = {
-            page: 1,
-            pageSize: 999999,
-            searchText,
-            filters,
-            ...(orderBy && { orderBy }),
-          };
+    let orderBy;
+    if (sort && typeof sort === 'string' && sort.includes('-')) {
+      const [field, direction] = sort.split('-');
+      orderBy = {
+        field: field as ProductOrderField,
+        direction: direction as ProductOrderDirection,
+      };
+    }
 
-          return this.productService.postSearchProduct(params);
-        }),
-      )
-      .subscribe({
-        next: (res: SearchProductResponse) => {
-          this.products = res.results;
-          this.isLoading = false;
-        },
-        error: () => {
-          this.products = [];
-          this.isLoading = false;
-        },
-      });
+    const params: ProductParams = {
+      page: this.currentPage,
+      pageSize: this.pageSize,
+      searchText,
+      filters,
+      ...(orderBy && { orderBy }),
+    };
+
+    this.productService.postSearchProduct(params).subscribe({
+      next: (res: SearchProductResponse) => {
+        this.products = [...this.products, ...res.results];
+
+        this.isLoading = false;
+        this.hasMoreProducts = res.results.length === this.pageSize;
+      },
+      error: () => {
+        this.products = [];
+        this.isLoading = false;
+        this.hasMoreProducts = false;
+      },
+    });
+  }
+
+  onScroll(): void {
+    if (!this.isLoading && this.hasMoreProducts) {
+      this.currentPage++;
+      this.doSearch();
+    }
   }
 
   onAddToCartKeyDown() {

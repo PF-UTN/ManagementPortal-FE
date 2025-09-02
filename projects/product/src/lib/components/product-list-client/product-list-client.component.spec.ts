@@ -10,10 +10,10 @@ import { of, throwError } from 'rxjs';
 
 import { ProductListClientComponent } from './product-list-client.component';
 import { ProductService } from '../../services/product.service';
-import { mockProductListItem } from '../../testing/mock-data.model';
 import {
   mockProductListItems,
   mockProductCategories,
+  mockProductListItem,
 } from '../../testing/mock-data.model';
 import { DetailLateralClientDrawerComponent } from '../detail-lateral-client-drawer/detail-lateral-client-drawer.component';
 
@@ -218,6 +218,62 @@ describe('ProductListClientComponent', () => {
       const event = new KeyboardEvent('keydown', { key: 'Escape' });
       component.onCardKeyDown(event);
       expect(spy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('onScroll', () => {
+    it('should increment currentPage and call doSearch when onScroll is triggered and hasMoreProducts is true', () => {
+      // Arrange
+      component.isLoading = false;
+      component.hasMoreProducts = true;
+      component.currentPage = 1;
+      const postSearchProductSpy = jest.spyOn(
+        productService,
+        'postSearchProduct',
+      );
+
+      // Act
+      component.onScroll();
+
+      // Assert
+      expect(component.currentPage).toBe(2);
+      expect(postSearchProductSpy).toHaveBeenCalled();
+    });
+
+    it('should NOT increment currentPage or call doSearch if isLoading is true', () => {
+      // Arrange
+      component.isLoading = true;
+      component.hasMoreProducts = true;
+      component.currentPage = 1;
+      const postSearchProductSpy = jest.spyOn(
+        productService,
+        'postSearchProduct',
+      );
+
+      // Act
+      component.onScroll();
+
+      // Assert
+      expect(component.currentPage).toBe(1);
+      expect(postSearchProductSpy).not.toHaveBeenCalled();
+    });
+
+    it('should NOT increment currentPage or call doSearch if hasMoreProducts is false', () => {
+      // Arrange
+      component.isLoading = false;
+      component.hasMoreProducts = false;
+      component.currentPage = 1;
+      const postSearchProductSpy = jest.spyOn(
+        productService,
+        'postSearchProduct',
+      );
+
+      // Act
+      component.onScroll();
+
+      // Assert
+      expect(component.currentPage).toBe(1);
+      expect(postSearchProductSpy).not.toHaveBeenCalled();
     });
   });
 });
