@@ -316,6 +316,15 @@ export class CreateUpdateSupplierLateralDrawerComponent
       event.preventDefault();
     }
   }
+
+  get documentNumberHint(): string {
+    const type = this.supplierForm.controls.documentType.value;
+    const value = this.supplierForm.controls.documentNumber.value || '';
+    if (type === 'DNI') return `${value.length}/8`;
+    if (type === 'CUIT' || type === 'CUIL') return `${value.length}/11`;
+    return '';
+  }
+
   displayTown(town: Town | string | null): string {
     if (typeof town === 'string') {
       return town;
