@@ -206,4 +206,19 @@ describe('InputComponent', () => {
     expect(inputComponent.onChange).toBe(fn);
     expect(inputComponent.onTouched).toBe(fn);
   });
+
+  it('should set the maxlength attribute on the input', () => {
+    // Arrange
+    inputComponent.maxlength = 8;
+    inputComponent.label = 'Test';
+    inputComponent.ngOnInit();
+    fixture.detectChanges();
+
+    // Act
+    const inputEl: HTMLInputElement =
+      fixture.nativeElement.querySelector('input');
+
+    // Assert
+    expect(inputEl.getAttribute('maxlength')).toBe('8');
+  });
 });

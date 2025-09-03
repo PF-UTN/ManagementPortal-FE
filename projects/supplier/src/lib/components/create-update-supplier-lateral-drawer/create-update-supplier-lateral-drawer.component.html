@@ -22,134 +22,79 @@
     </mat-form-field>
   </div>
   <div class="mb-4">
-    <mp-input
+   <mp-input
       type="text"
       label="Número Documento"
       formControlName="documentNumber"
-      icon="close"
+      [maxlength]="supplierForm.controls.documentType.value === 'DNI' ? 8 : (supplierForm.controls.documentType.value === 'CUIT' || supplierForm.controls.documentType.value === 'CUIL' ? 11 : null)"
       (keydown)="preventNonNumericInput($event)"
-    />
+      [hint]="documentNumberHint"
+    ></mp-input>
   </div>
-  <div class="mb-4">
-    <mp-input
-      type="text"
-      label="Razón Social"
-      formControlName="businessName"
-      icon="close"
-      [errorMessages]="{
-        required: 'Razón Social es requerido.',
-      }"
-    />
+  <div *ngIf="isSearchingSupplier()" class="d-flex justify-content-center my-4">
+    <mp-loading></mp-loading>
   </div>
-  <div class="mb-4">
-    <mp-input
-      type="email"
-      label="Email"
-      formControlName="email"
-      icon="close"
-      [errorMessages]="{
-        required: 'Email es requerido.',
-      }"
-    />
-  </div>
-  <div class="mb-4">
-    <mp-input
-      type="text"
-      label="Teléfono"
-      formControlName="phone"
-      icon="close"
-      [errorMessages]="{
-        required: 'Teléfono es requerido.',
-        pattern: 'Teléfono no válido.',
-      }"
-    />
-  </div>
-  <div class="row g-3 mb-4">
-    <div class="col-7">
+  <ng-container *ngIf="!isSearchingSupplier()">
+    <div class="mb-4">
       <mp-input
         type="text"
-        label="Calle"
-        formControlName="street"
+        label="Razón Social"
+        formControlName="businessName"
         icon="close"
-        [errorMessages]="{
-          required: 'Calle es requerido.',
-        }"
       />
     </div>
-    <div class="col-5">
+    <div class="mb-4">
       <mp-input
-        type="number"
-        label="Número"
-        formControlName="streetNumber"
+        type="email"
+        label="Email"
+        formControlName="email"
         icon="close"
-        [errorMessages]="{
-          required: 'Número es requerido.',
-        }"
       />
     </div>
-  </div>
-  <div class="mb-4">
-    <!-- <mat-form-field class="w-100" appearance="outline">
-      <mat-label>Ciudad</mat-label>
-      <input
+    <div class="mb-4">
+      <mp-input
         type="text"
-        matInput
-        formControlName="town"
-        [matAutocomplete]="auto"
-        placeholder="Buscar ciudad o código postal"
-        [attr.autocomplete]="'off'"
+        label="Teléfono"
+        formControlName="phone"
+        icon="close"
       />
-      <button
-        type="button"
-        matSuffix
-        mat-icon-button
-        aria-label="Clear"
-        (click)="supplierForm.controls.town.setValue(null)"
-      >
-        <mat-icon>close</mat-icon>
-      </button>
-      <mat-autocomplete
-        #auto="matAutocomplete"
-        [displayWith]="displayTown.bind(this)"
-      >
-        <mat-option *ngFor="let town of filteredTowns$ | async" [value]="town">
-          {{ town.name }} ({{ town.zipCode }})
-        </mat-option>
-      </mat-autocomplete>
-      <mat-error
-        *ngIf="
-          supplierForm.controls.town?.hasError('required') &&
-          supplierForm.controls.town?.touched
-        "
-      >
-        Ciudad es requerido
-      </mat-error>
-      <mat-error
-        *ngIf="
-          supplierForm.controls.town?.hasError('invalidTown') &&
-          supplierForm.controls.town?.touched &&
-          supplierForm.controls.town?.value != null
-        "
-      >
-        Debe seleccionar una ciudad de la lista.
-      </mat-error>
-    </mat-form-field> -->
-    <mp-input
-        label="Ciudad"
-        formControlName="town"
-        [icon]="'close'"
-        [errorMessages]="{
-          invalidTown: 'Debe seleccionar una ciudad de la lista.'
-        }"
-        type="text"
-        placeholder="Buscar ciudad o código postal"
-        [matAutocomplete]="auto"
-      ></mp-input>
-      <mat-autocomplete #auto="matAutocomplete"
-        [displayWith]="displayTown.bind(this)">
-        <mat-option *ngFor="let town of filteredTowns$ | async" [value]="town">
-          {{ town.name }} ({{ town.zipCode }})
-        </mat-option>
-      </mat-autocomplete>
-  </div>
+    </div>
+    <div class="row g-3 mb-4">
+      <div class="col-7">
+        <mp-input
+          type="text"
+          label="Calle"
+          formControlName="street"
+          icon="close"
+        />
+      </div>
+      <div class="col-5">
+        <mp-input
+          type="number"
+          label="Número"
+          formControlName="streetNumber"
+          icon="close"
+        />
+      </div>
+    </div>
+    <div class="mb-4">
+      <mp-input
+          label="Ciudad"
+          formControlName="town"
+          [icon]="'close'"
+          [errorMessages]="{
+            invalidTown: 'Debe seleccionar una ciudad de la lista.'
+          }"
+          type="text"
+          placeholder="Buscar ciudad o código postal"
+          [matAutocomplete]="auto"
+        ></mp-input>
+        <mat-autocomplete #auto="matAutocomplete"
+          [displayWith]="displayTown.bind(this)">
+          <mat-option *ngFor="let town of filteredTowns$ | async" [value]="town">
+            {{ town.name }} ({{ town.zipCode }})
+          </mat-option>
+        </mat-autocomplete>
+    </div>
+  </ng-container>
 </form>

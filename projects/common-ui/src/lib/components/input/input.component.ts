@@ -59,6 +59,7 @@ export class InputComponent
   rows = input<number>(3);
   displayWith = input<(value: any) => string>();
   @Input() matAutocomplete?: MatAutocomplete;
+  @Input() maxlength: string | number | null = null;
 
   @Output() input = new EventEmitter<Event>();
   @Output() change = new EventEmitter<Event>();

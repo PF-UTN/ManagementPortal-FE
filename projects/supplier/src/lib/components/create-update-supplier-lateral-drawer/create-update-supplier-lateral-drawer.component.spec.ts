@@ -15,7 +15,7 @@ import {
 } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { mockDeep } from 'jest-mock-extended';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 import { CreateUpdateSupplierLateralDrawerComponent } from './create-update-supplier-lateral-drawer.component';
 import { SupplierService } from '../../services/supplier.service';
@@ -316,5 +316,66 @@ describe('CreateEditSupplierLateralDrawerComponent', () => {
 
     // Assert
     expect(component.isDocumentCompleted()).toBe(true);
+  });
+
+  it('should set isSearchingSupplier to true when documentNumber reaches required length and calls checkSupplierExists', () => {
+    // Arrange
+    component.supplierForm.controls.documentType.setValue('DNI');
+    component.supplierForm.controls.documentNumber.setValue('12345678');
+    jest
+      .spyOn(supplierService, 'getSupplierByDocumentAsync')
+      .mockReturnValue(of(mockSupplierWithTown));
+
+    // Act
+    component.checkSupplierExists();
+
+    // Assert
+    expect(component.isSearchingSupplier()).toBe(false);
+    expect(supplierService.getSupplierByDocumentAsync).toHaveBeenCalledWith(
+      'DNI',
+      '12345678',
+    );
+  });
+
+  it('should not call getSupplierByDocumentAsync nor set isSearchingSupplier if documentNumber is incomplete', () => {
+    // Arrange
+    component.supplierForm.controls.documentType.setValue('CUIT');
+    component.supplierForm.controls.documentNumber.setValue('12345');
+
+    // Act
+    component.checkSupplierExists();
+
+    // Assert
+    expect(supplierService.getSupplierByDocumentAsync).not.toHaveBeenCalled();
+    expect(component.isSearchingSupplier()).toBe(false);
+  });
+
+  it('should set isSearchingSupplier to false after error response', () => {
+    // Arrange
+    component.supplierForm.controls.documentType.setValue('CUIT');
+    component.supplierForm.controls.documentNumber.setValue('12345678901');
+    jest
+      .spyOn(supplierService, 'getSupplierByDocumentAsync')
+      .mockReturnValue(throwError(() => new Error('error')));
+
+    // Act
+    component.checkSupplierExists();
+
+    // Assert
+    expect(component.isSearchingSupplier()).toBe(false);
+  });
+
+  it('should show spinner only while searching supplier', () => {
+    // Arrange
+    component.isSearchingSupplier.set(true);
+
+    // Act & Assert
+    fixture.detectChanges();
+    const spinner = fixture.nativeElement.querySelector('mp-loading');
+    expect(spinner).toBeTruthy();
+    component.isSearchingSupplier.set(false);
+    fixture.detectChanges();
+    const spinnerAfter = fixture.nativeElement.querySelector('mp-loading');
+    expect(spinnerAfter).toBeFalsy();
   });
 });
