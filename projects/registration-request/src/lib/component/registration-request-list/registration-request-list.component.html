@@ -1,13 +1,28 @@
 <div class="container-fluid">
+  <div class="main-container">
+    <mp-title>Solicitudes de Registro</mp-title>
+  </div>
   <div class="filters-container">
-    <mat-form-field appearance="outline" class="col">
-      <mat-label>Filtrar por estado</mat-label>
-      <mat-select [(ngModel)]="selectedStatus" (selectionChange)="onStatusFilterChange()" multiple>
-        <mat-option *ngFor="let option of actionsRequest | keyvalue" [value]="option.key">
-          {{ option.value }}
-        </mat-option>
-      </mat-select>
-    </mat-form-field>
+    <div class="filters-container__searchText">
+      <mp-input 
+        label="Buscar solicitudes"
+        [placeholder]="'Buscar por nombre, apellido o email...'"
+        [(ngModel)]="searchText"
+        icon="close"
+        [iconPosition]="'suffix'"
+        [iconAction]="onClearSearch.bind(this)"
+        (input)="onSearchTextChange()"/>
+    </div>
+    <div class="filters-container__status">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Filtrar por estado</mat-label>
+        <mat-select [(ngModel)]="selectedStatus" (selectionChange)="onStatusFilterChange()" multiple>
+          <mat-option *ngFor="let option of actionsRequest | keyvalue" [value]="option.key">
+            {{ option.value }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
     <div class="filters-container__dropdown">
       <mp-button 
           type="icon"
