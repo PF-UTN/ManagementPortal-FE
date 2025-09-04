@@ -453,4 +453,37 @@ describe('ProductListComponent', () => {
       expect(routerSpy).toHaveBeenCalledWith(['/productos/editar', 123]);
     });
   });
+
+  describe('onModifyProductStock', () => {
+    it('should navigate to the edit page with stockOnly query param', () => {
+      // Arrange
+      const routerSpy = jest.spyOn(component['router'], 'navigate');
+      const request = { ...mockProductListItem, id: 123 };
+
+      // Act
+      component.onModifyProductStock(request);
+
+      // Assert
+      expect(routerSpy).toHaveBeenCalledWith(['/productos/editar', 123], {
+        queryParams: { stockOnly: true },
+      });
+    });
+  });
+
+  describe('columns.actions', () => {
+    it('should call onModifyProductStock when "Ajustar stock" action is triggered', () => {
+      // Arrange
+      const spy = jest.spyOn(component, 'onModifyProductStock');
+      const action = component.columns
+        .find((c) => c.columnDef === 'actions')
+        ?.actions?.find((a) => a.description === 'Ajustar stock');
+      const request = mockProductListItem;
+
+      // Act
+      action?.action(request);
+
+      // Assert
+      expect(spy).toHaveBeenCalledWith(request);
+    });
+  });
 });

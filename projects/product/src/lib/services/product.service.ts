@@ -55,4 +55,17 @@ export class ProductService {
     const url = `${this.baseUrl}/${id}`;
     return this.http.get<ProductDetail>(url);
   }
+
+  changeProductStock(params: {
+    productId: number;
+    changes: Array<{
+      changedField: 'Available' | 'Reserved' | 'Ordered';
+      previousValue: number;
+      newValue: number;
+    }>;
+    reason: string;
+  }): Observable<void> {
+    const url = `${this.baseUrl}/stock-change`;
+    return this.http.post<void>(url, params);
+  }
 }

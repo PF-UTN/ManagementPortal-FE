@@ -32,6 +32,8 @@ describe('ProductCreateComponent', () => {
     createProduct: jest.Mock;
     updateProduct: jest.Mock;
     getCategories: jest.Mock;
+    getProductById: jest.Mock;
+    changeProductStock: jest.Mock;
   };
   let supplierServiceMock: { getSuppliers: jest.Mock };
   let snackBarMock: { open: jest.Mock };
@@ -71,6 +73,8 @@ describe('ProductCreateComponent', () => {
       createProduct: jest.fn(),
       updateProduct: jest.fn(),
       getCategories: jest.fn().mockReturnValue(of(mockCategories)),
+      getProductById: jest.fn(),
+      changeProductStock: jest.fn(),
     };
     supplierServiceMock = {
       getSuppliers: jest.fn().mockReturnValue(of(mockSuppliers)),
@@ -92,7 +96,10 @@ describe('ProductCreateComponent', () => {
         {
           provide: ActivatedRoute,
           useValue: {
-            snapshot: { paramMap: { get: () => null } },
+            snapshot: {
+              paramMap: { get: () => null },
+              queryParamMap: { get: () => null },
+            },
             paramMap: of({ get: () => null }),
           },
         },
@@ -324,6 +331,122 @@ describe('ProductCreateComponent', () => {
       );
       expect(routerMock.navigate).not.toHaveBeenCalled();
     }));
+
+    describe('onSubmit (stockOnlyMode)', () => {
+      beforeEach(() => {
+        jest
+          .spyOn(component['route'].snapshot.paramMap, 'get')
+          .mockImplementation((key: string) => {
+            if (key === 'id') return '1';
+            if (key === 'stockOnly') return 'true';
+            return null;
+          });
+        jest
+          .spyOn(component['route'].snapshot.queryParamMap, 'get')
+          .mockImplementation((key: string) => {
+            if (key === 'stockOnly') return 'true';
+            return null;
+          });
+
+        component.stockOnlyMode = true;
+        component.ngOnInit();
+        fixture.detectChanges();
+
+        productServiceMock.changeProductStock = jest.fn();
+        productServiceMock.getProductById = jest.fn().mockReturnValue(
+          of({
+            id: 1,
+            stock: {
+              quantityAvailable: 10,
+              quantityReserved: 5,
+              quantityOrdered: 2,
+            },
+          }),
+        );
+        component.productForm.patchValue({
+          stock: {
+            quantityAvailable: 15,
+            quantityReserved: 5,
+            quantityOrdered: 2,
+          },
+          stockReason: 'Ajuste por inventario',
+        });
+      });
+
+      it('should call changeProductStock with correct params and navigate on success', fakeAsync(() => {
+        // Arrange
+        productServiceMock.changeProductStock.mockReturnValue(of(undefined));
+        // Act
+        component.onSubmit();
+        tick();
+        fixture.detectChanges();
+        tick();
+        // Assert
+        expect(productServiceMock.changeProductStock).toHaveBeenCalledWith({
+          productId: 1,
+          changes: [
+            {
+              changedField: 'Available',
+              previousValue: 10,
+              newValue: 15,
+            },
+          ],
+          reason: 'Ajuste por inventario',
+        });
+        expect(snackBarMock.open).toHaveBeenCalledWith(
+          'Stock ajustado correctamente',
+          'Cerrar',
+          { duration: 3000 },
+        );
+        expect(routerMock.navigate).toHaveBeenCalledWith(['/productos']);
+      }));
+
+      it('should show message if no stock changes', fakeAsync(() => {
+        // Arrange
+        productServiceMock.getProductById.mockReturnValue(
+          of({
+            id: 1,
+            stock: {
+              quantityAvailable: 15,
+              quantityReserved: 5,
+              quantityOrdered: 2,
+            },
+          }),
+        );
+        // Act
+        component.onSubmit();
+        tick();
+        fixture.detectChanges();
+        tick();
+        // Assert
+        expect(productServiceMock.changeProductStock).not.toHaveBeenCalled();
+        expect(snackBarMock.open).toHaveBeenCalledWith(
+          'No hay cambios en el stock',
+          'Cerrar',
+          { duration: 3000 },
+        );
+      }));
+
+      it('should handle error on changeProductStock', fakeAsync(() => {
+        // Arrange
+        productServiceMock.changeProductStock.mockReturnValue(
+          throwError(() => new Error('fail')),
+        );
+        // Act
+        component.onSubmit();
+        tick();
+        fixture.detectChanges();
+        tick();
+        // Assert
+        expect(productServiceMock.changeProductStock).toHaveBeenCalled();
+        expect(snackBarMock.open).not.toHaveBeenCalledWith(
+          'Stock ajustado correctamente',
+          'Cerrar',
+          { duration: 3000 },
+        );
+        expect(routerMock.navigate).not.toHaveBeenCalled();
+      }));
+    });
   });
 
   describe('UI helpers', () => {

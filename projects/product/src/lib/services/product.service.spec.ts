@@ -285,4 +285,75 @@ describe('ProductService', () => {
       req.error(mockError);
     });
   });
+
+  describe('changeProductStock', () => {
+    it('should send a POST request with the correct parameters and return void', () => {
+      // Arrange
+      const params: {
+        productId: number;
+        changes: {
+          changedField: 'Available' | 'Reserved' | 'Ordered';
+          previousValue: number;
+          newValue: number;
+        }[];
+        reason: string;
+      } = {
+        productId: 1,
+        changes: [
+          {
+            changedField: 'Available',
+            previousValue: 10,
+            newValue: 15,
+          },
+        ],
+        reason: 'Ajuste de inventario',
+      };
+      const url = `${baseUrl}/stock-change`;
+
+      // Act & Assert
+      service.changeProductStock(params).subscribe((response) => {
+        expect(response).toBeUndefined();
+      });
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(params);
+      req.flush(null);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const params: {
+        productId: number;
+        changes: {
+          changedField: 'Available' | 'Reserved' | 'Ordered';
+          previousValue: number;
+          newValue: number;
+        }[];
+        reason: string;
+      } = {
+        productId: 1,
+        changes: [
+          {
+            changedField: 'Available',
+            previousValue: 10,
+            newValue: 15,
+          },
+        ],
+        reason: 'Ajuste de inventario',
+      };
+      const url = `${baseUrl}/stock-change`;
+      const mockError = new ErrorEvent('Network error');
+
+      // Act & Assert
+      service.changeProductStock(params).subscribe({
+        next: () => fail('Expected an error, but got a successful response'),
+        error: (error) => {
+          expect(error.error).toBe(mockError);
+        },
+      });
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
+      req.error(mockError);
+    });
+  });
 });

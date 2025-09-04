@@ -130,6 +130,11 @@ export class ProductListComponent implements OnInit {
           description: 'Eliminar',
           action: (element: ProductListItem) => this.onDeleteDrawer(element),
         },
+        {
+          description: 'Ajustar stock',
+          action: (element: ProductListItem) =>
+            this.onModifyProductStock(element),
+        },
       ],
     },
   ];
@@ -301,6 +306,12 @@ export class ProductListComponent implements OnInit {
 
   onModifyProduct(request: ProductListItem): void {
     this.router.navigate(['/productos/editar', request.id]);
+  }
+
+  onModifyProductStock(request: ProductListItem): void {
+    this.router.navigate(['/productos/editar', request.id], {
+      queryParams: { stockOnly: true },
+    });
   }
 
   onDeleteDrawer(request: ProductListItem): void {
