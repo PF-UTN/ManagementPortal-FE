@@ -6,6 +6,8 @@ import {
   PillStatusEnum,
   TableColumn,
   TableComponent,
+  InputComponent,
+  TitleComponent,
 } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
@@ -35,6 +37,8 @@ import { RejectLateralDrawerComponent } from '../reject-lateral-drawer/reject-la
     MatSelectModule,
     FormsModule,
     ReactiveFormsModule,
+    InputComponent,
+    TitleComponent,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './registration-request-list.component.html',
@@ -107,6 +111,7 @@ export class RegistrationRequestListComponent implements OnInit {
   pageSize: number = 10;
   itemsNumber: number = 0;
   selectedStatus: string[] = [];
+  searchText: string = '';
 
   actionsRequest = ActionsRequest;
 
@@ -130,7 +135,6 @@ export class RegistrationRequestListComponent implements OnInit {
         }),
         switchMap(() => {
           const params = this.getRegistrationRequestParams();
-
           return this.registrationRequestService.postSearchRegistrationRequest(
             params,
           );
@@ -154,7 +158,7 @@ export class RegistrationRequestListComponent implements OnInit {
     const params: RegistrationRequestParams = {
       page: this.pageIndex + 1,
       pageSize: this.pageSize,
-      searchText: '',
+      searchText: this.searchText || '',
       filters: {},
     };
 
@@ -174,6 +178,17 @@ export class RegistrationRequestListComponent implements OnInit {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
     this.doSearchSubject$.next();
+  }
+
+  onSearchTextChange(): void {
+    this.pageIndex = 0;
+    this.isLoading = true;
+    this.doSearchSubject$.next();
+  }
+
+  onClearSearch() {
+    this.searchText = '';
+    this.onSearchTextChange();
   }
 
   onApproveDrawer(request: RegistrationRequestListItem): void {

@@ -152,6 +152,49 @@ describe('RegistrationRequestListComponent', () => {
         }),
       );
     }));
+
+    it('should send searchText as parameter when searching', fakeAsync(() => {
+      // Arrange
+      component.ngOnInit();
+      component.searchText = 'john';
+      service.postSearchRegistrationRequest.mockReturnValueOnce(
+        of({ total: 0, results: [] }),
+      );
+
+      // Act
+      component.onSearchTextChange();
+      tick(1000);
+      fixture.detectChanges();
+
+      // Assert
+      expect(service.postSearchRegistrationRequest).toHaveBeenCalledWith(
+        expect.objectContaining({
+          searchText: 'john',
+        }),
+      );
+    }));
+
+    it('should reset searchText and trigger search when onClearSearch is called', fakeAsync(() => {
+      // Arrange
+      component.ngOnInit();
+      component.searchText = 'algo';
+      service.postSearchRegistrationRequest.mockReturnValueOnce(
+        of({ total: 0, results: [] }),
+      );
+
+      // Act
+      component.onClearSearch();
+      tick(1000);
+      fixture.detectChanges();
+
+      // Assert
+      expect(component.searchText).toBe('');
+      expect(service.postSearchRegistrationRequest).toHaveBeenCalledWith(
+        expect.objectContaining({
+          searchText: '',
+        }),
+      );
+    }));
   });
 
   describe('getRowClass', () => {
