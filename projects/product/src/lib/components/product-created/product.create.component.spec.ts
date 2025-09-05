@@ -446,6 +446,34 @@ describe('ProductCreateComponent', () => {
         );
         expect(routerMock.navigate).not.toHaveBeenCalled();
       }));
+
+      it('should call changeProductStock with correct params and navigate on success', fakeAsync(() => {
+        // Arrange
+        productServiceMock.changeProductStock.mockReturnValue(of(undefined));
+        // Act
+        component.onSubmit();
+        tick();
+        fixture.detectChanges();
+        tick();
+        // Assert
+        expect(productServiceMock.changeProductStock).toHaveBeenCalledWith({
+          productId: 1,
+          changes: [
+            {
+              changedField: 'Available',
+              previousValue: 10,
+              newValue: 15,
+            },
+          ],
+          reason: 'Ajuste por inventario',
+        });
+        expect(snackBarMock.open).toHaveBeenCalledWith(
+          'Stock ajustado correctamente',
+          'Cerrar',
+          { duration: 3000 },
+        );
+        expect(routerMock.navigate).toHaveBeenCalledWith(['/productos']);
+      }));
     });
   });
 
