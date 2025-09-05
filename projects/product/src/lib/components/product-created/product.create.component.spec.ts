@@ -373,6 +373,47 @@ describe('ProductCreateComponent', () => {
         });
       });
 
+      it('should send correct previousValue and newValue for quantityAvailable', fakeAsync(() => {
+        // Arrange
+        productServiceMock.changeProductStock.mockReturnValue(of(undefined));
+        // Simula cambio solo en quantityAvailable
+        component.productForm.patchValue({
+          stock: {
+            quantityAvailable: 20, // nuevo valor
+            quantityReserved: 5,
+            quantityOrdered: 2,
+          },
+          stockReason: 'Ajuste disponible',
+        });
+        productServiceMock.getProductById.mockReturnValue(
+          of({
+            id: 1,
+            stock: {
+              quantityAvailable: 10, // valor anterior
+              quantityReserved: 5,
+              quantityOrdered: 2,
+            },
+          }),
+        );
+        // Act
+        component.onSubmit();
+        tick();
+        fixture.detectChanges();
+        tick();
+        // Assert
+        expect(productServiceMock.changeProductStock).toHaveBeenCalledWith({
+          productId: 1,
+          changes: [
+            {
+              changedField: 'Available',
+              previousValue: 10,
+              newValue: 20,
+            },
+          ],
+          reason: 'Ajuste disponible',
+        });
+      }));
+
       it('should call changeProductStock with correct params and navigate on success', fakeAsync(() => {
         // Arrange
         productServiceMock.changeProductStock.mockReturnValue(of(undefined));
