@@ -9,6 +9,7 @@ import { ProductCreate } from '../models/product-create-param.model';
 import { ProductResponse } from '../models/product-create-response.model';
 import { ProductDetail } from '../models/product-detail.model';
 import { ProductParams } from '../models/product-param.model';
+import { ProductStockChange } from '../models/product-stock-change.model';
 import { SearchProductResponse } from '../models/search-product-response.model';
 
 @Injectable({
@@ -58,11 +59,7 @@ export class ProductService {
 
   changeProductStock(params: {
     productId: number;
-    changes: Array<{
-      changedField: 'Available' | 'Reserved' | 'Ordered';
-      previousValue: number;
-      newValue: number;
-    }>;
+    changes: ProductStockChange[];
     reason: string;
   }): Observable<void> {
     const url = `${this.baseUrl}/stock-change`;

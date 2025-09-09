@@ -443,7 +443,7 @@ describe('ProductListComponent', () => {
   describe('onModifyProduct', () => {
     it('should navigate to the edit page with the correct id', () => {
       // Arrange
-      const routerSpy = jest.spyOn(component['router'], 'navigate');
+      const routerSpy = jest.spyOn(component.router, 'navigate');
       const request = { ...mockProductListItem, id: 123 };
 
       // Act
@@ -457,7 +457,7 @@ describe('ProductListComponent', () => {
   describe('onModifyProductStock', () => {
     it('should navigate to the edit page with stockOnly query param', () => {
       // Arrange
-      const routerSpy = jest.spyOn(component['router'], 'navigate');
+      const routerSpy = jest.spyOn(component.router, 'navigate');
       const request = { ...mockProductListItem, id: 123 };
 
       // Act

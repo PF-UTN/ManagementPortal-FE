@@ -16,13 +16,14 @@ import { ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { mockDeep } from 'jest-mock-extended';
 import { of, throwError } from 'rxjs';
 
 import { ProductCreateComponent } from './product-create.component';
 import { ProductCategoryResponse } from '../../models/product-category-response.model';
 import { ProductResponse } from '../../models/product-create-response.model';
+import { StockChangeField } from '../../models/product-stock-change.model';
 import { ProductService } from '../../services/product.service';
 
 describe('ProductCreateComponent', () => {
@@ -131,6 +132,39 @@ describe('ProductCreateComponent', () => {
       expect(supplierServiceMock.getSuppliers).toHaveBeenCalled();
       expect(component.categories.length).toBe(2);
       expect(component.suppliers.length).toBe(1);
+    }));
+
+    it('should disable stock group if editing and not in stockOnlyMode', fakeAsync(() => {
+      // Arrange
+      component.stockOnlyMode = false;
+      const paramMapMock: ParamMap = {
+        get: (key: string) => (key === 'id' ? '1' : null),
+        has: (key: string) => key === 'id',
+        getAll: (key: string) => (key === 'id' ? ['1'] : []),
+        keys: ['id'],
+      };
+      Object.defineProperty(component['route'], 'paramMap', {
+        get: () => of(paramMapMock),
+      });
+
+      productServiceMock.getProductById.mockReturnValue(
+        of({
+          id: 1,
+          stock: {
+            quantityOrdered: 1,
+            quantityAvailable: 1,
+            quantityReserved: 1,
+          },
+        }),
+      );
+
+      // Act
+      component.ngOnInit();
+      tick();
+
+      // Assert
+      expect(component.productForm.controls.stock.disabled).toBe(true);
+      expect(component.isLoading()).toBe(false);
     }));
   });
 
@@ -369,7 +403,7 @@ describe('ProductCreateComponent', () => {
             quantityReserved: 5,
             quantityOrdered: 2,
           },
-          stockReason: 'Ajuste por inventario',
+          stockChangeReason: 'Ajuste por inventario',
         });
       });
 
@@ -383,13 +417,13 @@ describe('ProductCreateComponent', () => {
             quantityReserved: 5,
             quantityOrdered: 2,
           },
-          stockReason: 'Ajuste disponible',
+          stockChangeReason: 'Ajuste disponible',
         });
         productServiceMock.getProductById.mockReturnValue(
           of({
             id: 1,
             stock: {
-              quantityAvailable: 10, // valor anterior
+              quantityAvailable: 10,
               quantityReserved: 5,
               quantityOrdered: 2,
             },
@@ -514,6 +548,56 @@ describe('ProductCreateComponent', () => {
           { duration: 3000 },
         );
         expect(routerMock.navigate).toHaveBeenCalledWith(['/productos']);
+      }));
+
+      it('should send all changed stock fields in changes array', fakeAsync(() => {
+        // Arrange
+        productServiceMock.changeProductStock.mockReturnValue(of(undefined));
+        component.productForm.patchValue({
+          stock: {
+            quantityAvailable: 15,
+            quantityReserved: 7,
+            quantityOrdered: 5,
+          },
+          stockChangeReason: 'Ajuste múltiple',
+        });
+        productServiceMock.getProductById.mockReturnValue(
+          of({
+            id: 1,
+            stock: {
+              quantityAvailable: 10,
+              quantityReserved: 5,
+              quantityOrdered: 2,
+            },
+          }),
+        );
+        // Act
+        component.onSubmit();
+        tick();
+        fixture.detectChanges();
+        tick();
+        // Assert
+        expect(productServiceMock.changeProductStock).toHaveBeenCalledWith({
+          productId: 1,
+          changes: [
+            {
+              changedField: StockChangeField.Available,
+              previousValue: 10,
+              newValue: 15,
+            },
+            {
+              changedField: StockChangeField.Reserved,
+              previousValue: 5,
+              newValue: 7,
+            },
+            {
+              changedField: StockChangeField.Ordered,
+              previousValue: 2,
+              newValue: 5,
+            },
+          ],
+          reason: 'Ajuste múltiple',
+        });
       }));
     });
   });

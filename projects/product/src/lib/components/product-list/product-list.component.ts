@@ -173,7 +173,7 @@ export class ProductListComponent implements OnInit {
     private readonly productCategoryService: ProductCategoryService,
     private readonly supplierService: SupplierService,
     private readonly lateralDrawerService: LateralDrawerService,
-    private readonly router: Router,
+    public readonly router: Router,
     private readonly snackBar: MatSnackBar,
     private currencyPipe: CurrencyPipe,
   ) {}

@@ -42,6 +42,10 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Observable, of, startWith, map } from 'rxjs';
 
 import { ProductCreate } from '../../models/product-create-param.model';
+import {
+  ProductStockChange,
+  StockChangeField,
+} from '../../models/product-stock-change.model';
 import { ProductService } from '../../services/product.service';
 
 @Component({
@@ -83,7 +87,7 @@ export class ProductCreateComponent {
       quantityAvailable: FormControl<number | null>;
       quantityReserved: FormControl<number | null>;
     }>;
-    stockReason?: FormControl<string | null>;
+    stockChangeReason?: FormControl<string | null>;
   }>;
 
   isSubmitting = signal(false);
@@ -157,7 +161,7 @@ export class ProductCreateComponent {
           ),
         }),
         ...(this.stockOnlyMode && {
-          stockReason: new FormControl<string | null>(
+          stockChangeReason: new FormControl<string | null>(
             null,
             Validators.required,
           ),
@@ -167,7 +171,7 @@ export class ProductCreateComponent {
 
     if (this.stockOnlyMode) {
       Object.entries(this.productForm.controls).forEach(([key, control]) => {
-        if (key !== 'stock' && key !== 'stockReason') {
+        if (key !== 'stock' && key !== 'stockChangeReason') {
           control.disable();
         }
       });
@@ -373,7 +377,7 @@ export class ProductCreateComponent {
   }
 
   get stockReasonHint(): string {
-    const value = this.productForm?.controls?.stockReason?.value || '';
+    const value = this.productForm?.controls?.stockChangeReason?.value || '';
     return `${value.length}/50`;
   }
 
@@ -405,18 +409,14 @@ export class ProductCreateComponent {
       if (this.stockOnlyMode && productId) {
         const previous = this.productService.getProductById(+productId);
         previous.subscribe((product) => {
-          const changes: Array<{
-            changedField: 'Available' | 'Reserved' | 'Ordered';
-            previousValue: number;
-            newValue: number;
-          }> = [];
+          const changes: ProductStockChange[] = [];
           const stockControls = this.productForm.controls.stock.controls;
           if (
             product.stock?.quantityAvailable !==
             stockControls.quantityAvailable.value
           ) {
             changes.push({
-              changedField: 'Available',
+              changedField: StockChangeField.Available,
               previousValue: product.stock?.quantityAvailable ?? 0,
               newValue: stockControls.quantityAvailable.value ?? 0,
             });
@@ -426,7 +426,7 @@ export class ProductCreateComponent {
             stockControls.quantityReserved.value
           ) {
             changes.push({
-              changedField: 'Reserved',
+              changedField: StockChangeField.Reserved,
               previousValue: product.stock?.quantityReserved ?? 0,
               newValue: stockControls.quantityReserved.value ?? 0,
             });
@@ -436,38 +436,39 @@ export class ProductCreateComponent {
             stockControls.quantityOrdered.value
           ) {
             changes.push({
-              changedField: 'Ordered',
+              changedField: StockChangeField.Ordered,
               previousValue: product.stock?.quantityOrdered ?? 0,
               newValue: stockControls.quantityOrdered.value ?? 0,
             });
           }
 
-          if (changes.length > 0) {
-            this.productService
-              .changeProductStock({
-                productId: +productId,
-                changes,
-                reason: this.productForm.controls.stockReason?.value ?? '',
-              })
-              .subscribe({
-                next: () => {
-                  this.snackBar.open('Stock ajustado correctamente', 'Cerrar', {
-                    duration: 3000,
-                  });
-                  this.isSubmitting.set(false);
-                  this.router.navigate(['/productos']);
-                },
-                error: (err) => {
-                  console.error('Error al ajustar stock:', err);
-                  this.isSubmitting.set(false);
-                },
-              });
-          } else {
+          if (changes.length === 0) {
             this.snackBar.open('No hay cambios en el stock', 'Cerrar', {
               duration: 3000,
             });
             this.isSubmitting.set(false);
+            return;
           }
+
+          this.productService
+            .changeProductStock({
+              productId: +productId,
+              changes,
+              reason: this.productForm.controls.stockChangeReason?.value ?? '',
+            })
+            .subscribe({
+              next: () => {
+                this.snackBar.open('Stock ajustado correctamente', 'Cerrar', {
+                  duration: 3000,
+                });
+                this.isSubmitting.set(false);
+                this.router.navigate(['/productos']);
+              },
+              error: (err) => {
+                console.error('Error al ajustar stock:', err);
+                this.isSubmitting.set(false);
+              },
+            });
         });
         return;
       }
