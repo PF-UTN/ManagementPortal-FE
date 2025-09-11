@@ -13,7 +13,7 @@
       "@Product-Category": ["projects/product-category/src/public-api"],
       "@Vehicle": ["projects/vehicle/src/public-api"],
       "@PurchaseOrder": ["./projects/purchase-order/src/public-api"],
-      "cart": ["./dist/cart"]
+      "@Cart": ["./projects/cart/src/public-api"]
     },
     "outDir": "./dist/out-tsc",
     "strict": true,
