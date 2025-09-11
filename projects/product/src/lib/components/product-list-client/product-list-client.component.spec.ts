@@ -6,6 +6,7 @@ import {
   fakeAsync,
   tick,
 } from '@angular/core/testing';
+import { mockDeep } from 'jest-mock-extended';
 import { of, throwError } from 'rxjs';
 
 import { ProductListClientComponent } from './product-list-client.component';
@@ -16,12 +17,15 @@ import {
   mockProductListItem,
 } from '../../testing/mock-data.model';
 import { DetailLateralClientDrawerComponent } from '../detail-lateral-client-drawer/detail-lateral-client-drawer.component';
+import { CartService } from './../../../../../cart/src/lib/services/cart.service';
+import { mockCart } from './../../../../../cart/src/lib/testing/mock-data.model';
 
 describe('ProductListClientComponent', () => {
   let component: ProductListClientComponent;
   let fixture: ComponentFixture<ProductListClientComponent>;
   let productService: jest.Mocked<ProductService>;
   let lateralDrawerService: jest.Mocked<LateralDrawerService>;
+  let cartService: CartService;
 
   beforeEach(async () => {
     productService = {
@@ -46,9 +50,11 @@ describe('ProductListClientComponent', () => {
       providers: [
         { provide: ProductService, useValue: productService },
         { provide: LateralDrawerService, useValue: lateralDrawerService },
+        { provide: CartService, useValue: mockDeep<CartService>() },
       ],
     }).compileComponents();
 
+    cartService = TestBed.inject(CartService);
     fixture = TestBed.createComponent(ProductListClientComponent);
     component = fixture.componentInstance;
   });
@@ -219,6 +225,80 @@ describe('ProductListClientComponent', () => {
       component.onCardKeyDown(event);
       expect(spy).not.toHaveBeenCalled();
     });
+    it('should call getCart when handleAddToCart is triggered', fakeAsync(() => {
+      // Arrange
+      const event = { productId: 1, quantity: 2 };
+      const existingCart = {
+        ...mockCart,
+        items: [],
+      };
+      const getCartSpy = jest
+        .spyOn(cartService, 'getCart')
+        .mockReturnValue(of(existingCart));
+
+      jest.spyOn(cartService, 'addProductToCart').mockReturnValue(of(void 0));
+
+      // Act
+      component.handleAddToCart(event);
+      tick();
+
+      // Assert
+      expect(getCartSpy).toHaveBeenCalled();
+    }));
+
+    it('should call addProductToCart with correct quantity if product exists in cart', fakeAsync(() => {
+      // Arrange
+      const event = { productId: 1, quantity: 2 };
+      const existingCart = mockCart;
+      jest.spyOn(cartService, 'getCart').mockReturnValue(of(existingCart));
+      const addProductSpy = jest
+        .spyOn(cartService, 'addProductToCart')
+        .mockReturnValue(of(void 0));
+
+      // Act
+      component.handleAddToCart(event);
+      tick();
+
+      // Assert
+      expect(addProductSpy).toHaveBeenCalledWith({ productId: 1, quantity: 4 });
+    }));
+
+    it('should call addProductToCart with correct quantity if product does not exist in cart', fakeAsync(() => {
+      // Arrange
+      const event = { productId: 2, quantity: 4 };
+      const existingCart = {
+        ...mockCart,
+        items: [],
+      };
+      jest.spyOn(cartService, 'getCart').mockReturnValue(of(existingCart));
+      const addProductSpy = jest
+        .spyOn(cartService, 'addProductToCart')
+        .mockReturnValue(of(void 0));
+
+      // Act
+      component.handleAddToCart(event);
+      tick();
+
+      // Assert
+      expect(addProductSpy).toHaveBeenCalledWith({ productId: 2, quantity: 4 });
+    }));
+
+    it('should call addProductToCart even if it throws an error', fakeAsync(() => {
+      // Arrange
+      const event = { productId: 3, quantity: 1 };
+      const existingCart = mockCart;
+      jest.spyOn(cartService, 'getCart').mockReturnValue(of(existingCart));
+      const addProductSpy = jest
+        .spyOn(cartService, 'addProductToCart')
+        .mockReturnValue(throwError(() => new Error('fail')));
+
+      // Act
+      component.handleAddToCart(event);
+      tick();
+
+      // Assert
+      expect(addProductSpy).toHaveBeenCalledWith({ productId: 3, quantity: 1 });
+    }));
   });
 
   describe('onScroll', () => {

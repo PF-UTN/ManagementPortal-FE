@@ -22,6 +22,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
+import { CartUpdateProductQuantity } from 'projects/cart/src/lib/models/cart-update-product-quantity.model';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
@@ -36,6 +37,8 @@ import { SearchProductResponse } from '../../models/search-product-response.mode
 import { ProductService } from '../../services/product.service';
 import { DetailLateralClientDrawerComponent } from '../detail-lateral-client-drawer/detail-lateral-client-drawer.component';
 import { ProductCardComponent } from '../product-card/product-card.component';
+import { Cart } from './../../../../../cart/src/lib/models/cart.model';
+import { CartService } from './../../../../../cart/src/lib/services/cart.service';
 
 @Component({
   selector: 'lib-product-list-client',
@@ -83,6 +86,7 @@ export class ProductListClientComponent {
     private readonly fb: FormBuilder,
     private readonly productService: ProductService,
     private readonly lateralDrawerService: LateralDrawerService,
+    private readonly cartService: CartService,
   ) {
     this.filterForm = this.fb.group({
       searchText: this.fb.control('', { nonNullable: true }),
@@ -205,5 +209,32 @@ export class ProductListClientComponent {
         },
       },
     );
+  }
+
+  handleAddToCart(event: { productId: number; quantity: number }) {
+    console.log('Add to cart event received:', event);
+    this.cartService.getCart().subscribe((cart: Cart) => {
+      const existingItem = cart.items.find(
+        (item) => item.product.id === event.productId,
+      );
+
+      const newQuantity = existingItem
+        ? existingItem.quantity + event.quantity
+        : event.quantity;
+
+      const params: CartUpdateProductQuantity = {
+        productId: event.productId,
+        quantity: newQuantity,
+      };
+
+      this.cartService.addProductToCart(params).subscribe({
+        next: () => {
+          console.log('Product added to cart successfully');
+        },
+        error: (error) => {
+          console.error('Error adding product to cart:', error);
+        },
+      });
+    });
   }
 }

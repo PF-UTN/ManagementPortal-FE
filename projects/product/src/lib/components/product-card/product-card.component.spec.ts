@@ -115,7 +115,24 @@ describe('ProductCardComponent', () => {
       // Act
       component.onAddToCartKeyDown();
       // Assert
-      expect(spy).toHaveBeenCalled();
+      expect(spy).toHaveBeenCalledWith({
+        productId: component.product.id,
+        quantity: component.quantity,
+      });
+    });
+
+    it('should emit addToCart when onAddToCartClick is called', () => {
+      // Arrange
+      const spy = jest.spyOn(component.addToCart, 'emit');
+
+      // Act
+      component.onAddToCartClick();
+
+      // Assert
+      expect(spy).toHaveBeenCalledWith({
+        productId: component.product.id,
+        quantity: component.quantity,
+      });
     });
   });
 });

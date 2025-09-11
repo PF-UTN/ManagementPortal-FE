@@ -12,7 +12,8 @@
       "@Supplier": ["projects/supplier/src/public-api"],
       "@Product-Category": ["projects/product-category/src/public-api"],
       "@Vehicle": ["projects/vehicle/src/public-api"],
-      "@PurchaseOrder": ["./projects/purchase-order/src/public-api"]
+      "@PurchaseOrder": ["./projects/purchase-order/src/public-api"],
+      "cart": ["./dist/cart"]
     },
     "outDir": "./dist/out-tsc",
     "strict": true,
