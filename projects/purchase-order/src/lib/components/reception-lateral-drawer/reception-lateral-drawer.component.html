@@ -1,0 +1,74 @@
+<div *ngIf="isLoadingData()">
+    <mp-loading></mp-loading>
+</div>
+
+<ng-container *ngIf="!isLoadingData()">
+
+    <div class="drawer-container__head">
+        <div class="drawer-container__row">
+            <p><strong>Proveedor</strong></p>
+            <p>{{ data()?.supplier?.businessName }}</p>
+        </div>
+        <div class="drawer-container__row">
+            <p><strong>Fecha estimada</strong></p>
+            <p>{{ data()?.estimatedDeliveryDate | date: 'dd/MM/yyyy' }}</p>
+        </div>
+        <div class="drawer-container__row">
+            <p><strong>Fecha efectiva</strong></p>
+            <p>{{ today | date: 'dd/MM/yyyy' }}</p>
+        </div>
+        <div class="drawer-container__row">
+            <p><strong>Observaciones</strong></p>
+            <p>{{ data()?.observation }}</p>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="drawer-container__body">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let item of form?.controls?.items?.controls; let i = index" [formGroup]="item">
+                    <td>{{ data()?.purchaseOrderItems?.[i]?.productName ?? '' }}</td>
+                    <td>
+                        <div class="drawer-container__body__input">
+                            <mp-input 
+                                type="number" 
+                                formControlName="quantity" 
+                                label="Cantidad" 
+                                [min]=1
+                                placeholder="Cantidad">
+                            </mp-input>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="drawer-container__body__input">
+                            <mp-input 
+                                type="number" 
+                                formControlName="price" 
+                                label="Precio" 
+                                [min]=1 
+                                placeholder="Precio">
+                            </mp-input>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="drawer-footer">
+        <div class="drawer-footer__subtotal">
+            <strong>Subtotal:</strong>
+            {{ subtotal() | currency:'ARS':'symbol':'1.2-2':'es-AR' }}
+        </div>
+    </div>
+
+</ng-container>

@@ -1,0 +1,13 @@
+.drawer-container {
+  &__row {
+    display: flex;
+    flex-direction: column;
+    margin-top: 15px;
+  }
+
+  &__body {
+    &__input {
+      max-width: 90px;
+    }
+  }
+}
