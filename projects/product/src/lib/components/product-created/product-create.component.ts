@@ -377,7 +377,7 @@ export class ProductCreateComponent {
   }
 
   get stockReasonHint(): string {
-    const value = this.productForm?.controls?.stockChangeReason?.value || '';
+    const value = this.productForm.controls.stockChangeReason!.value || '';
     return `${value.length}/50`;
   }
 
