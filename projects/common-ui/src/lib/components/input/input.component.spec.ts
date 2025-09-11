@@ -221,4 +221,19 @@ describe('InputComponent', () => {
     // Assert
     expect(inputEl.getAttribute('maxlength')).toBe('8');
   });
+
+  it('should set the min attribute on the input', () => {
+    // Arrange
+    inputComponent.min = 5;
+    inputComponent.label = 'Test';
+    inputComponent.ngOnInit();
+    fixture.detectChanges();
+
+    // Act
+    const inputEl: HTMLInputElement =
+      fixture.nativeElement.querySelector('input');
+
+    // Assert
+    expect(inputEl.getAttribute('min')).toBe('5');
+  });
 });

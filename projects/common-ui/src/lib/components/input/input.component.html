@@ -13,6 +13,7 @@
       (change)="change.emit($event)"
       (blur)="blur.emit($event); onTouched()"
       [maxlength]="maxlength ?? null"
+      [attr.min]="min"
     />
     <input
       *ngIf="matAutocomplete"
@@ -25,6 +26,7 @@
       (change)="change.emit($event)"
       (blur)="blur.emit($event); onTouched()"
       [matAutocomplete]="matAutocomplete"
+      [attr.min]="min"
     />
   </ng-container>
 
