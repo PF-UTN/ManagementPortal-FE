@@ -1,3 +1,4 @@
+import { mockCart, CartService } from '@Cart';
 import { LateralDrawerService } from '@Common-UI';
 
 import {
@@ -17,8 +18,6 @@ import {
   mockProductListItem,
 } from '../../testing/mock-data.model';
 import { DetailLateralClientDrawerComponent } from '../detail-lateral-client-drawer/detail-lateral-client-drawer.component';
-import { CartService } from './../../../../../cart/src/lib/services/cart.service';
-import { mockCart } from './../../../../../cart/src/lib/testing/mock-data.model';
 
 describe('ProductListClientComponent', () => {
   let component: ProductListClientComponent;
