@@ -14,3 +14,7 @@ export const PurchaseOrderStatusEnabledForDeletion: string[] = [
 export const PurchaseOrderStatusEnabledForModification: string[] = [
   PurchaseOrderStatusOptions.Draft,
 ];
+
+export const PurchaseOrderStatusEnabledForExecution: string[] = [
+  PurchaseOrderStatusOptions.Draft,
+];

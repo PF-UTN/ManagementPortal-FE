@@ -21,6 +21,7 @@ import { PurchaseOrderOrderField } from '../../models/purchase-order-param.model
 import { PurchaseOrderService } from '../../services/purchase-order.service';
 import { mockPurchaseOrderListItems } from '../../testing/mock-data.model';
 import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-lateral-drawer.component';
+import { ExecuteLateralDrawerComponent } from '../execute-lateral-drawer/execute-lateral-drawer.component';
 
 describe('PurchaseOrderListComponent', () => {
   let component: PurchaseOrderListComponent;
@@ -526,6 +527,35 @@ describe('PurchaseOrderListComponent', () => {
           footer: expect.objectContaining({
             firstButton: expect.objectContaining({
               text: 'Cerrar',
+              click: expect.any(Function),
+            }),
+          }),
+        }),
+      );
+    });
+  });
+
+  describe('onExecuteDrawer', () => {
+    it('should open drawer with productId and correct config', () => {
+      //Arrange
+      const openSpy = jest.spyOn(lateralDrawerService, 'open');
+
+      // Act
+      component.onExecuteDrawer(mockPurchaseOrderListItems[0]);
+
+      // Assert
+      expect(openSpy).toHaveBeenCalledWith(
+        ExecuteLateralDrawerComponent,
+        { purchaseOrderId: mockPurchaseOrderListItems[0].id },
+        expect.objectContaining({
+          title: `Ejecutar Orden #${mockPurchaseOrderListItems[0].id}`,
+          footer: expect.objectContaining({
+            firstButton: expect.objectContaining({
+              text: 'Ejecutar',
+              click: expect.any(Function),
+            }),
+            secondButton: expect.objectContaining({
+              text: 'Cancelar',
               click: expect.any(Function),
             }),
           }),
