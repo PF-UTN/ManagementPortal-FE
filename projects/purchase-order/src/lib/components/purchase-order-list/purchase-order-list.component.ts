@@ -30,6 +30,7 @@ import { BehaviorSubject, debounceTime, Subject, switchMap, tap } from 'rxjs';
 import {
   PurchaseOrderStatusEnabledForDeletion,
   PurchaseOrderStatusEnabledForModification,
+  PurchaseOrderStatusEnabledForReception,
   PurchaseOrderStatusOptions,
 } from '../../constants/purchase-order-status.enum';
 import { PurchaseOrderItem } from '../../models/purchase-order-item.model';
@@ -41,6 +42,7 @@ import {
 import { PurchaseOrderService } from '../../services/purchase-order.service';
 import { CancelLateralDrawerComponent } from '../cancel-lateral-drawer/cancel-lateral-drawer.component';
 import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-lateral-drawer.component';
+import { ReceptionLateralDrawerComponent } from '../reception-lateral-drawer/reception-lateral-drawer.component';
 
 @Component({
   selector: 'mp-purchase-order-list',
@@ -164,6 +166,15 @@ export class PurchaseOrderListComponent implements OnInit {
           description: 'Ejecutar',
           action: (element: PurchaseOrderItem) =>
             console.log('Ejecutar', element),
+        },
+        {
+          description: 'Recepcionar',
+          disabled: (element: PurchaseOrderItem) =>
+            !PurchaseOrderStatusEnabledForReception.includes(
+              element.purchaseOrderStatusName,
+            ),
+          action: (element: PurchaseOrderItem) =>
+            this.onReceptionDrawer(element),
         },
       ],
     },
@@ -405,6 +416,30 @@ export class PurchaseOrderListComponent implements OnInit {
         { data: rowItem },
         {
           title: 'Cancelar Orden de Compra',
+          footer: {
+            firstButton: {
+              text: 'Confirmar',
+              click: () => {},
+            },
+            secondButton: {
+              text: 'Cancelar',
+              click: () => {
+                this.lateralDrawerService.close();
+              },
+            },
+          },
+        },
+      )
+      .subscribe(() => this.doSearchSubject$.next());
+  }
+
+  onReceptionDrawer(rowItem: PurchaseOrderItem): void {
+    this.lateralDrawerService
+      .open(
+        ReceptionLateralDrawerComponent,
+        { purchaseOrderId: rowItem.id },
+        {
+          title: 'Recepcionar Orden de Compra',
           footer: {
             firstButton: {
               text: 'Confirmar',

@@ -584,6 +584,43 @@ describe('PurchaseOrderListComponent', () => {
     }));
   });
 
+  describe('onReceptionDrawer', () => {
+    it('should open the ReceptionLateralDrawerComponent with correct configuration', () => {
+      // Arrange
+      const rowItem = mockDeep<PurchaseOrderItem>({ id: 789 });
+
+      // Act
+      component.onReceptionDrawer(rowItem);
+
+      // Assert
+      expect(lateralDrawerService.open).toHaveBeenCalledWith(
+        expect.any(Function),
+        { purchaseOrderId: rowItem.id },
+        expect.objectContaining({
+          title: 'Recepcionar Orden de Compra',
+          footer: expect.objectContaining({
+            firstButton: expect.objectContaining({ text: 'Confirmar' }),
+            secondButton: expect.objectContaining({ text: 'Cancelar' }),
+          }),
+        }),
+      );
+    });
+
+    it('should trigger a search after the drawer closes', fakeAsync(() => {
+      // Arrange
+      const doSearchSpy = jest.spyOn(component.doSearchSubject$, 'next');
+      const rowItem = mockDeep<PurchaseOrderItem>({ id: 789 });
+      jest.spyOn(lateralDrawerService, 'open').mockReturnValue(of(void 0));
+
+      // Act
+      component.onReceptionDrawer(rowItem);
+      tick();
+
+      // Assert
+      expect(doSearchSpy).toHaveBeenCalled();
+    }));
+  });
+
   describe('clearDateFilters', () => {
     it('should clear both date ranges and call applyFilters', () => {
       // Arrange
