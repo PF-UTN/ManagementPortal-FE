@@ -619,6 +619,32 @@ describe('PurchaseOrderListComponent', () => {
       // Assert
       expect(doSearchSpy).toHaveBeenCalled();
     }));
+
+    it('should close the drawer when cancel button is clicked in reception drawer', () => {
+      // Arrange
+      const rowItem = mockDeep<PurchaseOrderItem>({ id: 789 });
+      const closeSpy = jest.spyOn(lateralDrawerService, 'close');
+      let footerConfig:
+        | {
+            firstButton: { text: string; click: () => void };
+            secondButton?: { text: string; click: () => void };
+          }
+        | undefined;
+
+      jest
+        .spyOn(lateralDrawerService, 'open')
+        .mockImplementation((_comp, _data, config) => {
+          footerConfig = config?.footer;
+          return of(void 0);
+        });
+
+      // Act
+      component.onReceptionDrawer(rowItem);
+      footerConfig?.secondButton?.click();
+
+      // Assert
+      expect(closeSpy).toHaveBeenCalled();
+    });
   });
 
   describe('clearDateFilters', () => {

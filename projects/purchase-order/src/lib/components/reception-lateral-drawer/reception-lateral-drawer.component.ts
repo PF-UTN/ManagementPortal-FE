@@ -65,7 +65,7 @@ export class ReceptionLateralDrawerComponent
 
   constructor(
     private readonly purchaseOrderService: PurchaseOrderService,
-    private readonly lateralDrawerService: LateralDrawerService,
+    public readonly lateralDrawerService: LateralDrawerService,
     private readonly snackBar: MatSnackBar,
     private readonly dialog: MatDialog,
   ) {
