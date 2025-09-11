@@ -9,6 +9,10 @@ import { ProductCategoryResponse } from '../models/product-category-response.mod
 import { ProductCreate } from '../models/product-create-param.model';
 import { ProductResponse } from '../models/product-create-response.model';
 import { ProductParams } from '../models/product-param.model';
+import {
+  ProductStockChange,
+  StockChangeField,
+} from '../models/product-stock-change.model';
 import { ProductService } from '../services/product.service';
 import {
   mockProductListItemResponse,
@@ -282,6 +286,69 @@ describe('ProductService', () => {
       });
       const req = httpMock.expectOne(url);
       expect(req.request.method).toBe('PUT');
+      req.error(mockError);
+    });
+  });
+
+  describe('changeProductStock', () => {
+    it('should send a POST request with the correct parameters and return void', () => {
+      // Arrange
+      const params: {
+        productId: number;
+        changes: ProductStockChange[];
+        reason: string;
+      } = {
+        productId: 1,
+        changes: [
+          {
+            changedField: StockChangeField.Available,
+            previousValue: 10,
+            newValue: 15,
+          },
+        ],
+        reason: 'Ajuste de inventario',
+      };
+      const url = `${baseUrl}/stock-change`;
+
+      // Act & Assert
+      service.changeProductStock(params).subscribe((response) => {
+        expect(response).toBeUndefined();
+      });
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(params);
+      req.flush(null);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const params: {
+        productId: number;
+        changes: ProductStockChange[];
+        reason: string;
+      } = {
+        productId: 1,
+        changes: [
+          {
+            changedField: StockChangeField.Available,
+            previousValue: 10,
+            newValue: 15,
+          },
+        ],
+        reason: 'Ajuste de inventario',
+      };
+      const url = `${baseUrl}/stock-change`;
+      const mockError = new ErrorEvent('Network error');
+
+      // Act & Assert
+      service.changeProductStock(params).subscribe({
+        next: () => fail('Expected an error, but got a successful response'),
+        error: (error) => {
+          expect(error.error).toBe(mockError);
+        },
+      });
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
       req.error(mockError);
     });
   });

@@ -16,13 +16,14 @@ import { ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { mockDeep } from 'jest-mock-extended';
 import { of, throwError } from 'rxjs';
 
 import { ProductCreateComponent } from './product-create.component';
 import { ProductCategoryResponse } from '../../models/product-category-response.model';
 import { ProductResponse } from '../../models/product-create-response.model';
+import { StockChangeField } from '../../models/product-stock-change.model';
 import { ProductService } from '../../services/product.service';
 
 describe('ProductCreateComponent', () => {
@@ -32,6 +33,8 @@ describe('ProductCreateComponent', () => {
     createProduct: jest.Mock;
     updateProduct: jest.Mock;
     getCategories: jest.Mock;
+    getProductById: jest.Mock;
+    changeProductStock: jest.Mock;
   };
   let supplierServiceMock: { getSuppliers: jest.Mock };
   let snackBarMock: { open: jest.Mock };
@@ -71,6 +74,8 @@ describe('ProductCreateComponent', () => {
       createProduct: jest.fn(),
       updateProduct: jest.fn(),
       getCategories: jest.fn().mockReturnValue(of(mockCategories)),
+      getProductById: jest.fn(),
+      changeProductStock: jest.fn(),
     };
     supplierServiceMock = {
       getSuppliers: jest.fn().mockReturnValue(of(mockSuppliers)),
@@ -92,7 +97,10 @@ describe('ProductCreateComponent', () => {
         {
           provide: ActivatedRoute,
           useValue: {
-            snapshot: { paramMap: { get: () => null } },
+            snapshot: {
+              paramMap: { get: () => null },
+              queryParamMap: { get: () => null },
+            },
             paramMap: of({ get: () => null }),
           },
         },
@@ -124,6 +132,39 @@ describe('ProductCreateComponent', () => {
       expect(supplierServiceMock.getSuppliers).toHaveBeenCalled();
       expect(component.categories.length).toBe(2);
       expect(component.suppliers.length).toBe(1);
+    }));
+
+    it('should disable stock group if editing and not in stockOnlyMode', fakeAsync(() => {
+      // Arrange
+      component.stockOnlyMode = false;
+      const paramMapMock: ParamMap = {
+        get: (key: string) => (key === 'id' ? '1' : null),
+        has: (key: string) => key === 'id',
+        getAll: (key: string) => (key === 'id' ? ['1'] : []),
+        keys: ['id'],
+      };
+      Object.defineProperty(component['route'], 'paramMap', {
+        get: () => of(paramMapMock),
+      });
+
+      productServiceMock.getProductById.mockReturnValue(
+        of({
+          id: 1,
+          stock: {
+            quantityOrdered: 1,
+            quantityAvailable: 1,
+            quantityReserved: 1,
+          },
+        }),
+      );
+
+      // Act
+      component.ngOnInit();
+      tick();
+
+      // Assert
+      expect(component.productForm.controls.stock.disabled).toBe(true);
+      expect(component.isLoading()).toBe(false);
     }));
   });
 
@@ -324,6 +365,241 @@ describe('ProductCreateComponent', () => {
       );
       expect(routerMock.navigate).not.toHaveBeenCalled();
     }));
+
+    describe('onSubmit (stockOnlyMode)', () => {
+      beforeEach(() => {
+        jest
+          .spyOn(component['route'].snapshot.paramMap, 'get')
+          .mockImplementation((key: string) => {
+            if (key === 'id') return '1';
+            if (key === 'stockOnly') return 'true';
+            return null;
+          });
+        jest
+          .spyOn(component['route'].snapshot.queryParamMap, 'get')
+          .mockImplementation((key: string) => {
+            if (key === 'stockOnly') return 'true';
+            return null;
+          });
+
+        component.stockOnlyMode = true;
+        component.ngOnInit();
+        fixture.detectChanges();
+
+        productServiceMock.changeProductStock = jest.fn();
+        productServiceMock.getProductById = jest.fn().mockReturnValue(
+          of({
+            id: 1,
+            stock: {
+              quantityAvailable: 10,
+              quantityReserved: 5,
+              quantityOrdered: 2,
+            },
+          }),
+        );
+        component.productForm.patchValue({
+          stock: {
+            quantityAvailable: 15,
+            quantityReserved: 5,
+            quantityOrdered: 2,
+          },
+          stockChangeReason: 'Ajuste por inventario',
+        });
+      });
+
+      it('should send correct previousValue and newValue for quantityAvailable', fakeAsync(() => {
+        // Arrange
+        productServiceMock.changeProductStock.mockReturnValue(of(undefined));
+        // Simula cambio solo en quantityAvailable
+        component.productForm.patchValue({
+          stock: {
+            quantityAvailable: 20, // nuevo valor
+            quantityReserved: 5,
+            quantityOrdered: 2,
+          },
+          stockChangeReason: 'Ajuste disponible',
+        });
+        productServiceMock.getProductById.mockReturnValue(
+          of({
+            id: 1,
+            stock: {
+              quantityAvailable: 10,
+              quantityReserved: 5,
+              quantityOrdered: 2,
+            },
+          }),
+        );
+        // Act
+        component.onSubmit();
+        tick();
+        fixture.detectChanges();
+        tick();
+        // Assert
+        expect(productServiceMock.changeProductStock).toHaveBeenCalledWith({
+          productId: 1,
+          changes: [
+            {
+              changedField: 'Available',
+              previousValue: 10,
+              newValue: 20,
+            },
+          ],
+          reason: 'Ajuste disponible',
+        });
+      }));
+
+      it('should call changeProductStock with correct params and navigate on success', fakeAsync(() => {
+        // Arrange
+        productServiceMock.changeProductStock.mockReturnValue(of(undefined));
+        // Act
+        component.onSubmit();
+        tick();
+        fixture.detectChanges();
+        tick();
+        // Assert
+        expect(productServiceMock.changeProductStock).toHaveBeenCalledWith({
+          productId: 1,
+          changes: [
+            {
+              changedField: 'Available',
+              previousValue: 10,
+              newValue: 15,
+            },
+          ],
+          reason: 'Ajuste por inventario',
+        });
+        expect(snackBarMock.open).toHaveBeenCalledWith(
+          'Stock ajustado correctamente',
+          'Cerrar',
+          { duration: 3000 },
+        );
+        expect(routerMock.navigate).toHaveBeenCalledWith(['/productos']);
+      }));
+
+      it('should show message if no stock changes', fakeAsync(() => {
+        // Arrange
+        productServiceMock.getProductById.mockReturnValue(
+          of({
+            id: 1,
+            stock: {
+              quantityAvailable: 15,
+              quantityReserved: 5,
+              quantityOrdered: 2,
+            },
+          }),
+        );
+        // Act
+        component.onSubmit();
+        tick();
+        fixture.detectChanges();
+        tick();
+        // Assert
+        expect(productServiceMock.changeProductStock).not.toHaveBeenCalled();
+        expect(snackBarMock.open).toHaveBeenCalledWith(
+          'No hay cambios en el stock',
+          'Cerrar',
+          { duration: 3000 },
+        );
+      }));
+
+      it('should handle error on changeProductStock', fakeAsync(() => {
+        // Arrange
+        productServiceMock.changeProductStock.mockReturnValue(
+          throwError(() => new Error('fail')),
+        );
+        // Act
+        component.onSubmit();
+        tick();
+        fixture.detectChanges();
+        tick();
+        // Assert
+        expect(productServiceMock.changeProductStock).toHaveBeenCalled();
+        expect(snackBarMock.open).not.toHaveBeenCalledWith(
+          'Stock ajustado correctamente',
+          'Cerrar',
+          { duration: 3000 },
+        );
+        expect(routerMock.navigate).not.toHaveBeenCalled();
+      }));
+
+      it('should call changeProductStock with correct params and navigate on success', fakeAsync(() => {
+        // Arrange
+        productServiceMock.changeProductStock.mockReturnValue(of(undefined));
+        // Act
+        component.onSubmit();
+        tick();
+        fixture.detectChanges();
+        tick();
+        // Assert
+        expect(productServiceMock.changeProductStock).toHaveBeenCalledWith({
+          productId: 1,
+          changes: [
+            {
+              changedField: 'Available',
+              previousValue: 10,
+              newValue: 15,
+            },
+          ],
+          reason: 'Ajuste por inventario',
+        });
+        expect(snackBarMock.open).toHaveBeenCalledWith(
+          'Stock ajustado correctamente',
+          'Cerrar',
+          { duration: 3000 },
+        );
+        expect(routerMock.navigate).toHaveBeenCalledWith(['/productos']);
+      }));
+
+      it('should send all changed stock fields in changes array', fakeAsync(() => {
+        // Arrange
+        productServiceMock.changeProductStock.mockReturnValue(of(undefined));
+        component.productForm.patchValue({
+          stock: {
+            quantityAvailable: 15,
+            quantityReserved: 7,
+            quantityOrdered: 5,
+          },
+          stockChangeReason: 'Ajuste múltiple',
+        });
+        productServiceMock.getProductById.mockReturnValue(
+          of({
+            id: 1,
+            stock: {
+              quantityAvailable: 10,
+              quantityReserved: 5,
+              quantityOrdered: 2,
+            },
+          }),
+        );
+        // Act
+        component.onSubmit();
+        tick();
+        fixture.detectChanges();
+        tick();
+        // Assert
+        expect(productServiceMock.changeProductStock).toHaveBeenCalledWith({
+          productId: 1,
+          changes: [
+            {
+              changedField: StockChangeField.Available,
+              previousValue: 10,
+              newValue: 15,
+            },
+            {
+              changedField: StockChangeField.Reserved,
+              previousValue: 5,
+              newValue: 7,
+            },
+            {
+              changedField: StockChangeField.Ordered,
+              previousValue: 2,
+              newValue: 5,
+            },
+          ],
+          reason: 'Ajuste múltiple',
+        });
+      }));
+    });
   });
 
   describe('UI helpers', () => {

@@ -9,6 +9,7 @@ import { ProductCreate } from '../models/product-create-param.model';
 import { ProductResponse } from '../models/product-create-response.model';
 import { ProductDetail } from '../models/product-detail.model';
 import { ProductParams } from '../models/product-param.model';
+import { ProductStockChange } from '../models/product-stock-change.model';
 import { SearchProductResponse } from '../models/search-product-response.model';
 
 @Injectable({
@@ -54,5 +55,14 @@ export class ProductService {
   getProductById(id: number): Observable<ProductDetail> {
     const url = `${this.baseUrl}/${id}`;
     return this.http.get<ProductDetail>(url);
+  }
+
+  changeProductStock(params: {
+    productId: number;
+    changes: ProductStockChange[];
+    reason: string;
+  }): Observable<void> {
+    const url = `${this.baseUrl}/stock-change`;
+    return this.http.post<void>(url, params);
   }
 }
