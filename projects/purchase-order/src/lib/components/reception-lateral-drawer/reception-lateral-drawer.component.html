@@ -23,8 +23,6 @@
         </div>
     </div>
 
-    <hr />
-
     <div class="drawer-container__body">
         <table class="table">
             <thead>
@@ -43,7 +41,7 @@
                                 type="number" 
                                 formControlName="quantity" 
                                 label="Cantidad" 
-                                [min]=1
+                                [min]=0
                                 placeholder="Cantidad">
                             </mp-input>
                         </div>
@@ -68,6 +66,12 @@
         <div class="drawer-footer__subtotal">
             <strong>Subtotal:</strong>
             {{ subtotal() | currency:'ARS':'symbol':'1.2-2':'es-AR' }}
+        </div>
+    
+        <div class="drawer-footer__error">
+            <mat-error *ngIf="isFormInvalid()">
+                Al menos un producto debe tener cantidad mayores a cero
+            </mat-error>
         </div>
     </div>
 

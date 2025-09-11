@@ -139,7 +139,7 @@ describe('ReceptionLateralDrawerComponent', () => {
       // act
       component['updateSubtotalAndValidation']();
       // assert
-      expect(component.isFormInvalid()).toBe(true);
+      expect(component.isFormInvalid()).toBe(false);
     });
 
     it('should set isFormInvalid to false if all items are valid', () => {
@@ -188,6 +188,38 @@ describe('ReceptionLateralDrawerComponent', () => {
       component['updateSubtotalAndValidation']();
       // assert
       expect(component.subtotal()).toBe(350);
+    });
+
+    it('should allow quantity zero for a product if at least one has quantity > 0', () => {
+      // arrange
+      component.data.set(mockPurchaseOrderDetail);
+      component['initializeForm']();
+      component.form.setValue({
+        items: [
+          { quantity: 0, price: 100 },
+          { quantity: 3, price: 50 },
+        ],
+      });
+      // act
+      component['updateSubtotalAndValidation']();
+      // assert
+      expect(component.isFormInvalid()).toBe(false);
+    });
+
+    it('should set form as invalid if all products have quantity zero', () => {
+      // arrange
+      component.data.set(mockPurchaseOrderDetail);
+      component['initializeForm']();
+      component.form.setValue({
+        items: [
+          { quantity: 0, price: 100 },
+          { quantity: 0, price: 50 },
+        ],
+      });
+      // act
+      component['updateSubtotalAndValidation']();
+      // assert
+      expect(component.isFormInvalid()).toBe(true);
     });
   });
 
@@ -313,6 +345,33 @@ describe('ReceptionLateralDrawerComponent', () => {
       expect(closeSpy).toHaveBeenCalled();
       expect(component.isLoadingConfirm()).toBe(false);
       expect(emitSuccessSpy).toHaveBeenCalled();
+    });
+
+    it('should not send products with quantity zero to backend', () => {
+      // arrange
+      component.data.set(mockPurchaseOrderDetail);
+      component['initializeForm']();
+      component.form.setValue({
+        items: [
+          { quantity: 0, price: 100 },
+          { quantity: 3, price: 50 },
+        ],
+      });
+      const dialogRefMock = {
+        afterClosed: () => of(true),
+      } as MatDialogRef<boolean>;
+      jest.spyOn(dialog, 'open').mockReturnValue(dialogRefMock);
+      jest
+        .spyOn(purchaseOrderService, 'updatePurchaseOrderAsync')
+        .mockImplementation((id, req) => {
+          // assert
+          expect(req.purchaseOrderItems).toEqual([
+            { productId: 2, quantity: 3, unitPrice: 50 },
+          ]);
+          return of(void 0);
+        });
+      // act
+      component.handleConfirmClick();
     });
   });
 

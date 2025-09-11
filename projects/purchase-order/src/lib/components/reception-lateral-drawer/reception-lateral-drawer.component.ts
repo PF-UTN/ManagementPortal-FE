@@ -16,6 +16,7 @@ import {
   ReactiveFormsModule,
 } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 
 import {
@@ -35,6 +36,7 @@ import { PurchaseOrderService } from '../../services/purchase-order.service';
     LoadingComponent,
     CommonModule,
     InputComponent,
+    MatFormFieldModule,
   ],
   templateUrl: './reception-lateral-drawer.component.html',
   styleUrl: './reception-lateral-drawer.component.scss',
@@ -120,7 +122,7 @@ export class ReceptionLateralDrawerComponent
           (product) =>
             new FormGroup({
               quantity: new FormControl(product.quantity, {
-                validators: [Validators.required, Validators.min(1)],
+                validators: [Validators.required, Validators.min(0)],
                 nonNullable: true,
               }),
               price: new FormControl(product.unitPrice, {
@@ -139,21 +141,25 @@ export class ReceptionLateralDrawerComponent
 
   private updateSubtotalAndValidation() {
     const items = this.form.value.items!;
+    const hasAtLeastOne = items.some(
+      (item) => item && typeof item.quantity === 'number' && item.quantity > 0,
+    );
     const hasInvalid = items.some(
       (item) =>
         !item ||
         typeof item.quantity !== 'number' ||
         typeof item.price !== 'number' ||
-        item.quantity <= 0 ||
+        item.quantity < 0 ||
         item.price <= 0,
     );
-    this.isFormInvalid.set(hasInvalid);
+    this.isFormInvalid.set(hasInvalid || !hasAtLeastOne);
 
     const total = items.reduce((acc, item) => {
       if (
         item &&
         typeof item.quantity === 'number' &&
-        typeof item.price === 'number'
+        typeof item.price === 'number' &&
+        item.quantity > 0
       ) {
         return acc + item.quantity * item.price;
       }
@@ -188,13 +194,13 @@ export class ReceptionLateralDrawerComponent
       }
 
       const formItems = this.form.value.items!;
-      const purchaseOrderItems = purchaseOrder.purchaseOrderItems.map(
-        (item, idx) => ({
+      const purchaseOrderItems = purchaseOrder.purchaseOrderItems
+        .map((item, idx) => ({
           productId: item.productId,
           quantity: formItems[idx].quantity ?? item.quantity,
           unitPrice: formItems[idx].price ?? item.unitPrice,
-        }),
-      );
+        }))
+        .filter((item) => item.quantity > 0);
 
       const request = {
         estimatedDeliveryDate: purchaseOrder.estimatedDeliveryDate,
