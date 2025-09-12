@@ -1,6 +1,6 @@
 import { LateralDrawerService } from '@Common-UI';
 
-import { registerLocaleData } from '@angular/common';
+import { registerLocaleData, DatePipe } from '@angular/common';
 import localeEsAr from '@angular/common/locales/es-AR';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -10,10 +10,7 @@ import { mockDeep } from 'jest-mock-extended';
 import { of } from 'rxjs';
 
 import { ReceptionLateralDrawerComponent } from './reception-lateral-drawer.component';
-import {
-  PurchaseOrderStatusIdMap,
-  PurchaseOrderStatusOptions,
-} from '../../constants/purchase-order-status.enum';
+import { PurchaseOrderStatusOptionsId } from '../../constants/purchase-order-status-ids.enum';
 import { PurchaseOrderDetail } from '../../models/purchase-order-detail.model';
 import { PurchaseOrderService } from '../../services/purchase-order.service';
 
@@ -67,6 +64,7 @@ describe('ReceptionLateralDrawerComponent', () => {
         },
         { provide: MatSnackBar, useValue: snackBarMock },
         { provide: MatDialog, useValue: mockDeep<MatDialog>() },
+        DatePipe,
       ],
     });
 
@@ -312,8 +310,7 @@ describe('ReceptionLateralDrawerComponent', () => {
                 mockPurchaseOrderDetail.estimatedDeliveryDate,
               effectiveDeliveryDate: expect.any(String),
               observation: mockPurchaseOrderDetail.observation,
-              purchaseOrderStatusId:
-                PurchaseOrderStatusIdMap[PurchaseOrderStatusOptions.Received],
+              purchaseOrderStatusId: PurchaseOrderStatusOptionsId.Received,
               purchaseOrderItems: [
                 { productId: 1, quantity: 2, unitPrice: 100 },
                 { productId: 2, quantity: 3, unitPrice: 50 },

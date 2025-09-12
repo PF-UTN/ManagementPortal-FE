@@ -19,10 +19,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 
-import {
-  PurchaseOrderStatusOptions,
-  PurchaseOrderStatusIdMap,
-} from '../../constants/purchase-order-status.enum';
+import { PurchaseOrderStatusOptionsId } from '../../constants/purchase-order-status-ids.enum';
 import { PurchaseOrderDetail } from '../../models/purchase-order-detail.model';
 import { PurchaseOrderService } from '../../services/purchase-order.service';
 
@@ -32,12 +29,12 @@ import { PurchaseOrderService } from '../../services/purchase-order.service';
   imports: [
     MatSnackBarModule,
     ReactiveFormsModule,
-    DatePipe,
     LoadingComponent,
     CommonModule,
     InputComponent,
     MatFormFieldModule,
   ],
+  providers: [DatePipe],
   templateUrl: './reception-lateral-drawer.component.html',
   styleUrl: './reception-lateral-drawer.component.scss',
 })
@@ -70,6 +67,7 @@ export class ReceptionLateralDrawerComponent
     public readonly lateralDrawerService: LateralDrawerService,
     private readonly snackBar: MatSnackBar,
     private readonly dialog: MatDialog,
+    private readonly datePipe: DatePipe,
   ) {
     super();
     effect(() => {
@@ -144,7 +142,7 @@ export class ReceptionLateralDrawerComponent
     const hasAtLeastOne = items.some(
       (item) => item && typeof item.quantity === 'number' && item.quantity > 0,
     );
-    const hasInvalid = items.some(
+    const containsInvalidItem = items.some(
       (item) =>
         !item ||
         typeof item.quantity !== 'number' ||
@@ -152,7 +150,7 @@ export class ReceptionLateralDrawerComponent
         item.quantity < 0 ||
         item.price <= 0,
     );
-    this.isFormInvalid.set(hasInvalid || !hasAtLeastOne);
+    this.isFormInvalid.set(containsInvalidItem || !hasAtLeastOne);
 
     const total = items.reduce((acc, item) => {
       if (
@@ -204,10 +202,12 @@ export class ReceptionLateralDrawerComponent
 
       const request = {
         estimatedDeliveryDate: purchaseOrder.estimatedDeliveryDate,
-        effectiveDeliveryDate: new Date().toISOString().slice(0, 10),
+        effectiveDeliveryDate: this.datePipe.transform(
+          new Date(),
+          'yyyy-MM-dd',
+        ),
         observation: purchaseOrder.observation ?? '',
-        purchaseOrderStatusId:
-          PurchaseOrderStatusIdMap[PurchaseOrderStatusOptions.Received],
+        purchaseOrderStatusId: PurchaseOrderStatusOptionsId.Received,
         purchaseOrderItems,
       };
 

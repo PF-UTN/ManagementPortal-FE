@@ -4,6 +4,7 @@ import {
   SubtitleComponent,
   LoadingComponent,
   LateralDrawerService,
+  InputComponent,
 } from '@Common-UI';
 import {
   CreateUpdateProductCategoryLateralDrawerComponent,
@@ -41,6 +42,10 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Observable, of, startWith, map } from 'rxjs';
 
 import { ProductCreate } from '../../models/product-create-param.model';
+import {
+  ProductStockChange,
+  StockChangeField,
+} from '../../models/product-stock-change.model';
 import { ProductService } from '../../services/product.service';
 
 @Component({
@@ -63,6 +68,7 @@ import { ProductService } from '../../services/product.service';
     MatIconButton,
     MatButtonModule,
     LoadingComponent,
+    InputComponent,
   ],
 })
 export class ProductCreateComponent {
@@ -81,7 +87,9 @@ export class ProductCreateComponent {
       quantityAvailable: FormControl<number | null>;
       quantityReserved: FormControl<number | null>;
     }>;
+    stockChangeReason?: FormControl<string | null>;
   }>;
+
   isSubmitting = signal(false);
   categories: ProductCategoryResponse[] = [];
   filteredCategories$: Observable<ProductCategoryResponse[]> = of([]);
@@ -89,6 +97,7 @@ export class ProductCreateComponent {
   filteredSuppliers$: Observable<SupplierResponse[]> = of([]);
 
   isLoading = signal(true);
+  stockOnlyMode = false;
 
   public readonly MANAGE_CATEGORY_OPTION: ProductCategoryResponse = {
     id: -1,
@@ -117,6 +126,9 @@ export class ProductCreateComponent {
   ) {}
 
   ngOnInit() {
+    this.stockOnlyMode =
+      this.route.snapshot.queryParamMap.get('stockOnly') === 'true';
+
     {
       this.productForm = this.fb.group({
         name: new FormControl<string | null>(null, Validators.required),
@@ -148,8 +160,23 @@ export class ProductCreateComponent {
             Validators.required,
           ),
         }),
+        ...(this.stockOnlyMode && {
+          stockChangeReason: new FormControl<string | null>(
+            null,
+            Validators.required,
+          ),
+        }),
       });
     }
+
+    if (this.stockOnlyMode) {
+      Object.entries(this.productForm.controls).forEach(([key, control]) => {
+        if (key !== 'stock' && key !== 'stockChangeReason') {
+          control.disable();
+        }
+      });
+    }
+
     this.initCategories();
     this.initSuppliers();
     this.route.paramMap.subscribe((params) => {
@@ -179,7 +206,9 @@ export class ProductCreateComponent {
               quantityReserved: product.stock?.quantityReserved,
             },
           });
-          this.productForm.controls.stock.disable();
+          if (!this.stockOnlyMode) {
+            this.productForm.controls.stock.disable();
+          }
           this.isLoading.set(false);
         });
       } else {
@@ -347,9 +376,15 @@ export class ProductCreateComponent {
     this.router.navigate(['/productos']);
   }
 
+  get stockReasonHint(): string {
+    const value = this.productForm.controls.stockChangeReason!.value || '';
+    return `${value.length}/50`;
+  }
+
   onSubmit() {
     if (this.productForm.valid) {
       this.isSubmitting.set(true);
+
       const product: ProductCreate = {
         name: this.productForm.controls.name.value!,
         description: this.productForm.controls.description.value!,
@@ -371,6 +406,72 @@ export class ProductCreateComponent {
       };
 
       const productId = this.route.snapshot.paramMap.get('id');
+      if (this.stockOnlyMode && productId) {
+        const previous = this.productService.getProductById(+productId);
+        previous.subscribe((product) => {
+          const changes: ProductStockChange[] = [];
+          const stockControls = this.productForm.controls.stock.controls;
+          if (
+            product.stock?.quantityAvailable !==
+            stockControls.quantityAvailable.value
+          ) {
+            changes.push({
+              changedField: StockChangeField.Available,
+              previousValue: product.stock?.quantityAvailable ?? 0,
+              newValue: stockControls.quantityAvailable.value ?? 0,
+            });
+          }
+          if (
+            product.stock?.quantityReserved !==
+            stockControls.quantityReserved.value
+          ) {
+            changes.push({
+              changedField: StockChangeField.Reserved,
+              previousValue: product.stock?.quantityReserved ?? 0,
+              newValue: stockControls.quantityReserved.value ?? 0,
+            });
+          }
+          if (
+            product.stock?.quantityOrdered !==
+            stockControls.quantityOrdered.value
+          ) {
+            changes.push({
+              changedField: StockChangeField.Ordered,
+              previousValue: product.stock?.quantityOrdered ?? 0,
+              newValue: stockControls.quantityOrdered.value ?? 0,
+            });
+          }
+
+          if (changes.length === 0) {
+            this.snackBar.open('No hay cambios en el stock', 'Cerrar', {
+              duration: 3000,
+            });
+            this.isSubmitting.set(false);
+            return;
+          }
+
+          this.productService
+            .changeProductStock({
+              productId: +productId,
+              changes,
+              reason: this.productForm.controls.stockChangeReason?.value ?? '',
+            })
+            .subscribe({
+              next: () => {
+                this.snackBar.open('Stock ajustado correctamente', 'Cerrar', {
+                  duration: 3000,
+                });
+                this.isSubmitting.set(false);
+                this.router.navigate(['/productos']);
+              },
+              error: (err) => {
+                console.error('Error al ajustar stock:', err);
+                this.isSubmitting.set(false);
+              },
+            });
+        });
+        return;
+      }
       if (productId) {
         this.productService.updateProduct(+productId, product).subscribe({
           next: () => {

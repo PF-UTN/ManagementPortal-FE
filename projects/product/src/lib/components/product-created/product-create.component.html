@@ -79,7 +79,7 @@
           </div>
           <div class="row">
             <div class="col-12 d-flex justify-content-end">
-              <mat-slide-toggle color="primary">
+              <mat-slide-toggle color="primary" formControlName="enabled">
                 Producto habilitado
               </mat-slide-toggle>
             </div>
@@ -330,6 +330,17 @@
               </div>
             </div>
           </div>
+          <div *ngIf="stockOnlyMode">
+             <mp-input
+                label="Motivo del ajuste"
+                formControlName="stockChangeReason"
+                [textarea]="true"
+                [rows]="3"
+                [maxlength]="50"
+                [hint]="stockReasonHint"
+                required
+              ></mp-input>
+            </div>
         </div>
       </div>
       <div class="row">
