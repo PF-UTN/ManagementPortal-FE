@@ -1,7 +1,7 @@
 export interface PutUpdatePurchaseOrderRequest {
   purchaseOrderStatusId: number;
   observation: string;
-  estimatedDeliveryDate: Date;
+  estimatedDeliveryDate: Date | string;
   purchaseOrderItems?: UpdatePurchaseOrderItemDto[];
 }
 

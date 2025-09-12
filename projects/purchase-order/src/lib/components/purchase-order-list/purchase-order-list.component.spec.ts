@@ -614,6 +614,69 @@ describe('PurchaseOrderListComponent', () => {
     }));
   });
 
+  describe('onReceptionDrawer', () => {
+    it('should open the ReceptionLateralDrawerComponent with correct configuration', () => {
+      // Arrange
+      const rowItem = mockDeep<PurchaseOrderItem>({ id: 789 });
+
+      // Act
+      component.onReceptionDrawer(rowItem);
+
+      // Assert
+      expect(lateralDrawerService.open).toHaveBeenCalledWith(
+        expect.any(Function),
+        { purchaseOrderId: rowItem.id },
+        expect.objectContaining({
+          title: 'Recepcionar Orden de Compra',
+          footer: expect.objectContaining({
+            firstButton: expect.objectContaining({ text: 'Confirmar' }),
+            secondButton: expect.objectContaining({ text: 'Cancelar' }),
+          }),
+        }),
+      );
+    });
+
+    it('should trigger a search after the drawer closes', fakeAsync(() => {
+      // Arrange
+      const doSearchSpy = jest.spyOn(component.doSearchSubject$, 'next');
+      const rowItem = mockDeep<PurchaseOrderItem>({ id: 789 });
+      jest.spyOn(lateralDrawerService, 'open').mockReturnValue(of(void 0));
+
+      // Act
+      component.onReceptionDrawer(rowItem);
+      tick();
+
+      // Assert
+      expect(doSearchSpy).toHaveBeenCalled();
+    }));
+
+    it('should close the drawer when cancel button is clicked in reception drawer', () => {
+      // Arrange
+      const rowItem = mockDeep<PurchaseOrderItem>({ id: 789 });
+      const closeSpy = jest.spyOn(lateralDrawerService, 'close');
+      let footerConfig:
+        | {
+            firstButton: { text: string; click: () => void };
+            secondButton?: { text: string; click: () => void };
+          }
+        | undefined;
+
+      jest
+        .spyOn(lateralDrawerService, 'open')
+        .mockImplementation((_comp, _data, config) => {
+          footerConfig = config?.footer;
+          return of(void 0);
+        });
+
+      // Act
+      component.onReceptionDrawer(rowItem);
+      footerConfig?.secondButton?.click();
+
+      // Assert
+      expect(closeSpy).toHaveBeenCalled();
+    });
+  });
+
   describe('clearDateFilters', () => {
     it('should clear both date ranges and call applyFilters', () => {
       // Arrange

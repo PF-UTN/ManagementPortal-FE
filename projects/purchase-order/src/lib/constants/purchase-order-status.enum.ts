@@ -18,3 +18,7 @@ export const PurchaseOrderStatusEnabledForModification: string[] = [
 export const PurchaseOrderStatusEnabledForExecution: string[] = [
   PurchaseOrderStatusOptions.Draft,
 ];
+
+export const PurchaseOrderStatusEnabledForReception: string[] = [
+  PurchaseOrderStatusOptions.Ordered,
+];
