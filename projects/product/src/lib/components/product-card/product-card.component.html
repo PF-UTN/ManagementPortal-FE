@@ -56,7 +56,6 @@
     <mp-button 
       class="w-100"
       [disabled]="quantity > product.stock"
-      (keydown.enter)="onAddToCartKeyDown()" 
       (onClick)="onAddToCartClick();"
       (click)="$event.stopPropagation()">
         Agregar al carrito

@@ -68,13 +68,6 @@ export class ProductCardComponent {
     }
   }
 
-  onAddToCartKeyDown() {
-    this.addToCart.emit({
-      productId: this.product.id,
-      quantity: this.quantity,
-    });
-  }
-
   onAddToCartClick() {
     this.addToCart.emit({
       productId: this.product.id,

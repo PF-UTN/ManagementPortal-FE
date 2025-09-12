@@ -210,7 +210,6 @@ export class ProductListClientComponent {
   }
 
   handleAddToCart(event: { productId: number; quantity: number }) {
-    console.log('Add to cart event received:', event);
     this.cartService.getCart().subscribe((cart: Cart) => {
       const existingItem = cart.items.find(
         (item) => item.product.id === event.productId,
@@ -225,14 +224,7 @@ export class ProductListClientComponent {
         quantity: newQuantity,
       };
 
-      this.cartService.addProductToCart(params).subscribe({
-        next: () => {
-          console.log('Product added to cart successfully');
-        },
-        error: (error) => {
-          console.error('Error adding product to cart:', error);
-        },
-      });
+      this.cartService.addProductToCart(params).subscribe();
     });
   }
 }

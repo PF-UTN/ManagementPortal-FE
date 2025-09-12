@@ -281,23 +281,6 @@ describe('ProductListClientComponent', () => {
       // Assert
       expect(addProductSpy).toHaveBeenCalledWith({ productId: 2, quantity: 4 });
     }));
-
-    it('should call addProductToCart even if it throws an error', fakeAsync(() => {
-      // Arrange
-      const event = { productId: 3, quantity: 1 };
-      const existingCart = mockCart;
-      jest.spyOn(cartService, 'getCart').mockReturnValue(of(existingCart));
-      const addProductSpy = jest
-        .spyOn(cartService, 'addProductToCart')
-        .mockReturnValue(throwError(() => new Error('fail')));
-
-      // Act
-      component.handleAddToCart(event);
-      tick();
-
-      // Assert
-      expect(addProductSpy).toHaveBeenCalledWith({ productId: 3, quantity: 1 });
-    }));
   });
 
   describe('onScroll', () => {
