@@ -29,6 +29,7 @@ import { BehaviorSubject, debounceTime, Subject, switchMap, tap } from 'rxjs';
 
 import {
   PurchaseOrderStatusEnabledForDeletion,
+  PurchaseOrderStatusEnabledForExecution,
   PurchaseOrderStatusEnabledForModification,
   PurchaseOrderStatusEnabledForReception,
   PurchaseOrderStatusOptions,
@@ -42,6 +43,7 @@ import {
 import { PurchaseOrderService } from '../../services/purchase-order.service';
 import { CancelLateralDrawerComponent } from '../cancel-lateral-drawer/cancel-lateral-drawer.component';
 import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-lateral-drawer.component';
+import { ExecuteLateralDrawerComponent } from '../execute-lateral-drawer/execute-lateral-drawer.component';
 import { ReceptionLateralDrawerComponent } from '../reception-lateral-drawer/reception-lateral-drawer.component';
 
 @Component({
@@ -164,8 +166,11 @@ export class PurchaseOrderListComponent implements OnInit {
         },
         {
           description: 'Ejecutar',
-          action: (element: PurchaseOrderItem) =>
-            console.log('Ejecutar', element),
+          disabled: (element: PurchaseOrderItem) =>
+            !PurchaseOrderStatusEnabledForExecution.includes(
+              element.purchaseOrderStatusName,
+            ),
+          action: (element: PurchaseOrderItem) => this.onExecuteDrawer(element),
         },
         {
           description: 'Recepcionar',
@@ -339,6 +344,30 @@ export class PurchaseOrderListComponent implements OnInit {
         },
       },
     );
+  }
+
+  onExecuteDrawer(request: PurchaseOrderItem): void {
+    this.lateralDrawerService
+      .open(
+        ExecuteLateralDrawerComponent,
+        { purchaseOrderId: request.id },
+        {
+          title: `Ejecutar Orden #${request.id}`,
+          footer: {
+            firstButton: {
+              text: 'Ejecutar',
+              click: () => {},
+            },
+            secondButton: {
+              text: 'Cancelar',
+              click: () => {
+                this.lateralDrawerService.close();
+              },
+            },
+          },
+        },
+      )
+      .subscribe(() => this.doSearchSubject$.next());
   }
 
   clearDateFilters(): void {
