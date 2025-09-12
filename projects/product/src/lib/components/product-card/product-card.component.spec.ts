@@ -109,13 +109,18 @@ describe('ProductCardComponent', () => {
   });
 
   describe('Add to cart', () => {
-    it('should emit addToCart when onAddToCartKeyDown is called', () => {
+    it('should emit addToCart when onAddToCartClick is called', () => {
       // Arrange
       const spy = jest.spyOn(component.addToCart, 'emit');
+
       // Act
-      component.onAddToCartKeyDown();
+      component.onAddToCartClick();
+
       // Assert
-      expect(spy).toHaveBeenCalled();
+      expect(spy).toHaveBeenCalledWith({
+        productId: component.product.id,
+        quantity: component.quantity,
+      });
     });
   });
 });

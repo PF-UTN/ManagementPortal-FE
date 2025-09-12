@@ -21,7 +21,10 @@ export class ProductCardComponent {
     productId: number;
     quantity: number;
   }>();
-  @Output() addToCart = new EventEmitter<void>();
+  @Output() addToCart = new EventEmitter<{
+    productId: number;
+    quantity: number;
+  }>();
 
   quantity: number = 1;
 
@@ -65,7 +68,10 @@ export class ProductCardComponent {
     }
   }
 
-  onAddToCartKeyDown() {
-    this.addToCart.emit();
+  onAddToCartClick() {
+    this.addToCart.emit({
+      productId: this.product.id,
+      quantity: this.quantity,
+    });
   }
 }
