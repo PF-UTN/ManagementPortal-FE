@@ -2,18 +2,20 @@ import {
   HttpHandler,
   HttpRequest,
   HttpErrorResponse,
+  HttpEvent,
 } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { mockDeep } from 'jest-mock-extended';
-import { throwError } from 'rxjs';
+import { mockDeep, DeepMockProxy } from 'jest-mock-extended';
+import { of, throwError } from 'rxjs';
 
+import { BYPASSED_ERROR_HANDLING_REQUEST_URLS } from './bypassed-requests.constants';
 import { HttpErrorInterceptor } from './http-error.interceptor';
 
 describe('HttpErrorInterceptor', () => {
   let interceptor: HttpErrorInterceptor;
-  let dialog: MatDialog;
-  let next: HttpHandler;
+  let dialog: DeepMockProxy<MatDialog>;
+  let next: DeepMockProxy<HttpHandler>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -24,7 +26,7 @@ describe('HttpErrorInterceptor', () => {
     });
 
     interceptor = TestBed.inject(HttpErrorInterceptor);
-    dialog = TestBed.inject(MatDialog);
+    dialog = TestBed.inject(MatDialog) as DeepMockProxy<MatDialog>;
     next = mockDeep<HttpHandler>();
   });
 
@@ -85,6 +87,29 @@ describe('HttpErrorInterceptor', () => {
             }),
           );
           expect(err.status).toBe(500);
+          done();
+        },
+      });
+    });
+
+    it('should bypass error handling for URLs in BYPASSED_ERROR_HANDLING_REQUEST_URLS', (done) => {
+      const bypassedUrl = BYPASSED_ERROR_HANDLING_REQUEST_URLS[0];
+      const req = new HttpRequest('GET', bypassedUrl);
+      const error = new HttpErrorResponse({
+        status: 500,
+        statusText: 'Server Error',
+      });
+
+      jest
+        .spyOn(next, 'handle')
+        .mockReturnValueOnce(throwError(() => error))
+        .mockReturnValueOnce(of({} as HttpEvent<unknown>));
+
+      interceptor.intercept(req, next).subscribe({
+        next: (res) => {
+          expect(res).toBeDefined();
+          expect(dialog.open).not.toHaveBeenCalled();
+          expect(next.handle).toHaveBeenCalledTimes(2);
           done();
         },
       });
