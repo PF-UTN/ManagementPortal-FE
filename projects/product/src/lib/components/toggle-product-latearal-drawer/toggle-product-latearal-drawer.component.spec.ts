@@ -34,6 +34,7 @@ describe('ToggleProductLatearalDrawerComponent', () => {
       email: 'supplier@mail.com',
       phone: '123456789',
     },
+    imageUrl: null,
   };
 
   beforeEach(() => {
