@@ -7,12 +7,14 @@ import {
   input,
   signal,
   OnDestroy,
+  effect,
 } from '@angular/core';
+import { MatTooltip, MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'mp-ellipsis-text',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MatTooltipModule, MatTooltip],
   templateUrl: './ellipsis-text.component.html',
   styleUrls: ['./ellipsis-text.component.scss'],
 })
@@ -22,11 +24,23 @@ export class EllipsisTextComponent implements AfterViewInit, OnDestroy {
 
   @ViewChild('textContainer', { static: true })
   textContainer!: ElementRef<HTMLDivElement>;
+  @ViewChild('tooltip')
+  tooltip!: MatTooltip;
 
   isTruncated = signal(false);
   isHovered = signal(false);
 
   private resizeObserver?: ResizeObserver;
+
+  constructor() {
+    effect(() => {
+      if (this.isTruncated() && this.isHovered()) {
+        this.tooltip.show();
+      } else {
+        this.tooltip.hide();
+      }
+    });
+  }
 
   ngAfterViewInit(): void {
     const el = this.textContainer.nativeElement;

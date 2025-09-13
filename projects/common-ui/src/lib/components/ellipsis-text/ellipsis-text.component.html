@@ -1,5 +1,7 @@
 <div 
   class="ellipsis-wrapper"
+  [matTooltip]="text()"
+  #tooltip="matTooltip"
   (mouseenter)="onMouseEnter()" 
   (mouseleave)="onMouseLeave()">
   <div
@@ -10,9 +12,4 @@
     {{ text() }}
   </div>
 </div>
-
-<span *ngIf="isTruncated() && isHovered()" class="tooltip-text">
-{{ text() }}
-</span>
-
 
