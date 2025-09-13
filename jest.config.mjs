@@ -6,7 +6,7 @@ const { compilerOptions } = JSON.parse(readFileSync(new URL('./tsconfig.json', i
 
 export default {
   preset: 'jest-preset-angular',
-  setupFilesAfterEnv: ['<rootDir>/setup-jest.ts'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   testEnvironment: 'jsdom',
   testMatch: ['**/__tests__/**/*.ts', '**/?(*.)+(spec|test).ts'],
   transform: {

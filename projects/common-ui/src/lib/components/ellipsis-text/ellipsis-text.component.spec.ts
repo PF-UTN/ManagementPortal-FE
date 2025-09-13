@@ -2,13 +2,6 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EllipsisTextComponent } from './ellipsis-text.component';
 
-beforeAll(() => {
-  global.ResizeObserver = class {
-    observe = jest.fn();
-    disconnect = jest.fn();
-  } as unknown as typeof ResizeObserver;
-});
-
 describe('EllipsisTextComponent', () => {
   let component: EllipsisTextComponent;
   let fixture: ComponentFixture<EllipsisTextComponent>;
