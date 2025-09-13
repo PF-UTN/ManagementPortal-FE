@@ -6,6 +6,12 @@
   <ng-container *ngIf="!error(); else errorContent">
     <ng-container *ngIf="data() as product">
       <div class="container py-3">
+        <div>
+          <img
+            mat-card-image 
+            [src]="product.imageUrl ?? 'https://material.angular.dev/assets/img/examples/shiba2.jpg'"
+          >
+        </div>
         <div class="row mb-3">
           <div class="col-12">
             <strong>Nombre</strong>
