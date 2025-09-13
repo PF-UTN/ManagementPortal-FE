@@ -1,3 +1,4 @@
+import { CartService, Cart, CartUpdateProductQuantity } from '@Cart';
 import {
   TitleComponent,
   SubtitleComponent,
@@ -83,6 +84,7 @@ export class ProductListClientComponent {
     private readonly fb: FormBuilder,
     private readonly productService: ProductService,
     private readonly lateralDrawerService: LateralDrawerService,
+    private readonly cartService: CartService,
   ) {
     this.filterForm = this.fb.group({
       searchText: this.fb.control('', { nonNullable: true }),
@@ -205,5 +207,24 @@ export class ProductListClientComponent {
         },
       },
     );
+  }
+
+  handleAddToCart(event: { productId: number; quantity: number }) {
+    this.cartService.getCart().subscribe((cart: Cart) => {
+      const existingItem = cart.items.find(
+        (item) => item.product.id === event.productId,
+      );
+
+      const newQuantity = existingItem
+        ? existingItem.quantity + event.quantity
+        : event.quantity;
+
+      const params: CartUpdateProductQuantity = {
+        productId: event.productId,
+        quantity: newQuantity,
+      };
+
+      this.cartService.addProductToCart(params).subscribe();
+    });
   }
 }
