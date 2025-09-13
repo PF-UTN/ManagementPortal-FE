@@ -343,6 +343,21 @@
             </div>
         </div>
       </div>
+      <div class="row mb-3 align-items-start">
+        <div class="col-2 d-flex align-items-start pt-2">
+          <mp-subtitle>Imágenes del Producto</mp-subtitle>
+        </div>
+        <div class="col-10">
+          <mp-file-uploader
+            [accept]="'.jpg,.png,.jpeg,.pdf'"
+            [multiple]="false"
+            [maxSizeMB]="10"
+            [initialFiles]="selectedFiles()"
+            placeholder="Subir archivo"
+            (filesSelected)="onFilesSelected($event)"
+          ></mp-file-uploader>
+        </div>
+      </div>
       <div class="row">
         <div class="col-2"></div>
         <div class="col-10 d-flex justify-content-end">
