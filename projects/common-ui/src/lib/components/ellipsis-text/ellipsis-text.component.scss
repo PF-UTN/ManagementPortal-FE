@@ -1,7 +1,6 @@
 .ellipsis-wrapper {
   position: relative;
   display: inline-block;
-  max-width: 300px;
 }
 
 .ellipsis-multiline {
@@ -11,12 +10,11 @@
   text-overflow: ellipsis;
   white-space: normal;
   -webkit-line-clamp: 2; /* fallback default */
-  cursor: help;
 }
 
 .tooltip-text {
   position: absolute;
-  z-index: 9999;
+  z-index: 5;
   background: #333;
   color: #fff;
   padding: 6px 10px;
