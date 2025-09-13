@@ -1,4 +1,4 @@
-import { ButtonComponent } from '@Common-UI';
+import { ButtonComponent, EllipsisTextComponent } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
 import { Component, Input, Output, EventEmitter } from '@angular/core';
@@ -9,7 +9,12 @@ import { ProductListItem } from '../../models/product-item.model';
 @Component({
   selector: 'mp-product-card',
   standalone: true,
-  imports: [MatCardModule, CommonModule, ButtonComponent],
+  imports: [
+    MatCardModule,
+    CommonModule,
+    ButtonComponent,
+    EllipsisTextComponent,
+  ],
   templateUrl: './product-card.component.html',
   styleUrl: './product-card.component.scss',
 })

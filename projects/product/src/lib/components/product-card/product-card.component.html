@@ -13,10 +13,11 @@
         >
     </mat-card-header>
     <mat-card-content class="product-card__content">
-        <span class="product-card__name">{{ product.name }}</span>
+        <mp-ellipsis-text class="product-card__name" [text]="product.name"></mp-ellipsis-text>
         <p>{{ product.weight }} kg</p>
-        <div class="product-card__row">
-            <div class="product-card__quantity">
+        <div class="product-card__row row">
+            <span class="product-card__content-price">$ {{ product.price }}</span>
+            <div class="product-card__quantity col">
                 <mp-button 
                     type="icon"
                     icon="remove"
@@ -30,11 +31,10 @@
                     type="number" 
                     min="1" 
                     [max]="product.stock"
-                    class="mx-2 mat-card__content-input" 
+                    class="mx-2 mat-card__content-input col" 
                     [value]="quantity"
                     (click)="$event.stopPropagation()" 
                     (input)="onQuantityInput($event)"
-                    (click)="$event.stopPropagation()"
                 />
                 <mp-button 
                     type="icon"
@@ -48,7 +48,6 @@
                     (click)="$event.stopPropagation()">
                 </mp-button>
             </div>
-            <span class="product-card__content-price">$ {{ product.price }}</span>
         </div>
     </mat-card-content>
     <mat-card-actions>
