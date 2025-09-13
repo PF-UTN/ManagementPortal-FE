@@ -22,6 +22,7 @@ import { Observable } from 'rxjs';
 
 import { ColumnTypeEnum } from '../../constants';
 import { TableColumn } from '../../models/table-column.model';
+import { EllipsisTextComponent } from '../ellipsis-text/ellipsis-text.component';
 import { LoadingComponent } from '../loading/loading.component';
 import { PillComponent } from '../pill';
 
@@ -38,6 +39,7 @@ import { PillComponent } from '../pill';
     MatPaginatorModule,
     LoadingComponent,
     PillComponent,
+    EllipsisTextComponent,
   ],
   templateUrl: './table.component.html',
   styleUrl: './table.component.scss',

@@ -1,0 +1,18 @@
+<div 
+  class="ellipsis-wrapper"
+  (mouseenter)="onMouseEnter()" 
+  (mouseleave)="onMouseLeave()">
+  <div
+    #textContainer
+    class="ellipsis-multiline"
+    [style.-webkitLineClamp]="lines()"
+  >
+    {{ text() }}
+  </div>
+</div>
+
+<span *ngIf="isTruncated() && isHovered()" class="tooltip-text">
+{{ text() }}
+</span>
+
+
