@@ -6,6 +6,7 @@ import {
   TableComponent,
   DropdownItem,
   PillStatusEnum,
+  InputComponent,
 } from '@Common-UI';
 import {
   CreateUpdateProductCategoryLateralDrawerComponent,
@@ -52,6 +53,7 @@ import { ToggleProductLatearalDrawerComponent } from '../toggle-product-latearal
     FormsModule,
     ReactiveFormsModule,
     DropdownButtonComponent,
+    InputComponent,
   ],
   providers: [CurrencyPipe],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -146,6 +148,7 @@ export class ProductListComponent implements OnInit {
   pageIndex: number = 0;
   pageSize: number = 10;
   itemsNumber: number = 0;
+  searchText: string = '';
   selectedCategories: string[] = [];
   selectedEnabled: boolean | null = null;
   selectedSuppliers: string[] = [];
@@ -189,9 +192,9 @@ export class ProductListComponent implements OnInit {
         }),
         switchMap(() => {
           const params: ProductParams = {
+            searchText: this.searchText,
             page: this.pageIndex + 1,
             pageSize: this.pageSize,
-            searchText: '',
             filters: {},
           };
           if (this.selectedEnabled !== null) {
@@ -361,6 +364,17 @@ export class ProductListComponent implements OnInit {
       .subscribe(() => {
         this.doSearchSubject$.next();
       });
+  }
+
+  onSearchTextChange(): void {
+    this.pageIndex = 0;
+    this.isLoading = true;
+    this.doSearchSubject$.next();
+  }
+
+  onClearSearch() {
+    this.searchText = '';
+    this.onSearchTextChange();
   }
 
   onEnabledFilterChange(): void {

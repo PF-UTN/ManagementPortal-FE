@@ -1,5 +1,15 @@
 <div class="container-fluid">
   <div class="filters-container">
+    
+    <div class="filters-container__selector col">
+      <mp-input 
+          label="Buscar productos" 
+          placeholder="Buscar por nombre o descripción del producto"
+          [(ngModel)]="searchText"
+          [iconAction]="onClearSearch.bind(this)"
+          (input)="onSearchTextChange()" />
+    </div>
+    
     <div class="filters-container__selector col">
       <mat-form-field appearance="outline">
       <mat-label>Filtrar por categoría</mat-label>
