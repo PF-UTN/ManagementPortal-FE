@@ -8,4 +8,5 @@ export interface ProductListItem {
   stock: number;
   weight: number;
   enabled: boolean;
+  imageUrl?: string;
 }

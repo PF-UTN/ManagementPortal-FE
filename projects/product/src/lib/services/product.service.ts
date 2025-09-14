@@ -5,7 +5,6 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { ProductCategoryResponse } from '../models/product-category-response.model';
-import { ProductCreate } from '../models/product-create-param.model';
 import { ProductResponse } from '../models/product-create-response.model';
 import { ProductDetail } from '../models/product-detail.model';
 import { ProductParams } from '../models/product-param.model';
@@ -29,9 +28,8 @@ export class ProductService {
     return this.http.delete<void>(url);
   }
 
-  createProduct(params: ProductCreate): Observable<ProductResponse> {
-    const url = `${this.baseUrl}`;
-    return this.http.post<ProductResponse>(url, params);
+  createProduct(formData: FormData): Observable<ProductResponse> {
+    return this.http.post<ProductResponse>(this.baseUrl, formData);
   }
 
   toggleProductStatus(productId: number, enabled: boolean): Observable<void> {
@@ -41,10 +39,11 @@ export class ProductService {
 
   updateProduct(
     productId: number,
-    params: ProductCreate,
+    formData: FormData,
   ): Observable<ProductResponse> {
     const url = `${this.baseUrl}/${productId}`;
-    return this.http.put<ProductResponse>(url, params);
+
+    return this.http.put<ProductResponse>(url, formData);
   }
 
   getCategories(): Observable<ProductCategoryResponse[]> {

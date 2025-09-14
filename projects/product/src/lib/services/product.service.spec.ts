@@ -6,7 +6,6 @@ import {
 import { TestBed } from '@angular/core/testing';
 
 import { ProductCategoryResponse } from '../models/product-category-response.model';
-import { ProductCreate } from '../models/product-create-param.model';
 import { ProductResponse } from '../models/product-create-response.model';
 import { ProductParams } from '../models/product-param.model';
 import {
@@ -16,7 +15,6 @@ import {
 import { ProductService } from '../services/product.service';
 import {
   mockProductListItemResponse,
-  mockProductCreate,
   mockProductResponse,
   mockProductCategories,
   mockProductDetail,
@@ -115,7 +113,7 @@ describe('ProductService', () => {
   describe('createProduct', () => {
     it('should send a POST request with the correct parameters and return data', () => {
       // Arrange
-      const params: ProductCreate = mockProductCreate;
+      const params: FormData = new FormData();
       const expectedResponse: ProductResponse = mockProductResponse;
       // Act & Assert
       service.createProduct(params).subscribe((response) => {
@@ -131,7 +129,7 @@ describe('ProductService', () => {
 
     it('should handle HTTP errors', () => {
       // Arrange
-      const params: ProductCreate = mockProductCreate;
+      const params: FormData = new FormData();
       const mockError = new ErrorEvent('Network error');
       // Act & Assert
       service.createProduct(params).subscribe({
@@ -256,7 +254,7 @@ describe('ProductService', () => {
     it('should send a PUT request with the correct parameters and return data', () => {
       // Arrange
       const productId = 1;
-      const params: ProductCreate = mockProductCreate;
+      const params: FormData = new FormData();
       const expectedResponse: ProductResponse = mockProductResponse;
       const url = `${baseUrl}/${productId}`;
 
@@ -273,7 +271,7 @@ describe('ProductService', () => {
     it('should handle HTTP errors', () => {
       // Arrange
       const productId = 1;
-      const params: ProductCreate = mockProductCreate;
+      const params: FormData = new FormData();
       const mockError = new ErrorEvent('Network error');
       const url = `${baseUrl}/${productId}`;
 

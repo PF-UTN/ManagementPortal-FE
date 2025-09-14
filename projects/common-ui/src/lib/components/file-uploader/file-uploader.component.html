@@ -1,0 +1,39 @@
+<div class="file-uploader">
+  <div class="file-uploader__row">
+    <label class="file-uploader__upload-label">
+      <input
+        type="file"
+        [attr.accept]="accept"
+        [attr.multiple]="multiple ? '' : null"
+        (change)="onFileSelected($event)"
+        hidden
+      />
+      <span class="file-uploader__upload-btn">{{ placeholder }}</span>
+    </label>
+    @if (errorMessage) {
+      <div class="file-uploader__error">{{ errorMessage }}</div>
+    }
+    @if (!errorMessage && selectedFiles().length === 0) {
+      <div class="file-uploader__error">Archivo requerido</div>
+    }
+  </div>
+  <div class="row">     
+    @if (selectedFiles().length > 0) {
+      <div class="file-uploader__list">
+       @for (file of selectedFiles(); let i=$index; track i) {
+          <div class="file-uploader__item">
+            @if (previews()[i]) {
+              <div class="col w-100 file-uploader__item__image-container">
+                <img [src]="previews()[i]" alt="preview" class="file-uploader__item-preview" />
+              </div>
+            }
+            <div>
+              <span>{{ selectedFiles()[i].name }}</span>
+              <button type="button" (click)="removeFile(i)">✖</button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
