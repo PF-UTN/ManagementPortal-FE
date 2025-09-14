@@ -54,15 +54,13 @@ export class FileUploaderComponent implements OnInit {
       this.filesSelected.emit(this.selectedFiles());
     }
 
-    input.value = ''; // reset input
+    input.value = '';
   }
-
-  /** Check if a single file passes all validations */
+  
   private isValidFile(file: File): boolean {
     return this.isValidSize(file) && this.isValidType(file);
   }
 
-  /** Validate file size */
   private isValidSize(file: File): boolean {
     if (file.size / 1024 / 1024 > this.maxSizeMB) {
       this.errorMessage = `${file.name} excede ${this.maxSizeMB}MB y fue omitido.`;
@@ -71,7 +69,6 @@ export class FileUploaderComponent implements OnInit {
     return true;
   }
 
-  /** Validate file type against `accept` input */
   private isValidType(file: File): boolean {
     if (!this.accept) return true;
 
@@ -93,7 +90,6 @@ export class FileUploaderComponent implements OnInit {
     return isValid;
   }
 
-  /** Add valid files to selectedFiles and generate previews */
   private addFiles(files: File[]): void {
     if (this.multiple) {
       this.selectedFiles.update((current) => [...current, ...files]);
