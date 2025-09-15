@@ -76,4 +76,12 @@ export class VehicleService {
       responseType: 'blob',
     });
   }
+
+  downloadMaintenanceHistory(vehicleId: number) {
+    const url = `${this.baseUrl}/${vehicleId}/maintenance/download`;
+    return this.http.post(url, null, {
+      observe: 'response',
+      responseType: 'blob',
+    });
+  }
 }

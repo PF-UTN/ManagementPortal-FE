@@ -1,3 +1,6 @@
+import { downloadFileFromResponse } from '@Common';
+
+import { HttpResponse } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -6,6 +9,14 @@ import { of, throwError } from 'rxjs';
 
 import { MaintenanceHistoryComponent } from './maintenance-history.component';
 import { VehicleService } from '../../services/vehicle.service';
+
+jest.mock('@Common', () => ({
+  environment: {
+    apiBaseUrl: 'https://dev-management-portal-be.vercel.app',
+  },
+  downloadFileFromResponse: jest.fn(),
+}));
+
 describe('MaintenanceHistoryComponent', () => {
   let component: MaintenanceHistoryComponent;
   let fixture: ComponentFixture<MaintenanceHistoryComponent>;
@@ -108,5 +119,53 @@ describe('MaintenanceHistoryComponent', () => {
 
     // Assert
     expect(component.vehicle).toBeUndefined();
+  });
+
+  describe('handleDownloadClick', () => {
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('should call vehicleService.downloadMaintenanceHistory with correct vehicleId and trigger file download', () => {
+      // Arrange
+      const vehicleService = TestBed.inject(VehicleService);
+      const mockHttpResponse = new HttpResponse({
+        body: new Blob(['test'], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }),
+        status: 200,
+        statusText: 'OK',
+      });
+      jest
+        .spyOn(vehicleService, 'downloadMaintenanceHistory')
+        .mockReturnValue(of(mockHttpResponse));
+
+      // Act
+      component.handleDownloadClick();
+
+      // Assert
+      expect(vehicleService.downloadMaintenanceHistory).toHaveBeenCalledWith(
+        123,
+      );
+      expect(downloadFileFromResponse).toHaveBeenCalledWith(
+        mockHttpResponse,
+        'historial_mantenimiento.xlsx',
+      );
+    });
+
+    it('should handle errors from vehicleService.downloadMaintenanceHistory', () => {
+      // Arrange
+      const vehicleService = TestBed.inject(VehicleService);
+      jest
+        .spyOn(vehicleService, 'downloadMaintenanceHistory')
+        .mockReturnValueOnce(throwError(() => new Error('Download error')));
+      component.vehicleId = 123;
+
+      // Act
+      component.handleDownloadClick();
+
+      // Assert
+      expect(downloadFileFromResponse).not.toHaveBeenCalled();
+    });
   });
 });

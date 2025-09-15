@@ -5,6 +5,12 @@
                 <mp-title>Historial de Mantenimiento - {{ vehicle?.brand }} {{ vehicle?.model }}</mp-title>
         </div>
         <div class="header__dropdown">
+            <mp-button 
+                type="icon"
+                icon="download"
+                ariaLabel="Descargar XLSX"
+                (onClick)="handleDownloadClick()">
+            </mp-button>
             <mp-dropdown-button type="primary" [items]="dropdownItems">
                 Nuevo
             </mp-dropdown-button>
