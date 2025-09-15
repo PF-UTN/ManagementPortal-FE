@@ -49,8 +49,8 @@ export class MaintenanceHistoryComponent implements OnInit {
   ];
 
   constructor(
-    private route: ActivatedRoute,
-    private vehicleService: VehicleService,
+    private readonly route: ActivatedRoute,
+    private readonly vehicleService: VehicleService,
   ) {}
 
   ngOnInit(): void {

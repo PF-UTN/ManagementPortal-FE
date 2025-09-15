@@ -181,7 +181,7 @@ export class ProductListComponent implements OnInit {
     private readonly lateralDrawerService: LateralDrawerService,
     public readonly router: Router,
     private readonly snackBar: MatSnackBar,
-    private currencyPipe: CurrencyPipe,
+    private readonly currencyPipe: CurrencyPipe,
   ) {}
 
   ngOnInit(): void {
