@@ -1,3 +1,4 @@
+import { downloadFileFromResponse } from '@Common';
 import {
   ColumnTypeEnum,
   DropdownButtonComponent,
@@ -7,6 +8,7 @@ import {
   DropdownItem,
   PillStatusEnum,
   InputComponent,
+  ButtonComponent,
 } from '@Common-UI';
 import {
   CreateUpdateProductCategoryLateralDrawerComponent,
@@ -54,6 +56,7 @@ import { ToggleProductLatearalDrawerComponent } from '../toggle-product-latearal
     ReactiveFormsModule,
     DropdownButtonComponent,
     InputComponent,
+    ButtonComponent,
   ],
   providers: [CurrencyPipe],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
@@ -245,6 +248,27 @@ export class ProductListComponent implements OnInit {
     });
   }
 
+  public getProductParams(): ProductParams {
+    const params: ProductParams = {
+      page: this.pageIndex + 1,
+      pageSize: this.pageSize,
+      searchText: this.searchText || '',
+      filters: {},
+    };
+
+    if (this.selectedCategories.length > 0) {
+      params.filters.categoryName = this.selectedCategories;
+    }
+    if (this.selectedSuppliers.length > 0) {
+      params.filters.supplierBusinessName = this.selectedSuppliers;
+    }
+    if (this.selectedEnabled !== null) {
+      params.filters.enabled = this.selectedEnabled;
+    }
+
+    return params;
+  }
+
   onDetailDrawer(request: ProductListItem): void {
     this.lateralDrawerService.open(
       DetailLateralDrawerComponent,
@@ -396,5 +420,13 @@ export class ProductListComponent implements OnInit {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
     this.doSearchSubject$.next();
+  }
+
+  handleDownloadClick(): void {
+    const params = this.getProductParams();
+
+    this.productService.postDownloadProduct(params).subscribe((response) => {
+      downloadFileFromResponse(response, 'productos.xlsx');
+    });
   }
 }

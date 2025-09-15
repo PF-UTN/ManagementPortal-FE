@@ -23,6 +23,14 @@ export class ProductService {
     return this.http.post<SearchProductResponse>(url, params);
   }
 
+  postDownloadProduct(params: ProductParams) {
+    const url = `${this.baseUrl}/download`;
+    return this.http.post(url, params, {
+      observe: 'response',
+      responseType: 'blob',
+    });
+  }
+
   deletedProduct(id: number): Observable<void> {
     const url = `${this.baseUrl}/${id}`;
     return this.http.delete<void>(url);
