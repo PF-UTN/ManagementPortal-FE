@@ -1,0 +1,15 @@
+<div 
+  class="ellipsis-wrapper"
+  [matTooltip]="text()"
+  #tooltip="matTooltip"
+  (mouseenter)="onMouseEnter()" 
+  (mouseleave)="onMouseLeave()">
+  <div
+    #textContainer
+    class="ellipsis-multiline"
+    [style.-webkitLineClamp]="lines()"
+  >
+    {{ text() }}
+  </div>
+</div>
+

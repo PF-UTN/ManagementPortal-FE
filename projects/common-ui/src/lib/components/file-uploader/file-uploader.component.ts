@@ -56,7 +56,7 @@ export class FileUploaderComponent implements OnInit {
 
     input.value = '';
   }
-  
+
   private isValidFile(file: File): boolean {
     return this.isValidSize(file) && this.isValidType(file);
   }
