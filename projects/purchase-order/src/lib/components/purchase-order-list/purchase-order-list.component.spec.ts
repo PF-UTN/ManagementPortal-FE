@@ -1,7 +1,8 @@
-import { OrderDirection } from '@Common';
+import { downloadFileFromResponse, OrderDirection } from '@Common';
 import { LateralDrawerService, PillStatusEnum } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
+import { HttpResponse } from '@angular/common/http';
 import {
   ComponentFixture,
   fakeAsync,
@@ -22,6 +23,14 @@ import { PurchaseOrderService } from '../../services/purchase-order.service';
 import { mockPurchaseOrderListItems } from '../../testing/mock-data.model';
 import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-lateral-drawer.component';
 import { ExecuteLateralDrawerComponent } from '../execute-lateral-drawer/execute-lateral-drawer.component';
+
+jest.mock('@Common', () => ({
+  downloadFileFromResponse: jest.fn(),
+  OrderDirection: {
+    ASC: 'asc',
+    DESC: 'desc',
+  },
+}));
 
 describe('PurchaseOrderListComponent', () => {
   let component: PurchaseOrderListComponent;
@@ -718,6 +727,180 @@ describe('PurchaseOrderListComponent', () => {
       // Assert
       expect(component.pageIndex).toBe(0);
       expect(spy).toHaveBeenCalledWith();
+    });
+  });
+
+  describe('handleDownloadClick', () => {
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('should call purchaseOrderService.downloadPurchaseOrderList with correct params and trigger file download', () => {
+      // Arrange
+      const params = component['getPurchaseOrderParams']();
+      const mockResponse = new HttpResponse({
+        body: new Blob(['test'], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }),
+        status: 200,
+        statusText: 'OK',
+      });
+      jest
+        .spyOn(service, 'downloadPurchaseOrderList')
+        .mockReturnValue(of(mockResponse));
+
+      // Act
+      component.handleDownloadClick();
+
+      // Assert
+      expect(service.downloadPurchaseOrderList).toHaveBeenCalledWith(params);
+      expect(downloadFileFromResponse).toHaveBeenCalledWith(
+        mockResponse,
+        'ordenes_compra.xlsx',
+      );
+    });
+
+    it('should handle errors from purchaseOrderService.downloadPurchaseOrderList', () => {
+      // Arrange
+      jest
+        .spyOn(service, 'downloadPurchaseOrderList')
+        .mockReturnValueOnce(throwError(() => new Error('Download error')));
+
+      // Act
+      component.handleDownloadClick();
+
+      // Assert
+      expect(downloadFileFromResponse).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('getPurchaseOrderParams', () => {
+    it('should include statusName in filters when selectedStatus is not empty', () => {
+      // Arrange
+      component.selectedStatus = ['Pending', 'Cancelled'];
+      component.selectedCreationDateRange = { start: null, end: null };
+      component.selectedEstimatedDeliveryDateRange = { start: null, end: null };
+
+      // Act
+      const params = component['getPurchaseOrderParams']();
+
+      // Assert
+      expect(params.filters.statusName).toEqual(['Pending', 'Cancelled']);
+      expect(params.filters.fromDate).toBeUndefined();
+      expect(params.filters.toDate).toBeUndefined();
+      expect(params.filters.fromEstimatedDeliveryDate).toBeUndefined();
+      expect(params.filters.toEstimatedDeliveryDate).toBeUndefined();
+    });
+
+    it('should include fromDate in filters when selectedCreationDateRange.start is set', () => {
+      // Arrange
+      component.selectedStatus = [];
+      component.selectedCreationDateRange = {
+        start: new Date('2024-07-01'),
+        end: null,
+      };
+      component.selectedEstimatedDeliveryDateRange = { start: null, end: null };
+
+      // Act
+      const params = component['getPurchaseOrderParams']();
+
+      // Assert
+      expect(params.filters.fromDate).toEqual(new Date('2024-07-01'));
+      expect(params.filters.statusName).toBeUndefined();
+      expect(params.filters.toDate).toBeUndefined();
+      expect(params.filters.fromEstimatedDeliveryDate).toBeUndefined();
+      expect(params.filters.toEstimatedDeliveryDate).toBeUndefined();
+    });
+
+    it('should include toDate in filters when selectedCreationDateRange.end is set', () => {
+      // Arrange
+      component.selectedStatus = [];
+      component.selectedCreationDateRange = {
+        start: null,
+        end: new Date('2024-07-31'),
+      };
+      component.selectedEstimatedDeliveryDateRange = { start: null, end: null };
+
+      // Act
+      const params = component['getPurchaseOrderParams']();
+
+      // Assert
+      expect(params.filters.toDate).toEqual(new Date('2024-07-31'));
+      expect(params.filters.statusName).toBeUndefined();
+      expect(params.filters.fromDate).toBeUndefined();
+      expect(params.filters.fromEstimatedDeliveryDate).toBeUndefined();
+      expect(params.filters.toEstimatedDeliveryDate).toBeUndefined();
+    });
+
+    it('should include fromEstimatedDeliveryDate in filters when selectedEstimatedDeliveryDateRange.start is set', () => {
+      // Arrange
+      component.selectedStatus = [];
+      component.selectedCreationDateRange = { start: null, end: null };
+      component.selectedEstimatedDeliveryDateRange = {
+        start: new Date('2024-07-05'),
+        end: null,
+      };
+
+      // Act
+      const params = component['getPurchaseOrderParams']();
+
+      // Assert
+      expect(params.filters.fromEstimatedDeliveryDate).toEqual(
+        new Date('2024-07-05'),
+      );
+      expect(params.filters.statusName).toBeUndefined();
+      expect(params.filters.fromDate).toBeUndefined();
+      expect(params.filters.toDate).toBeUndefined();
+      expect(params.filters.toEstimatedDeliveryDate).toBeUndefined();
+    });
+
+    it('should include toEstimatedDeliveryDate in filters when selectedEstimatedDeliveryDateRange.end is set', () => {
+      // Arrange
+      component.selectedStatus = [];
+      component.selectedCreationDateRange = { start: null, end: null };
+      component.selectedEstimatedDeliveryDateRange = {
+        start: null,
+        end: new Date('2024-07-20'),
+      };
+
+      // Act
+      const params = component['getPurchaseOrderParams']();
+
+      // Assert
+      expect(params.filters.toEstimatedDeliveryDate).toEqual(
+        new Date('2024-07-20'),
+      );
+      expect(params.filters.statusName).toBeUndefined();
+      expect(params.filters.fromDate).toBeUndefined();
+      expect(params.filters.toDate).toBeUndefined();
+      expect(params.filters.fromEstimatedDeliveryDate).toBeUndefined();
+    });
+
+    it('should include all filters when all are set', () => {
+      // Arrange
+      component.selectedStatus = ['Pending'];
+      component.selectedCreationDateRange = {
+        start: new Date('2024-07-01'),
+        end: new Date('2024-07-31'),
+      };
+      component.selectedEstimatedDeliveryDateRange = {
+        start: new Date('2024-07-05'),
+        end: new Date('2024-07-20'),
+      };
+
+      // Act
+      const params = component['getPurchaseOrderParams']();
+
+      // Assert
+      expect(params.filters.statusName).toEqual(['Pending']);
+      expect(params.filters.fromDate).toEqual(new Date('2024-07-01'));
+      expect(params.filters.toDate).toEqual(new Date('2024-07-31'));
+      expect(params.filters.fromEstimatedDeliveryDate).toEqual(
+        new Date('2024-07-05'),
+      );
+      expect(params.filters.toEstimatedDeliveryDate).toEqual(
+        new Date('2024-07-20'),
+      );
     });
   });
 });
