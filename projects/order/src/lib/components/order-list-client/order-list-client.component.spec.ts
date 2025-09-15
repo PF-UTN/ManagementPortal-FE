@@ -1,7 +1,11 @@
+import { registerLocaleData } from '@angular/common';
+import localeEsAr from '@angular/common/locales/es-AR';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { OrderListClientComponent } from './order-list-client.component';
 import { OrderItem } from '../../models/order-item.model';
+
+registerLocaleData(localeEsAr);
 
 describe('OrderListClientComponent', () => {
   let component: OrderListClientComponent;
@@ -22,6 +26,96 @@ describe('OrderListClientComponent', () => {
       // Arrange & Act done in beforeEach
       // Assert
       expect(component).toBeTruthy();
+    });
+  });
+
+  describe('columns value functions', () => {
+    it('should return id as string for orderId column', () => {
+      const order: OrderItem = {
+        id: 123,
+        createdAt: '2025-09-14',
+        status: 'pendiente',
+        totalAmount: 100,
+        quantityProducts: 2,
+      };
+      const column = component.columns.find((c) => c.columnDef === 'orderId');
+      expect(column).toBeDefined();
+      let result: string | undefined;
+      if (column && typeof column.value === 'function') {
+        result = column.value(order);
+      }
+      expect(result).toBe('123');
+    });
+
+    it('should format createdAt for createdAt column', () => {
+      const order: OrderItem = {
+        id: 1,
+        createdAt: '2025-09-15',
+        status: 'pendiente',
+        totalAmount: 100,
+        quantityProducts: 2,
+      };
+      const column = component.columns.find((c) => c.columnDef === 'createdAt');
+      expect(column).toBeDefined();
+      let result: string | undefined;
+      if (column && typeof column.value === 'function') {
+        result = column.value(order);
+      }
+      expect(result).toBe('15/09/2025');
+    });
+
+    it('should return status for status column', () => {
+      const order: OrderItem = {
+        id: 1,
+        createdAt: '2025-09-15',
+        status: 'procesando',
+        totalAmount: 100,
+        quantityProducts: 2,
+      };
+      const column = component.columns.find((c) => c.columnDef === 'status');
+      expect(column).toBeDefined();
+      let result: string | undefined;
+      if (column && typeof column.value === 'function') {
+        result = column.value(order);
+      }
+      expect(result).toBe('procesando');
+    });
+
+    it('should format totalAmount for price column', () => {
+      const order: OrderItem = {
+        id: 1,
+        createdAt: '2025-09-15',
+        status: 'pendiente',
+        totalAmount: 1234.56,
+        quantityProducts: 2,
+      };
+      const column = component.columns.find((c) => c.columnDef === 'price');
+      expect(column).toBeDefined();
+      let result: string | undefined;
+      if (column && typeof column.value === 'function') {
+        result = column.value(order);
+      }
+      expect(typeof result).toBe('string');
+      expect(result).toContain('$');
+    });
+
+    it('should return quantityProducts as string for quantityProducts column', () => {
+      const order: OrderItem = {
+        id: 1,
+        createdAt: '2025-09-15',
+        status: 'pendiente',
+        totalAmount: 100,
+        quantityProducts: 5,
+      };
+      const column = component.columns.find(
+        (c) => c.columnDef === 'quantityProducts',
+      );
+      expect(column).toBeDefined();
+      let result: string | undefined;
+      if (column && typeof column.value === 'function') {
+        result = column.value(order);
+      }
+      expect(result).toBe('5');
     });
   });
 
