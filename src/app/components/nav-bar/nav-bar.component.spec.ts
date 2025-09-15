@@ -89,6 +89,12 @@ describe('NavBarComponent', () => {
           route: 'vehiculos',
           shouldRender: true,
         },
+        {
+          title: 'Pedidos',
+          icon: 'assignment',
+          route: 'pedidos',
+          shouldRender: true,
+        },
       ]);
     });
 
@@ -143,6 +149,12 @@ describe('NavBarComponent', () => {
           icon: 'directions_car',
           route: 'vehiculos',
           shouldRender: true,
+        },
+        {
+          title: 'Pedidos',
+          icon: 'assignment',
+          route: 'pedidos',
+          shouldRender: false,
         },
       ]);
     });
@@ -199,6 +211,12 @@ describe('NavBarComponent', () => {
         icon: 'directions_car',
         route: 'vehiculos',
         shouldRender: false,
+      },
+      {
+        title: 'Pedidos',
+        icon: 'assignment',
+        route: 'pedidos',
+        shouldRender: true,
       },
     ]);
   });
