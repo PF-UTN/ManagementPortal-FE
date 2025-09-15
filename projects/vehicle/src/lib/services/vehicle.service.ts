@@ -68,4 +68,12 @@ export class VehicleService {
   getVehicleById(id: number): Observable<VehicleListItem> {
     return this.http.get<VehicleListItem>(`${this.baseUrl}/${id}`);
   }
+
+  downloadVehicleList(params: VehicleParams) {
+    const url = `${this.baseUrl}/download`;
+    return this.http.post(url, params, {
+      observe: 'response',
+      responseType: 'blob',
+    });
+  }
 }

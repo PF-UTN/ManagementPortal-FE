@@ -1,3 +1,4 @@
+import { downloadFileFromResponse } from '@Common';
 import {
   ButtonComponent,
   ColumnTypeEnum,
@@ -298,5 +299,17 @@ export class VehicleListComponent implements OnInit {
     if (event.key === 'Enter') {
       this.openCreateVehicleDrawer();
     }
+  }
+
+  handleDownloadClick(): void {
+    const params: VehicleParams = {
+      page: this.pageIndex + 1,
+      pageSize: this.pageSize,
+      searchText: this.searchText,
+    };
+
+    this.vehicleService.downloadVehicleList(params).subscribe((response) => {
+      downloadFileFromResponse(response, 'vehiculos.xlsx');
+    });
   }
 }

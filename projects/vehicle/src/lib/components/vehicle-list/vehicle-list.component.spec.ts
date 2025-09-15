@@ -1,7 +1,9 @@
+import { downloadFileFromResponse } from '@Common';
 import { LateralDrawerService, ModalComponent } from '@Common-UI';
 import { VehicleService } from '@Vehicle';
 
 import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
+import { HttpResponse } from '@angular/common/http';
 import {
   ComponentFixture,
   fakeAsync,
@@ -23,6 +25,10 @@ import { of, throwError } from 'rxjs';
 import { VehicleListComponent } from './vehicle-list.component';
 import { VehicleListItem } from '../../models/vehicle-item.model';
 import { mockVehicleListItems } from '../../testing/mock-data.model';
+
+jest.mock('@Common', () => ({
+  downloadFileFromResponse: jest.fn(),
+}));
 
 describe('VehicleListComponent', () => {
   let component: VehicleListComponent;
@@ -558,5 +564,53 @@ describe('VehicleListComponent', () => {
       expect(snackSpy).not.toHaveBeenCalled();
       expect(reloadSpy).not.toHaveBeenCalled();
     }));
+  });
+
+  describe('handleDownloadClick', () => {
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('should call vehicleService.downloadVehicleList with correct params and trigger file download', () => {
+      // Arrange
+      const params = {
+        page: component.pageIndex + 1,
+        pageSize: component.pageSize,
+        searchText: component.searchText,
+      };
+      const mockHttpResponse = new HttpResponse({
+        body: new Blob(['test'], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }),
+        status: 200,
+        statusText: 'OK',
+      });
+      jest
+        .spyOn(service, 'downloadVehicleList')
+        .mockReturnValue(of(mockHttpResponse));
+
+      // Act
+      component.handleDownloadClick();
+
+      // Assert
+      expect(service.downloadVehicleList).toHaveBeenCalledWith(params);
+      expect(downloadFileFromResponse).toHaveBeenCalledWith(
+        mockHttpResponse,
+        'vehiculos.xlsx',
+      );
+    });
+
+    it('should handle errors from vehicleService.downloadVehicleList', () => {
+      // Arrange
+      jest
+        .spyOn(service, 'downloadVehicleList')
+        .mockReturnValueOnce(throwError(() => new Error('Download error')));
+
+      // Act
+      component.handleDownloadClick();
+
+      // Assert
+      expect(downloadFileFromResponse).not.toHaveBeenCalled();
+    });
   });
 });
