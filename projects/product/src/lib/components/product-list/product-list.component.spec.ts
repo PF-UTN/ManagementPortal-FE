@@ -533,4 +533,66 @@ describe('ProductListComponent', () => {
       expect(downloadFileFromResponse).not.toHaveBeenCalled();
     });
   });
+
+  describe('getProductParams', () => {
+    it('should include categoryName in filters when selectedCategories is not empty', () => {
+      // Arrange
+      component.selectedCategories = ['Cat1', 'Cat2'];
+      component.selectedSuppliers = [];
+      component.selectedEnabled = null;
+
+      // Act
+      const params = component.getProductParams();
+
+      // Assert
+      expect(params.filters.categoryName).toEqual(['Cat1', 'Cat2']);
+      expect(params.filters.supplierBusinessName).toBeUndefined();
+      expect(params.filters.enabled).toBeUndefined();
+    });
+
+    it('should include supplierBusinessName in filters when selectedSuppliers is not empty', () => {
+      // Arrange
+      component.selectedCategories = [];
+      component.selectedSuppliers = ['Sup1', 'Sup2'];
+      component.selectedEnabled = null;
+
+      // Act
+      const params = component.getProductParams();
+
+      // Assert
+      expect(params.filters.supplierBusinessName).toEqual(['Sup1', 'Sup2']);
+      expect(params.filters.categoryName).toBeUndefined();
+      expect(params.filters.enabled).toBeUndefined();
+    });
+
+    it('should include enabled in filters when selectedEnabled is not null', () => {
+      // Arrange
+      component.selectedCategories = [];
+      component.selectedSuppliers = [];
+      component.selectedEnabled = true;
+
+      // Act
+      const params = component.getProductParams();
+
+      // Assert
+      expect(params.filters.enabled).toBe(true);
+      expect(params.filters.categoryName).toBeUndefined();
+      expect(params.filters.supplierBusinessName).toBeUndefined();
+    });
+
+    it('should include all filters when all are set', () => {
+      // Arrange
+      component.selectedCategories = ['Cat1'];
+      component.selectedSuppliers = ['Sup1'];
+      component.selectedEnabled = false;
+
+      // Act
+      const params = component.getProductParams();
+
+      // Assert
+      expect(params.filters.categoryName).toEqual(['Cat1']);
+      expect(params.filters.supplierBusinessName).toEqual(['Sup1']);
+      expect(params.filters.enabled).toBe(false);
+    });
+  });
 });
