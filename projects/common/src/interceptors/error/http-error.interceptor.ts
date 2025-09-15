@@ -12,6 +12,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
+import { BYPASSED_ERROR_HANDLING_REQUEST_URLS } from './bypassed-requests.constants';
+
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
   constructor(private dialog: MatDialog) {}
@@ -22,6 +24,14 @@ export class HttpErrorInterceptor implements HttpInterceptor {
   ): Observable<HttpEvent<unknown>> {
     return next.handle(req).pipe(
       catchError((error: HttpErrorResponse) => {
+        if (
+          BYPASSED_ERROR_HANDLING_REQUEST_URLS.some((url) =>
+            req.url.includes(url),
+          )
+        ) {
+          return next.handle(req);
+        }
+
         if (error.status === 401 || error.status === 403) {
           return throwError(() => error);
         }

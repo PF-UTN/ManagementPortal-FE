@@ -30,7 +30,7 @@ export const routes: Routes = [
     path: 'productos',
     loadChildren: () => import('@Product').then((m) => m.ProductRoutingModule),
     canActivate: [RoleGuard],
-    data: { admittedRoles: [RolesEnum.Employee] },
+    data: { admittedRoles: [RolesEnum.Employee, RolesEnum.Client] },
   },
   {
     path: 'ordenes-compra',

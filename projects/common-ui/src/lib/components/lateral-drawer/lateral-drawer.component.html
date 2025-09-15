@@ -2,12 +2,12 @@
   <mat-drawer #drawer mode="over" position="end" class="drawer" [opened]="false">
     <div class="drawer-content">
       <div class="drawer-content__header">
-        <div class="drawer-content__header__title">
+        <div class="drawer-content__header__title" tabindex="0">
           {{ config.title }}
           <span class="material-icons close-icon drawer-content__header__title__icon" 
             (click)="closeDrawer()"
             (keydown.escape)="closeDrawer()"
-            tabindex="-1">close</span>
+            tabindex="1">close</span>
         </div>
       </div>
       <div class="drawer-content__body">

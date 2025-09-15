@@ -1,0 +1,25 @@
+.ellipsis-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.ellipsis-multiline {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  -webkit-line-clamp: 2; /* fallback default */
+}
+
+.tooltip-text {
+  position: absolute;
+  z-index: 5;
+  background: #333;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  max-width: 400px;
+  white-space: normal;
+  transition: opacity 0.2s;
+}

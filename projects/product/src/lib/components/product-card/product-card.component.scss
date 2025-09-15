@@ -36,12 +36,7 @@
   }
 
   &__name {
-    display: block;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
     font-weight: bold;
-    max-width: 200px;
   }
 
   &__row {
