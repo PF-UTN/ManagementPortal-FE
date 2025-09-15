@@ -40,6 +40,12 @@ export const routes: Routes = [
     data: { admittedRoles: [RolesEnum.Employee] },
   },
   {
+    path: 'pedidos',
+    loadChildren: () => import('@Order').then((m) => m.OrderRoutingModule),
+    canActivate: [RoleGuard],
+    data: { admittedRoles: [RolesEnum.Client] },
+  },
+  {
     path: 'vehiculos',
     loadChildren: () => import('@Vehicle').then((m) => m.VehicleRoutingModule),
     canActivate: [RoleGuard],
