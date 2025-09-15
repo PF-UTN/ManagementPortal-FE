@@ -8,7 +8,7 @@
         <img 
             class="product-card__image" 
             mat-card-image 
-            src="https://material.angular.dev/assets/img/examples/shiba2.jpg"
+            [src]="product.imageUrl ?? 'https://material.angular.dev/assets/img/examples/shiba2.jpg'"
             alt="Shiba Inu"
         >
     </mat-card-header>

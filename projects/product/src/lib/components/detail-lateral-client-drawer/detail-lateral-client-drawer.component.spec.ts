@@ -30,6 +30,7 @@ describe('DetailLateralClientDrawerComponent', () => {
       phone: '123456789',
     },
     enabled: true,
+    imageUrl: null,
   };
 
   beforeEach(async () => {

@@ -18,7 +18,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { mockDeep } from 'jest-mock-extended';
-import { of, throwError } from 'rxjs';
+import { defer, of, throwError } from 'rxjs';
 
 import { ProductCreateComponent } from './product-create.component';
 import { ProductCategoryResponse } from '../../models/product-category-response.model';
@@ -72,13 +72,26 @@ describe('ProductCreateComponent', () => {
   beforeEach(async () => {
     productServiceMock = {
       createProduct: jest.fn(),
-      updateProduct: jest.fn(),
-      getCategories: jest.fn().mockReturnValue(of(mockCategories)),
-      getProductById: jest.fn(),
+      updateProduct: jest
+        .fn()
+        .mockReturnValue(defer(() => of(mockProductResponse))),
+      getCategories: jest.fn().mockReturnValue(defer(() => of(mockCategories))),
+      getProductById: jest.fn().mockReturnValue(
+        defer(() =>
+          of({
+            id: 1,
+            stock: {
+              quantityAvailable: 15,
+              quantityReserved: 5,
+              quantityOrdered: 2,
+            },
+          }),
+        ),
+      ),
       changeProductStock: jest.fn(),
     };
     supplierServiceMock = {
-      getSuppliers: jest.fn().mockReturnValue(of(mockSuppliers)),
+      getSuppliers: jest.fn().mockReturnValue(defer(() => of(mockSuppliers))),
     };
     snackBarMock = { open: jest.fn() };
     routerMock = { navigate: jest.fn(), url: '/productos/crear' };
@@ -195,6 +208,7 @@ describe('ProductCreateComponent', () => {
           quantityAvailable: 1,
           quantityReserved: 1,
         },
+        file: new File([''], 'filename', { type: 'image/png' }),
       });
       // act
       const valid = component.productForm.valid;
@@ -231,6 +245,7 @@ describe('ProductCreateComponent', () => {
           quantityAvailable: 1,
           quantityReserved: 1,
         },
+        file: new File([''], 'filename', { type: 'image/png' }),
       });
       productServiceMock.createProduct.mockReturnValue(of(mockProductResponse));
       // act
@@ -264,6 +279,7 @@ describe('ProductCreateComponent', () => {
           quantityAvailable: 1,
           quantityReserved: 1,
         },
+        file: new File([''], 'filename', { type: 'image/png' }),
       });
       jest.spyOn(lateralDrawerService, 'open').mockReturnValue(of(undefined));
 
@@ -307,6 +323,7 @@ describe('ProductCreateComponent', () => {
           quantityAvailable: 1,
           quantityReserved: 1,
         },
+        file: new File([''], 'filename', { type: 'image/png' }),
       });
 
       // act
@@ -351,6 +368,7 @@ describe('ProductCreateComponent', () => {
           quantityAvailable: 1,
           quantityReserved: 1,
         },
+        file: new File([''], 'filename', { type: 'image/png' }),
       });
 
       // act
@@ -552,7 +570,7 @@ describe('ProductCreateComponent', () => {
 
       it('should send all changed stock fields in changes array', fakeAsync(() => {
         // Arrange
-        productServiceMock.changeProductStock.mockReturnValue(of(undefined));
+        productServiceMock.changeProductStock.mockReturnValue(of());
         component.productForm.patchValue({
           stock: {
             quantityAvailable: 15,
@@ -898,6 +916,19 @@ describe('ProductCreateComponent', () => {
           }),
         }),
       );
+    });
+  });
+
+  describe('onFilesSelected', () => {
+    it('should patch file control when a file is selected', () => {
+      const file = new File(['data'], 'file.png', { type: 'image/png' });
+      component.onFilesSelected([file]);
+      expect(component.productForm.controls.file.value).toBe(file);
+    });
+
+    it('should patch file control with null when no files selected', () => {
+      component.onFilesSelected([]);
+      expect(component.productForm.controls.file.value).toBeNull();
     });
   });
 

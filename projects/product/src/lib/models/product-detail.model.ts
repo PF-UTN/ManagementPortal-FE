@@ -18,4 +18,5 @@ export interface ProductDetail {
   };
   enabled: boolean;
   weight: number;
+  imageUrl: string | null;
 }

@@ -89,6 +89,7 @@ export const mockProductDetail: ProductDetail = {
     phone: '123456789',
   },
   enabled: true,
+  imageUrl: null,
 };
 
 export const mockProductListItem: ProductListItem = {

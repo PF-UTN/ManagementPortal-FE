@@ -1,6 +1,7 @@
 export * from './button/button.component';
 export * from './button/constants/button-types';
 export * from './ellipsis-text/ellipsis-text.component';
+export * from './file-uploader/file-uploader.component';
 export * from './input/input.component';
 export * from './lateral-drawer';
 export * from './loading/loading.component';
