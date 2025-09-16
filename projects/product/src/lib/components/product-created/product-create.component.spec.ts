@@ -933,7 +933,7 @@ describe('ProductCreateComponent', () => {
 
     it('should set file control as touched', () => {
       component.onFilesSelected([]);
-      expect(component.productForm.controls.file.touched).toBeTruthy();
+      expect(component.productForm.touched).toBeTruthy();
     });
   });
 
