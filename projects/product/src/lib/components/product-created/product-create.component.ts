@@ -240,6 +240,7 @@ export class ProductCreateComponent {
         }
 
         this.isLoading.set(false);
+        this.productForm.markAsPristine();
       });
   }
 
@@ -308,6 +309,8 @@ export class ProductCreateComponent {
   }
 
   onFilesSelected(files: File[]) {
+    this.productForm.markAsTouched();
+
     if (files.length === 0) {
       this.productForm.patchValue({ file: null });
       return;

@@ -6,6 +6,7 @@
           label="Buscar productos" 
           placeholder="Buscar por nombre o descripción del producto"
           [(ngModel)]="searchText"
+          icon="close"
           [iconAction]="onClearSearch.bind(this)"
           (input)="onSearchTextChange()" />
     </div>

@@ -70,6 +70,7 @@ export class ProductListComponent implements OnInit {
       header: 'Nombre',
       type: ColumnTypeEnum.VALUE,
       value: (element: ProductListItem) => element.name,
+      width: '350px',
     },
     {
       columnDef: 'category',
