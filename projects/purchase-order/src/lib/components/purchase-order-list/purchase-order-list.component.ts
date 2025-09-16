@@ -1,4 +1,4 @@
-import { OrderDirection } from '@Common';
+import { OrderDirection, downloadFileFromResponse } from '@Common';
 import {
   ButtonComponent,
   ColumnTypeEnum,
@@ -254,38 +254,7 @@ export class PurchaseOrderListComponent implements OnInit {
           this.isLoading = true;
         }),
         switchMap(() => {
-          const params: PurchaseOrderParams = {
-            page: this.pageIndex + 1,
-            pageSize: this.pageSize,
-            searchText: this.searchText,
-            filters: {},
-            orderBy: {
-              field: PurchaseOrderOrderField.CreatedAt,
-              direction: OrderDirection.ASC,
-            },
-          };
-          if (this.selectedStatus.length > 0) {
-            params.filters.statusName = this.selectedStatus;
-          }
-          if (this.selectedCreationDateRange.start) {
-            params.filters.fromDate = this.selectedCreationDateRange.start;
-          }
-          if (this.selectedCreationDateRange.end) {
-            params.filters.toDate = this.selectedCreationDateRange.end;
-          }
-          if (this.selectedEstimatedDeliveryDateRange.start) {
-            params.filters.fromEstimatedDeliveryDate =
-              this.selectedEstimatedDeliveryDateRange.start;
-          }
-          if (this.selectedEstimatedDeliveryDateRange.end) {
-            params.filters.toEstimatedDeliveryDate =
-              this.selectedEstimatedDeliveryDateRange.end;
-          }
-
-          if (this.selectedOrderBy) {
-            params.orderBy.field = this.selectedOrderBy.field;
-            params.orderBy.direction = this.selectedOrderBy.direction;
-          }
+          const params = this.getPurchaseOrderParams();
           return this.purchaseOrderService.searchWithFiltersAsync(params);
         }),
       )
@@ -301,6 +270,38 @@ export class PurchaseOrderListComponent implements OnInit {
         },
       });
     this.doSearchSubject$.next();
+  }
+
+  private getPurchaseOrderParams(): PurchaseOrderParams {
+    const params: PurchaseOrderParams = {
+      page: this.pageIndex + 1,
+      pageSize: this.pageSize,
+      searchText: this.searchText,
+      filters: {},
+      orderBy: {
+        field: this.selectedOrderBy?.field || PurchaseOrderOrderField.CreatedAt,
+        direction: this.selectedOrderBy?.direction || OrderDirection.ASC,
+      },
+    };
+
+    if (this.selectedStatus.length > 0) {
+      params.filters.statusName = this.selectedStatus;
+    }
+    if (this.selectedCreationDateRange.start) {
+      params.filters.fromDate = this.selectedCreationDateRange.start;
+    }
+    if (this.selectedCreationDateRange.end) {
+      params.filters.toDate = this.selectedCreationDateRange.end;
+    }
+    if (this.selectedEstimatedDeliveryDateRange.start) {
+      params.filters.fromEstimatedDeliveryDate =
+        this.selectedEstimatedDeliveryDateRange.start;
+    }
+    if (this.selectedEstimatedDeliveryDateRange.end) {
+      params.filters.toEstimatedDeliveryDate =
+        this.selectedEstimatedDeliveryDateRange.end;
+    }
+    return params;
   }
 
   onEstimatedDeliveryDateRangeChange(): void {
@@ -489,5 +490,15 @@ export class PurchaseOrderListComponent implements OnInit {
         },
       )
       .subscribe(() => this.doSearchSubject$.next());
+  }
+
+  handleDownloadClick(): void {
+    const params = this.getPurchaseOrderParams();
+
+    this.purchaseOrderService
+      .downloadPurchaseOrderList(params)
+      .subscribe((response) => {
+        downloadFileFromResponse(response, 'ordenes_compra.xlsx');
+      });
   }
 }

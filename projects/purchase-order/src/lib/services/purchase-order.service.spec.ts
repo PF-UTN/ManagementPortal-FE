@@ -272,4 +272,70 @@ describe('PurchaseOrderService', () => {
       req.error(mockError);
     });
   });
+
+  describe('downloadPurchaseOrderList', () => {
+    it('should send a POST request with the correct parameters and return a blob response', () => {
+      // Arrange
+      const params: PurchaseOrderParams = {
+        page: 1,
+        pageSize: 10,
+        searchText: 'Order',
+        filters: {
+          statusName: ['Pending', 'Cancelled'],
+          supplierBusinessName: ['Supplier A', 'Supplier B'],
+          fromDate: new Date('2024-07-01'),
+          toDate: new Date('2024-07-31'),
+          fromEstimatedDeliveryDate: new Date('2024-07-05'),
+          toEstimatedDeliveryDate: new Date('2024-07-20'),
+        },
+        orderBy: {
+          field: PurchaseOrderOrderField.CreatedAt,
+          direction: OrderDirection.ASC,
+        },
+      };
+      const url = `${baseUrl}/download`;
+      const mockBlob = new Blob(['test'], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      });
+
+      // Act & Assert
+      service.downloadPurchaseOrderList(params).subscribe((response) => {
+        expect(response.body).toEqual(mockBlob);
+        expect(response.status).toBe(200);
+      });
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(params);
+      req.flush(mockBlob, { status: 200, statusText: 'OK' });
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const params: PurchaseOrderParams = {
+        page: 1,
+        pageSize: 10,
+        filters: {},
+        searchText: '',
+        orderBy: {
+          field: PurchaseOrderOrderField.CreatedAt,
+          direction: OrderDirection.ASC,
+        },
+      };
+      const url = `${baseUrl}/download`;
+      const mockError = new ErrorEvent('Network error');
+
+      // Act & Assert
+      service.downloadPurchaseOrderList(params).subscribe({
+        next: () => {
+          fail('Expected an error, but got a successful response');
+        },
+        error: (error) => {
+          expect(error.error).toBe(mockError);
+        },
+      });
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
+      req.error(mockError);
+    });
+  });
 });

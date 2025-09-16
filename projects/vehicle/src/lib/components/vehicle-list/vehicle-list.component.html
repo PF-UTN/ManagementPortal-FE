@@ -13,6 +13,13 @@
     </div>
     <div class="filters-container__dropdown">
       <mp-button 
+          type="icon"
+          icon="download"
+          ariaLabel="Descargar XLSX"
+          [disabled]="isLoading"
+          (onClick)="handleDownloadClick()">
+      </mp-button>
+      <mp-button 
         type="primary"
         (click)="openCreateVehicleDrawer()"
         (keydown)="onButtonKeyDown($event)">

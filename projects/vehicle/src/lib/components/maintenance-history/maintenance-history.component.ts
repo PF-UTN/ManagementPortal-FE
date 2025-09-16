@@ -1,8 +1,10 @@
+import { downloadFileFromResponse } from '@Common';
 import {
   TitleComponent,
   BackArrowComponent,
   DropdownButtonComponent,
   DropdownItem,
+  ButtonComponent,
 } from '@Common-UI';
 
 import { Component, OnInit } from '@angular/core';
@@ -26,6 +28,7 @@ import { MaintenanceRepairListComponent } from '../maintenance-repair-list/maint
     MaintenancePlanListComponent,
     MaintenanceListComponent,
     MaintenanceRepairListComponent,
+    ButtonComponent,
   ],
   templateUrl: './maintenance-history.component.html',
   styleUrl: './maintenance-history.component.scss',
@@ -46,8 +49,8 @@ export class MaintenanceHistoryComponent implements OnInit {
   ];
 
   constructor(
-    private route: ActivatedRoute,
-    private vehicleService: VehicleService,
+    private readonly route: ActivatedRoute,
+    private readonly vehicleService: VehicleService,
   ) {}
 
   ngOnInit(): void {
@@ -68,5 +71,13 @@ export class MaintenanceHistoryComponent implements OnInit {
 
   onCreateRepairDrawer() {
     // Logic to open the create/update repair drawer
+  }
+
+  handleDownloadClick() {
+    this.vehicleService
+      .downloadMaintenanceHistory(this.vehicleId)
+      .subscribe((response) => {
+        downloadFileFromResponse(response, 'historial_mantenimiento.xlsx');
+      });
   }
 }

@@ -94,6 +94,58 @@ describe('ProductService', () => {
     });
   });
 
+  describe('postDownloadProduct', () => {
+    it('should send a POST request with the correct parameters and return a blob response', () => {
+      // Arrange
+      const params: ProductParams = {
+        page: 1,
+        pageSize: 10,
+        searchText: 'Product',
+        filters: {
+          categoryName: ['Category 1'],
+          supplierBusinessName: ['Supplier 1'],
+          enabled: true,
+        },
+      };
+      const url = `${baseUrl}/download`;
+      const mockBlob = new Blob(['test'], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      });
+
+      // Act & Assert
+      service.postDownloadProduct(params).subscribe((response) => {
+        expect(response.body).toEqual(mockBlob);
+        expect(response.status).toBe(200);
+      });
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(params);
+      req.flush(mockBlob, { status: 200, statusText: 'OK' });
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const params: ProductParams = {
+        page: 1,
+        pageSize: 10,
+        filters: {},
+      };
+      const url = `${baseUrl}/download`;
+      const mockError = new ErrorEvent('Network error');
+
+      // Act & Assert
+      service.postDownloadProduct(params).subscribe({
+        next: () => fail('Expected an error, but got a successful response'),
+        error: (error) => {
+          expect(error.error).toBe(mockError);
+        },
+      });
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
+      req.error(mockError);
+    });
+  });
+
   describe('getProductById', () => {
     it('should send a GET request with the correct parameters and return data', () => {
       //Arrange

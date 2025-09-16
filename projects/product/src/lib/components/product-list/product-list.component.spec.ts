@@ -1,8 +1,10 @@
+import { downloadFileFromResponse } from '@Common';
 import { LateralDrawerService } from '@Common-UI';
 import { ProductCategoryService } from '@Product-Category';
 import { SupplierService } from '@Supplier';
 
 import { CommonModule, registerLocaleData } from '@angular/common';
+import { HttpResponse } from '@angular/common/http';
 import localeEsAr from '@angular/common/locales/es-AR';
 registerLocaleData(localeEsAr);
 import {
@@ -25,6 +27,10 @@ import { mockProductListItems, mockProductListItem } from '../../testing';
 import { DeletedProductLateralDrawerComponent } from '../deleted-product-lateral-drawer/deleted-product-lateral-drawer.component';
 import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-lateral-drawer.component';
 import { ToggleProductLatearalDrawerComponent } from '../toggle-product-latearal-drawer/toggle-product-latearal-drawer.component';
+
+jest.mock('@Common', () => ({
+  downloadFileFromResponse: jest.fn(),
+}));
 
 describe('ProductListComponent', () => {
   let component: ProductListComponent;
@@ -484,6 +490,109 @@ describe('ProductListComponent', () => {
 
       // Assert
       expect(spy).toHaveBeenCalledWith(request);
+    });
+  });
+
+  describe('handleDownloadClick', () => {
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('should call productService.postDownloadProduct with correct params and trigger file download', () => {
+      // Arrange
+      const params = component.getProductParams();
+      const mockResponse = new HttpResponse({
+        body: new Blob(['test'], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }),
+        status: 200,
+        statusText: 'OK',
+      });
+      service.postDownloadProduct.mockReturnValue(of(mockResponse));
+
+      // Act
+      component.handleDownloadClick();
+
+      // Assert
+      expect(service.postDownloadProduct).toHaveBeenCalledWith(params);
+      expect(downloadFileFromResponse).toHaveBeenCalledWith(
+        mockResponse,
+        'productos.xlsx',
+      );
+    });
+
+    it('should handle errors from productService.postDownloadProduct', () => {
+      // Arrange
+      const error = new Error('Download error');
+      service.postDownloadProduct.mockReturnValueOnce(throwError(() => error));
+
+      // Act
+      component.handleDownloadClick();
+
+      // Assert
+      expect(downloadFileFromResponse).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('getProductParams', () => {
+    it('should include categoryName in filters when selectedCategories is not empty', () => {
+      // Arrange
+      component.selectedCategories = ['Cat1', 'Cat2'];
+      component.selectedSuppliers = [];
+      component.selectedEnabled = null;
+
+      // Act
+      const params = component.getProductParams();
+
+      // Assert
+      expect(params.filters.categoryName).toEqual(['Cat1', 'Cat2']);
+      expect(params.filters.supplierBusinessName).toBeUndefined();
+      expect(params.filters.enabled).toBeUndefined();
+    });
+
+    it('should include supplierBusinessName in filters when selectedSuppliers is not empty', () => {
+      // Arrange
+      component.selectedCategories = [];
+      component.selectedSuppliers = ['Sup1', 'Sup2'];
+      component.selectedEnabled = null;
+
+      // Act
+      const params = component.getProductParams();
+
+      // Assert
+      expect(params.filters.supplierBusinessName).toEqual(['Sup1', 'Sup2']);
+      expect(params.filters.categoryName).toBeUndefined();
+      expect(params.filters.enabled).toBeUndefined();
+    });
+
+    it('should include enabled in filters when selectedEnabled is not null', () => {
+      // Arrange
+      component.selectedCategories = [];
+      component.selectedSuppliers = [];
+      component.selectedEnabled = true;
+
+      // Act
+      const params = component.getProductParams();
+
+      // Assert
+      expect(params.filters.enabled).toBe(true);
+      expect(params.filters.categoryName).toBeUndefined();
+      expect(params.filters.supplierBusinessName).toBeUndefined();
+    });
+
+    it('should include all filters when all are set', () => {
+      // Arrange
+      component.selectedCategories = ['Cat1'];
+      component.selectedSuppliers = ['Sup1'];
+      component.selectedEnabled = false;
+
+      // Act
+      const params = component.getProductParams();
+
+      // Assert
+      expect(params.filters.categoryName).toEqual(['Cat1']);
+      expect(params.filters.supplierBusinessName).toEqual(['Sup1']);
+      expect(params.filters.enabled).toBe(false);
     });
   });
 });

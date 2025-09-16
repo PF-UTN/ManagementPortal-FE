@@ -57,4 +57,12 @@ export class PurchaseOrderService {
     const url = `${this.baseUrl}/${id}`;
     return this.http.put<void>(url, request);
   }
+
+  downloadPurchaseOrderList(params: PurchaseOrderParams) {
+    const url = `${this.baseUrl}/download`;
+    return this.http.post(url, params, {
+      observe: 'response',
+      responseType: 'blob',
+    });
+  }
 }

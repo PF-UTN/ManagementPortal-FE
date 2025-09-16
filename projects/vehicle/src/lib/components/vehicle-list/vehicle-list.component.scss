@@ -35,6 +35,11 @@
 
   &__dropdown {
     margin-bottom: $input-footer-height;
-    padding: 0 32px;
+    padding: 0 10px;
+    display: flex;
+    flex-direction: row;
+    gap: 22px;
+    justify-content: space-between;
+    align-items: center;
   }
 }

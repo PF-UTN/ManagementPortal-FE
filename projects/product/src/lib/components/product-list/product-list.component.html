@@ -39,6 +39,13 @@
       </mat-form-field>
     </div>
     <div class="filters-container__dropdown">
+      <mp-button 
+          type="icon"
+          icon="download"
+          ariaLabel="Descargar XLSX"
+          [disabled]="isLoading"
+          (onClick)="handleDownloadClick()">
+      </mp-button>
       <mp-dropdown-button type="primary" [items]="dropdownItems">
         Nuevo
       </mp-dropdown-button>

@@ -14,7 +14,10 @@
 
   &__dropdown {
     display: flex;
-    align-items: center;
     padding: $input-footer-height;
+    flex-direction: row;
+    gap: 22px;
+    justify-content: space-between;
+    align-items: center;
   }
 }

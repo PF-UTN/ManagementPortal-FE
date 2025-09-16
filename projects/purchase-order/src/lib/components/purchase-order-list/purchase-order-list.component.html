@@ -46,7 +46,9 @@
         <mp-button 
           type="icon" 
           icon="download" 
-          ariaLabel="Descargar XLSX">
+          ariaLabel="Descargar XLSX"
+          [disabled]="isLoading"
+          (onClick)="handleDownloadClick()">
         </mp-button>
       </div>
         <mat-menu #filtersMenu="matMenu" panelClass="custom-filters-menu">
