@@ -930,6 +930,11 @@ describe('ProductCreateComponent', () => {
       component.onFilesSelected([]);
       expect(component.productForm.controls.file.value).toBeNull();
     });
+
+    it('should set file control as touched', () => {
+      component.onFilesSelected([]);
+      expect(component.productForm.controls.file.touched).toBeTruthy();
+    });
   });
 
   describe('showBackArrow', () => {
