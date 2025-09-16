@@ -12,7 +12,7 @@ import { BehaviorSubject, Subject } from 'rxjs';
 import { OrderItem } from '../../models/order-item.model';
 
 @Component({
-  selector: 'lib-order-list-client',
+  selector: 'mp-order-list-client',
   standalone: true,
   imports: [TableComponent, TitleComponent],
   providers: [DatePipe, CurrencyPipe],
