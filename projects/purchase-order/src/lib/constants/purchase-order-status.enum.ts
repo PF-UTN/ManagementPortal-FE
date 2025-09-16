@@ -6,6 +6,11 @@ export enum PurchaseOrderStatusOptions {
   Cancelled = 'Cancelada',
 }
 
+export const PurchaseOrderStatusEnabledForCancelled: string[] = [
+  PurchaseOrderStatusOptions.Draft,
+  PurchaseOrderStatusOptions.Ordered,
+];
+
 export const PurchaseOrderStatusEnabledForDeletion: string[] = [
   PurchaseOrderStatusOptions.Draft,
   PurchaseOrderStatusOptions.Cancelled,

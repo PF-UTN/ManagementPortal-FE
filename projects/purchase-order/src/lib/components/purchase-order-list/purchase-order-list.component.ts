@@ -28,6 +28,7 @@ import { Router } from '@angular/router';
 import { BehaviorSubject, debounceTime, Subject, switchMap, tap } from 'rxjs';
 
 import {
+  PurchaseOrderStatusEnabledForCancelled,
   PurchaseOrderStatusEnabledForDeletion,
   PurchaseOrderStatusEnabledForExecution,
   PurchaseOrderStatusEnabledForModification,
@@ -162,6 +163,10 @@ export class PurchaseOrderListComponent implements OnInit {
         },
         {
           description: 'Cancelar',
+          disabled: (element: PurchaseOrderItem) =>
+            !PurchaseOrderStatusEnabledForCancelled.includes(
+              element.purchaseOrderStatusName,
+            ),
           action: (element: PurchaseOrderItem) => this.onCancelDrawer(element),
         },
         {
