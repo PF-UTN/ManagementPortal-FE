@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
+import { SearchMaintenanceItemResponse } from '../models/maintenance-item-response.model';
 import { SearchMaintenancePlanResponse } from '../models/maintenance-plan-response.model';
 import { MaintenanceRepairParams } from '../models/maintenance-repair-param.model';
 import { SearchMaintenanceRepairResponse } from '../models/maintenance-response.model';
@@ -83,5 +84,10 @@ export class VehicleService {
       observe: 'response',
       responseType: 'blob',
     });
+  }
+
+  postSearchMaintenanceItem(param: MaintenanceRepairParams) {
+    const url = `${this.baseUrl}/maintenance-item/search`;
+    return this.http.post<SearchMaintenanceItemResponse>(url, param);
   }
 }

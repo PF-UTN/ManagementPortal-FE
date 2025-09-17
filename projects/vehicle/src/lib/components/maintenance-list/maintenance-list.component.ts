@@ -11,7 +11,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BehaviorSubject, debounceTime, Subject, switchMap, tap } from 'rxjs';
 
-import { MaintenanceListItem } from '../../models/maintenance-item-list.model';
+import { MaintenanceItem } from '../../models/maintenance-item.model';
 
 @Component({
   selector: 'mp-maintenance-list',
@@ -24,26 +24,26 @@ import { MaintenanceListItem } from '../../models/maintenance-item-list.model';
 export class MaintenanceListComponent implements OnInit {
   @Input() vehicleId!: number;
 
-  columns: TableColumn<MaintenanceListItem>[] = [
+  columns: TableColumn<MaintenanceItem>[] = [
     {
       columnDef: 'maintenanceDate',
       header: 'Fecha de mantenimiento',
       type: ColumnTypeEnum.VALUE,
-      value: (element: MaintenanceListItem) =>
-        this.datePipe.transform(element.maintenanceDate, 'dd/MM/yyyy')!,
+      value: (element: MaintenanceItem) =>
+        this.datePipe.transform(element.kmPerformed, 'dd/MM/yyyy')!,
     },
     {
       columnDef: 'description',
       header: 'Descripcion',
       type: ColumnTypeEnum.VALUE,
-      value: (element: MaintenanceListItem) => element.description,
+      value: (element: MaintenanceItem) => element.description,
     },
     {
       columnDef: 'maintenanceKm',
       header: 'Kilometraje',
       type: ColumnTypeEnum.VALUE,
-      value: (element: MaintenanceListItem) =>
-        this.decimalPipe.transform(element.maintenanceKm, '1.0-0')! + ' km',
+      value: (element: MaintenanceItem) =>
+        this.decimalPipe.transform(element.kmPerformed, '1.0-0')! + ' km',
     },
     {
       columnDef: 'actions',
@@ -52,19 +52,19 @@ export class MaintenanceListComponent implements OnInit {
       actions: [
         {
           description: 'Modificar',
-          action: (element: MaintenanceListItem) =>
+          action: (element: MaintenanceItem) =>
             console.log('Modificar', element),
         },
         {
           description: 'Eliminnar',
-          action: (element: MaintenanceListItem) =>
+          action: (element: MaintenanceItem) =>
             console.log('Eliminar', element),
         },
       ],
     },
   ];
 
-  dataSource$ = new BehaviorSubject<MaintenanceListItem[]>([]);
+  dataSource$ = new BehaviorSubject<MaintenanceItem[]>([]);
   itemsNumber: number = 0;
   isLoading: boolean = false;
   pageIndex: number = 0;
@@ -99,11 +99,11 @@ export class MaintenanceListComponent implements OnInit {
       )
       .subscribe({
         next: (response) => {
-          const mappedResults: MaintenanceListItem[] = response.results.map(
+          const mappedResults: MaintenanceItem[] = response.results.map(
             (item) => ({
-              maintenanceDate: item.date,
+              kmPerformed: item.kmPerformed,
               description: item.description,
-              maintenanceKm: item.kmPerformed,
+              date: item.date,
             }),
           );
           this.dataSource$.next(mappedResults);

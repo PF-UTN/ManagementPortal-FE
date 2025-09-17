@@ -491,4 +491,48 @@ describe('VehicleService', () => {
       req.error(mockError);
     });
   });
+
+  describe('postSearchMaintenanceItem', () => {
+    it('should send a POST request with the correct parameters and return data', () => {
+      // Arrange
+      const params = { searchText: '', page: 1, pageSize: 10 };
+      const mockResponse = {
+        total: 2,
+        results: [
+          { id: 1, description: 'Cambio de aceite' },
+          { id: 2, description: 'Filtro de aire' },
+        ],
+      };
+      const url = `${baseUrl}/maintenance-item/search`;
+
+      // Act & Assert
+      service.postSearchMaintenanceItem(params).subscribe((response) => {
+        expect(response).toEqual(mockResponse);
+      });
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(params);
+      req.flush(mockResponse);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const params = { searchText: '', page: 1, pageSize: 10 };
+      const mockError = new ErrorEvent('Network error');
+      const url = `${baseUrl}/maintenance-item/search`;
+
+      // Act
+      service.postSearchMaintenanceItem(params).subscribe({
+        next: () => {
+          fail('Expected an error, but got a successful response');
+        },
+        error: (error) => {
+          expect(error.error).toBe(mockError);
+        },
+      });
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
+      req.error(mockError);
+    });
+  });
 });
