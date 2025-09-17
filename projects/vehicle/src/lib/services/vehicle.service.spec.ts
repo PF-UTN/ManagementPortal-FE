@@ -7,6 +7,7 @@ import {
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
+import { MaintenancePlanCreate } from '../models/maintenance-item-create.model';
 import { VehicleCreate } from '../models/vehicle-create.model';
 import { VehicleParams } from '../models/vehicle-params.model';
 import { VehicleService } from '../services/vehicle.service';
@@ -530,6 +531,57 @@ describe('VehicleService', () => {
           expect(error.error).toBe(mockError);
         },
       });
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
+      req.error(mockError);
+    });
+  });
+
+  describe('createMaintenancePlanItem', () => {
+    it('should send a POST request with the correct payload and return void', () => {
+      // Arrange
+      const payload: MaintenancePlanCreate = {
+        vehicleId: 1,
+        maintenanceItemId: 2,
+        kmInterval: 10000,
+        timeInterval: null,
+      };
+      const url = `${baseUrl}/maintenance-plan-item`;
+
+      // Act
+      service.createMaintenancePlanItem(payload).subscribe((response) => {
+        expect(response).toBeUndefined();
+      });
+
+      // Assert
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(payload);
+      req.flush(null);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const payload: MaintenancePlanCreate = {
+        vehicleId: 1,
+        maintenanceItemId: 2,
+        kmInterval: 10000,
+        timeInterval: null,
+      };
+      const mockError = new ErrorEvent('Network error');
+      const url = `${baseUrl}/maintenance-plan-item`;
+
+      // Act
+      service.createMaintenancePlanItem(payload).subscribe({
+        next: () => {
+          fail('Expected an error, but got a successful response');
+        },
+        error: (error) => {
+          expect(error.error).toBe(mockError);
+        },
+      });
+
+      // Assert
       const req = httpMock.expectOne(url);
       expect(req.request.method).toBe('POST');
       req.error(mockError);
