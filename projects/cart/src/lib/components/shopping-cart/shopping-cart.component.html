@@ -1,0 +1,129 @@
+<ng-container *ngIf="isLoading(); else loaded">
+  <div class="cart-wrapper cart-loading-bg">
+    <mp-loading></mp-loading>
+  </div>
+</ng-container>
+
+<ng-template #loaded>
+  <ng-container *ngIf="!error(); else errorContent">
+    <ng-container *ngIf="data() as cart">
+      <div
+        class="cart-header d-flex justify-content-between align-items-center m-3"
+      >
+        <mp-title>MI CARRITO</mp-title>
+        <mp-button
+          type="primary"
+          (onClick)="goToProducts()"
+          ariaLabel="Seguir comprando"
+        >
+          Seguir comprando
+        </mp-button>
+      </div>
+
+      <div *ngIf="cart.items.length > 0; else emptyCart" class="cart-wrapper">
+        <div class="cart-container">
+          <div class="cart-items-wrapper">
+            <div
+              *ngFor="let item of cart.items"
+              class="cart-item"
+              (click)="openProductDrawer(item.product.id, item.quantity)"
+            >
+              <div class="item-image">
+                <img [src]="item.product.imageUrl" />
+              </div>
+              <div class="item-info">
+                <h5 class="m-0 fs-6">{{ item.product.name }}</h5>
+                <p class="description">{{ item.product.description }}</p>
+                <div class="item-remove">
+                  <button
+                    class="remove-btn"
+                    (click)="removeItem(item); $event.stopPropagation()"
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </div>
+
+              <div class="item-actions">
+                <p class="price">
+                  {{
+                    item.product.price | currency: 'ARS' : 'symbol' : '1.2-2'
+                  }}
+                </p>
+
+                <div class="product-card__quantity col">
+                  <mp-button
+                    type="icon"
+                    icon="remove"
+                    ariaLabel="Restar"
+                    [disabled]="item.quantity <= 1"
+                    (onClick)="decreaseQuantity(item)"
+                  >
+                  </mp-button>
+
+                  <input
+                    type="number"
+                    min="1"
+                    [max]="item.product.stock.quantityAvailable"
+                    class="mx-2 mat-card__content-input col"
+                    [value]="item.quantity"
+                    (input)="onQuantityInput(item, $event)"
+                    (click)="$event.stopPropagation()"
+                  />
+
+                  <mp-button
+                    type="icon"
+                    icon="add"
+                    ariaLabel="Sumar"
+                    tooltipPosition="above"
+                    (onClick)="increaseQuantity(item)"
+                  >
+                  </mp-button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cart-summary">
+            <h2 class="fw-bold">Resumen de Compra</h2>
+            <div class="summary-items">
+              <div *ngFor="let item of cart.items" class="summary-item">
+                <span class="item-name"
+                  >{{ item.product.name }}
+                  <strong>X{{ item.quantity }}</strong></span
+                >
+                <span class="item-price">{{
+                  item.product.price * item.quantity
+                    | currency: 'ARS' : 'symbol' : '1.2-2'
+                }}</span>
+              </div>
+            </div>
+
+            <div class="summary-total">
+              <span>Total</span>
+              <span class="total-price">{{
+                totalPrice() | currency: 'ARS' : 'symbol' : '1.2-2'
+              }}</span>
+            </div>
+            <mp-button>Continuar Compra</mp-button>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #emptyCart>
+        <div class="no-data-message">
+          <span class="material-symbols-outlined no-data-message__icon">
+            unknown_document
+          </span>
+          {{ noDataMessage }}
+        </div>
+      </ng-template>
+    </ng-container>
+  </ng-container>
+
+  <ng-template #errorContent>
+    <div class="container py-3">
+      <p class="text-danger">{{ error() }}</p>
+    </div>
+  </ng-template>
+</ng-template>

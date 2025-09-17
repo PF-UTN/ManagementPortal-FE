@@ -1,0 +1,53 @@
+@import '../../../../../../src/styles/varibles';
+
+.container {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  position: relative;
+  margin-bottom: 24px;
+
+  &__body {
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(135deg, $white-color 60%, $lavander-color 100%);
+    border-radius: 16px;
+    box-shadow: 0 8px 24px rgba(60, 72, 88, 0.1);
+    padding: 32px;
+    animation: fadeInUp 0.5s;
+  }
+
+  &__image {
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+    margin: 0 auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(60, 72, 88, 0.1);
+    transition: transform 0.3s;
+    &:hover {
+      transform: scale(1.08);
+    }
+  }
+}
+
+.price-highlight {
+  background: $white-color;
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 20px;
+  color: $dusky-violet;
+  font-weight: bold;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

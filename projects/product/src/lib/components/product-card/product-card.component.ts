@@ -21,6 +21,7 @@ import { ProductListItem } from '../../models/product-item.model';
 export class ProductCardComponent {
   @Input() product!: ProductListItem;
   @Input() initialQuantity: number = 1;
+  @Input() loading: boolean = false;
 
   @Output() openDrawer = new EventEmitter<{
     productId: number;

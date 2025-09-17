@@ -63,7 +63,8 @@
         class="w-100"
         [disabled]="quantity > product.stock"
         (onClick)="onAddToCartClick();"
-        (click)="$event.stopPropagation()">
+        (click)="$event.stopPropagation()"
+        [loading]="loading">
           Agregar al carrito
       </mp-button>
     </ng-container>
