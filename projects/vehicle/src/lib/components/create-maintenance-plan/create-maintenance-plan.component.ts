@@ -77,10 +77,10 @@ export class CreateMaintenancePlanComponent implements OnInit {
 
   constructor(
     public fb: FormBuilder,
-    private vehicleService: VehicleService,
-    private route: ActivatedRoute,
-    private snackBar: MatSnackBar,
-    private location: Location,
+    private readonly vehicleService: VehicleService,
+    private readonly route: ActivatedRoute,
+    private readonly snackBar: MatSnackBar,
+    private readonly location: Location,
   ) {}
 
   ngOnInit(): void {
