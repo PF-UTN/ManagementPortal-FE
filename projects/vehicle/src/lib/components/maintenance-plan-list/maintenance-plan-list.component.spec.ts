@@ -78,6 +78,7 @@ describe('MaintenancePlanListComponent', () => {
   it('should format kmInterval using decimalPipe', () => {
     // Arrange
     const item: MaintenancePlanListItem = {
+      id: 1,
       description: 'Cambio de aceite',
       kmInterval: 15000,
       timeInterval: 12,
@@ -95,6 +96,7 @@ describe('MaintenancePlanListComponent', () => {
   it('should return timeInterval as string with "Meses"', () => {
     // Arrange
     const item: MaintenancePlanListItem = {
+      id: 1,
       description: 'Cambio de filtro',
       kmInterval: 10000,
       timeInterval: 6,
@@ -112,6 +114,7 @@ describe('MaintenancePlanListComponent', () => {
   it('should call action handlers for actions column', () => {
     // Arrange
     const item: MaintenancePlanListItem = {
+      id: 1,
       description: 'Cambio de correa',
       kmInterval: 50000,
       timeInterval: 24,
@@ -134,6 +137,7 @@ describe('MaintenancePlanListComponent', () => {
   it('should show "-" for kmInterval when null', () => {
     // Arrange
     const item: MaintenancePlanListItem = {
+      id: 1,
       description: 'Sin km',
       kmInterval: null,
       timeInterval: 12,
@@ -151,6 +155,7 @@ describe('MaintenancePlanListComponent', () => {
   it('should show "-" for timeInterval when null', () => {
     // Arrange
     const item: MaintenancePlanListItem = {
+      id: 1,
       description: 'Sin meses',
       kmInterval: 10000,
       timeInterval: 0,
@@ -171,11 +176,13 @@ describe('MaintenancePlanListComponent', () => {
       const mockResponse = {
         results: [
           {
+            id: 1,
             description: 'Cambio de aceite',
             kmInterval: 10000,
             timeInterval: 6,
           },
           {
+            id: 2,
             description: 'Cambio de filtro',
             kmInterval: 15000,
             timeInterval: 12,

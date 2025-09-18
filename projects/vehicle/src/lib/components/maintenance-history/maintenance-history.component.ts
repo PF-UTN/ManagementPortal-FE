@@ -9,7 +9,7 @@ import {
 
 import { Component, OnInit } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { VehicleListItem } from '../../models/vehicle-item.model';
 import { VehicleService } from '../../services/vehicle.service';
@@ -40,7 +40,7 @@ export class MaintenanceHistoryComponent implements OnInit {
   dropdownItems: DropdownItem[] = [
     {
       label: 'Crear Ítem de Mantenimiento',
-      action: () => this.onCreateMaintenanceDrawer(),
+      action: () => this.onCreateMaintenancePlan(),
     },
     {
       label: 'Crear Reparación',
@@ -50,6 +50,7 @@ export class MaintenanceHistoryComponent implements OnInit {
 
   constructor(
     private readonly route: ActivatedRoute,
+    private readonly router: Router,
     private readonly vehicleService: VehicleService,
   ) {}
 
@@ -61,12 +62,12 @@ export class MaintenanceHistoryComponent implements OnInit {
     });
   }
 
-  onCreateMaintenancePlanDrawer() {
-    // Logic to open the create/update maintenance plan drawer
-  }
+  onCreateMaintenancePlanDrawer() {}
 
-  onCreateMaintenanceDrawer() {
-    // Logic to open the create/update maintenance drawer
+  onCreateMaintenancePlan() {
+    this.router.navigate(['crear-plan-mantenimiento'], {
+      relativeTo: this.route,
+    });
   }
 
   onCreateRepairDrawer() {
