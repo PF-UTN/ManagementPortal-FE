@@ -587,4 +587,95 @@ describe('VehicleService', () => {
       req.error(mockError);
     });
   });
+  describe('postCreateMaintenanceItemAsync', () => {
+    it('should send a POST request with the correct payload and return void', () => {
+      // Arrange
+      const payload = { description: 'Cambio de aceite' };
+      const url = `${baseUrl}/maintenance-item`;
+
+      // Act
+      service.postCreateMaintenanceItemAsync(payload).subscribe((response) => {
+        // Assert
+        expect(response).toBeUndefined();
+      });
+
+      // Assert
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(payload);
+      req.flush(null);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const payload = { description: 'Cambio de aceite' };
+      const mockError = new ErrorEvent('Network error');
+      const url = `${baseUrl}/maintenance-item`;
+
+      // Act
+      service.postCreateMaintenanceItemAsync(payload).subscribe({
+        next: () => {
+          fail('Expected an error, but got a successful response');
+        },
+        error: (error) => {
+          // Assert
+          expect(error.error).toBe(mockError);
+        },
+      });
+
+      // Assert
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
+      req.error(mockError);
+    });
+  });
+
+  describe('putUpdateMaintenanceItemAsync', () => {
+    it('should send a PUT request with the correct id and payload and return void', () => {
+      // Arrange
+      const idMaintenanceItem = 10;
+      const payload = { description: 'Filtro de aire' };
+      const url = `${baseUrl}/maintenance-item/${idMaintenanceItem}`;
+
+      // Act
+      service
+        .putUpdateMaintenanceItemAsync(idMaintenanceItem, payload)
+        .subscribe((response) => {
+          // Assert
+          expect(response).toBeUndefined();
+        });
+
+      // Assert
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('PUT');
+      expect(req.request.body).toEqual(payload);
+      req.flush(null);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const idMaintenanceItem = 10;
+      const payload = { description: 'Filtro de aire' };
+      const mockError = new ErrorEvent('Network error');
+      const url = `${baseUrl}/maintenance-item/${idMaintenanceItem}`;
+
+      // Act
+      service
+        .putUpdateMaintenanceItemAsync(idMaintenanceItem, payload)
+        .subscribe({
+          next: () => {
+            fail('Expected an error, but got a successful response');
+          },
+          error: (error) => {
+            // Assert
+            expect(error.error).toBe(mockError);
+          },
+        });
+
+      // Assert
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('PUT');
+      req.error(mockError);
+    });
+  });
 });

@@ -3,6 +3,7 @@ import {
   TitleComponent,
   ButtonComponent,
   InputComponent,
+  LateralDrawerService,
 } from '@Common-UI';
 
 import { CommonModule, Location } from '@angular/common';
@@ -37,6 +38,7 @@ import {
 
 import { MaintenanceItemSearchResult } from '../../models/maintenance-item-response.model';
 import { VehicleService } from '../../services/vehicle.service';
+import { CreateUpdateMaintenanceItemLateralDrawerComponent } from '../create-update-maintenance-item-drawer/create-update-maintenance-item-lateral-drawer.component';
 
 @Component({
   selector: 'lib-create-maintenance-plan',
@@ -81,6 +83,7 @@ export class CreateMaintenancePlanComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly snackBar: MatSnackBar,
     private readonly location: Location,
+    private readonly lateralDrawerService: LateralDrawerService,
   ) {}
 
   ngOnInit(): void {
@@ -129,11 +132,44 @@ export class CreateMaintenancePlanComponent implements OnInit {
   onMaintenanceItemSelected(event: MatAutocompleteSelectedEvent) {
     const item = event.option.value as MaintenanceItemSearchResult;
     if (item.id === -1) {
-      // Acá abriría el drawer/modal para crear un nuevo item de mantenimiento
-      this.maintenanceForm.controls.maintenanceItem.reset();
-    } else {
-      this.maintenanceForm.patchValue({ maintenanceItemId: item.id });
+      this.handleCreateOrUpdateMaintenanceItemLateralDrawer();
+      return;
     }
+
+    this.maintenanceForm.patchValue({
+      maintenanceItemId: item.id,
+      maintenanceItem: item,
+    });
+  }
+
+  onMaintenanceItemEditClick() {
+    this.handleCreateOrUpdateMaintenanceItemLateralDrawer(
+      this.maintenanceForm.controls.maintenanceItem.value!,
+    );
+  }
+
+  private handleCreateOrUpdateMaintenanceItemLateralDrawer(
+    maintenanceItem?: MaintenanceItemSearchResult,
+  ) {
+    this.lateralDrawerService
+      .open(
+        CreateUpdateMaintenanceItemLateralDrawerComponent,
+        { maintenanceItem },
+        {
+          title: 'Crear Ítem de Mantenimiento',
+          footer: {
+            firstButton: {
+              click: () => {},
+              text: 'Crear',
+            },
+            secondButton: {
+              click: () => {},
+              text: 'Cancelar',
+            },
+          },
+        },
+      )
+      .subscribe(() => this.maintenanceForm.controls.maintenanceItem.reset());
   }
 
   maintenanceItemObjectValidator(): ValidatorFn {

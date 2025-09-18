@@ -96,4 +96,19 @@ export class VehicleService {
     const url = `${this.baseUrl}/maintenance-plan-item`;
     return this.http.post(url, payload);
   }
+
+  postCreateMaintenanceItemAsync(request: {
+    description: string;
+  }): Observable<void> {
+    const url = `${this.baseUrl}/maintenance-item`;
+    return this.http.post<void>(url, request);
+  }
+
+  putUpdateMaintenanceItemAsync(
+    idMaintenanceItem: number,
+    request: { description: string },
+  ): Observable<void> {
+    const url = `${this.baseUrl}/maintenance-item/${idMaintenanceItem}`;
+    return this.http.put<void>(url, request);
+  }
 }
