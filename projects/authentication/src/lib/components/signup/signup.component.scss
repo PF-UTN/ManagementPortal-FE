@@ -55,6 +55,13 @@
   margin-right: 8px;
 }
 
+.custom-account-icon {
+  width: 75px;
+  height: 75px;
+  padding: 0;
+  margin-bottom: 12px;
+}
+
 @media (max-width: map-get($grid-breakpoints, 'md')) {
   .container {
     width: 100%;

@@ -1,4 +1,4 @@
-import { AuthService, TownService, NavBarService } from '@Common';
+import { AuthService, TownService, NavBarService, environment } from '@Common';
 import { ButtonComponent, InputComponent, TitleComponent } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
@@ -90,6 +90,7 @@ export class SignupComponent implements OnInit {
 
   filteredTowns$: Observable<Town[]>;
 
+  logoUrl = `${environment.cdnBaseUrl}/images/dog.png`;
   isSubmitting = signal(false);
   maxDocumentLength: number | null;
   hidePassword = signal(true);

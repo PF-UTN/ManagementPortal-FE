@@ -1,6 +1,6 @@
 <div class="container d-flex flex-column justify-content-center align-items-center">
   <div class="row">
-    <span class="material-icons custom-account-icon"> account_circle </span>
+    <img alt="logo" [src]="logoUrl" class="custom-account-icon"/>
   </div>
   <div class="mb-3">
     <mp-title>REGISTRO</mp-title>
@@ -130,7 +130,7 @@
     </div>
     <div class="form-group">
       <mp-input
-        label="Teléfono"
+        label="Teléfono"  
         formControlName="phone"
         [icon]="'close'"
         type="text"
