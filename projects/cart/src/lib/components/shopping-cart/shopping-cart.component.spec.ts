@@ -337,5 +337,35 @@ describe('ShoppingCartComponent', () => {
         }),
       );
     });
+
+    it('should call openProductDrawer when Enter or Space is pressed on cart item', () => {
+      // Arrange
+      const mockItem = mockCartItem;
+      const spy = jest
+        .spyOn(component, 'openProductDrawer')
+        .mockImplementation(() => {});
+
+      // Act
+      const enterEvent = new KeyboardEvent('keydown', { key: 'Enter' });
+      component.onCartItemKeyDown(enterEvent, mockItem);
+
+      // Assert
+      expect(spy).toHaveBeenCalledWith(1, 2);
+    });
+
+    it('should NOT call openProductDrawer for other keys', () => {
+      // Arrange
+      const mockItem = mockCartItem;
+      const spy = jest
+        .spyOn(component, 'openProductDrawer')
+        .mockImplementation(() => {});
+
+      // Act
+      const otherEvent = new KeyboardEvent('keydown', { key: 'Tab' });
+      component.onCartItemKeyDown(otherEvent, mockItem);
+
+      // Assert
+      expect(spy).not.toHaveBeenCalled();
+    });
   });
 });

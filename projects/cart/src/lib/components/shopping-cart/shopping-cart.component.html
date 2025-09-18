@@ -27,6 +27,8 @@
               *ngFor="let item of cart.items"
               class="cart-item"
               (click)="openProductDrawer(item.product.id, item.quantity)"
+              tabindex="0"
+              (keydown)="onCartItemKeyDown($event, item)"
             >
               <div class="item-image">
                 <img [src]="item.product.imageUrl" />
