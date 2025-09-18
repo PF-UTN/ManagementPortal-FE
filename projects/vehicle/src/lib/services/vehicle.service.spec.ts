@@ -7,7 +7,7 @@ import {
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
-import { MaintenancePlanCreate } from '../models/maintenance-item-create.model';
+import { MaintenancePlanCreate } from '../models/maintenance-plan-create.model';
 import { VehicleCreate } from '../models/vehicle-create.model';
 import { VehicleParams } from '../models/vehicle-params.model';
 import { VehicleService } from '../services/vehicle.service';

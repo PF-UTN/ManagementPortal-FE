@@ -102,7 +102,7 @@ export class CreateUpdateMaintenanceItemLateralDrawerComponent
       this.maintenanceItem == null
         ? this.vehicleService.postCreateMaintenanceItemAsync(request)
         : this.vehicleService.putUpdateMaintenanceItemAsync(
-            this.maintenanceItem!.id,
+            this.maintenanceItem.id,
             request,
           );
 

@@ -4,8 +4,10 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { MaintenancePlanCreate } from '../models/maintenance-item-create.model';
+import { CreateMaintenanceItemRequest } from '../models/maintenance-item-create.model';
 import { SearchMaintenanceItemResponse } from '../models/maintenance-item-response.model';
+import { UpdateMaintenanceItemRequest } from '../models/maintenance-item-update.model';
+import { MaintenancePlanCreate } from '../models/maintenance-plan-create.model';
 import { SearchMaintenancePlanResponse } from '../models/maintenance-plan-response.model';
 import { MaintenanceRepairParams } from '../models/maintenance-repair-param.model';
 import { SearchMaintenanceRepairResponse } from '../models/maintenance-response.model';
@@ -97,16 +99,16 @@ export class VehicleService {
     return this.http.post(url, payload);
   }
 
-  postCreateMaintenanceItemAsync(request: {
-    description: string;
-  }): Observable<void> {
+  postCreateMaintenanceItemAsync(
+    request: CreateMaintenanceItemRequest,
+  ): Observable<void> {
     const url = `${this.baseUrl}/maintenance-item`;
     return this.http.post<void>(url, request);
   }
 
   putUpdateMaintenanceItemAsync(
     idMaintenanceItem: number,
-    request: { description: string },
+    request: UpdateMaintenanceItemRequest,
   ): Observable<void> {
     const url = `${this.baseUrl}/maintenance-item/${idMaintenanceItem}`;
     return this.http.put<void>(url, request);
