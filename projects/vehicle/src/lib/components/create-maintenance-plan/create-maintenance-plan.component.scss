@@ -1,8 +1,10 @@
+@import '../../../../../../src/styles/varibles';
+
 .container-header {
   display: flex;
 }
 
 .span {
-  color: #1976d2;
+  color: $cyan-blue;
   font-weight: 500;
 }
