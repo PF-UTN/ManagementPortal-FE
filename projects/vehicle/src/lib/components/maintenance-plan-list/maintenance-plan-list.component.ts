@@ -3,6 +3,7 @@ import { VehicleService } from '@Vehicle';
 
 import { DecimalPipe } from '@angular/common';
 import { Component, OnInit, input } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 
 import { MaintenancePlanListItem } from '../../models/maintenance-plan.model';
@@ -46,8 +47,11 @@ export class MaintenancePlanListComponent implements OnInit {
       actions: [
         {
           description: 'Realizar',
-          action: (element: MaintenancePlanListItem) =>
-            console.log('Realizar', element),
+          action: (element: MaintenancePlanListItem) => {
+            this.router.navigate(['realizar', element.id], {
+              relativeTo: this.route,
+            });
+          },
         },
         {
           description: 'Modificar',
@@ -73,6 +77,8 @@ export class MaintenancePlanListComponent implements OnInit {
   constructor(
     private readonly decimalPipe: DecimalPipe,
     private readonly vechicleService: VehicleService,
+    private readonly router: Router,
+    private readonly route: ActivatedRoute,
   ) {}
 
   private formatTimeInterval(timeInterval: number | null | undefined): string {

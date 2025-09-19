@@ -1,0 +1,16 @@
+@import '../../../../../../src/styles/varibles';
+
+.container-header {
+  display: flex;
+}
+
+.span {
+  color: $cyan-blue;
+  font-weight: 500;
+}
+
+.error-placeholder {
+  min-height: 24px;
+  display: flex;
+  align-items: flex-start;
+}
