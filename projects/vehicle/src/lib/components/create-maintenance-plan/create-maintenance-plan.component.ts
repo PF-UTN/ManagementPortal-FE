@@ -167,6 +167,7 @@ export class CreateMaintenancePlanComponent implements OnInit {
               text: 'Cancelar',
             },
           },
+          size: 'small',
         },
       )
       .subscribe(() => this.maintenanceForm.controls.maintenanceItem.reset());
