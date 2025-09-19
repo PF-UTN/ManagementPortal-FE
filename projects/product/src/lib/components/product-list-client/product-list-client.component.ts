@@ -205,6 +205,7 @@ export class ProductListClientComponent {
             click: () => this.lateralDrawerService.close(),
           },
         },
+        size: 'small',
       },
     );
   }

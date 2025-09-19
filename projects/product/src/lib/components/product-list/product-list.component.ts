@@ -282,6 +282,7 @@ export class ProductListComponent implements OnInit {
             click: () => this.lateralDrawerService.close(),
           },
         },
+        size: 'small',
       },
     );
   }
@@ -305,6 +306,7 @@ export class ProductListComponent implements OnInit {
               },
             },
           },
+          size: 'small',
         },
       )
       .subscribe(() => this.doSearchSubject$.next());
@@ -328,6 +330,7 @@ export class ProductListComponent implements OnInit {
             },
           },
         },
+        size: 'small',
       },
     );
   }
@@ -359,6 +362,7 @@ export class ProductListComponent implements OnInit {
               click: () => this.lateralDrawerService.close(),
             },
           },
+          size: 'small',
         },
       )
       .subscribe(() => {
@@ -384,6 +388,7 @@ export class ProductListComponent implements OnInit {
               click: () => this.lateralDrawerService.close(),
             },
           },
+          size: 'small',
         },
       )
       .subscribe(() => {

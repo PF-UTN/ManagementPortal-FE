@@ -348,6 +348,7 @@ export class PurchaseOrderListComponent implements OnInit {
             click: () => this.lateralDrawerService.close(),
           },
         },
+        size: 'medium',
       },
     );
   }
@@ -371,6 +372,7 @@ export class PurchaseOrderListComponent implements OnInit {
               },
             },
           },
+          size: 'small',
         },
       )
       .subscribe(() => this.doSearchSubject$.next());
@@ -463,6 +465,7 @@ export class PurchaseOrderListComponent implements OnInit {
               },
             },
           },
+          size: 'small',
         },
       )
       .subscribe(() => this.doSearchSubject$.next());
@@ -487,6 +490,7 @@ export class PurchaseOrderListComponent implements OnInit {
               },
             },
           },
+          size: 'small',
         },
       )
       .subscribe(() => this.doSearchSubject$.next());

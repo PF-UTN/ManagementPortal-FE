@@ -11,18 +11,11 @@ import { MatDrawer, MatDrawerContainer } from '@angular/material/sidenav';
 import { LateralDrawerConfig } from './model/lateral-drawer-config.model';
 import { LateralDrawerService } from './service/lateral-drawer.service';
 import { ButtonComponent } from '../button/button.component';
-import { TitleComponent } from '../title/title.component';
 
 @Component({
   selector: 'mp-lateral-drawer',
   standalone: true,
-  imports: [
-    CommonModule,
-    MatDrawerContainer,
-    MatDrawer,
-    TitleComponent,
-    ButtonComponent,
-  ],
+  imports: [CommonModule, MatDrawerContainer, MatDrawer, ButtonComponent],
   templateUrl: './lateral-drawer.component.html',
   styleUrls: ['./lateral-drawer.component.scss'],
 })
@@ -41,6 +34,7 @@ export class LateralDrawerComponent implements OnInit {
         },
       },
     },
+    size: 'small',
   };
 
   constructor(private drawerService: LateralDrawerService) {}
