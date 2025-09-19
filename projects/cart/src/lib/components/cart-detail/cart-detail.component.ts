@@ -27,10 +27,10 @@ import { DetailLateralCartDrawerComponent } from '../detail-lateral-drawer/detai
     MatIconModule,
     MatButtonModule,
   ],
-  templateUrl: './shopping-cart.component.html',
-  styleUrl: './shopping-cart.component.scss',
+  templateUrl: './cart-detail.component.html',
+  styleUrl: './cart-detail.component.scss',
 })
-export class ShoppingCartComponent implements OnInit {
+export class CartDetailComponent implements OnInit {
   constructor(
     private readonly cartService: CartService,
     private readonly snackBar: MatSnackBar,
@@ -188,6 +188,7 @@ export class ShoppingCartComponent implements OnInit {
       { productId, quantity },
       {
         title: 'Detalle del Producto',
+        size: 'small',
         footer: {
           firstButton: {
             text: 'Cancelar',

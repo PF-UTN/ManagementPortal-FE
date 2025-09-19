@@ -7,18 +7,18 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { mockDeep } from 'jest-mock-extended';
 import { of } from 'rxjs';
 
-import { CartService } from './../../services/cart.service';
-import { ShoppingCartComponent } from './shopping-cart.component';
+import { CartDetailComponent } from './cart-detail.component';
+import { CartService } from '../../services/cart.service';
 
-describe('ShoppingCartComponent', () => {
-  let component: ShoppingCartComponent;
-  let fixture: ComponentFixture<ShoppingCartComponent>;
+describe('CartDetailComponent', () => {
+  let component: CartDetailComponent;
+  let fixture: ComponentFixture<CartDetailComponent>;
   let cartService: CartService;
   let lateralDrawerService: LateralDrawerService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ShoppingCartComponent, CommonModule, NoopAnimationsModule],
+      imports: [CartDetailComponent, CommonModule, NoopAnimationsModule],
       providers: [
         {
           provide: CartService,
@@ -38,7 +38,7 @@ describe('ShoppingCartComponent', () => {
     lateralDrawerService = TestBed.inject(LateralDrawerService);
     jest.spyOn(cartService, 'getCart').mockReturnValue(of(mockEmptyCart));
 
-    fixture = TestBed.createComponent(ShoppingCartComponent);
+    fixture = TestBed.createComponent(CartDetailComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
