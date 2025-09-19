@@ -7,6 +7,7 @@ import {
   fakeAsync,
   tick,
 } from '@angular/core/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { mockDeep } from 'jest-mock-extended';
 import { of, throwError } from 'rxjs';
 
@@ -45,7 +46,7 @@ describe('ProductListClientComponent', () => {
     } as unknown as jest.Mocked<LateralDrawerService>;
 
     await TestBed.configureTestingModule({
-      imports: [ProductListClientComponent],
+      imports: [ProductListClientComponent, NoopAnimationsModule],
       providers: [
         { provide: ProductService, useValue: productService },
         { provide: LateralDrawerService, useValue: lateralDrawerService },
@@ -336,6 +337,39 @@ describe('ProductListClientComponent', () => {
       // Assert
       expect(component.currentPage).toBe(1);
       expect(postSearchProductSpy).not.toHaveBeenCalled();
+    });
+  });
+  describe('setCartLoading', () => {
+    it('should set loading to true for a product', () => {
+      // Act
+      component.setCartLoading(1, true);
+
+      // Assert
+      expect(component.isCartLoadingMap()[1]).toBe(true);
+    });
+
+    it('should set loading to false for a product', () => {
+      // Arrange
+      component.setCartLoading(1, true);
+
+      // Act
+      component.setCartLoading(1, false);
+
+      // Assert
+      expect(component.isCartLoadingMap()[1]).toBe(false);
+    });
+
+    it('should not affect other products', () => {
+      // Arrange
+      component.setCartLoading(1, true);
+      component.setCartLoading(2, false);
+
+      // Act
+      component.setCartLoading(1, false);
+
+      // Assert
+      expect(component.isCartLoadingMap()[1]).toBe(false);
+      expect(component.isCartLoadingMap()[2]).toBe(false);
     });
   });
 });

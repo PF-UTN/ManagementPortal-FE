@@ -68,6 +68,7 @@
         [initialQuantity]="1"
         (openDrawer)="openProductDrawer($event)"
         (addToCart)="handleAddToCart($event)"
+        [loading]="isCartLoadingMap()[product.id]"
       >
       </mp-product-card>
     </div>
