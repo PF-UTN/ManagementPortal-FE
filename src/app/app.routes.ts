@@ -51,6 +51,12 @@ export const routes: Routes = [
     canActivate: [RoleGuard],
     data: { admittedRoles: [RolesEnum.Employee] },
   },
+  {
+    path: 'carrito',
+    loadChildren: () => import('@Cart').then((m) => m.CartRoutingModule),
+    canActivate: [RoleGuard],
+    data: { admittedRoles: [RolesEnum.Client, RolesEnum.Admin] },
+  },
   { path: 'unauthorized', pathMatch: 'full', component: UnauthorizedComponent },
   { path: '**', pathMatch: 'full', redirectTo: 'inicio' },
 ];

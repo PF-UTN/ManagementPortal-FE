@@ -95,6 +95,12 @@ describe('NavBarComponent', () => {
           route: 'pedidos',
           shouldRender: true,
         },
+        {
+          title: 'Carrito',
+          icon: 'shopping_cart',
+          route: 'carrito',
+          shouldRender: true,
+        },
       ]);
     });
 
@@ -154,6 +160,12 @@ describe('NavBarComponent', () => {
           title: 'Pedidos',
           icon: 'assignment',
           route: 'pedidos',
+          shouldRender: false,
+        },
+        {
+          title: 'Carrito',
+          icon: 'shopping_cart',
+          route: 'carrito',
           shouldRender: false,
         },
       ]);
@@ -216,6 +228,12 @@ describe('NavBarComponent', () => {
         title: 'Pedidos',
         icon: 'assignment',
         route: 'pedidos',
+        shouldRender: true,
+      },
+      {
+        title: 'Carrito',
+        icon: 'shopping_cart',
+        route: 'carrito',
         shouldRender: true,
       },
     ]);

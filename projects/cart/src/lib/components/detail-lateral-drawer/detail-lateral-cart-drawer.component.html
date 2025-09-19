@@ -1,0 +1,67 @@
+<ng-container *ngIf="isLoading(); else loaded">
+  <div class="d-flex justify-content-center align-items-center py-5">
+    <mp-loading></mp-loading>
+  </div>
+</ng-container>
+
+<ng-template #loaded>
+  <ng-container *ngIf="!error(); else errorContent">
+    <ng-container *ngIf="data() as product">
+      <div class="container py-4">
+        <div class="container__body">
+          <div class="text-center mb-4">
+            <img
+              class="container__image"
+              mat-card-image
+              [src]="
+                product.imageUrl ??
+                'https://material.angular.dev/assets/img/examples/shiba2.jpg'
+              "
+              alt="Producto"
+            />
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-12">
+              <strong>Nombre</strong>
+              <p class="mb-1 text-primary">{{ product.name }}</p>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-12">
+              <strong>Descripción</strong>
+              <p class="mb-1 text-secondary">{{ product.description }}</p>
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-6">
+              <strong>Categoría</strong>
+              <p class="mb-1">{{ product.category.name }}</p>
+            </div>
+            <div class="col-6">
+              <strong>Peso</strong>
+              <p class="mb-1">{{ product.weight }} kg</p>
+            </div>
+          </div>
+
+          <div class="row mb-3 align-items-center justify-content-between">
+            <div class="col">
+              <strong>Precio Unitario</strong>
+            </div>
+            <div class="col-auto text-end">
+              <p class="mb-1 price-highlight">${{ product.price }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+
+  <ng-template #errorContent>
+    <div class="container py-4">
+      <p class="text-danger text-center">{{ error() }}</p>
+    </div>
+  </ng-template>
+</ng-template>

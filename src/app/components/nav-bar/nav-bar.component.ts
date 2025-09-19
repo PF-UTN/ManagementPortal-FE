@@ -72,6 +72,12 @@ export class NavBarComponent implements OnInit {
         route: 'pedidos',
         shouldRender: this.authService.hasAccess([RolesEnum.Client]),
       },
+      {
+        title: 'Carrito',
+        icon: 'shopping_cart',
+        route: 'carrito',
+        shouldRender: this.authService.hasAccess([RolesEnum.Client]),
+      },
     ];
   }
 

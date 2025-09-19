@@ -8,7 +8,7 @@ import {
 } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -21,6 +21,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
 import { Subject } from 'rxjs';
@@ -69,6 +70,7 @@ export class ProductListClientComponent {
   searchText: string = '';
   selectedProductId?: number;
   isLoading: boolean = true;
+  isCartLoadingMap = signal<Record<number, boolean>>({});
   hasMoreProducts: boolean = true;
   currentPage: number = 1;
   pageSize: number = 5;
@@ -85,6 +87,7 @@ export class ProductListClientComponent {
     private readonly productService: ProductService,
     private readonly lateralDrawerService: LateralDrawerService,
     private readonly cartService: CartService,
+    private readonly snackBar: MatSnackBar,
   ) {
     this.filterForm = this.fb.group({
       searchText: this.fb.control('', { nonNullable: true }),
@@ -211,6 +214,7 @@ export class ProductListClientComponent {
   }
 
   handleAddToCart(event: { productId: number; quantity: number }) {
+    this.setCartLoading(event.productId, true);
     this.cartService.getCart().subscribe((cart: Cart) => {
       const existingItem = cart.items.find(
         (item) => item.product.id === event.productId,
@@ -225,7 +229,27 @@ export class ProductListClientComponent {
         quantity: newQuantity,
       };
 
-      this.cartService.addProductToCart(params).subscribe();
+      this.cartService.addProductToCart(params).subscribe({
+        next: () => {
+          this.setCartLoading(event.productId, false);
+          this.snackBar.open('Producto agregado al carrito', 'Cerrar', {
+            duration: 3000,
+          });
+        },
+        error: () => {
+          this.setCartLoading(event.productId, false);
+          this.snackBar.open(
+            'Error al agregar el producto al carrito',
+            'Cerrar',
+            {
+              duration: 3000,
+            },
+          );
+        },
+      });
     });
+  }
+  setCartLoading(productId: number, value: boolean) {
+    this.isCartLoadingMap.update((map) => ({ ...map, [productId]: value }));
   }
 }
