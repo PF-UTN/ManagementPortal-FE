@@ -1,0 +1,92 @@
+<div class="container-fluid">
+    <div class="d-flex align-items-center mb-2">
+        <mp-back-arrow [backTo]="''" [color]="'muted-purple'"></mp-back-arrow>
+        <mp-title>Realizar Mantenimiento</mp-title>
+    </div>
+    <hr>
+    <div class="container">
+        <form [formGroup]="maintenanceForm" class="container__body">
+            <div class="row">
+                <div class="col-6">
+                    <mat-form-field class="w-100" appearance="outline">
+                        <mat-label>Fecha</mat-label>
+                        <input 
+                            matInput 
+                            [matDatepicker]="picker" 
+                            formControlName="date" 
+                            readonly
+                        >
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                        <mat-error
+                            *ngIf="maintenanceForm.controls.date.hasError('required') && maintenanceForm.controls.date.touched">
+                            La fecha es requerida
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div class="col-6">
+                    <mp-input 
+                        type="number" 
+                        formControlName="kmPerformed" 
+                        [min]="1" 
+                        placeholder="Kilometraje actual"
+                        label="Kilometraje actual"
+                        icon="close">
+                    </mp-input>
+                    <div class="error-placeholder">
+                        <mat-error *ngIf="maintenanceForm.controls.kmPerformed.hasError('kmTooLow')">
+                            El kilometraje debe ser mayor al actual del vehículo ({{ kmTraveled }} km).
+                        </mat-error>
+                    </div>
+                </div>
+            </div>
+            
+            <mat-form-field class="w-100 mt-3" appearance="outline">
+                <mat-label>Proveedor</mat-label>
+                <input 
+                    type="text" 
+                    matInput 
+                    formControlName="supplier" 
+                    [matAutocomplete]="autoSupplier"
+                    placeholder="Buscar proveedor" 
+                    [attr.autocomplete]="'off'" 
+                />
+                <button
+                    *ngIf="showEditSupplierIcon"
+                    matSuffix
+                    mat-icon-button
+                    aria-label="Editar proveedor"
+                    type="button"
+                    tabindex="-1">
+                    <mat-icon>edit</mat-icon>
+                </button>
+                <mat-autocomplete #autoSupplier="matAutocomplete" [displayWith]="displaySupplier"
+                    (optionSelected)="onSupplierSelected($event)">
+                    <mat-option *ngFor="let supplier of filteredSuppliers$ | async" [value]="supplier"
+                        [ngClass]="{'create-supplier-option': supplier.id === -1}">
+                        <span *ngIf="supplier.id === -1" class="span">+ Crear nuevo proveedor</span>
+                        <span *ngIf="supplier.id !== -1">{{ supplier.businessName }}</span>
+                    </mat-option>
+                </mat-autocomplete>
+                <mat-error
+                    *ngIf="maintenanceForm.controls.supplier?.hasError('required') && maintenanceForm.controls.supplier?.touched">
+                    El proveedor es requerido
+                </mat-error>
+                <mat-error
+                    *ngIf="maintenanceForm.controls.supplier?.hasError('invalidSupplier') && maintenanceForm.controls.supplier?.touched">
+                    Debe seleccionar un proveedor de la lista.
+                </mat-error>
+            </mat-form-field>
+        </form>
+        <div class="container__footer d-flex justify-content-end mt-4">
+            <mp-button 
+                type="primary" 
+                (click)="onSave()" 
+                [disabled]="maintenanceForm.invalid" 
+                [loading]="isLoading">
+                Guardar
+            </mp-button>
+        </div>
+    </div>
+</div>

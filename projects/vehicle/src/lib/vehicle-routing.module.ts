@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { CreateMaintenancePlanComponent } from './components/create-maintenance-plan/create-maintenance-plan.component';
 import { MaintenanceHistoryComponent } from './components/maintenance-history/maintenance-history.component';
+import { PerformMaintenancePlanComponent } from './components/perform-maintenance-plan/perform-maintenance-plan.component';
 import { VehicleListComponent } from './components/vehicle-list/vehicle-list.component';
 
 const routes: Routes = [
@@ -17,6 +18,10 @@ const routes: Routes = [
   {
     path: ':vehicleId/mantenimiento/crear-plan-mantenimiento',
     component: CreateMaintenancePlanComponent,
+  },
+  {
+    path: ':vehicleId/mantenimiento/realizar/:maintenanceId',
+    component: PerformMaintenancePlanComponent,
   },
 ];
 

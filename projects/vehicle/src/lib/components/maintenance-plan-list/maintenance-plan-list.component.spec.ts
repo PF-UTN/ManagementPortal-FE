@@ -4,6 +4,7 @@ import { DecimalPipe } from '@angular/common';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ActivatedRoute } from '@angular/router';
 import { of, throwError, firstValueFrom } from 'rxjs';
 
 import { MaintenancePlanListComponent } from './maintenance-plan-list.component';
@@ -38,6 +39,7 @@ describe('MaintenancePlanListComponent', () => {
         DecimalPipe,
         provideHttpClientTesting(),
         { provide: VehicleService, useValue: vehicleServiceMock },
+        { provide: ActivatedRoute, useValue: {} },
       ],
     }).compileComponents();
 
@@ -122,16 +124,19 @@ describe('MaintenancePlanListComponent', () => {
     const actionsColumn = component.columns.find(
       (col) => col.columnDef === 'actions',
     );
-    const spyRealizar = jest.spyOn(console, 'log');
+    const routerSpy = jest.spyOn(component['router'], 'navigate');
+    const spyModificar = jest.spyOn(console, 'log');
     // Act
     actionsColumn?.actions?.[0].action(item);
     actionsColumn?.actions?.[1].action(item);
     actionsColumn?.actions?.[2].action(item);
     // Assert
-    expect(spyRealizar).toHaveBeenCalledWith('Realizar', item);
-    expect(spyRealizar).toHaveBeenCalledWith('Modificar', item);
-    expect(spyRealizar).toHaveBeenCalledWith('Eliminar', item);
-    spyRealizar.mockRestore();
+    expect(routerSpy).toHaveBeenCalledWith(['realizar', item.id], {
+      relativeTo: component['route'],
+    });
+    expect(spyModificar).toHaveBeenCalledWith('Modificar', item);
+    expect(spyModificar).toHaveBeenCalledWith('Eliminar', item);
+    spyModificar.mockRestore();
   });
 
   it('should show "-" for kmInterval when null', () => {
@@ -220,6 +225,26 @@ describe('MaintenancePlanListComponent', () => {
       expect(data).toEqual([]);
       expect(component.itemsNumber).toBe(0);
       expect(component.isLoading).toBe(false);
+    });
+  });
+
+  it('should navigate to realizar route with correct params when Realizar is clicked', () => {
+    // Arrange
+    const item: MaintenancePlanListItem = {
+      id: 42,
+      description: 'Cambio de aceite',
+      kmInterval: 10000,
+      timeInterval: 6,
+    };
+    const actionsColumn = component.columns.find(
+      (col) => col.columnDef === 'actions',
+    );
+    const routerSpy = jest.spyOn(component['router'], 'navigate');
+    // Act
+    actionsColumn?.actions?.[0].action(item);
+    // Assert
+    expect(routerSpy).toHaveBeenCalledWith(['realizar', item.id], {
+      relativeTo: component['route'],
     });
   });
 });
