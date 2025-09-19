@@ -1,3 +1,5 @@
+import { LateralDrawerService } from '@Common-UI';
+
 import { Location } from '@angular/common';
 import {
   ComponentFixture,
@@ -9,6 +11,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
+import { mockDeep } from 'jest-mock-extended';
 import { of, throwError } from 'rxjs';
 
 import { CreateMaintenancePlanComponent } from './create-maintenance-plan.component';
@@ -24,6 +27,7 @@ describe('CreateMaintenancePlanComponent', () => {
   let vehicleService: jest.Mocked<VehicleService>;
   let snackBar: { open: jest.Mock };
   let location: { back: jest.Mock };
+  let lateralDrawerService: LateralDrawerService;
 
   beforeEach(async () => {
     vehicleService = {
@@ -50,10 +54,15 @@ describe('CreateMaintenancePlanComponent', () => {
             },
           },
         },
+        {
+          provide: LateralDrawerService,
+          useValue: mockDeep<LateralDrawerService>(),
+        },
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(CreateMaintenancePlanComponent);
+    lateralDrawerService = TestBed.inject(LateralDrawerService);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -154,6 +163,7 @@ describe('CreateMaintenancePlanComponent', () => {
         component.maintenanceForm.controls.maintenanceItem,
         'reset',
       );
+      jest.spyOn(lateralDrawerService, 'open').mockReturnValue(of(void 0));
 
       // Act
       component.onMaintenanceItemSelected(
