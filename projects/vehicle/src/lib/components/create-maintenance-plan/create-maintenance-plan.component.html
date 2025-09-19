@@ -22,9 +22,10 @@
                     type="button" 
                     matSuffix 
                     mat-icon-button 
-                    aria-label="Clear"
-                    (click)="maintenanceForm.controls.maintenanceItem.reset()">
-                    <mat-icon>close</mat-icon>
+                    aria-label="Edit"
+                    [disabled]="!this.maintenanceForm.controls.maintenanceItemId.value"
+                    (click)="onMaintenanceItemEditClick(); $event.stopPropagation()">
+                    <mat-icon>edit</mat-icon>
                 </button>
                 <mat-autocomplete 
                     #autoMaintenanceItem="matAutocomplete" 

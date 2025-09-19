@@ -1,0 +1,15 @@
+<form
+  [formGroup]="form"
+  class="container-fluid p-3"
+  (keydown.enter)="onSubmit()"
+>
+  <div class="mb-4">
+      <mp-input
+        type="text"
+        label="Descripción"
+        formControlName="description"
+        icon="close"
+      >
+      </mp-input>
+  </div>
+</form>
