@@ -36,6 +36,7 @@ describe('LateralDrawerService', () => {
           click: jest.fn(),
         },
       },
+      size: 'small',
     };
   });
 
@@ -175,6 +176,7 @@ describe('LateralDrawerService', () => {
             click: jest.fn(),
           },
         },
+        size: 'small',
       };
 
       const newConfig = { title: 'Updated Title' };
@@ -202,6 +204,7 @@ describe('LateralDrawerService', () => {
             click: jest.fn(),
           },
         },
+        size: 'small',
       };
 
       const newConfig = { title: 'Updated Title' };
@@ -229,6 +232,7 @@ describe('LateralDrawerService', () => {
             click: jest.fn(),
           },
         },
+        size: 'small',
       };
 
       const newConfig = {
@@ -263,6 +267,7 @@ describe('LateralDrawerService', () => {
             click: jest.fn(),
           },
         },
+        size: 'small',
       };
 
       const newConfig = {

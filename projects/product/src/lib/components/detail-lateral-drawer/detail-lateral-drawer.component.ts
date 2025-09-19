@@ -6,13 +6,14 @@ import {
 
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { ProductDetail } from '../../models/product-detail.model';
 import { ProductService } from '../../services/product.service';
 @Component({
   selector: 'lib-detail-lateral-drawer',
   standalone: true,
-  imports: [CommonModule, LoadingComponent],
+  imports: [CommonModule, LoadingComponent, MatSlideToggleModule],
   templateUrl: './detail-lateral-drawer.component.html',
   styleUrl: './detail-lateral-drawer.component.scss',
 })

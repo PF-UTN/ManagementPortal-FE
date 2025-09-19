@@ -6,7 +6,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { throwError } from 'rxjs';
 
 import { MaintenanceListComponent } from './maintenance-list.component';
-import { MaintenanceListItem } from '../../models/maintenance-item-list.model';
+import { MaintenanceItem } from '../../models/maintenance-item.model';
 
 describe('MaintenanceListComponent', () => {
   let component: MaintenanceListComponent;
@@ -42,14 +42,12 @@ describe('MaintenanceListComponent', () => {
   describe('columns', () => {
     it('should format maintenanceDate using datePipe', () => {
       // Arrange
-      const item: MaintenanceListItem = {
-        maintenanceDate: '01/01/2023',
+      const item: MaintenanceItem = {
+        date: '01/01/2023',
         description: 'Cambio de aceite',
-        maintenanceKm: 15000,
+        kmPerformed: 15000,
       };
-      const col = component.columns.find(
-        (c) => c.columnDef === 'maintenanceDate',
-      );
+      const col = component.columns.find((c) => c.columnDef === 'date');
       // Act
       const result = col && col.value ? col.value(item) : undefined;
       // Assert
@@ -58,10 +56,10 @@ describe('MaintenanceListComponent', () => {
 
     it('should return description as is', () => {
       // Arrange
-      const item: MaintenanceListItem = {
-        maintenanceDate: '01/01/1999',
+      const item: MaintenanceItem = {
+        date: '01/01/1999',
         description: 'Filtro de aire',
-        maintenanceKm: 20000,
+        kmPerformed: 20000,
       };
       const col = component.columns.find((c) => c.columnDef === 'description');
       // Act
@@ -70,16 +68,14 @@ describe('MaintenanceListComponent', () => {
       expect(result).toBe('Filtro de aire');
     });
 
-    it('should format maintenanceKm using decimalPipe', () => {
+    it('should format kmPerformed using decimalPipe', () => {
       // Arrange
-      const item: MaintenanceListItem = {
-        maintenanceDate: '01/01/1999',
+      const item: MaintenanceItem = {
+        date: '01/01/1999',
         description: 'Cambio de correa',
-        maintenanceKm: 12345,
+        kmPerformed: 12345,
       };
-      const col = component.columns.find(
-        (c) => c.columnDef === 'maintenanceKm',
-      );
+      const col = component.columns.find((c) => c.columnDef === 'kmPerformed');
       // Act
       const result = col && col.value ? col.value(item) : undefined;
       // Assert
@@ -88,10 +84,10 @@ describe('MaintenanceListComponent', () => {
 
     it('should call action handlers for actions column', () => {
       // Arrange
-      const item: MaintenanceListItem = {
-        maintenanceDate: '01/01/1999',
+      const item: MaintenanceItem = {
+        date: '01/01/1999',
         description: 'Cambio de bujías',
-        maintenanceKm: 30000,
+        kmPerformed: 30000,
       };
       const col = component.columns.find((c) => c.columnDef === 'actions');
       const spyLog = jest.spyOn(console, 'log').mockImplementation();

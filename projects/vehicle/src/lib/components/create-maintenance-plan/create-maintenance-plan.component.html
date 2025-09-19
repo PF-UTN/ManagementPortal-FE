@@ -1,0 +1,100 @@
+<div class="container-fluid">
+    <div class="d-flex align-items-center mb-2">
+        <mp-back-arrow [backTo]="''" [color]="'muted-purple'"></mp-back-arrow>
+        <mp-title>Crear Item de Mantenimiento</mp-title>
+    </div>
+
+    <hr>
+
+    <div class="container">
+        <form [formGroup]="maintenanceForm" class="container__body">
+            <mat-form-field class="w-100" appearance="outline">
+                <mat-label>Item de mantenimiento</mat-label>
+                <input 
+                    type="text" 
+                    matInput 
+                    formControlName="maintenanceItem" 
+                    [matAutocomplete]="autoMaintenanceItem"
+                    placeholder="Seleccionar item" 
+                    [attr.autocomplete]="'off'" 
+                />
+                <button 
+                    type="button" 
+                    matSuffix 
+                    mat-icon-button 
+                    aria-label="Edit"
+                    [disabled]="!this.maintenanceForm.controls.maintenanceItemId.value"
+                    (click)="onMaintenanceItemEditClick(); $event.stopPropagation()">
+                    <mat-icon>edit</mat-icon>
+                </button>
+                <mat-autocomplete 
+                    #autoMaintenanceItem="matAutocomplete" 
+                    [displayWith]="displayMaintenanceItem"
+                    (optionSelected)="onMaintenanceItemSelected($event)">
+                    <mat-option 
+                        *ngFor="let item of filteredMaintenanceItems$ | async" 
+                        [value]="item"
+                        [ngClass]="{'create-maintenance-item-option': item.id === -1}">
+                        <span *ngIf="item.id === -1" class="span">+ Crear item de mantenimiento</span>
+                        <span *ngIf="item.id !== -1">{{ item.description }}</span>
+                    </mat-option>
+                </mat-autocomplete>
+                
+                <mat-error
+                    *ngIf="maintenanceForm.controls.maintenanceItem?.hasError('required') && maintenanceForm.controls.maintenanceItem?.touched">
+                    El item es requerido
+                </mat-error>
+                
+                <mat-error
+                    *ngIf="maintenanceForm.controls.maintenanceItem?.hasError('invalidMaintenanceItem') && maintenanceForm.controls.maintenanceItem?.touched">
+                    Debe seleccionar un item de la lista.
+                </mat-error>
+            
+            </mat-form-field>
+
+            <div class="row">
+                <div class="col-6">
+                    <mp-input 
+                        type="number" 
+                        formControlName="kmInterval" 
+                        [min]="0" 
+                        placeholder="Intervalo en kilómetros"
+                        label="Intervalo (km)">
+                    </mp-input>
+                </div>
+                <div class="col-6">
+                    <mp-input 
+                        type="number" 
+                        formControlName="timeInterval" 
+                        [min]="0" 
+                        placeholder="Intervalo en meses"
+                        label="Intervalo (meses)">
+                    </mp-input>
+                </div>
+            </div>
+           <div 
+                *ngIf="maintenanceForm.hasError('invalidInterval')" 
+                class="text-secondary mt-2 d-flex align-items-center">
+                <mat-icon class="me-1">warning</mat-icon>
+                Ingresá al menos uno de los intervalos (kilómetros o meses).
+            </div>
+        </form>
+        <div class="container__footer d-flex justify-content-end mt-4">
+            <mp-button
+                *ngIf="canEditSelectedItem"
+                type="secondary"
+                class="me-2"
+                [disabled]="isLoading"
+                (click)="onEditSelectedItem()">
+                Editar
+            </mp-button>
+            <mp-button 
+                type="primary" 
+                (click)="onSave()" 
+                [disabled]="maintenanceForm.invalid"
+                [loading]="isLoading">
+                Guardar
+            </mp-button>
+        </div>
+    </div>
+</div>

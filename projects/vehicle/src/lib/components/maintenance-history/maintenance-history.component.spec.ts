@@ -4,6 +4,7 @@ import { HttpResponse } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
@@ -39,6 +40,10 @@ describe('MaintenanceHistoryComponent', () => {
             },
           },
         },
+        {
+          provide: Router,
+          useValue: { navigate: jest.fn() },
+        },
       ],
     }).compileComponents();
 
@@ -67,7 +72,7 @@ describe('MaintenanceHistoryComponent', () => {
 
   it('should call onCreateMaintenanceDrawer when dropdown action is triggered', () => {
     // Arrange
-    const spy = jest.spyOn(component, 'onCreateMaintenanceDrawer');
+    const spy = jest.spyOn(component, 'onCreateMaintenancePlan');
     // Act
     component.dropdownItems[0].action();
     // Assert
@@ -166,6 +171,20 @@ describe('MaintenanceHistoryComponent', () => {
 
       // Assert
       expect(downloadFileFromResponse).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('onCreateMaintenancePlan', () => {
+    it('should navigate to crear-plan-mantenimiento with relative route', () => {
+      // Arrange
+      const router = TestBed.inject(Router);
+      const navigateSpy = jest.spyOn(router, 'navigate');
+      // Act
+      component.onCreateMaintenancePlan();
+      // Assert
+      expect(navigateSpy).toHaveBeenCalledWith(['crear-plan-mantenimiento'], {
+        relativeTo: expect.any(Object),
+      });
     });
   });
 });

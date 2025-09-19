@@ -5,75 +5,86 @@
 <ng-template #loaded>
   <ng-container *ngIf="!error(); else errorContent">
     <ng-container *ngIf="data() as product">
-      <div class="container py-3">
-        <div>
-          <img
-            mat-card-image 
-            [src]="product.imageUrl ?? 'https://material.angular.dev/assets/img/examples/shiba2.jpg'"
-          >
-        </div>
-        <div class="row mb-3">
-          <div class="col-12">
-            <strong>Nombre</strong>
-            <p>{{ product.name }}</p>
+      <div class="container">
+        <div class="container__body">
+          <div class="container__image">
+            <img mat-card-image
+              [src]="product.imageUrl ?? 'https://material.angular.dev/assets/img/examples/shiba2.jpg'"
+              style="width: 100%; height: auto;">
           </div>
-        </div>
+          <div class="row mb-2 mt-2">
+            <div class="col-6">
+              <strong>Nombre</strong>
+              <p>{{ product.name }}</p>
+            </div>
+            <div class="col-6 d-flex align-items-center justify-content-end">
+              <mat-slide-toggle [checked]="product.enabled" disabled color="primary">
+                {{ product.enabled ? 'Activo' : 'En Pausa' }}
+              </mat-slide-toggle>
+            </div>
+          </div>
 
-        <div class="row mb-3">
-          <div class="col-12">
-            <strong>Descripción</strong>
-            <p>{{ product.description }}</p>
+          <div class="row mb-2">
+            <div class="col-12">
+              <strong>Descripción</strong>
+              <p class="text-muted">{{ product.description }}</p>
+            </div>
           </div>
-        </div>
 
-        <div class="row mb-3">
-          <div class="col-12">
-            <strong>Categoría</strong>
-            <p>{{ product.category.name }}</p>
+          <div class="row">
+            <div class="col-6">
+              <strong>Categoría</strong>
+              <p>{{ product.category.name }}</p>
+            </div>
+            <div class="col-6 text-end">
+              <strong>Peso</strong>
+              <p>{{ product.weight }} kg</p>
+            </div>
           </div>
-        </div>
 
-        <div class="row mb-3">
-          <div class="col-12">
-            <strong>Precio</strong>
-            <p>${{ product.price }}</p>
-          </div>
-        </div>
+          <hr>
 
-        <div class="row mb-3">
-          <div class="col-12">
-            <strong>Stock</strong>
-            <ul>
-              <li><strong>Disponible:</strong> {{ product.stock.quantityAvailable }}</li>
-              <li><strong>En pedido:</strong> {{ product.stock.quantityOrdered }}</li>
-              <li><strong>Reservado:</strong> {{ product.stock.quantityReserved }}</li>
-            </ul>
+          <div class="row text-center">
+            <div class="col-4">
+              <strong>Disponible</strong>
+              <br>
+              {{ product.stock.quantityAvailable }}
+            </div>
+            <div class="col-4">
+              <strong>Pedido</strong>
+              <br>
+              {{ product.stock.quantityOrdered }}
+            </div>
+            <div class="col-4">
+              <strong>Reservado</strong>
+              <br>
+              {{ product.stock.quantityReserved }}
+            </div>
           </div>
-        </div>
 
-        <div class="row mb-3">
-          <div class="col-12">
-            <strong>Peso</strong>
-            <p>{{ product.weight }} kg</p>
-          </div>
-        </div>
+          <hr>
 
-        <div class="row mb-3">
-          <div class="col-12">
-            <strong>Proveedor</strong>
-            <ul>
-              <li><strong>Nombre del negocio:</strong> {{ product.supplier.businessName }}</li>
-              <li><strong>Email:</strong> {{ product.supplier.email }}</li>
-              <li><strong>Teléfono:</strong> {{ product.supplier.phone }}</li>
-            </ul>
+          <div class="row text-center">
+            <div class="col-12">
+              <span class="ms-2">{{ product.supplier.businessName }}</span>
+              <div>
+                <span class="text-muted">{{ product.supplier.phone }}</span>
+                <span class="text-muted mx-2">|</span>
+                <span class="text-muted">{{ product.supplier.email }}</span>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div class="row">
-          <div class="col-12">
-            <strong>Estado del producto:</strong>
-            <p>{{ product.enabled ? 'Activo' : 'En Pausa' }}</p>
+          <hr>
+
+          <div class="row mb-3">
+            <div class="col-12 text-center">
+              <p class="container__price">
+                {{ product.price | currency:'ARS':'symbol':'1.2-2' }}
+              </p>
+            </div>
           </div>
+
         </div>
       </div>
     </ng-container>

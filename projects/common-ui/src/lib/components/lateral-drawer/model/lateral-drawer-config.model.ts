@@ -1,6 +1,7 @@
 export interface LateralDrawerConfig {
   title: string;
   footer: LateralDrawerConfigFooter;
+  size: 'small' | 'medium' | 'large';
 }
 
 export interface LateralDrawerConfigFooter {

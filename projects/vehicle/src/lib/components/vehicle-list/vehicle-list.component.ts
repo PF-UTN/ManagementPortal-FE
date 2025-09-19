@@ -98,6 +98,7 @@ export class VehicleListComponent implements OnInit {
                     },
                   },
                 },
+                size: 'small',
               },
             );
           },
@@ -123,6 +124,7 @@ export class VehicleListComponent implements OnInit {
                       },
                     },
                   },
+                  size: 'small',
                 },
               )
               .subscribe(() => this.doSearchSubject$.next());
@@ -290,6 +292,7 @@ export class VehicleListComponent implements OnInit {
               },
             },
           },
+          size: 'small',
         },
       )
       .subscribe(() => this.doSearchSubject$.next());

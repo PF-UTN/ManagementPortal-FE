@@ -1,4 +1,4 @@
-import { AuthService, NavBarService } from '@Common';
+import { AuthService, environment, NavBarService } from '@Common';
 import {
   ButtonComponent,
   InputComponent,
@@ -42,7 +42,7 @@ export class LoginComponent implements OnInit {
     email: FormControl<string | null>;
     password: FormControl<string | null>;
   }>;
-
+  logoUrl = `${environment.cdnBaseUrl}/images/dog.png`;
   hidePassword = signal(true);
   errorMessage: string | null;
   isSubmitting = signal(false);

@@ -41,7 +41,16 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, ActivatedRoute } from '@angular/router';
-import { Observable, of, startWith, map, mergeMap, forkJoin, tap } from 'rxjs';
+import {
+  Observable,
+  of,
+  startWith,
+  map,
+  mergeMap,
+  forkJoin,
+  tap,
+  EMPTY,
+} from 'rxjs';
 
 import { ProductDetail } from '../../models/product-detail.model';
 import {
@@ -210,7 +219,12 @@ export class ProductCreateComponent {
         mergeMap((params) => {
           const productId = params.get('id');
 
-          return this.productService.getProductById(+productId!).pipe(
+          if (productId == null) {
+            this.isLoading.set(false);
+            return EMPTY;
+          }
+
+          return this.productService.getProductById(+productId).pipe(
             mergeMap((product) => {
               if (product.imageUrl) {
                 return fetchFileFromUrl$(product.imageUrl).pipe(
@@ -224,11 +238,6 @@ export class ProductCreateComponent {
         }),
       )
       .subscribe(({ product, imageFile }) => {
-        if (!product) {
-          this.isLoading.set(false);
-          return;
-        }
-
         this.patchFormWithProduct(product);
 
         if (imageFile) {
@@ -397,6 +406,7 @@ export class ProductCreateComponent {
               },
             },
           },
+          size: 'small',
         },
       )
       .subscribe(() => this.initSelectors().subscribe());
@@ -420,6 +430,7 @@ export class ProductCreateComponent {
               },
             },
           },
+          size: 'small',
         },
       )
       .subscribe(() => this.initSelectors().subscribe());
