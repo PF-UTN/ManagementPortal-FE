@@ -210,6 +210,7 @@ export class RegistrationRequestListComponent implements OnInit {
               },
             },
           },
+          size: 'small',
         },
       )
       .subscribe(() => this.doSearchSubject$.next());
@@ -234,6 +235,7 @@ export class RegistrationRequestListComponent implements OnInit {
               },
             },
           },
+          size: 'small',
         },
       )
       .subscribe(() => this.doSearchSubject$.next());

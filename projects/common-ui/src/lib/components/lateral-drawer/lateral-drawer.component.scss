@@ -13,6 +13,14 @@
   width: 400px;
   background: $white-color;
   box-shadow: -2px 0 5px $black-transparent;
+
+  &.medium {
+    width: 600px;
+  }
+
+  &.large {
+    width: 900px;
+  }
 }
 
 .mat-drawer-backdrop {

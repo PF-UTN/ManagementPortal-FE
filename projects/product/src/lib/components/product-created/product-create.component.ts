@@ -406,6 +406,7 @@ export class ProductCreateComponent {
               },
             },
           },
+          size: 'small',
         },
       )
       .subscribe(() => this.initSelectors().subscribe());
@@ -429,6 +430,7 @@ export class ProductCreateComponent {
               },
             },
           },
+          size: 'small',
         },
       )
       .subscribe(() => this.initSelectors().subscribe());
