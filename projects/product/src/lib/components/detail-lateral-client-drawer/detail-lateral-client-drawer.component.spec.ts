@@ -1,10 +1,10 @@
 import { CartService, mockCart } from '@Cart';
 import { LateralDrawerService } from '@Common-UI';
 
-import { TestBed } from '@angular/core/testing';
+import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { mockDeep, MockProxy } from 'jest-mock-extended';
-import { of, throwError } from 'rxjs';
+import { delay, of, throwError } from 'rxjs';
 
 import { DetailLateralClientDrawerComponent } from './detail-lateral-client-drawer.component';
 import { ProductDetail } from '../../models/product-detail.model';
@@ -241,6 +241,62 @@ describe('DetailLateralClientDrawerComponent', () => {
         });
         done();
       }, 0);
+    });
+
+    it('should call closeDrawer after successful addProductToCart', (done) => {
+      // Arrange
+      component.data.set(mockProduct);
+      component.productId = 1;
+      component.quantity = 2;
+
+      jest.spyOn(cartService, 'getCart').mockReturnValue(of(mockCart));
+      jest.spyOn(cartService, 'addProductToCart').mockReturnValue(of(void 0));
+      const closeSpy = jest
+        .spyOn(component, 'closeDrawer')
+        .mockImplementation(() => {});
+
+      // Act
+      component.confirmAddToCart();
+
+      // Assert
+      setTimeout(() => {
+        expect(closeSpy).toHaveBeenCalled();
+        done();
+      }, 0);
+    });
+
+    it('should set isLoading true while adding and false after', fakeAsync(() => {
+      // Arrange
+      component.data.set(mockProduct);
+      component.productId = 1;
+      component.quantity = 2;
+
+      jest.spyOn(cartService, 'getCart').mockReturnValue(of(mockCart));
+      jest
+        .spyOn(cartService, 'addProductToCart')
+        .mockReturnValue(of(void 0).pipe(delay(100)));
+
+      // Act
+      component.confirmAddToCart();
+
+      // Assert
+      expect(component.isLoading()).toBe(true);
+      tick(100);
+      expect(component.isLoading()).toBe(false);
+    }));
+    it('should not call addProductToCart if product is not loaded', () => {
+      // Arrange
+      component.data.set(undefined as unknown as ProductDetail);
+      component.productId = 1;
+      component.quantity = 2;
+
+      const addProductSpy = jest.spyOn(cartService, 'addProductToCart');
+
+      // Act
+      component.confirmAddToCart();
+
+      // Assert
+      expect(addProductSpy).not.toHaveBeenCalled();
     });
   });
 });
