@@ -1,4 +1,8 @@
+import { CartService, mockCart } from '@Cart';
+import { LateralDrawerService } from '@Common-UI';
+
 import { TestBed } from '@angular/core/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { mockDeep, MockProxy } from 'jest-mock-extended';
 import { of, throwError } from 'rxjs';
 
@@ -9,6 +13,7 @@ import { ProductService } from '../../services/product.service';
 describe('DetailLateralClientDrawerComponent', () => {
   let component: DetailLateralClientDrawerComponent;
   let productServiceMock: MockProxy<ProductService>;
+  let cartService: CartService;
 
   const mockProduct: ProductDetail = {
     id: 1,
@@ -37,15 +42,24 @@ describe('DetailLateralClientDrawerComponent', () => {
     productServiceMock = mockDeep<ProductService>();
 
     await TestBed.configureTestingModule({
-      imports: [DetailLateralClientDrawerComponent],
+      imports: [DetailLateralClientDrawerComponent, NoopAnimationsModule],
       providers: [
         {
           provide: ProductService,
           useValue: productServiceMock,
         },
+        {
+          provide: LateralDrawerService,
+          useValue: mockDeep<LateralDrawerService>(),
+        },
+        {
+          provide: CartService,
+          useValue: mockDeep<CartService>(),
+        },
       ],
     }).compileComponents();
 
+    cartService = TestBed.inject(CartService);
     const fixture = TestBed.createComponent(DetailLateralClientDrawerComponent);
     component = fixture.componentInstance;
     // Usar productServiceMock directamente, no TestBed.inject
@@ -178,6 +192,55 @@ describe('DetailLateralClientDrawerComponent', () => {
 
       // Assert
       expect(component.quantity).toBe(mockProduct.stock.quantityAvailable);
+    });
+  });
+  describe('confirmAddToCart', () => {
+    it('should adjust quantity to max stock and show stock message if total exceeds available', (done) => {
+      // Arrange
+      component.data.set(mockProduct);
+      component.productId = 1;
+      component.quantity = 4;
+
+      jest.spyOn(cartService, 'getCart').mockReturnValue(of(mockCart));
+      const addProductSpy = jest
+        .spyOn(cartService, 'addProductToCart')
+        .mockReturnValue(of(void 0));
+
+      // Act
+      component.confirmAddToCart();
+
+      // Assert
+      setTimeout(() => {
+        expect(addProductSpy).toHaveBeenCalledWith({
+          productId: 1,
+          quantity: 5,
+        });
+        done();
+      }, 0);
+    });
+
+    it('should add product and show success message if within stock', (done) => {
+      // Arrange
+      component.data.set(mockProduct);
+      component.productId = 1;
+      component.quantity = 2;
+
+      jest.spyOn(cartService, 'getCart').mockReturnValue(of(mockCart));
+      const addProductSpy = jest
+        .spyOn(cartService, 'addProductToCart')
+        .mockReturnValue(of(void 0));
+
+      // Act
+      component.confirmAddToCart();
+
+      // Assert
+      setTimeout(() => {
+        expect(addProductSpy).toHaveBeenCalledWith({
+          productId: 1,
+          quantity: 4,
+        });
+        done();
+      }, 0);
     });
   });
 });

@@ -201,7 +201,7 @@ export class ProductListClientComponent {
           firstButton: {
             text: 'Agregar al carrito',
             disabled: !quantityAvailable,
-            click: () => this.lateralDrawerService.close(),
+            click: () => {},
           },
           secondButton: {
             text: 'Cancelar',
@@ -219,31 +219,45 @@ export class ProductListClientComponent {
       const existingItem = cart.items.find(
         (item) => item.product.id === event.productId,
       );
+      const currentQuantity = existingItem ? existingItem.quantity : 0;
 
-      const newQuantity = existingItem
-        ? existingItem.quantity + event.quantity
-        : event.quantity;
+      const product = this.products.find((p) => p.id === event.productId);
+      const maxStock = product?.stock ?? Infinity;
+
+      let totalQuantity = currentQuantity + event.quantity;
+      let stockAdjusted = false;
+
+      if (totalQuantity > maxStock) {
+        totalQuantity = maxStock;
+        stockAdjusted = true;
+        this.snackBar.open(
+          `Ha alcanzado el stock máximo de ${maxStock} unidades.`,
+          'Cerrar',
+          { duration: 3000 },
+        );
+      }
 
       const params: CartUpdateProductQuantity = {
         productId: event.productId,
-        quantity: newQuantity,
+        quantity: totalQuantity,
       };
 
       this.cartService.addProductToCart(params).subscribe({
         next: () => {
           this.setCartLoading(event.productId, false);
-          this.snackBar.open('Producto agregado al carrito', 'Cerrar', {
-            duration: 3000,
-          });
+
+          if (!stockAdjusted) {
+            this.snackBar.open('Producto agregado al carrito', 'Cerrar', {
+              duration: 3000,
+            });
+          }
         },
         error: () => {
           this.setCartLoading(event.productId, false);
           this.snackBar.open(
             'Error al agregar el producto al carrito',
             'Cerrar',
-            {
-              duration: 3000,
-            },
+            { duration: 3000 },
           );
         },
       });

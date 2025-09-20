@@ -152,38 +152,36 @@ describe('CartDetailComponent', () => {
   describe('emitQuantityChangeInput', () => {
     it('should update item quantity locally after debounce', (done) => {
       // Arrange
-      const mockItem = { ...mockCartItem, quantity: 1 };
-      const mockCart = { cartId: 'cart:1', items: [mockItem] };
+      const mockCart = { cartId: 'cart:1', items: [mockCartItem] };
       component.data.set(mockCart);
       jest.spyOn(component, 'updateQuantity').mockImplementation(() => {});
 
       // Act
-      component.emitQuantityChangeInput(mockItem, 5);
+      component.emitQuantityChangeInput(mockCartItem, 2);
 
       // Assert
       setTimeout(() => {
-        expect(component.data()?.items[0].quantity).toBe(5);
+        expect(component.data()?.items[0].quantity).toBe(2);
         done();
-      }, 600);
+      }, 1700);
     });
 
     it('should call updateQuantity after debounce', (done) => {
       // Arrange
-      const mockItem = { ...mockCartItem, quantity: 1 };
-      const mockCart = { cartId: 'cart:1', items: [mockItem] };
+      const mockCart = { cartId: 'cart:1', items: [mockCartItem] };
       component.data.set(mockCart);
       const spy = jest
         .spyOn(component, 'updateQuantity')
         .mockImplementation(() => {});
 
       // Act
-      component.emitQuantityChangeInput(mockItem, 7);
+      component.emitQuantityChangeInput(mockCartItem, 2);
 
       // Assert
       setTimeout(() => {
-        expect(spy).toHaveBeenCalledWith(mockItem, 7);
+        expect(spy).toHaveBeenCalledWith(mockCartItem, 2);
         done();
-      }, 600);
+      }, 1700);
     });
   });
   describe('increaseQuantity', () => {
@@ -229,23 +227,21 @@ describe('CartDetailComponent', () => {
     });
   });
   describe('onQuantityInput', () => {
-    it('should call emitQuantityChangeInput with 1 if input is negative', () => {
-      // Arrange
-      const mockItem = {
-        ...mockCartItem,
-        quantity: 2,
-        product: {
-          ...mockCartItem.product,
-          stock: {
-            quantityAvailable: 10,
-            quantityOrdered: 5,
-            quantityReserved: 2,
-          },
+    const mockItem = {
+      ...mockCartItem,
+      quantity: 2,
+      product: {
+        ...mockCartItem.product,
+        stock: {
+          quantityAvailable: 10,
+          quantityOrdered: 5,
+          quantityReserved: 2,
         },
-      };
-      const mockCart = { cartId: 'cart:1', items: [mockItem] };
-      component.data.set(mockCart);
-      const event = { target: { value: '-3' } } as unknown as Event;
+      },
+    };
+    it('should not update quantity if input is empty', () => {
+      // Arrange
+      const event = { target: { value: '' } } as unknown as Event;
       const spy = jest
         .spyOn(component, 'emitQuantityChangeInput')
         .mockImplementation(() => {});
@@ -254,7 +250,50 @@ describe('CartDetailComponent', () => {
       component.onQuantityInput(mockItem, event);
 
       // Assert
-      expect(spy).toHaveBeenCalledWith(mockItem, 1);
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('should not update quantity if input is negative', () => {
+      // Arrange
+      const event = { target: { value: '-5' } } as unknown as Event;
+      const spy = jest
+        .spyOn(component, 'emitQuantityChangeInput')
+        .mockImplementation(() => {});
+
+      // Act
+      component.onQuantityInput(mockCartItem, event);
+
+      // Assert
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('should update quantity if input is valid and within stock', () => {
+      // Arrange
+      const mockItem = { ...mockCartItem, quantity: 2 };
+      const event = { target: { value: '5' } } as unknown as Event;
+      const spy = jest
+        .spyOn(component, 'emitQuantityChangeInput')
+        .mockImplementation(() => {});
+
+      // Act
+      component.onQuantityInput(mockCartItem, event);
+
+      // Assert
+      expect(spy).toHaveBeenCalledWith(mockItem, 5);
+    });
+
+    it('should correct quantity if input exceeds stock', () => {
+      // Arrange
+      const event = { target: { value: '15' } } as unknown as Event;
+      const spy = jest
+        .spyOn(component, 'emitQuantityChangeInput')
+        .mockImplementation(() => {});
+
+      // Act
+      component.onQuantityInput(mockCartItem, event);
+
+      // Assert
+      expect(spy).toHaveBeenCalledWith(mockItem, 10);
     });
 
     it('should set value to maxStock if input is greater than stock', () => {
@@ -363,6 +402,49 @@ describe('CartDetailComponent', () => {
       // Act
       const otherEvent = new KeyboardEvent('keydown', { key: 'Tab' });
       component.onCartItemKeyDown(otherEvent, mockItem);
+
+      // Assert
+      expect(spy).not.toHaveBeenCalled();
+    });
+  });
+  describe('onQuantityBlur', () => {
+    it('should correct quantity to 1 if input is empty on blur', () => {
+      // Arrange
+      const event = { target: { value: '' } } as unknown as Event;
+      const spy = jest
+        .spyOn(component, 'emitQuantityChangeInput')
+        .mockImplementation(() => {});
+
+      // Act
+      component.onQuantityBlur(mockCartItem, event);
+
+      // Assert
+      expect(spy).toHaveBeenCalledWith(mockCartItem, 1);
+    });
+
+    it('should correct quantity to 1 if input is negative on blur', () => {
+      // Arrange
+      const event = { target: { value: '-8' } } as unknown as Event;
+      const spy = jest
+        .spyOn(component, 'emitQuantityChangeInput')
+        .mockImplementation(() => {});
+
+      // Act
+      component.onQuantityBlur(mockCartItem, event);
+
+      // Assert
+      expect(spy).toHaveBeenCalledWith(mockCartItem, 1);
+    });
+
+    it('should not correct quantity if input is valid on blur', () => {
+      // Arrange
+      const event = { target: { value: '5' } } as unknown as Event;
+      const spy = jest
+        .spyOn(component, 'emitQuantityChangeInput')
+        .mockImplementation(() => {});
+
+      // Act
+      component.onQuantityBlur(mockCartItem, event);
 
       // Assert
       expect(spy).not.toHaveBeenCalled();
