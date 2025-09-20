@@ -167,7 +167,7 @@ export class CartDetailComponent implements OnInit {
   emitQuantityChangeInput(item: CartItem, newQuantity: number): void {
     if (!this.quantitySubjects.has(item.product.id)) {
       const subject = new Subject<number>();
-      subject.pipe(debounceTime(500)).subscribe((quantity) => {
+      subject.pipe(debounceTime(1700)).subscribe((quantity) => {
         const cart = this.data();
         if (cart) {
           const updatedItems = cart.items.map((i) =>
@@ -200,21 +200,38 @@ export class CartDetailComponent implements OnInit {
   }
   onQuantityInput(item: CartItem, event: Event): void {
     const input = event.target as HTMLInputElement;
-    let value = Number(input.value);
+    const value = input.value;
+
+    if (value === '') {
+      return;
+    }
+
+    let numValue = Number(value);
     const maxStock = item.product.stock?.quantityAvailable ?? Infinity;
 
-    if (value < 1 || isNaN(value)) {
-      value = 1;
-      input.value = '1';
-    } else if (value > maxStock) {
-      value = maxStock;
+    if (numValue < 1 || isNaN(numValue)) {
+      return;
+    }
+
+    if (numValue > maxStock) {
+      numValue = maxStock;
       input.value = String(maxStock);
       this.snackBar.open('No hay suficiente stock disponible', 'Cerrar', {
         duration: 3000,
       });
     }
 
-    this.emitQuantityChangeInput(item, value);
+    this.emitQuantityChangeInput(item, numValue);
+  }
+
+  onQuantityBlur(item: CartItem, event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const value = input.value;
+
+    if (value === '' || Number(value) < 1 || isNaN(Number(value))) {
+      input.value = '1';
+      this.emitQuantityChangeInput(item, 1);
+    }
   }
   goToProducts(): void {
     this.router.navigate(['productos/cliente']);

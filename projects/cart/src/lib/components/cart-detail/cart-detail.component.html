@@ -71,6 +71,7 @@
                     [value]="item.quantity"
                     (input)="onQuantityInput(item, $event)"
                     (click)="$event.stopPropagation()"
+                    (blur)="onQuantityBlur(item, $event)"
                   />
 
                   <mp-button

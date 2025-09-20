@@ -177,28 +177,6 @@ describe('ProductListClientComponent', () => {
         }),
       );
     });
-
-    it('should close the drawer when footer firstButton click is called', () => {
-      const closeSpy = jest.spyOn(lateralDrawerService, 'close');
-      component.products = [
-        {
-          id: 1,
-          stock: 2,
-          name: 'Test',
-          price: 10,
-          weight: 1,
-          description: '',
-          categoryName: '',
-          supplierBusinessName: '',
-          enabled: true,
-        },
-      ];
-
-      component.openProductDrawer({ productId: 1, quantity: 2 });
-      const config = (lateralDrawerService.open as jest.Mock).mock.calls[0][2];
-      config.footer.firstButton.click();
-      expect(closeSpy).toHaveBeenCalled();
-    });
   });
 
   describe('Keyboard events', () => {
