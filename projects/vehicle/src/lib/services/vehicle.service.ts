@@ -7,11 +7,13 @@ import { Observable } from 'rxjs';
 import { CreateMaintenanceItemRequest } from '../models/maintenance-item-create.model';
 import { SearchMaintenanceItemResponse } from '../models/maintenance-item-response.model';
 import { UpdateMaintenanceItemRequest } from '../models/maintenance-item-update.model';
+import { MaintenancePerformRequest } from '../models/maintenance-perform.model';
 import { MaintenancePlanCreate } from '../models/maintenance-plan-create.model';
 import { SearchMaintenancePlanResponse } from '../models/maintenance-plan-response.model';
 import { MaintenanceRepairParams } from '../models/maintenance-repair-param.model';
 import { SearchMaintenanceRepairResponse } from '../models/maintenance-response.model';
 import { SearchVehicleResponse } from '../models/search-vehicle-response.model';
+import { SupplierSearchResponseModel } from '../models/supplier-search-response-model';
 import { VehicleCreate } from '../models/vehicle-create.model';
 import { VehicleListItem } from '../models/vehicle-item.model';
 import { VehicleParams } from '../models/vehicle-params.model';
@@ -112,5 +114,20 @@ export class VehicleService {
   ): Observable<void> {
     const url = `${this.baseUrl}/maintenance-item/${idMaintenanceItem}`;
     return this.http.put<void>(url, request);
+  }
+
+  createMaintenanceAsync(
+    vehicleId: number,
+    payload: MaintenancePerformRequest,
+  ): Observable<void> {
+    const url = `${this.baseUrl}/${vehicleId}/maintenance`;
+    return this.http.post<void>(url, payload);
+  }
+
+  searchServiceSuppliers(
+    params: MaintenanceRepairParams,
+  ): Observable<SupplierSearchResponseModel> {
+    const url = `${environment.apiBaseUrl}/service-supplier/search`;
+    return this.http.post<SupplierSearchResponseModel>(url, params);
   }
 }

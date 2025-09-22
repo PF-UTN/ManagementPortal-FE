@@ -7,7 +7,10 @@ import {
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
+import { MaintenancePerformRequest } from '../models/maintenance-perform.model';
 import { MaintenancePlanCreate } from '../models/maintenance-plan-create.model';
+import { MaintenanceRepairParams } from '../models/maintenance-repair-param.model';
+import { SupplierSearchResponseModel } from '../models/supplier-search-response-model';
 import { VehicleCreate } from '../models/vehicle-create.model';
 import { VehicleParams } from '../models/vehicle-params.model';
 import { VehicleService } from '../services/vehicle.service';
@@ -675,6 +678,121 @@ describe('VehicleService', () => {
       // Assert
       const req = httpMock.expectOne(url);
       expect(req.request.method).toBe('PUT');
+      req.error(mockError);
+    });
+  });
+
+  describe('createMaintenanceAsync', () => {
+    it('should send a POST request with the correct payload and return void', () => {
+      // Arrange
+      const vehicleId = 123;
+      const payload: MaintenancePerformRequest = {
+        date: '2025-10-01',
+        kmPerformed: 20000,
+        maintenancePlanItemId: 3,
+        serviceSupplierId: 2,
+      };
+      const url = `${baseUrl}/${vehicleId}/maintenance`;
+
+      // Act
+      service
+        .createMaintenanceAsync(vehicleId, payload)
+        .subscribe((response) => {
+          // Assert
+          expect(response).toBeUndefined();
+        });
+
+      // Assert
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(payload);
+      req.flush(null);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const vehicleId = 123;
+      const payload: MaintenancePerformRequest = {
+        date: '2025-10-01',
+        kmPerformed: 20000,
+        maintenancePlanItemId: 3,
+        serviceSupplierId: 2,
+      };
+      const mockError = new ErrorEvent('Network error');
+      const url = `${baseUrl}/${vehicleId}/maintenance`;
+
+      // Act
+      service.createMaintenanceAsync(vehicleId, payload).subscribe({
+        next: () => {
+          fail('Expected an error, but got a successful response');
+        },
+        error: (error) => {
+          // Assert
+          expect(error.error).toBe(mockError);
+        },
+      });
+
+      // Assert
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
+      req.error(mockError);
+    });
+  });
+
+  describe('searchServiceSuppliers', () => {
+    it('should send a POST request with the correct params and return data', () => {
+      // Arrange
+      const params: MaintenanceRepairParams = {
+        page: 1,
+        pageSize: 10,
+        searchText: 'proveedor',
+      };
+      const mockResponse: SupplierSearchResponseModel = {
+        total: 2,
+        results: [
+          { id: 1, businessName: 'Proveedor 1' },
+          { id: 2, businessName: 'Proveedor 2' },
+        ],
+      };
+      const url = `${environment.apiBaseUrl}/service-supplier/search`;
+
+      // Act
+      service.searchServiceSuppliers(params).subscribe((response) => {
+        // Assert
+        expect(response).toEqual(mockResponse);
+      });
+
+      // Assert
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(params);
+      req.flush(mockResponse);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const params: MaintenanceRepairParams = {
+        page: 1,
+        pageSize: 10,
+        searchText: 'proveedor',
+      };
+      const mockError = new ErrorEvent('Network error');
+      const url = `${environment.apiBaseUrl}/service-supplier/search`;
+
+      // Act
+      service.searchServiceSuppliers(params).subscribe({
+        next: () => {
+          fail('Expected an error, but got a successful response');
+        },
+        error: (error) => {
+          // Assert
+          expect(error.error).toBe(mockError);
+        },
+      });
+
+      // Assert
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
       req.error(mockError);
     });
   });
