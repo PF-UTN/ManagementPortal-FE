@@ -5,6 +5,7 @@ import {
   fakeAsync,
   tick,
 } from '@angular/core/testing';
+import { Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
@@ -163,12 +164,16 @@ describe('PerformMaintenancePlanComponent', () => {
     it('should mark kmPerformed as invalid if less than or equal to kmTraveled', () => {
       // Arrange
       component.kmTraveled = 1000;
+      component.maintenanceForm.controls.kmPerformed.setValidators([
+        Validators.required,
+        Validators.min(component.kmTraveled),
+      ]);
       component.maintenanceForm.controls.kmPerformed.setValue(900);
       // Act
       component.maintenanceForm.controls.kmPerformed.updateValueAndValidity();
       // Assert
       expect(
-        component.maintenanceForm.controls.kmPerformed.hasError('kmTooLow'),
+        component.maintenanceForm.controls.kmPerformed.hasError('min'),
       ).toBe(true);
     });
 

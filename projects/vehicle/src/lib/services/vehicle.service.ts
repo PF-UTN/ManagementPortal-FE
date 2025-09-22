@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 import { CreateMaintenanceItemRequest } from '../models/maintenance-item-create.model';
 import { SearchMaintenanceItemResponse } from '../models/maintenance-item-response.model';
 import { UpdateMaintenanceItemRequest } from '../models/maintenance-item-update.model';
-import { MaintenanceCreate } from '../models/maintenance-perform.model';
+import { MaintenancePerformRequest } from '../models/maintenance-perform.model';
 import { MaintenancePlanCreate } from '../models/maintenance-plan-create.model';
 import { SearchMaintenancePlanResponse } from '../models/maintenance-plan-response.model';
 import { MaintenanceRepairParams } from '../models/maintenance-repair-param.model';
@@ -118,7 +118,7 @@ export class VehicleService {
 
   createMaintenanceAsync(
     vehicleId: number,
-    payload: MaintenanceCreate,
+    payload: MaintenancePerformRequest,
   ): Observable<void> {
     const url = `${this.baseUrl}/${vehicleId}/maintenance`;
     return this.http.post<void>(url, payload);

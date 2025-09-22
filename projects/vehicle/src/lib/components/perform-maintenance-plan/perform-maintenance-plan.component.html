@@ -35,7 +35,7 @@
                         icon="close">
                     </mp-input>
                     <div class="error-placeholder">
-                        <mat-error *ngIf="maintenanceForm.controls.kmPerformed.hasError('kmTooLow')">
+                       <mat-error *ngIf="maintenanceForm.controls.kmPerformed.hasError('min') && maintenanceForm.controls.kmPerformed.touched">
                             El kilometraje debe ser mayor al actual del vehículo ({{ kmTraveled }} km).
                         </mat-error>
                     </div>

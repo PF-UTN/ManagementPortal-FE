@@ -7,7 +7,7 @@ import {
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
-import { MaintenanceCreate } from '../models/maintenance-perform.model';
+import { MaintenancePerformRequest } from '../models/maintenance-perform.model';
 import { MaintenancePlanCreate } from '../models/maintenance-plan-create.model';
 import { MaintenanceRepairParams } from '../models/maintenance-repair-param.model';
 import { SupplierSearchResponseModel } from '../models/supplier-search-response-model';
@@ -686,7 +686,7 @@ describe('VehicleService', () => {
     it('should send a POST request with the correct payload and return void', () => {
       // Arrange
       const vehicleId = 123;
-      const payload: MaintenanceCreate = {
+      const payload: MaintenancePerformRequest = {
         date: '2025-10-01',
         kmPerformed: 20000,
         maintenancePlanItemId: 3,
@@ -712,7 +712,7 @@ describe('VehicleService', () => {
     it('should handle HTTP errors', () => {
       // Arrange
       const vehicleId = 123;
-      const payload: MaintenanceCreate = {
+      const payload: MaintenancePerformRequest = {
         date: '2025-10-01',
         kmPerformed: 20000,
         maintenancePlanItemId: 3,

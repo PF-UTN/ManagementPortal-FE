@@ -37,7 +37,7 @@ import {
   finalize,
 } from 'rxjs/operators';
 
-import { MaintenanceCreate } from '../../models/maintenance-perform.model';
+import { MaintenancePerformRequest } from '../../models/maintenance-perform.model';
 import { SupplierSearchResult } from '../../models/supplier-search-response-model';
 import { VehicleService } from '../../services/vehicle.service';
 
@@ -98,7 +98,7 @@ export class PerformMaintenancePlanComponent implements OnInit {
       date: new FormControl<string | null>(null, Validators.required),
       kmPerformed: new FormControl<number | null>(null, [
         Validators.required,
-        Validators.min(0),
+        Validators.min(this.kmTraveled),
       ]),
       supplier: new FormControl<SupplierSearchResult | null>(null, [
         Validators.required,
@@ -110,8 +110,7 @@ export class PerformMaintenancePlanComponent implements OnInit {
       this.kmTraveled = vehicle.kmTraveled;
       this.maintenanceForm.controls.kmPerformed.setValidators([
         Validators.required,
-        Validators.min(1),
-        this.kmGreaterThanTraveledValidator(),
+        Validators.min(this.kmTraveled),
       ]);
       this.maintenanceForm.controls.kmPerformed.updateValueAndValidity();
     });
@@ -137,13 +136,6 @@ export class PerformMaintenancePlanComponent implements OnInit {
         }),
       );
   }
-
-  kmGreaterThanTraveledValidator = (): ValidatorFn => {
-    return (control: AbstractControl) => {
-      if (this.kmTraveled == null || control.value == null) return null;
-      return control.value > this.kmTraveled ? null : { kmTooLow: true };
-    };
-  };
 
   displaySupplier(supplier: SupplierSearchResult): string {
     return supplier?.businessName ?? '';
@@ -189,7 +181,7 @@ export class PerformMaintenancePlanComponent implements OnInit {
     }
     this.isLoading = true;
     const { date, kmPerformed, supplier } = this.maintenanceForm.value;
-    const payload: MaintenanceCreate = {
+    const payload: MaintenancePerformRequest = {
       date: date!,
       kmPerformed: kmPerformed!,
       maintenancePlanItemId: this.maintenancePlanItemId,

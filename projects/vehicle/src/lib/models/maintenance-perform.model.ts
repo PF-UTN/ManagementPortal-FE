@@ -1,4 +1,4 @@
-export interface MaintenanceCreate {
+export interface MaintenancePerformRequest {
   date: string;
   kmPerformed: number;
   maintenancePlanItemId: number;
