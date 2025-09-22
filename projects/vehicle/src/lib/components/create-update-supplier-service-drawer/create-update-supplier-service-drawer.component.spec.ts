@@ -51,7 +51,6 @@ describe('CreateUpdateSupplierServiceDrawerComponent', () => {
           useValue: mockDeep<LateralDrawerService>(),
         },
         { provide: TownService, useValue: mockDeep<TownService>() },
-        { provide: MatSnackBar, useValue: mockDeep<MatSnackBar>() },
       ],
     }).compileComponents();
 
@@ -60,7 +59,6 @@ describe('CreateUpdateSupplierServiceDrawerComponent', () => {
     );
     component = fixture.componentInstance;
     vehicleService = TestBed.inject(VehicleService);
-    snackBar = TestBed.inject(MatSnackBar);
     fixture.detectChanges();
   });
 
