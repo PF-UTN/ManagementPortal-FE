@@ -2,7 +2,8 @@ import { environment } from '@Common';
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 import { CreateMaintenanceItemRequest } from '../models/maintenance-item-create.model';
 import { SearchMaintenanceItemResponse } from '../models/maintenance-item-response.model';
@@ -13,11 +14,15 @@ import { SearchMaintenancePlanResponse } from '../models/maintenance-plan-respon
 import { MaintenanceRepairParams } from '../models/maintenance-repair-param.model';
 import { SearchMaintenanceRepairResponse } from '../models/maintenance-response.model';
 import { SearchVehicleResponse } from '../models/search-vehicle-response.model';
+import { ServiceSupplierCreateUpdate } from '../models/supplier-create-update.model';
+import { ServiceSupplierDetailResponse } from '../models/supplier-response-create-update.model';
+import { ServiceSupplierResponse } from '../models/supplier-response-create-update.model';
 import { SupplierSearchResponseModel } from '../models/supplier-search-response-model';
 import { VehicleCreate } from '../models/vehicle-create.model';
 import { VehicleListItem } from '../models/vehicle-item.model';
 import { VehicleParams } from '../models/vehicle-params.model';
 import { VehicleUpdate } from '../models/vehicle-update.model';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -129,5 +134,33 @@ export class VehicleService {
   ): Observable<SupplierSearchResponseModel> {
     const url = `${environment.apiBaseUrl}/service-supplier/search`;
     return this.http.post<SupplierSearchResponseModel>(url, params);
+  }
+
+  getServiceSupplierByDocument(
+    documentType: string,
+    documentNumber: string,
+  ): Observable<ServiceSupplierDetailResponse | null> {
+    const url = `${environment.apiBaseUrl}/service-supplier/search`;
+    return this.http
+      .get<ServiceSupplierDetailResponse>(url, {
+        params: { documentType, documentNumber },
+      })
+      .pipe(
+        catchError((err) => {
+          if (err?.status === 404) {
+            // Si es 404, retorna null y NO propaga el error
+            return of(null);
+          }
+          // Otros errores sí se propagan
+          throw err;
+        }),
+      );
+  }
+
+  createServiceSupplier(
+    payload: ServiceSupplierCreateUpdate,
+  ): Observable<ServiceSupplierResponse> {
+    const url = `${environment.apiBaseUrl}/service-supplier`;
+    return this.http.post<ServiceSupplierResponse>(url, payload);
   }
 }
