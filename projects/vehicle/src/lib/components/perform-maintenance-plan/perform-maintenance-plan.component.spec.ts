@@ -1,3 +1,5 @@
+import { LateralDrawerService } from '@Common-UI';
+
 import { Location } from '@angular/common';
 import {
   ComponentFixture,
@@ -25,6 +27,7 @@ describe('PerformMaintenancePlanComponent', () => {
   };
   let snackBarMock: { open: jest.Mock };
   let locationMock: { back: jest.Mock };
+  let lateralDrawerServiceMock: { open: jest.Mock };
 
   beforeEach(async () => {
     vehicleServiceMock = {
@@ -35,12 +38,17 @@ describe('PerformMaintenancePlanComponent', () => {
     snackBarMock = { open: jest.fn() };
     locationMock = { back: jest.fn() };
 
+    lateralDrawerServiceMock = {
+      open: jest.fn().mockReturnValue(of(undefined)),
+    };
+
     await TestBed.configureTestingModule({
       imports: [PerformMaintenancePlanComponent, NoopAnimationsModule],
       providers: [
         { provide: VehicleService, useValue: vehicleServiceMock },
         { provide: MatSnackBar, useValue: snackBarMock },
         { provide: Location, useValue: locationMock },
+        { provide: LateralDrawerService, useValue: lateralDrawerServiceMock },
         {
           provide: ActivatedRoute,
           useValue: {
