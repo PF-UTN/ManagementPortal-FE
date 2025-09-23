@@ -98,21 +98,12 @@ export class PerformMaintenancePlanComponent implements OnInit {
       date: new FormControl<string | null>(null, Validators.required),
       kmPerformed: new FormControl<number | null>(null, [
         Validators.required,
-        Validators.min(this.kmTraveled),
+        Validators.min(1),
       ]),
       supplier: new FormControl<SupplierSearchResult | null>(null, [
         Validators.required,
         this.supplierObjectValidator(),
       ]),
-    });
-
-    this.vehicleService.getVehicleById(this.vehicleId).subscribe((vehicle) => {
-      this.kmTraveled = vehicle.kmTraveled;
-      this.maintenanceForm.controls.kmPerformed.setValidators([
-        Validators.required,
-        Validators.min(this.kmTraveled),
-      ]);
-      this.maintenanceForm.controls.kmPerformed.updateValueAndValidity();
     });
 
     this.filteredSuppliers$ =
