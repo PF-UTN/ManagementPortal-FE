@@ -21,6 +21,12 @@
     border-radius: 4px;
     cursor: pointer;
     white-space: nowrap;
+
+    &__disabled {
+      opacity: 0.5;
+      pointer-events: none;
+      cursor: not-allowed;
+    }
   }
 
   &__list {

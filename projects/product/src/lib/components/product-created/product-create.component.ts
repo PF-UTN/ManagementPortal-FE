@@ -199,7 +199,10 @@ export class ProductCreateComponent {
           Validators.required,
         ),
       }),
-      file: new FormControl<File | null>(null, Validators.required),
+      file: new FormControl<File | null>(
+        null,
+        this.stockOnlyMode ? [] : Validators.required,
+      ),
     });
   }
 
@@ -209,6 +212,11 @@ export class ProductCreateComponent {
     Object.entries(this.productForm.controls).forEach(([key, control]) => {
       if (key !== 'stock' && key !== 'stockChangeReason') {
         control.disable();
+        if (key === 'file') {
+          control.clearValidators();
+          control.setErrors(null);
+          control.updateValueAndValidity();
+        }
       }
     });
   }

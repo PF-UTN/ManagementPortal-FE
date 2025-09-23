@@ -5,7 +5,6 @@ import {
   fakeAsync,
   tick,
 } from '@angular/core/testing';
-import { Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
@@ -72,18 +71,17 @@ describe('PerformMaintenancePlanComponent', () => {
       expect(component.maintenancePlanItemId).toBe(2);
     });
 
-    it('should set kmTraveled and update kmPerformed validators after loading vehicle', () => {
-      // Arrange
-      vehicleServiceMock.getVehicleById.mockReturnValue(
-        of({ kmTraveled: 1234 }),
-      );
-      // Act
-      component.ngOnInit();
+    it('should initialize the form with min(1) validator for kmPerformed', () => {
+      // Arrange & Act
       // Assert
-      expect(component.kmTraveled).toBe(1234);
       expect(
         component.maintenanceForm.controls.kmPerformed.validator,
       ).toBeDefined();
+      component.maintenanceForm.controls.kmPerformed.setValue(0);
+      component.maintenanceForm.controls.kmPerformed.updateValueAndValidity();
+      expect(
+        component.maintenanceForm.controls.kmPerformed.hasError('min'),
+      ).toBe(true);
     });
   });
 
@@ -161,22 +159,6 @@ describe('PerformMaintenancePlanComponent', () => {
   });
 
   describe('Validation', () => {
-    it('should mark kmPerformed as invalid if less than or equal to kmTraveled', () => {
-      // Arrange
-      component.kmTraveled = 1000;
-      component.maintenanceForm.controls.kmPerformed.setValidators([
-        Validators.required,
-        Validators.min(component.kmTraveled),
-      ]);
-      component.maintenanceForm.controls.kmPerformed.setValue(900);
-      // Act
-      component.maintenanceForm.controls.kmPerformed.updateValueAndValidity();
-      // Assert
-      expect(
-        component.maintenanceForm.controls.kmPerformed.hasError('min'),
-      ).toBe(true);
-    });
-
     it('should mark supplier as invalid if not an object or is CREATE_SUPPLIER_OPTION', () => {
       // Arrange
       component.maintenanceForm.controls.supplier.setValue(
@@ -194,6 +176,30 @@ describe('PerformMaintenancePlanComponent', () => {
       expect(
         component.maintenanceForm.controls.supplier.hasError('invalidSupplier'),
       ).toBe(true);
+    });
+
+    it('should mark kmPerformed as invalid if less than 1', () => {
+      // Arrange
+      component.maintenanceForm.controls.kmPerformed.setValue(0);
+
+      // Act
+      component.maintenanceForm.controls.kmPerformed.updateValueAndValidity();
+
+      // Assert
+      expect(
+        component.maintenanceForm.controls.kmPerformed.hasError('min'),
+      ).toBe(true);
+    });
+
+    it('should mark kmPerformed as valid if greater than or equal to 1', () => {
+      // Arrange
+      component.maintenanceForm.controls.kmPerformed.setValue(1);
+
+      // Act
+      component.maintenanceForm.controls.kmPerformed.updateValueAndValidity();
+
+      // Assert
+      expect(component.maintenanceForm.controls.kmPerformed.valid).toBe(true);
     });
   });
 

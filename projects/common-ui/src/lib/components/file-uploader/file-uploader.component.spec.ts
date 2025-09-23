@@ -98,4 +98,48 @@ describe('FileUploaderComponent', () => {
       component.selectedFiles(),
     );
   });
+
+  it('should not allow file selection when disabled', () => {
+    // Arrange
+    component.disabled = true;
+    fixture.detectChanges();
+
+    const file = new File(['test'], 'test.png', { type: 'image/png' });
+    const event = {
+      target: { files: [file] },
+    } as unknown as Event;
+
+    jest.spyOn(component.filesSelected, 'emit');
+
+    // Act
+    component.onFileSelected(event);
+
+    // Assert
+    expect(component.selectedFiles()).toHaveLength(0);
+    expect(component.filesSelected.emit).not.toHaveBeenCalled();
+  });
+
+  it('should not show "Archivo requerido" when disabled', () => {
+    // Arrange
+    component.disabled = true;
+
+    // Act
+    fixture.detectChanges();
+    const error = fixture.nativeElement.querySelector('.file-uploader__error');
+
+    // Assert
+    expect(error).toBeNull();
+  });
+
+  it('should show "Archivo requerido" when enabled and no files selected', () => {
+    // Arrange
+    component.disabled = false;
+
+    // Act
+    fixture.detectChanges();
+    const error = fixture.nativeElement.querySelector('.file-uploader__error');
+
+    // Assert
+    expect(error?.textContent).toContain('Archivo requerido');
+  });
 });

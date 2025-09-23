@@ -355,6 +355,7 @@
             [initialFiles]="selectedFiles()"
             placeholder="Subir archivo"
             (filesSelected)="onFilesSelected($event)"
+            [disabled]="stockOnlyMode"
           ></mp-file-uploader>
         </div>
       </div>

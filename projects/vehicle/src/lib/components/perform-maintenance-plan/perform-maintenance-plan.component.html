@@ -30,15 +30,10 @@
                         type="number" 
                         formControlName="kmPerformed" 
                         [min]="1" 
-                        placeholder="Kilometraje actual"
-                        label="Kilometraje actual"
+                        placeholder="Kilometraje al momento del mantenimiento"
+                        label="Kilometraje al momento del mantenimiento"
                         icon="close">
                     </mp-input>
-                    <div class="error-placeholder">
-                       <mat-error *ngIf="maintenanceForm.controls.kmPerformed.hasError('min') && maintenanceForm.controls.kmPerformed.touched">
-                            El kilometraje debe ser mayor al actual del vehículo ({{ kmTraveled }} km).
-                        </mat-error>
-                    </div>
                 </div>
             </div>
             

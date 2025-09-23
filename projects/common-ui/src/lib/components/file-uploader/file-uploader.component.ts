@@ -20,6 +20,7 @@ export class FileUploaderComponent implements OnInit {
   @Input() multiple: boolean = false;
   @Input() maxSizeMB: number = 5;
   @Input() placeholder: string = 'Seleccionar archivo(s)';
+  @Input() disabled: boolean = false;
 
   @Input() initialFiles: File[] = [];
 
@@ -41,6 +42,7 @@ export class FileUploaderComponent implements OnInit {
     }
   }
   onFileSelected(event: Event): void {
+    if (this.disabled) return;
     const input = event.target as HTMLInputElement;
     if (!input.files) return;
 
