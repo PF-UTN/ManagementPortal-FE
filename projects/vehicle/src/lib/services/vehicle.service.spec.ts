@@ -10,6 +10,11 @@ import { TestBed } from '@angular/core/testing';
 import { MaintenancePerformRequest } from '../models/maintenance-perform.model';
 import { MaintenancePlanCreate } from '../models/maintenance-plan-create.model';
 import { MaintenanceRepairParams } from '../models/maintenance-repair-param.model';
+import { ServiceSupplierCreateUpdate } from '../models/supplier-create-update.model';
+import {
+  ServiceSupplierDetailResponse,
+  ServiceSupplierResponse,
+} from '../models/supplier-response-create-update.model';
 import { SupplierSearchResponseModel } from '../models/supplier-search-response-model';
 import { VehicleCreate } from '../models/vehicle-create.model';
 import { VehicleParams } from '../models/vehicle-params.model';
@@ -793,6 +798,176 @@ describe('VehicleService', () => {
       // Assert
       const req = httpMock.expectOne(url);
       expect(req.request.method).toBe('POST');
+      req.error(mockError);
+    });
+  });
+
+  describe('getServiceSupplierByDocument', () => {
+    it('should send a GET request with the correct params and return the supplier detail', () => {
+      // Arrange
+      const documentType = 'DNI';
+      const documentNumber = '12345678';
+      const mockResponse: ServiceSupplierDetailResponse = {
+        id: 9,
+        businessName: 'Test',
+        documentType: 'DNI',
+        documentNumber: '12345678',
+        email: 'a@gmail.com',
+        phone: '1',
+        addressId: 39,
+        address: {
+          id: 39,
+          townId: 102001,
+          street: 'es',
+          streetNumber: 1,
+          town: {
+            id: 102001,
+            name: 'Buenos Aires',
+            zipCode: '1000',
+            provinceId: 102,
+          },
+        },
+      };
+      const url = `${environment.apiBaseUrl}/service-supplier/search`;
+
+      // Act & Assert
+      service
+        .getServiceSupplierByDocument(documentType, documentNumber)
+        .subscribe((response) => {
+          expect(response).toEqual(mockResponse);
+        });
+
+      const req = httpMock.expectOne(
+        (r) =>
+          r.url === url &&
+          r.params.get('documentType') === documentType &&
+          r.params.get('documentNumber') === documentNumber,
+      );
+      expect(req.request.method).toBe('GET');
+      req.flush(mockResponse);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const documentType = 'DNI';
+      const documentNumber = '12345678';
+      const mockError = new ErrorEvent('Network error');
+      const url = `${environment.apiBaseUrl}/service-supplier/search`;
+
+      // Act
+      service
+        .getServiceSupplierByDocument(documentType, documentNumber)
+        .subscribe({
+          next: () => {
+            fail('Expected an error, but got a successful response');
+          },
+          error: (error) => {
+            expect(error.error).toBe(mockError);
+          },
+        });
+
+      const req = httpMock.expectOne(
+        (r) =>
+          r.url === url &&
+          r.params.get('documentType') === documentType &&
+          r.params.get('documentNumber') === documentNumber,
+      );
+      expect(req.request.method).toBe('GET');
+      req.error(mockError);
+    });
+
+    it('should return null if the error status is 404', () => {
+      // Arrange
+      const documentType = 'DNI';
+      const documentNumber = '12345678';
+      const url = `${environment.apiBaseUrl}/service-supplier/search`;
+
+      // Act
+      service
+        .getServiceSupplierByDocument(documentType, documentNumber)
+        .subscribe((response) => {
+          // Assert
+          expect(response).toBeNull();
+        });
+
+      const req = httpMock.expectOne(
+        (r) =>
+          r.url === url &&
+          r.params.get('documentType') === documentType &&
+          r.params.get('documentNumber') === documentNumber,
+      );
+      expect(req.request.method).toBe('GET');
+      req.flush({}, { status: 404, statusText: 'Not Found' });
+    });
+  });
+
+  describe('createServiceSupplier', () => {
+    it('should send a POST request with the correct payload and return the supplier response', () => {
+      // Arrange
+      const payload: ServiceSupplierCreateUpdate = {
+        businessName: 'Pampa Nutrición',
+        documentType: 'DNI',
+        documentNumber: '11222333',
+        email: 'contacto@pampanutricion.com',
+        phone: '+1234567890',
+        address: {
+          street: 'Calle Falsa',
+          streetNumber: 123,
+          townId: 1,
+        },
+      };
+      const mockResponse: ServiceSupplierResponse = {
+        id: 10,
+        businessName: 'Pampa Nutrición',
+        documentType: 'DNI',
+        documentNumber: '11222333',
+        email: 'contacto@pampanutricion.com',
+        phone: '+1234567890',
+        addressId: 40,
+      };
+      const url = `${environment.apiBaseUrl}/service-supplier`;
+
+      // Act & Assert
+      service.createServiceSupplier(payload).subscribe((response) => {
+        expect(response).toEqual(mockResponse);
+      });
+
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(payload);
+      req.flush(mockResponse);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const payload: ServiceSupplierCreateUpdate = {
+        businessName: 'Pampa Nutrición',
+        documentType: 'DNI',
+        documentNumber: '11222333',
+        email: 'contacto@pampanutricion.com',
+        phone: '+1234567890',
+        address: {
+          street: 'Calle Falsa',
+          streetNumber: 123,
+          townId: 1,
+        },
+      };
+      const mockError = new ErrorEvent('Network error');
+      const url = `${environment.apiBaseUrl}/service-supplier`;
+
+      // Act
+      service.createServiceSupplier(payload).subscribe({
+        next: () => {
+          fail('Expected an error, but got a successful response');
+        },
+        error: (error) => {
+          expect(error.error).toBe(mockError);
+        },
+      });
+
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(payload);
       req.error(mockError);
     });
   });

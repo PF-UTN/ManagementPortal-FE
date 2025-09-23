@@ -47,15 +47,6 @@
                     placeholder="Buscar proveedor" 
                     [attr.autocomplete]="'off'" 
                 />
-                <button
-                    *ngIf="showEditSupplierIcon"
-                    matSuffix
-                    mat-icon-button
-                    aria-label="Editar proveedor"
-                    type="button"
-                    tabindex="-1">
-                    <mat-icon>edit</mat-icon>
-                </button>
                 <mat-autocomplete #autoSupplier="matAutocomplete" [displayWith]="displaySupplier"
                     (optionSelected)="onSupplierSelected($event)">
                     <mat-option *ngFor="let supplier of filteredSuppliers$ | async" [value]="supplier"

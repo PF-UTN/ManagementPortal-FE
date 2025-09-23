@@ -3,6 +3,7 @@ import {
   TitleComponent,
   ButtonComponent,
   InputComponent,
+  LateralDrawerService,
 } from '@Common-UI';
 
 import { CommonModule, Location } from '@angular/common';
@@ -40,6 +41,7 @@ import {
 import { MaintenancePerformRequest } from '../../models/maintenance-perform.model';
 import { SupplierSearchResult } from '../../models/supplier-search-response-model';
 import { VehicleService } from '../../services/vehicle.service';
+import { CreateUpdateSupplierServiceDrawerComponent } from '../create-update-supplier-service-drawer/create-update-supplier-service-drawer.component';
 
 @Component({
   selector: 'lib-perform-maintenance-plan',
@@ -86,6 +88,7 @@ export class PerformMaintenancePlanComponent implements OnInit {
     private readonly route: ActivatedRoute,
     private readonly snackBar: MatSnackBar,
     private readonly location: Location,
+    private readonly lateralDrawerService: LateralDrawerService,
   ) {}
 
   ngOnInit(): void {
@@ -143,7 +146,24 @@ export class PerformMaintenancePlanComponent implements OnInit {
   }
 
   onCreateSupplierClick() {
-    // aca va el drawer de crear proveedor
+    this.lateralDrawerService
+      .open(
+        CreateUpdateSupplierServiceDrawerComponent,
+        {},
+        {
+          title: 'Gestionar proveedor',
+          size: 'small',
+          footer: {
+            firstButton: {
+              text: 'Cancelar',
+              click: () => this.lateralDrawerService.close(),
+            },
+          },
+        },
+      )
+      .subscribe(() => {
+        this.maintenanceForm.controls.supplier.setValue(null);
+      });
   }
 
   supplierObjectValidator(): ValidatorFn {

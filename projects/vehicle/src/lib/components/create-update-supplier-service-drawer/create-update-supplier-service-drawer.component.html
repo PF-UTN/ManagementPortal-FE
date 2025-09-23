@@ -1,0 +1,95 @@
+<form
+  [formGroup]="form"
+  class="container-fluid p-3"
+  (keydown.enter)="onSubmit()">
+  
+  <div class="mb-4">
+    <mat-form-field class="w-100" appearance="outline">
+      <mat-label>Tipo de Documento</mat-label>
+      <mat-select formControlName="documentType" [disabled]="isUpdating()">
+        <mat-option value="DNI">DNI</mat-option>
+        <mat-option value="CUIT">CUIT</mat-option>
+        <mat-option value="CUIL">CUIL</mat-option>
+      </mat-select>
+      <mat-error
+        *ngIf="form.controls.documentType?.hasError('required') && form.controls.documentType?.touched"
+      >
+        Tipo de Documento es requerido
+      </mat-error>
+    </mat-form-field>
+  </div>
+
+  <div class="mb-4">
+    <mp-input
+      type="text"
+      label="Número Documento"
+      formControlName="documentNumber"
+      [disabled]="isUpdating()"
+      [maxlength]="form.controls.documentType.value === 'DNI' ? 8 : (form.controls.documentType.value === 'CUIT' || form.controls.documentType.value === 'CUIL' ? 11 : null)"
+      [hint]="form.controls.documentType.value === 'DNI' ? (form.controls.documentNumber.value?.length || 0) + '/8' : (form.controls.documentType.value === 'CUIT' || form.controls.documentType.value === 'CUIL' ? (form.controls.documentNumber.value?.length || 0) + '/11' : '')"
+    ></mp-input>
+  </div>
+
+  <mp-loading *ngIf="isLoading()"></mp-loading>
+
+  <div *ngIf="!isLoading()">
+    <div class="mb-4">
+      <mp-input
+        type="text"
+        label="Razón Social"
+        formControlName="businessName"
+      />
+    </div>
+    <div class="mb-4">
+      <mp-input
+        type="email"
+        label="Email"
+        formControlName="email"
+      />
+    </div>
+    <div class="mb-4">
+      <mp-input
+        type="text"
+        label="Teléfono"
+        formControlName="phone"
+      />
+    </div>
+    <div class="row g-3 mb-4">
+      <div class="col-7">
+        <mp-input
+          type="text"
+          label="Calle"
+          formControlName="street"
+        />
+      </div>
+      <div class="col-5">
+        <mp-input
+          type="number"
+          label="Número"
+          formControlName="streetNumber"
+        />
+      </div>
+    </div>
+    
+    <div class="mb-4">
+      <mp-input
+        label="Ciudad"
+        formControlName="town"
+        [icon]="'close'"
+        [errorMessages]="{
+          invalidTown: 'Debe seleccionar una ciudad de la lista.'
+        }"
+        type="text"
+        placeholder="Buscar ciudad o código postal"
+        [matAutocomplete]="auto"
+        ></mp-input>
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayTown.bind(this)">
+            <mat-option *ngFor="let town of filteredTowns$ | async" [value]="town">
+            {{ town.name }} ({{ town.zipCode }})
+            </mat-option>
+        </mat-autocomplete>
+    </div>
+
+  </div>
+  
+</form>
