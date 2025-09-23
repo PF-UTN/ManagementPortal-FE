@@ -323,4 +323,80 @@ describe('OrderListClientComponent', () => {
       }
     });
   });
+
+  describe('mapStatusNameToEnum', () => {
+    it('should map spanish status names to enum', () => {
+      // Arrange
+      const cases = [
+        { input: 'pendiente', expected: OrderStatusOptions.Pending },
+        { input: 'en preparación', expected: OrderStatusOptions.InPreparation },
+        { input: 'enviado', expected: OrderStatusOptions.Shipped },
+        { input: 'entregado', expected: OrderStatusOptions.Delivered },
+        { input: 'cancelado', expected: OrderStatusOptions.Cancelled },
+        { input: 'devuelto', expected: OrderStatusOptions.Returned },
+        { input: 'desconocido', expected: OrderStatusOptions.Pending },
+        { input: undefined, expected: OrderStatusOptions.Pending },
+      ];
+
+      // Act & Assert
+      cases.forEach(({ input, expected }) => {
+        expect(component['mapStatusNameToEnum'](input)).toBe(expected);
+      });
+    });
+  });
+
+  describe('getStatusLabel', () => {
+    it('should return spanish label for each enum value', () => {
+      // Arrange
+      const cases = [
+        { input: OrderStatusOptions.Pending, expected: 'Pendiente' },
+        { input: OrderStatusOptions.InPreparation, expected: 'En preparación' },
+        { input: OrderStatusOptions.Shipped, expected: 'Enviado' },
+        { input: OrderStatusOptions.Delivered, expected: 'Entregado' },
+        { input: OrderStatusOptions.Cancelled, expected: 'Cancelado' },
+        { input: OrderStatusOptions.Returned, expected: 'Devuelto' },
+        { input: 'otro' as OrderStatusOptions, expected: 'Pendiente' },
+      ];
+
+      // Act & Assert
+      cases.forEach(({ input, expected }) => {
+        expect(component.getStatusLabel(input)).toBe(expected);
+      });
+    });
+  });
+
+  describe('mapStatusToPillStatus', () => {
+    it('should return correct PillStatusEnum for each status', () => {
+      // Arrange
+      const cases = [
+        { input: OrderStatusOptions.Pending, expected: PillStatusEnum.Initial },
+        {
+          input: OrderStatusOptions.InPreparation,
+          expected: PillStatusEnum.InProgress,
+        },
+        {
+          input: OrderStatusOptions.Shipped,
+          expected: PillStatusEnum.InProgress,
+        },
+        { input: OrderStatusOptions.Delivered, expected: PillStatusEnum.Done },
+        {
+          input: OrderStatusOptions.Cancelled,
+          expected: PillStatusEnum.Cancelled,
+        },
+        {
+          input: OrderStatusOptions.Returned,
+          expected: PillStatusEnum.Warning,
+        },
+        {
+          input: 'otro' as OrderStatusOptions,
+          expected: PillStatusEnum.Initial,
+        },
+      ];
+
+      // Act & Assert
+      cases.forEach(({ input, expected }) => {
+        expect(component.mapStatusToPillStatus(input)).toBe(expected);
+      });
+    });
+  });
 });
