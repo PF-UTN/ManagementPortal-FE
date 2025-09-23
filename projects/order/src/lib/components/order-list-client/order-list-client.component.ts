@@ -3,13 +3,16 @@ import {
   TableColumn,
   TableComponent,
   TitleComponent,
+  PillStatusEnum,
 } from '@Common-UI';
 
 import { DatePipe, CurrencyPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 
+import { OrderClientSearchResult } from '../../models/order-client-response.model';
 import { OrderItem } from '../../models/order-item.model';
+import { OrderService } from '../../services/order.service';
 
 @Component({
   selector: 'mp-order-list-client',
@@ -23,7 +26,7 @@ export class OrderListClientComponent implements OnInit {
   columns: TableColumn<OrderItem>[] = [
     {
       columnDef: 'orderId',
-      header: 'Número de orden',
+      header: 'Número de pedido',
       type: ColumnTypeEnum.VALUE,
       value: (element: OrderItem) => element.id.toString(),
     },
@@ -39,6 +42,18 @@ export class OrderListClientComponent implements OnInit {
       header: 'Estado',
       type: ColumnTypeEnum.PILL,
       value: (element: OrderItem) => element.status,
+      pillStatus: (element: OrderItem) => {
+        switch (element.status) {
+          case 'Pendiente':
+            return PillStatusEnum.Initial;
+          case 'Cancelado':
+            return PillStatusEnum.Cancelled;
+          case 'Completado':
+            return PillStatusEnum.Done;
+          default:
+            return PillStatusEnum.Initial;
+        }
+      },
     },
     {
       columnDef: 'price',
@@ -87,9 +102,50 @@ export class OrderListClientComponent implements OnInit {
   constructor(
     private datePipe: DatePipe,
     private currencyPipe: CurrencyPipe,
+    private orderService: OrderService,
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.doSearchSubject$.subscribe(() => {
+      this.loadOrders();
+    });
+    this.loadOrders();
+  }
+
+  private mapToOrderItem(apiResult: OrderClientSearchResult): OrderItem {
+    return {
+      id: apiResult.id,
+      createdAt: apiResult.createdAt,
+      status: apiResult.orderStatusName,
+      totalAmount: apiResult.totalAmount,
+      quantityProducts: apiResult.productsCount,
+    };
+  }
+
+  loadOrders(): void {
+    this.isLoading = true;
+    const token = localStorage.getItem('token');
+    const body = {
+      searchText: this.searchText,
+      page: this.pageIndex + 1,
+      pageSize: this.pageSize,
+      filters: {},
+    };
+
+    this.orderService.searchClientOrders(body, token).subscribe({
+      next: (response) => {
+        const mapped = response.results.map((r) => this.mapToOrderItem(r));
+        this.dataSource$.next(mapped);
+        this.itemsNumber = response.total;
+        this.isLoading = false;
+      },
+      error: () => {
+        this.dataSource$.next([]);
+        this.itemsNumber = 0;
+        this.isLoading = false;
+      },
+    });
+  }
 
   onDetailDrawer(order: OrderItem) {
     console.log('Ver detalle de la orden', order);

@@ -1,8 +1,12 @@
 import { registerLocaleData } from '@angular/common';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import localeEsAr from '@angular/common/locales/es-AR';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { of } from 'rxjs';
 
 import { OrderListClientComponent } from './order-list-client.component';
+import { OrderClientSearchResponse } from '../../models/order-client-response.model';
 import { OrderItem } from '../../models/order-item.model';
 
 registerLocaleData(localeEsAr);
@@ -14,6 +18,7 @@ describe('OrderListClientComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [OrderListClientComponent],
+      providers: [provideHttpClient(), provideHttpClientTesting()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(OrderListClientComponent);
@@ -214,6 +219,45 @@ describe('OrderListClientComponent', () => {
       expect(nextSpy).toHaveBeenCalled();
 
       nextSpy.mockRestore();
+    });
+  });
+
+  describe('loadOrders', () => {
+    it('should call orderService, map results and update dataSource$', () => {
+      // Arrange
+      const mockResponse: OrderClientSearchResponse = {
+        total: 1,
+        results: [
+          {
+            id: 1,
+            orderStatusName: 'Pendiente',
+            createdAt: '2025-09-20T11:02:59.042Z',
+            totalAmount: 804,
+            productsCount: 1,
+          },
+        ],
+      };
+      const mappedOrder = {
+        id: 1,
+        createdAt: '2025-09-20T11:02:59.042Z',
+        status: 'Pendiente',
+        totalAmount: 804,
+        quantityProducts: 1,
+      };
+      const serviceSpy = jest
+        .spyOn(component['orderService'], 'searchClientOrders')
+        .mockReturnValue(of(mockResponse));
+
+      // Act
+      component.loadOrders();
+
+      // Assert
+      expect(serviceSpy).toHaveBeenCalled();
+      component.dataSource$.subscribe((data) => {
+        expect(data).toEqual([mappedOrder]);
+      });
+      expect(component.itemsNumber).toBe(1);
+      expect(component.isLoading).toBe(false);
     });
   });
 });
