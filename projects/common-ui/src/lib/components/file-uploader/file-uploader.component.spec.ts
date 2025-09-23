@@ -98,4 +98,24 @@ describe('FileUploaderComponent', () => {
       component.selectedFiles(),
     );
   });
+
+  it('should not allow file selection when disabled', () => {
+    // Arrange
+    component.disabled = true;
+    fixture.detectChanges();
+
+    const file = new File(['test'], 'test.png', { type: 'image/png' });
+    const event = {
+      target: { files: [file] },
+    } as unknown as Event;
+
+    jest.spyOn(component.filesSelected, 'emit');
+
+    // Act
+    component.onFileSelected(event);
+
+    // Assert
+    expect(component.selectedFiles()).toHaveLength(0);
+    expect(component.filesSelected.emit).not.toHaveBeenCalled();
+  });
 });

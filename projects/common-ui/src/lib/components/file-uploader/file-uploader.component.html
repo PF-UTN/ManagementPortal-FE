@@ -6,9 +6,10 @@
         [attr.accept]="accept"
         [attr.multiple]="multiple ? '' : null"
         (change)="onFileSelected($event)"
+        [disabled]="disabled"
         hidden
       />
-      <span class="file-uploader__upload-btn">{{ placeholder }}</span>
+      <span class="file-uploader__upload-btn" [class.file-uploader__upload-btn__disabled]="disabled">{{ placeholder }}</span>
     </label>
     @if (errorMessage) {
       <div class="file-uploader__error">{{ errorMessage }}</div>

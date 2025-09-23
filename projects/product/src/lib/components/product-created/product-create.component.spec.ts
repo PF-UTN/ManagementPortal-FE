@@ -220,7 +220,7 @@ describe('ProductCreateComponent', () => {
   describe('onSubmit', () => {
     it('should not call createProduct if form is invalid', () => {
       // act
-      component.productForm.patchValue({ name: '' }); // invalid
+      component.productForm.patchValue({ name: '' });
       component.onSubmit();
       // assert
       expect(productServiceMock.createProduct).not.toHaveBeenCalled();
