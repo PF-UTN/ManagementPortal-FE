@@ -1,7 +1,12 @@
 import { NavBarService } from '@Common';
 import { LateralDrawerComponent } from '@Common-UI';
 
-import { CommonModule, registerLocaleData } from '@angular/common';
+import {
+  CommonModule,
+  DATE_PIPE_DEFAULT_OPTIONS,
+  DatePipeConfig,
+  registerLocaleData,
+} from '@angular/common';
 import localeEsAr from '@angular/common/locales/es-AR';
 import { Component, computed, LOCALE_ID, Signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -20,7 +25,14 @@ registerLocaleData(localeEsAr);
     NavBarComponent,
     LateralDrawerComponent,
   ],
-  providers: [NavBarService, { provide: LOCALE_ID, useValue: 'es-AR' }],
+  providers: [
+    NavBarService,
+    { provide: LOCALE_ID, useValue: 'es-AR' },
+    {
+      provide: DATE_PIPE_DEFAULT_OPTIONS,
+      useValue: { timezone: 'UTC' } as DatePipeConfig,
+    },
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
