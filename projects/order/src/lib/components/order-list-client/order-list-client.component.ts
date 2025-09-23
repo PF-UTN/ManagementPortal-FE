@@ -4,6 +4,7 @@ import {
   TableComponent,
   TitleComponent,
   PillStatusEnum,
+  SubtitleComponent,
 } from '@Common-UI';
 
 import { DatePipe, CurrencyPipe } from '@angular/common';
@@ -12,12 +13,13 @@ import { BehaviorSubject, Subject } from 'rxjs';
 
 import { OrderClientSearchResult } from '../../models/order-client-response.model';
 import { OrderItem } from '../../models/order-item.model';
+import { OrderStatusOptions } from '../../models/order-status.enum';
 import { OrderService } from '../../services/order.service';
 
 @Component({
   selector: 'mp-order-list-client',
   standalone: true,
-  imports: [TableComponent, TitleComponent],
+  imports: [TableComponent, TitleComponent, SubtitleComponent],
   providers: [DatePipe, CurrencyPipe],
   templateUrl: './order-list-client.component.html',
   styleUrl: './order-list-client.component.scss',
@@ -41,19 +43,9 @@ export class OrderListClientComponent implements OnInit {
       columnDef: 'status',
       header: 'Estado',
       type: ColumnTypeEnum.PILL,
-      value: (element: OrderItem) => element.status,
-      pillStatus: (element: OrderItem) => {
-        switch (element.status) {
-          case 'Pendiente':
-            return PillStatusEnum.Initial;
-          case 'Cancelado':
-            return PillStatusEnum.Cancelled;
-          case 'Completado':
-            return PillStatusEnum.Done;
-          default:
-            return PillStatusEnum.Initial;
-        }
-      },
+      value: (element: OrderItem) => this.getStatusLabel(element.status),
+      pillStatus: (element: OrderItem) =>
+        this.mapStatusToPillStatus(element.status),
     },
     {
       columnDef: 'price',
@@ -111,12 +103,72 @@ export class OrderListClientComponent implements OnInit {
     });
     this.loadOrders();
   }
+  private mapStatusNameToEnum(
+    statusName: string | undefined,
+  ): OrderStatusOptions {
+    switch ((statusName ?? '').toLowerCase()) {
+      case 'pendiente':
+        return OrderStatusOptions.Pending;
+      case 'en preparación':
+        return OrderStatusOptions.InPreparation;
+      case 'enviado':
+        return OrderStatusOptions.Shipped;
+      case 'entregado':
+        return OrderStatusOptions.Delivered;
+      case 'cancelado':
+        return OrderStatusOptions.Cancelled;
+      case 'devuelto':
+        return OrderStatusOptions.Returned;
+      default:
+        return OrderStatusOptions.Pending;
+    }
+  }
+
+  getStatusLabel(status: OrderStatusOptions): string {
+    switch (status) {
+      case OrderStatusOptions.Pending:
+        return 'Pendiente';
+      case OrderStatusOptions.InPreparation:
+        return 'En preparación';
+      case OrderStatusOptions.Shipped:
+        return 'Enviado';
+      case OrderStatusOptions.Delivered:
+        return 'Entregado';
+      case OrderStatusOptions.Cancelled:
+        return 'Cancelado';
+      case OrderStatusOptions.Returned:
+        return 'Devuelto';
+      default:
+        return 'Pendiente'; // <-- valor por defecto, no status
+    }
+  }
+
+  mapStatusToPillStatus(status: OrderStatusOptions): PillStatusEnum {
+    switch (status) {
+      case OrderStatusOptions.Pending:
+        return PillStatusEnum.Initial;
+      case OrderStatusOptions.InPreparation:
+        return PillStatusEnum.InProgress;
+      case OrderStatusOptions.Shipped:
+        return PillStatusEnum.InProgress;
+      case OrderStatusOptions.Delivered:
+        return PillStatusEnum.Done;
+      case OrderStatusOptions.Cancelled:
+        return PillStatusEnum.Cancelled;
+      case OrderStatusOptions.Returned:
+        return PillStatusEnum.Warning;
+      default:
+        return PillStatusEnum.Initial; // <-- valor por defecto, no status
+    }
+  }
 
   private mapToOrderItem(apiResult: OrderClientSearchResult): OrderItem {
+    const status = this.mapStatusNameToEnum(apiResult.orderStatusName);
+
     return {
       id: apiResult.id,
       createdAt: apiResult.createdAt,
-      status: apiResult.orderStatusName,
+      status,
       totalAmount: apiResult.totalAmount,
       quantityProducts: apiResult.productsCount,
     };
