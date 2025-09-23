@@ -148,10 +148,8 @@ export class VehicleService {
       .pipe(
         catchError((err) => {
           if (err?.status === 404) {
-            // Si es 404, retorna null y NO propaga el error
             return of(null);
           }
-          // Otros errores sí se propagan
           throw err;
         }),
       );

@@ -875,6 +875,30 @@ describe('VehicleService', () => {
       expect(req.request.method).toBe('GET');
       req.error(mockError);
     });
+
+    it('should return null if the error status is 404', () => {
+      // Arrange
+      const documentType = 'DNI';
+      const documentNumber = '12345678';
+      const url = `${environment.apiBaseUrl}/service-supplier/search`;
+
+      // Act
+      service
+        .getServiceSupplierByDocument(documentType, documentNumber)
+        .subscribe((response) => {
+          // Assert
+          expect(response).toBeNull();
+        });
+
+      const req = httpMock.expectOne(
+        (r) =>
+          r.url === url &&
+          r.params.get('documentType') === documentType &&
+          r.params.get('documentNumber') === documentNumber,
+      );
+      expect(req.request.method).toBe('GET');
+      req.flush({}, { status: 404, statusText: 'Not Found' });
+    });
   });
 
   describe('createServiceSupplier', () => {

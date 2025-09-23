@@ -27,7 +27,7 @@ describe('PerformMaintenancePlanComponent', () => {
   };
   let snackBarMock: { open: jest.Mock };
   let locationMock: { back: jest.Mock };
-  let lateralDrawerServiceMock: { open: jest.Mock };
+  let lateralDrawerServiceMock: { open: jest.Mock; close: jest.Mock };
 
   beforeEach(async () => {
     vehicleServiceMock = {
@@ -40,6 +40,7 @@ describe('PerformMaintenancePlanComponent', () => {
 
     lateralDrawerServiceMock = {
       open: jest.fn().mockReturnValue(of(undefined)),
+      close: jest.fn(),
     };
 
     await TestBed.configureTestingModule({
@@ -165,6 +166,24 @@ describe('PerformMaintenancePlanComponent', () => {
       expect(component.maintenanceForm.controls.supplier.value).toEqual(
         supplier,
       );
+    });
+
+    it('should call lateralDrawerService.close when Cancelar button is clicked in the drawer', () => {
+      // Arrange
+      // lateralDrawerServiceMock ya tiene el método close mockeado
+      lateralDrawerServiceMock.open.mockImplementation(
+        (_comp, _data, config) => {
+          // Simula que el usuario hace click en "Cancelar"
+          config.footer.firstButton.click();
+          return of(undefined);
+        },
+      );
+
+      // Act
+      component.onCreateSupplierClick();
+
+      // Assert
+      expect(lateralDrawerServiceMock.close).toHaveBeenCalled();
     });
   });
 
