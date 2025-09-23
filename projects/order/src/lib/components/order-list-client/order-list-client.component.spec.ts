@@ -1,9 +1,11 @@
+import { PillStatusEnum } from '@Common-UI';
+
 import { registerLocaleData } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import localeEsAr from '@angular/common/locales/es-AR';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 import { OrderListClientComponent } from './order-list-client.component';
 import { OrderClientSearchResponse } from '../../models/order-client-response.model';
@@ -258,6 +260,66 @@ describe('OrderListClientComponent', () => {
       });
       expect(component.itemsNumber).toBe(1);
       expect(component.isLoading).toBe(false);
+    });
+    it('should set dataSource$ to empty, itemsNumber to 0 and isLoading to false on error', () => {
+      // Arrange
+      const serviceSpy = jest
+        .spyOn(component['orderService'], 'searchClientOrders')
+        .mockReturnValue(throwError(() => new Error('fail')));
+
+      // Act
+      component.loadOrders();
+
+      // Assert
+      component.dataSource$.subscribe((data) => {
+        expect(data).toEqual([]);
+      });
+      expect(component.itemsNumber).toBe(0);
+      expect(component.isLoading).toBe(false);
+      expect(serviceSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('columns pillStatus function', () => {
+    it('should return correct PillStatusEnum for status column', () => {
+      // Arrange
+      const column = component.columns.find((c) => c.columnDef === 'status');
+      const pendiente: OrderItem = {
+        id: 1,
+        createdAt: '',
+        status: 'Pendiente',
+        totalAmount: 0,
+        quantityProducts: 0,
+      };
+      const cancelado: OrderItem = {
+        id: 2,
+        createdAt: '',
+        status: 'Cancelado',
+        totalAmount: 0,
+        quantityProducts: 0,
+      };
+      const completado: OrderItem = {
+        id: 3,
+        createdAt: '',
+        status: 'Completado',
+        totalAmount: 0,
+        quantityProducts: 0,
+      };
+      const otro: OrderItem = {
+        id: 4,
+        createdAt: '',
+        status: 'Otro',
+        totalAmount: 0,
+        quantityProducts: 0,
+      };
+
+      // Act & Assert
+      if (column && typeof column.pillStatus === 'function') {
+        expect(column.pillStatus(pendiente)).toBe(PillStatusEnum.Initial);
+        expect(column.pillStatus(cancelado)).toBe(PillStatusEnum.Cancelled);
+        expect(column.pillStatus(completado)).toBe(PillStatusEnum.Done);
+        expect(column.pillStatus(otro)).toBe(PillStatusEnum.Initial);
+      }
     });
   });
 });
