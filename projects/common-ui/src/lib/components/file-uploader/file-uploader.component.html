@@ -14,7 +14,7 @@
     @if (errorMessage) {
       <div class="file-uploader__error">{{ errorMessage }}</div>
     }
-    @if (!errorMessage && selectedFiles().length === 0) {
+    @if (!disabled && !errorMessage && selectedFiles().length === 0) {
       <div class="file-uploader__error">Archivo requerido</div>
     }
   </div>
