@@ -1,9 +1,61 @@
 .main-container {
   &__header {
     margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px 8px 0 8px;
+  }
+}
+
+.filters-toolbar {
+  display: flex;
+  flex-direction: row;
+  font-size: 14px;
+  width: 100%;
+  padding: 16px 0;
+  gap: 8px;
+  align-items: center;
+
+  &__search {
+    flex: 1;
   }
 
-  &__body {
-    margin-top: 20px;
+  &__actions {
+    display: flex;
+    gap: 8px;
+
+    &__icon {
+      display: flex;
+      margin-top: 5px;
+    }
+
+    &__button {
+      flex-direction: row;
+      display: flex;
+      gap: 8px;
+    }
+
+    &__date {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding: 16px;
+      min-width: 260px;
+      max-width: 340px;
+
+      &__buttons {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        gap: 20px;
+      }
+
+      &__buttons mp-button {
+        min-width: 60px;
+        max-width: 90px;
+        font-size: 12px;
+      }
+    }
   }
 }
