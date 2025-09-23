@@ -10,6 +10,7 @@ import { of, throwError } from 'rxjs';
 import { OrderListClientComponent } from './order-list-client.component';
 import { OrderClientSearchResponse } from '../../models/order-client-response.model';
 import { OrderItem } from '../../models/order-item.model';
+import { OrderStatusOptions } from '../../models/order-status.enum';
 
 registerLocaleData(localeEsAr);
 
@@ -41,7 +42,7 @@ describe('OrderListClientComponent', () => {
       const order: OrderItem = {
         id: 123,
         createdAt: '2025-09-14',
-        status: 'pendiente',
+        status: OrderStatusOptions.Pending,
         totalAmount: 100,
         quantityProducts: 2,
       };
@@ -58,7 +59,7 @@ describe('OrderListClientComponent', () => {
       const order: OrderItem = {
         id: 1,
         createdAt: '2025-09-15',
-        status: 'pendiente',
+        status: OrderStatusOptions.Pending,
         totalAmount: 100,
         quantityProducts: 2,
       };
@@ -75,7 +76,7 @@ describe('OrderListClientComponent', () => {
       const order: OrderItem = {
         id: 1,
         createdAt: '2025-09-15',
-        status: 'procesando',
+        status: OrderStatusOptions.InPreparation,
         totalAmount: 100,
         quantityProducts: 2,
       };
@@ -85,14 +86,14 @@ describe('OrderListClientComponent', () => {
       if (column && typeof column.value === 'function') {
         result = column.value(order);
       }
-      expect(result).toBe('procesando');
+      expect(result).toBe('En preparación');
     });
 
     it('should format totalAmount for price column', () => {
       const order: OrderItem = {
         id: 1,
         createdAt: '2025-09-15',
-        status: 'pendiente',
+        status: OrderStatusOptions.Pending,
         totalAmount: 1234.56,
         quantityProducts: 2,
       };
@@ -110,7 +111,7 @@ describe('OrderListClientComponent', () => {
       const order: OrderItem = {
         id: 1,
         createdAt: '2025-09-15',
-        status: 'pendiente',
+        status: OrderStatusOptions.Pending,
         totalAmount: 100,
         quantityProducts: 5,
       };
@@ -132,7 +133,7 @@ describe('OrderListClientComponent', () => {
       const order: OrderItem = {
         id: 1,
         createdAt: '14/09/2025',
-        status: 'pendiente',
+        status: OrderStatusOptions.Pending,
         totalAmount: 100,
         quantityProducts: 2,
       };
@@ -154,7 +155,7 @@ describe('OrderListClientComponent', () => {
       const order: OrderItem = {
         id: 1,
         createdAt: '14/09/2025',
-        status: 'pendiente',
+        status: OrderStatusOptions.Pending,
         totalAmount: 100,
         quantityProducts: 2,
       };
@@ -287,28 +288,28 @@ describe('OrderListClientComponent', () => {
       const pendiente: OrderItem = {
         id: 1,
         createdAt: '',
-        status: 'Pendiente',
+        status: OrderStatusOptions.Pending,
         totalAmount: 0,
         quantityProducts: 0,
       };
       const cancelado: OrderItem = {
         id: 2,
         createdAt: '',
-        status: 'Cancelado',
+        status: OrderStatusOptions.Cancelled,
         totalAmount: 0,
         quantityProducts: 0,
       };
       const completado: OrderItem = {
         id: 3,
         createdAt: '',
-        status: 'Completado',
+        status: OrderStatusOptions.Delivered,
         totalAmount: 0,
         quantityProducts: 0,
       };
       const otro: OrderItem = {
         id: 4,
         createdAt: '',
-        status: 'Otro',
+        status: 'Otro' as OrderStatusOptions,
         totalAmount: 0,
         quantityProducts: 0,
       };
