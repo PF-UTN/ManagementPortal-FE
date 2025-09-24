@@ -79,7 +79,7 @@ export class PerformMaintenancePlanComponent implements OnInit {
   filteredSuppliers$!: Observable<SupplierSearchResult[]>;
   readonly CREATE_SUPPLIER_OPTION: SupplierSearchResult = {
     id: -1,
-    businessName: '+ Crear proveedor',
+    businessName: '+ Gestionar proveedores',
   };
 
   constructor(
