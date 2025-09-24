@@ -21,7 +21,7 @@
       <mat-form-field appearance="outline">
         <mat-label>Estado</mat-label>
         <mat-select multiple [(ngModel)]="selectedStatuses" (ngModelChange)="onStatusFilterChange()">
-          <mat-option *ngFor="let option of statusOptions" [value]="option.key">
+          <mat-option *ngFor="let option of statusOptions" [value]="option">
             {{ option.value }}
           </mat-option>
         </mat-select>

@@ -127,7 +127,7 @@ export class OrderListClientComponent implements OnInit {
   searchText: string = '';
 
   statusOptions = statusOptions;
-  selectedStatuses: string[] = [];
+  selectedStatuses: { key: OrderStatusOptions; value: string }[] = [];
   fromDate: Date | null = null;
   toDate: Date | null = null;
   orderByOptions = ORDER_LIST_ORDER_OPTIONS;
@@ -157,7 +157,7 @@ export class OrderListClientComponent implements OnInit {
             filters: {
               statusName:
                 this.selectedStatuses.length > 0
-                  ? this.selectedStatuses
+                  ? this.selectedStatuses.map((s) => s.key)
                   : undefined,
               fromDate: this.fromDate
                 ? this.fromDate.toISOString().slice(0, 10)
@@ -201,27 +201,6 @@ export class OrderListClientComponent implements OnInit {
     this.searchSubscription?.unsubscribe();
   }
 
-  private mapStatusNameToEnum(
-    statusName: string | undefined,
-  ): OrderStatusOptions {
-    switch ((statusName ?? '').toLowerCase()) {
-      case 'pendiente':
-        return OrderStatusOptions.Pending;
-      case 'en preparación':
-        return OrderStatusOptions.InPreparation;
-      case 'enviado':
-        return OrderStatusOptions.Shipped;
-      case 'entregado':
-        return OrderStatusOptions.Delivered;
-      case 'cancelado':
-        return OrderStatusOptions.Cancelled;
-      case 'devuelto':
-        return OrderStatusOptions.Returned;
-      default:
-        return OrderStatusOptions.Pending;
-    }
-  }
-
   getStatusLabel(status: OrderStatusOptions): string {
     switch (status) {
       case OrderStatusOptions.Pending:
@@ -261,12 +240,15 @@ export class OrderListClientComponent implements OnInit {
   }
 
   private mapToOrderItem(apiResult: OrderClientSearchResult): OrderItem {
-    const status = this.mapStatusNameToEnum(apiResult.orderStatusName);
-
     return {
       id: apiResult.id,
       createdAt: apiResult.createdAt,
-      status,
+      status:
+        this.statusOptions.find(
+          (opt) =>
+            opt.value.toLowerCase() ===
+            (apiResult.orderStatusName ?? '').toLowerCase(),
+        )?.key ?? OrderStatusOptions.Pending,
       totalAmount: apiResult.totalAmount,
       quantityProducts: apiResult.productsCount,
     };

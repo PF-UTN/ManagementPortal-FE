@@ -293,27 +293,6 @@ describe('OrderListClientComponent', () => {
     });
   });
 
-  describe('mapStatusNameToEnum', () => {
-    it('should map spanish status names to enum', () => {
-      // Arrange
-      const cases = [
-        { input: 'pendiente', expected: OrderStatusOptions.Pending },
-        { input: 'en preparación', expected: OrderStatusOptions.InPreparation },
-        { input: 'enviado', expected: OrderStatusOptions.Shipped },
-        { input: 'entregado', expected: OrderStatusOptions.Delivered },
-        { input: 'cancelado', expected: OrderStatusOptions.Cancelled },
-        { input: 'devuelto', expected: OrderStatusOptions.Returned },
-        { input: 'desconocido', expected: OrderStatusOptions.Pending },
-        { input: undefined, expected: OrderStatusOptions.Pending },
-      ];
-
-      // Act & Assert
-      cases.forEach(({ input, expected }) => {
-        expect(component['mapStatusNameToEnum'](input)).toBe(expected);
-      });
-    });
-  });
-
   describe('getStatusLabel', () => {
     it('should return spanish label for each enum value', () => {
       // Arrange
@@ -519,7 +498,9 @@ describe('OrderListClientComponent', () => {
       component.searchText = 'test';
       component.pageIndex = 1;
       component.pageSize = 20;
-      component.selectedStatuses = ['Pending'];
+      component.selectedStatuses = [
+        { key: OrderStatusOptions.Pending, value: 'Pendiente' },
+      ];
       component.fromDate = new Date('2025-09-01');
       component.toDate = new Date('2025-09-30');
       const orderOption: OrderListOrderOption = {
