@@ -31,6 +31,9 @@ describe('MaintenancePlanListComponent', () => {
       postSearchMaintenancePlanItemVehicle: jest
         .fn()
         .mockReturnValue(of({ results: [], total: 0 })),
+      postSearchMaintenanceVehicle: jest
+        .fn()
+        .mockReturnValue(of({ results: [], total: 0 })),
     } as unknown as jest.Mocked<VehicleService>;
 
     await TestBed.configureTestingModule({
@@ -195,20 +198,55 @@ describe('MaintenancePlanListComponent', () => {
         ],
         total: 2,
       };
+
+      const mockMaintenances = {
+        results: [
+          {
+            id: 101,
+            planId: 1,
+            date: '2023-01-01T00:00:00.000Z',
+            description: 'Cambio de aceite',
+            kmPerformed: 50000,
+          },
+          {
+            id: 102,
+            planId: 2,
+            date: '2023-02-01T00:00:00.000Z',
+            description: 'Cambio de filtro',
+            kmPerformed: 60000,
+          },
+        ],
+        total: 2,
+      };
+
       const vehicleService = TestBed.inject(VehicleService);
       jest
         .spyOn(vehicleService, 'postSearchMaintenancePlanItemVehicle')
         .mockReturnValue(of(mockResponse));
+      jest
+        .spyOn(vehicleService, 'postSearchMaintenanceVehicle')
+        .mockReturnValue(of(mockMaintenances));
+
       hostComponent.vehicleId = 1;
       // Act
       component.ngOnInit();
       // Assert
       const data = await firstValueFrom(component.dataSource$);
-      expect(data).toEqual(mockResponse.results);
+      expect(data).toEqual([
+        {
+          ...mockResponse.results[0],
+          lastMaintenanceDate: '2023-01-01T00:00:00.000Z',
+          lastMaintenanceKm: 50000,
+        },
+        {
+          ...mockResponse.results[1],
+          lastMaintenanceDate: '2023-02-01T00:00:00.000Z',
+          lastMaintenanceKm: 60000,
+        },
+      ]);
       expect(component.itemsNumber).toBe(2);
       expect(component.isLoading).toBe(false);
     });
-
     it('should clear dataSource$, itemsNumber and isLoading on error', async () => {
       // Arrange
       const vehicleService = TestBed.inject(VehicleService);
@@ -246,5 +284,93 @@ describe('MaintenancePlanListComponent', () => {
     expect(routerSpy).toHaveBeenCalledWith(['realizar', item.id], {
       relativeTo: component['route'],
     });
+  });
+
+  it('should calculate nextMaintenanceDate based on last maintenance and timeInterval', () => {
+    // Arrange
+    const plan: MaintenancePlanListItem = {
+      id: 1,
+      description: 'Cambio de aceite',
+      kmInterval: 10000,
+      timeInterval: 6,
+    };
+    const lastMaintenanceDate = '2023-01-01T00:00:00.000Z';
+    const planWithExtras = { ...plan, lastMaintenanceDate };
+    const column = component.columns.find(
+      (col) => col.columnDef === 'nextMaintenanceDate',
+    );
+
+    // Act
+    const result =
+      column && column.value ? column.value(planWithExtras) : undefined;
+
+    // Assert
+    const expectedDate = new Date(lastMaintenanceDate);
+    expectedDate.setMonth(expectedDate.getMonth() + plan.timeInterval!);
+    expect(result).toBe(expectedDate.toLocaleDateString());
+  });
+
+  it('should calculate nextMaintenanceKm based on last maintenance and kmInterval', () => {
+    // Arrange
+    const plan: MaintenancePlanListItem = {
+      id: 1,
+      description: 'Cambio de aceite',
+      kmInterval: 10000,
+      timeInterval: 6,
+    };
+    const lastMaintenanceKm = 50000;
+    const planWithExtras = { ...plan, lastMaintenanceKm };
+    const column = component.columns.find(
+      (col) => col.columnDef === 'nextMaintenanceKm',
+    );
+
+    // Act
+    const result =
+      column && column.value ? column.value(planWithExtras) : undefined;
+
+    // Assert
+    expect(result).toBe('60000 km');
+  });
+
+  it('should show "-" for nextMaintenanceDate if no last maintenance', () => {
+    // Arrange
+    const plan: MaintenancePlanListItem = {
+      id: 1,
+      description: 'Cambio de aceite',
+      kmInterval: 10000,
+      timeInterval: 6,
+    };
+    const planWithExtras = { ...plan, lastMaintenanceDate: undefined };
+    const column = component.columns.find(
+      (col) => col.columnDef === 'nextMaintenanceDate',
+    );
+
+    // Act
+    const result =
+      column && column.value ? column.value(planWithExtras) : undefined;
+
+    // Assert
+    expect(result).toBe('-');
+  });
+
+  it('should show "-" for nextMaintenanceKm if no last maintenance', () => {
+    // Arrange
+    const plan: MaintenancePlanListItem = {
+      id: 1,
+      description: 'Cambio de aceite',
+      kmInterval: 10000,
+      timeInterval: 6,
+    };
+    const planWithExtras = { ...plan, lastMaintenanceKm: undefined };
+    const column = component.columns.find(
+      (col) => col.columnDef === 'nextMaintenanceKm',
+    );
+
+    // Act
+    const result =
+      column && column.value ? column.value(planWithExtras) : undefined;
+
+    // Assert
+    expect(result).toBe('-');
   });
 });

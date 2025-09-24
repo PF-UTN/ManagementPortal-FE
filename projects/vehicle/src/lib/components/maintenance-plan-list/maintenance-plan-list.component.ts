@@ -6,6 +6,7 @@ import { Component, OnInit, input } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 
+import { MaintenanceItem } from '../../models/maintenance-item.model';
 import { MaintenancePlanListItem } from '../../models/maintenance-plan.model';
 
 @Component({
@@ -23,6 +24,31 @@ export class MaintenancePlanListComponent implements OnInit {
       header: 'Descripcion',
       type: ColumnTypeEnum.VALUE,
       value: (element: MaintenancePlanListItem) => element.description,
+    },
+    {
+      columnDef: 'nextMaintenanceDate',
+      header: 'Próxima fecha',
+      type: ColumnTypeEnum.VALUE,
+      value: (
+        element: MaintenancePlanListItem & { lastMaintenanceDate?: string },
+      ) => {
+        if (!element.lastMaintenanceDate || !element.timeInterval) return '-';
+        const last = new Date(element.lastMaintenanceDate);
+        last.setMonth(last.getMonth() + element.timeInterval);
+        return last.toLocaleDateString();
+      },
+    },
+    {
+      columnDef: 'nextMaintenanceKm',
+      header: 'Próximo KM',
+      type: ColumnTypeEnum.VALUE,
+      value: (
+        element: MaintenancePlanListItem & { lastMaintenanceKm?: number },
+      ) => {
+        if (element.lastMaintenanceKm == null || element.kmInterval == null)
+          return '-';
+        return element.lastMaintenanceKm + element.kmInterval + ' km';
+      },
     },
     {
       columnDef: 'kmInterval',
@@ -74,6 +100,8 @@ export class MaintenancePlanListComponent implements OnInit {
   pageIndex: number = 0;
   pageSize: number = 10;
 
+  maintenances: MaintenanceItem[] = [];
+
   constructor(
     private readonly decimalPipe: DecimalPipe,
     private readonly vechicleService: VehicleService,
@@ -102,9 +130,34 @@ export class MaintenancePlanListComponent implements OnInit {
           results: MaintenancePlanListItem[];
           total: number;
         }) => {
-          this.dataSource$.next(response.results);
-          this.itemsNumber = response.total;
-          this.isLoading = false;
+          this.vechicleService
+            .postSearchMaintenanceVehicle(this.vehicleId(), params)
+            .subscribe({
+              next: (maintResponse: { results: MaintenanceItem[] }) => {
+                this.maintenances = maintResponse.results;
+                const plansWithExtras = response.results.map((plan) => {
+                  const last = this.maintenances
+                    .filter((m) => m.description === plan.description)
+                    .sort(
+                      (a, b) =>
+                        new Date(b.date).getTime() - new Date(a.date).getTime(),
+                    )[0];
+                  return {
+                    ...plan,
+                    lastMaintenanceDate: last?.date,
+                    lastMaintenanceKm: last?.kmPerformed,
+                  };
+                });
+                this.dataSource$.next(plansWithExtras);
+                this.itemsNumber = response.total;
+                this.isLoading = false;
+              },
+              error: () => {
+                this.dataSource$.next([]);
+                this.itemsNumber = 0;
+                this.isLoading = false;
+              },
+            });
         },
         error: () => {
           this.dataSource$.next([]);
