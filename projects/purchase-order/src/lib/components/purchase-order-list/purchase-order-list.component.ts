@@ -280,7 +280,7 @@ export class PurchaseOrderListComponent implements OnInit {
       filters: {},
       orderBy: {
         field: this.selectedOrderBy?.field || PurchaseOrderOrderField.CreatedAt,
-        direction: this.selectedOrderBy?.direction || OrderDirection.ASC,
+        direction: this.selectedOrderBy?.direction || OrderDirection.DESC,
       },
     };
 
