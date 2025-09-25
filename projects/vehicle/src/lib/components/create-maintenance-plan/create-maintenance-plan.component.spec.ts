@@ -31,12 +31,19 @@ describe('CreateMaintenancePlanComponent', () => {
 
   beforeEach(async () => {
     vehicleService = {
-      postSearchMaintenanceItem: jest.fn(),
+      postSearchMaintenanceItem: jest
+        .fn()
+        .mockReturnValue(of({ results: [], total: 0 })),
       createMaintenancePlanItem: jest.fn(),
     } as unknown as jest.Mocked<VehicleService>;
 
     snackBar = { open: jest.fn() };
     location = { back: jest.fn() };
+
+    Object.defineProperty(history, 'state', {
+      value: {},
+      writable: true,
+    });
 
     await TestBed.configureTestingModule({
       imports: [CreateMaintenancePlanComponent, NoopAnimationsModule],
@@ -325,6 +332,62 @@ describe('CreateMaintenancePlanComponent', () => {
         'Cerrar',
         { duration: 3000 },
       );
+    });
+  });
+
+  describe('handleCreateOrUpdateMaintenanceItemLateralDrawer', () => {
+    it('should reset maintenanceItem control after drawer closes', () => {
+      // Arrange
+      const item: MaintenanceItemSearchResult = {
+        id: 3,
+        description: 'Drawer item',
+      };
+      jest.spyOn(lateralDrawerService, 'open').mockReturnValue(of(void 0));
+      const resetSpy = jest.spyOn(
+        component.maintenanceForm.controls.maintenanceItem,
+        'reset',
+      );
+
+      // Act
+      (component as CreateMaintenancePlanComponent)[
+        'handleCreateOrUpdateMaintenanceItemLateralDrawer'
+      ](item);
+
+      // Assert
+      expect(lateralDrawerService.open).toHaveBeenCalled();
+      expect(resetSpy).toHaveBeenCalled();
+      resetSpy.mockRestore();
+    });
+  });
+
+  describe('maintenanceItem valueChanges', () => {
+    it('should set maintenanceItemId when maintenanceItem is an object with id', () => {
+      // Arrange
+      const item: MaintenanceItemSearchResult = {
+        id: 10,
+        description: 'Sync item',
+      };
+
+      // Act
+      component.maintenanceForm.controls.maintenanceItem.setValue(item);
+
+      // Assert
+      expect(component.maintenanceForm.controls.maintenanceItemId.value).toBe(
+        10,
+      );
+    });
+
+    it('should set maintenanceItemId to null when maintenanceItem is not an object with id', () => {
+      // Arrange
+      // Act
+      component.maintenanceForm.controls.maintenanceItem.setValue(
+        'string' as unknown as MaintenanceItemSearchResult,
+      );
+
+      // Assert
+      expect(
+        component.maintenanceForm.controls.maintenanceItemId.value,
+      ).toBeNull();
     });
   });
 });

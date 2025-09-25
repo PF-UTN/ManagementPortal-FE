@@ -9,7 +9,10 @@ import { CreateMaintenanceItemRequest } from '../models/maintenance-item-create.
 import { SearchMaintenanceItemResponse } from '../models/maintenance-item-response.model';
 import { UpdateMaintenanceItemRequest } from '../models/maintenance-item-update.model';
 import { MaintenancePerformRequest } from '../models/maintenance-perform.model';
-import { MaintenancePlanCreate } from '../models/maintenance-plan-create.model';
+import {
+  MaintenancePlanCreate,
+  MaintenancePlanUpdate,
+} from '../models/maintenance-plan-create.model';
 import { SearchMaintenancePlanResponse } from '../models/maintenance-plan-response.model';
 import { MaintenanceRepairParams } from '../models/maintenance-repair-param.model';
 import { SearchMaintenanceRepairResponse } from '../models/maintenance-response.model';
@@ -160,5 +163,13 @@ export class VehicleService {
   ): Observable<ServiceSupplierResponse> {
     const url = `${environment.apiBaseUrl}/service-supplier`;
     return this.http.post<ServiceSupplierResponse>(url, payload);
+  }
+
+  updateMaintenancePlanItem(
+    maintenancePlanItemId: number,
+    payload: MaintenancePlanUpdate,
+  ): Observable<void> {
+    const url = `${this.baseUrl}/maintenance-plan-item/${maintenancePlanItemId}`;
+    return this.http.put<void>(url, payload);
   }
 }

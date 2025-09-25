@@ -55,8 +55,12 @@ export class MaintenancePlanListComponent implements OnInit {
         },
         {
           description: 'Modificar',
-          action: (element: MaintenancePlanListItem) =>
-            console.log('Modificar', element),
+          action: (element: MaintenancePlanListItem) => {
+            this.router.navigate(['crear-plan-mantenimiento'], {
+              relativeTo: this.route,
+              state: { plan: element },
+            });
+          },
         },
         {
           description: 'Eliminnar',
@@ -81,7 +85,7 @@ export class MaintenancePlanListComponent implements OnInit {
     private readonly route: ActivatedRoute,
   ) {}
 
-  private formatTimeInterval(timeInterval: number | null | undefined): string {
+  public formatTimeInterval(timeInterval: number | null | undefined): string {
     if (timeInterval == null || timeInterval === 0) {
       return '-';
     }

@@ -125,7 +125,7 @@ describe('MaintenancePlanListComponent', () => {
       (col) => col.columnDef === 'actions',
     );
     const routerSpy = jest.spyOn(component['router'], 'navigate');
-    const spyModificar = jest.spyOn(console, 'log');
+    const spyEliminar = jest.spyOn(console, 'log');
     // Act
     actionsColumn?.actions?.[0].action(item);
     actionsColumn?.actions?.[1].action(item);
@@ -134,9 +134,12 @@ describe('MaintenancePlanListComponent', () => {
     expect(routerSpy).toHaveBeenCalledWith(['realizar', item.id], {
       relativeTo: component['route'],
     });
-    expect(spyModificar).toHaveBeenCalledWith('Modificar', item);
-    expect(spyModificar).toHaveBeenCalledWith('Eliminar', item);
-    spyModificar.mockRestore();
+    expect(routerSpy).toHaveBeenCalledWith(['crear-plan-mantenimiento'], {
+      relativeTo: component['route'],
+      state: { plan: item },
+    });
+    expect(spyEliminar).toHaveBeenCalledWith('Eliminar', item);
+    spyEliminar.mockRestore();
   });
 
   it('should show "-" for kmInterval when null', () => {
@@ -245,6 +248,43 @@ describe('MaintenancePlanListComponent', () => {
     // Assert
     expect(routerSpy).toHaveBeenCalledWith(['realizar', item.id], {
       relativeTo: component['route'],
+    });
+  });
+
+  describe('columns', () => {
+    it('should have the correct columns defined', () => {
+      // Arrange & Act
+      const columnDefs = component.columns.map((col) => col.columnDef);
+      // Assert
+      expect(columnDefs).toEqual([
+        'description',
+        'kmInterval',
+        'timeInterval',
+        'actions',
+      ]);
+    });
+  });
+
+  describe('formatTimeInterval', () => {
+    it('should return "-" if timeInterval is null', () => {
+      // Arrange & Act
+      const result = component.formatTimeInterval(null);
+      // Assert
+      expect(result).toBe('-');
+    });
+
+    it('should return "-" if timeInterval is 0', () => {
+      // Arrange & Act
+      const result = component.formatTimeInterval(0);
+      // Assert
+      expect(result).toBe('-');
+    });
+
+    it('should return "<n> Meses" if timeInterval is a positive number', () => {
+      // Arrange & Act
+      const result = component.formatTimeInterval(8);
+      // Assert
+      expect(result).toBe('8 Meses');
     });
   });
 });
