@@ -43,6 +43,7 @@ describe('MaintenanceListComponent', () => {
     it('should format maintenanceDate using datePipe', () => {
       // Arrange
       const item: MaintenanceItem = {
+        id: 1,
         date: '01/01/2023',
         description: 'Cambio de aceite',
         kmPerformed: 15000,
@@ -57,6 +58,7 @@ describe('MaintenanceListComponent', () => {
     it('should return description as is', () => {
       // Arrange
       const item: MaintenanceItem = {
+        id: 1,
         date: '01/01/1999',
         description: 'Filtro de aire',
         kmPerformed: 20000,
@@ -71,6 +73,7 @@ describe('MaintenanceListComponent', () => {
     it('should format kmPerformed using decimalPipe', () => {
       // Arrange
       const item: MaintenanceItem = {
+        id: 1,
         date: '01/01/1999',
         description: 'Cambio de correa',
         kmPerformed: 12345,
@@ -85,6 +88,7 @@ describe('MaintenanceListComponent', () => {
     it('should call action handlers for actions column', () => {
       // Arrange
       const item: MaintenanceItem = {
+        id: 1,
         date: '01/01/1999',
         description: 'Cambio de bujías',
         kmPerformed: 30000,

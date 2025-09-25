@@ -101,6 +101,7 @@ export class MaintenanceListComponent implements OnInit {
         next: (response) => {
           const mappedResults: MaintenanceItem[] = response.results.map(
             (item) => ({
+              id: item.id,
               kmPerformed: item.kmPerformed,
               description: item.description,
               date: item.date,

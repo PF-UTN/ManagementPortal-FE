@@ -1,12 +1,14 @@
 import { downloadFileFromResponse } from '@Common';
 import {
   TitleComponent,
+  SubtitleComponent,
   BackArrowComponent,
   DropdownButtonComponent,
   DropdownItem,
   ButtonComponent,
 } from '@Common-UI';
 
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -22,6 +24,7 @@ import { MaintenanceRepairListComponent } from '../maintenance-repair-list/maint
   standalone: true,
   imports: [
     TitleComponent,
+    SubtitleComponent,
     BackArrowComponent,
     DropdownButtonComponent,
     MatTabsModule,
@@ -29,6 +32,7 @@ import { MaintenanceRepairListComponent } from '../maintenance-repair-list/maint
     MaintenanceListComponent,
     MaintenanceRepairListComponent,
     ButtonComponent,
+    CommonModule,
   ],
   templateUrl: './maintenance-history.component.html',
   styleUrl: './maintenance-history.component.scss',
