@@ -384,6 +384,8 @@ describe('MaintenancePlanListComponent', () => {
       // Assert
       expect(columnDefs).toEqual([
         'description',
+        'nextMaintenanceDate',
+        'nextMaintenanceKm',
         'kmInterval',
         'timeInterval',
         'actions',
