@@ -1,8 +1,18 @@
 <div class="container-fluid">
     <div class="header">
-        <div class="header__title">
-            <mp-back-arrow [backTo]="''" [color]="'muted-purple'"></mp-back-arrow>
-                <mp-title>Historial de Mantenimiento - {{ vehicle?.brand }} {{ vehicle?.model }}</mp-title>
+       <div class="header__title">
+            <div class="header__row">
+                <mp-back-arrow [backTo]="''" [color]="'muted-purple'"></mp-back-arrow>
+                <mp-title>Historial de Mantenimiento</mp-title>
+            </div>
+            <ng-container *ngIf="vehicle">
+                <div>
+                    <mp-subtitle>{{vehicle.licensePlate}} - {{ vehicle.brand }} {{ vehicle.model }}</mp-subtitle>
+                </div>
+                <div>
+                    <mp-subtitle>Kilometros del vehículo: {{ vehicle.kmTraveled | number:'1.0-0' }} km</mp-subtitle>
+                </div>
+            </ng-container>
         </div>
         <div class="header__dropdown">
             <mp-button 
@@ -16,7 +26,6 @@
             </mp-dropdown-button>
         </div>
     </div>
-    <hr />
     <mat-tab-group animationDuration="0ms">
         <mat-tab label="Plan de Mantenimiento"><mp-maintenance-plan-list [vehicleId]="vehicleId"></mp-maintenance-plan-list></mat-tab>
         <mat-tab label="Mantenimientos"><mp-maintenance-list [vehicleId]="vehicleId"></mp-maintenance-list></mat-tab>

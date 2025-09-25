@@ -51,7 +51,7 @@
                     (optionSelected)="onSupplierSelected($event)">
                     <mat-option *ngFor="let supplier of filteredSuppliers$ | async" [value]="supplier"
                         [ngClass]="{'create-supplier-option': supplier.id === -1}">
-                        <span *ngIf="supplier.id === -1" class="span">+ Crear nuevo proveedor</span>
+                        <span *ngIf="supplier.id === -1" class="span">+ Gestionar proveedores</span>
                         <span *ngIf="supplier.id !== -1">{{ supplier.businessName }}</span>
                     </mat-option>
                 </mat-autocomplete>
