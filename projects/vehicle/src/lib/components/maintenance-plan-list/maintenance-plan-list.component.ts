@@ -113,7 +113,7 @@ export class MaintenancePlanListComponent implements OnInit {
     private readonly route: ActivatedRoute,
   ) {}
 
-  public formatTimeInterval(timeInterval: number | null | undefined): string {
+  formatTimeInterval(timeInterval: number | null | undefined): string {
     if (timeInterval == null || timeInterval === 0) {
       return '-';
     }
