@@ -1,0 +1,13 @@
+<div class="h-100 d-flex flex-column">
+    <div class="row">
+      <h3>Productos:</h3>
+      @if (!isLoading()) {
+        @for (item of checkoutPreferences.items; track $index) {
+          {{item | json}}
+        }
+      }
+    </div>
+    <div class="row">
+      <mp-button (onClick)="handlePay()" [disabled]="isDisabled()" [loading]="isLoading()">Pagar</mp-button>
+    </div>
+</div>

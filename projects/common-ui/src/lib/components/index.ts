@@ -1,5 +1,6 @@
 export * from './button/button.component';
 export * from './button/constants/button-types';
+export * from './checkout/mercado-pago-checkout.component';
 export * from './ellipsis-text/ellipsis-text.component';
 export * from './file-uploader/file-uploader.component';
 export * from './input/input.component';
