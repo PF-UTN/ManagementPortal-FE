@@ -161,4 +161,9 @@ export class VehicleService {
     const url = `${environment.apiBaseUrl}/service-supplier`;
     return this.http.post<ServiceSupplierResponse>(url, payload);
   }
+
+  deleteMaintenanceItem(id: number) {
+    const url = `${this.baseUrl}/maintenance/${id}`;
+    return this.http.delete<void>(url);
+  }
 }

@@ -3,12 +3,15 @@ import {
   TableColumn,
   ColumnTypeEnum,
   InputComponent,
+  ModalComponent,
 } from '@Common-UI';
 import { VehicleService } from '@Vehicle';
 
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component, OnInit, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, debounceTime, Subject, switchMap, tap } from 'rxjs';
 
 import { MaintenanceItem } from '../../models/maintenance-item.model';
@@ -16,7 +19,7 @@ import { MaintenanceItem } from '../../models/maintenance-item.model';
 @Component({
   selector: 'mp-maintenance-list',
   standalone: true,
-  imports: [TableComponent, InputComponent, FormsModule],
+  imports: [TableComponent, InputComponent, FormsModule, ModalComponent],
   providers: [DatePipe, DecimalPipe],
   templateUrl: './maintenance-list.component.html',
   styleUrl: './maintenance-list.component.scss',
@@ -56,9 +59,9 @@ export class MaintenanceListComponent implements OnInit {
             console.log('Modificar', element),
         },
         {
-          description: 'Eliminnar',
+          description: 'Eliminar',
           action: (element: MaintenanceItem) =>
-            console.log('Eliminar', element),
+            this.deleteMaintenanceItem(element),
         },
       ],
     },
@@ -76,6 +79,8 @@ export class MaintenanceListComponent implements OnInit {
     private readonly datePipe: DatePipe,
     private readonly decimalPipe: DecimalPipe,
     private readonly vehicleService: VehicleService,
+    private readonly dialog: MatDialog,
+    private readonly snackBar: MatSnackBar,
   ) {}
 
   ngOnInit(): void {
@@ -136,5 +141,35 @@ export class MaintenanceListComponent implements OnInit {
     this.pageIndex = 0;
     this.isLoading = true;
     this.doSearchSubject$.next();
+  }
+
+  deleteMaintenanceItem(item: MaintenanceItem): void {
+    const dialogRef = this.dialog.open(ModalComponent, {
+      data: {
+        title: 'Eliminar mantenimiento',
+        message: '¿Está seguro que desea eliminar este mantenimiento?',
+        cancelText: 'Cancelar',
+        confirmText: 'Aceptar',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: boolean) => {
+      if (result) {
+        this.isLoading = true;
+        this.vehicleService.deleteMaintenanceItem(item.id).subscribe({
+          next: () => {
+            this.ngOnInit();
+            this.snackBar.open(
+              'Mantenimiento eliminado exitosamente',
+              'Cerrar',
+              { duration: 3000 },
+            );
+          },
+          error: () => {
+            this.isLoading = false;
+          },
+        });
+      }
+    });
   }
 }
