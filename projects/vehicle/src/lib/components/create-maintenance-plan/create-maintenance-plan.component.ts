@@ -93,7 +93,11 @@ export class CreateMaintenancePlanComponent implements OnInit {
 
   ngOnInit(): void {
     this.vehicleId = Number(this.route.snapshot.paramMap.get('vehicleId'));
-    const planFromState =
+    const planFromState: {
+      kmInterval: number | null;
+      timeInterval: number | null;
+      description: string;
+    } | null =
       history.state && 'plan' in history.state ? history.state.plan : null;
     this.isEditMode = !!planFromState;
 
@@ -117,18 +121,9 @@ export class CreateMaintenancePlanComponent implements OnInit {
       { validators: this.intervalValidator },
     );
 
+    // Refactor valueChanges logic
     this.maintenanceForm.controls.maintenanceItem.valueChanges.subscribe(
-      (item) => {
-        if (item && typeof item === 'object' && item.id !== undefined) {
-          this.maintenanceForm.controls.maintenanceItemId.setValue(item.id, {
-            emitEvent: false,
-          });
-        } else {
-          this.maintenanceForm.controls.maintenanceItemId.setValue(null, {
-            emitEvent: false,
-          });
-        }
-      },
+      (item) => this.syncMaintenanceItemId(item),
     );
 
     if (planFromState) {
@@ -139,25 +134,12 @@ export class CreateMaintenancePlanComponent implements OnInit {
           pageSize: 10,
         })
         .subscribe((res) => {
-          const found = res.results.find(
-            (item: MaintenanceItemSearchResult) =>
-              item.description === planFromState.description,
-          );
-          if (found) {
-            this.maintenanceForm.patchValue({
-              maintenanceItem: found,
-              maintenanceItemId: found.id,
-              kmInterval: planFromState.kmInterval,
-              timeInterval: planFromState.timeInterval,
-            });
-          } else {
-            this.maintenanceForm.patchValue({
-              maintenanceItem: null,
-              maintenanceItemId: null,
-              kmInterval: planFromState.kmInterval,
-              timeInterval: planFromState.timeInterval,
-            });
-          }
+          const found =
+            res.results.find(
+              (item: MaintenanceItemSearchResult) =>
+                item.description === planFromState.description,
+            ) ?? null;
+          this.patchFormWithPlan(planFromState, found);
           this.isInitialLoading = false;
         });
     } else {
@@ -183,6 +165,27 @@ export class CreateMaintenancePlanComponent implements OnInit {
             );
         }),
       );
+  }
+
+  private syncMaintenanceItemId(
+    item: MaintenanceItemSearchResult | null,
+  ): void {
+    const id = item?.id ?? null;
+    this.maintenanceForm.controls.maintenanceItemId.setValue(id, {
+      emitEvent: false,
+    });
+  }
+
+  private patchFormWithPlan(
+    plan: { kmInterval: number | null; timeInterval: number | null },
+    found: MaintenanceItemSearchResult | null,
+  ): void {
+    this.maintenanceForm.patchValue({
+      maintenanceItem: found,
+      maintenanceItemId: found?.id ?? null,
+      kmInterval: plan.kmInterval,
+      timeInterval: plan.timeInterval,
+    });
   }
 
   displayMaintenanceItem(item: MaintenanceItemSearchResult): string {
