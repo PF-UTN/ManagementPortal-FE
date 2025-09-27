@@ -16,10 +16,6 @@ const routes: Routes = [
     component: MaintenanceHistoryComponent,
   },
   {
-    path: ':vehicleId/mantenimiento/crear-plan-mantenimiento/:id',
-    component: CreateMaintenancePlanComponent,
-  },
-  {
     path: ':vehicleId/mantenimiento/crear-plan-mantenimiento',
     component: CreateMaintenancePlanComponent,
   },

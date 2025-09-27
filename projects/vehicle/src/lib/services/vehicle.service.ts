@@ -172,4 +172,14 @@ export class VehicleService {
     const url = `${this.baseUrl}/maintenance-plan-item/${maintenancePlanItemId}`;
     return this.http.put<void>(url, payload);
   }
+
+  deleteMaintenancePlanItem(id: number) {
+    const url = `${this.baseUrl}/maintenance-plan-item/${id}`;
+    return this.http.delete<void>(url);
+  }
+
+  deleteMaintenanceItem(id: number) {
+    const url = `${this.baseUrl}/maintenance/${id}`;
+    return this.http.delete<void>(url);
+  }
 }
