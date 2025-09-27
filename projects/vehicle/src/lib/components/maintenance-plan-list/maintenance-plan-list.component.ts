@@ -1,8 +1,15 @@
-import { TableComponent, TableColumn, ColumnTypeEnum } from '@Common-UI';
+import {
+  TableComponent,
+  TableColumn,
+  ColumnTypeEnum,
+  ModalComponent,
+} from '@Common-UI';
 import { VehicleService } from '@Vehicle';
 
 import { DecimalPipe } from '@angular/common';
 import { Component, OnInit, input } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 
@@ -89,9 +96,9 @@ export class MaintenancePlanListComponent implements OnInit {
           },
         },
         {
-          description: 'Eliminnar',
+          description: 'Eliminar',
           action: (element: MaintenancePlanListItem) =>
-            console.log('Eliminar', element),
+            this.deleteMaintenancePlanItem(element),
         },
       ],
     },
@@ -111,6 +118,8 @@ export class MaintenancePlanListComponent implements OnInit {
     private readonly vechicleService: VehicleService,
     private readonly router: Router,
     private readonly route: ActivatedRoute,
+    private readonly dialog: MatDialog,
+    private readonly snackBar: MatSnackBar,
   ) {}
 
   formatTimeInterval(timeInterval: number | null | undefined): string {
@@ -174,5 +183,46 @@ export class MaintenancePlanListComponent implements OnInit {
   handlePageChange(event: { pageIndex: number; pageSize: number }): void {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
+  }
+
+  deleteMaintenancePlanItem(item: MaintenancePlanListItem): void {
+    const dialogRef = this.dialog.open(ModalComponent, {
+      data: {
+        title: 'Eliminar ítem',
+        message:
+          '¿Está seguro que desea eliminar este ítem del plan de mantenimiento?',
+        cancelText: 'Cancelar',
+        confirmText: 'Aceptar',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: boolean) => {
+      if (result) {
+        this.isLoading = true;
+        this.vechicleService.deleteMaintenancePlanItem(item.id).subscribe({
+          next: () => {
+            this.ngOnInit();
+            this.snackBar.open(
+              'Mantenimiento eliminado exitosamente',
+              'Cerrar',
+              { duration: 3000 },
+            );
+          },
+          error: (err) => {
+            this.isLoading = false;
+            let message = 'Ocurrió un error al eliminar el mantenimiento.';
+            if (
+              err?.error?.message?.includes(
+                'is being used in a Maintenance and cannot be deleted',
+              )
+            ) {
+              message =
+                'No se puede eliminar el ítem porque ya fue utilizado en un mantenimiento.';
+            }
+            this.snackBar.open(message, 'Cerrar', { duration: 4000 });
+          },
+        });
+      }
+    });
   }
 }

@@ -1030,4 +1030,48 @@ describe('VehicleService', () => {
       req.error(mockError);
     });
   });
+
+  describe('deleteMaintenancePlanItem', () => {
+    it('should send a DELETE request with the correct id and return void', () => {
+      // Arrange
+      const maintenancePlanItemId = 77;
+      const url = `${baseUrl}/maintenance-plan-item/${maintenancePlanItemId}`;
+
+      // Act
+      service
+        .deleteMaintenancePlanItem(maintenancePlanItemId)
+        .subscribe((response) => {
+          // Assert
+          expect(response).toBeUndefined();
+        });
+
+      // Assert
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('DELETE');
+      req.flush(null);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const maintenancePlanItemId = 77;
+      const mockError = new ErrorEvent('Network error');
+      const url = `${baseUrl}/maintenance-plan-item/${maintenancePlanItemId}`;
+
+      // Act
+      service.deleteMaintenancePlanItem(maintenancePlanItemId).subscribe({
+        next: () => {
+          fail('Expected an error, but got a successful response');
+        },
+        error: (error) => {
+          // Assert
+          expect(error.error).toBe(mockError);
+        },
+      });
+
+      // Assert
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('DELETE');
+      req.error(mockError);
+    });
+  });
 });
