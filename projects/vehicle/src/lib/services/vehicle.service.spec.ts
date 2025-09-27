@@ -22,6 +22,7 @@ import { VehicleService } from '../services/vehicle.service';
 import { mockVehicleListItems } from '../testing/mock-data.model';
 
 const baseUrl = environment.apiBaseUrl + '/vehicle';
+
 describe('VehicleService', () => {
   let service: VehicleService;
   let httpMock: HttpTestingController;
@@ -967,6 +968,64 @@ describe('VehicleService', () => {
 
       const req = httpMock.expectOne(url);
       expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(payload);
+      req.error(mockError);
+    });
+  });
+
+  describe('updateMaintenancePlanItem', () => {
+    it('should send a PUT request with the correct id and payload and return void', () => {
+      // Arrange
+      const maintenancePlanItemId = 88;
+      const payload = {
+        maintenanceItemId: 1,
+        kmInterval: 10000,
+        timeInterval: 6,
+      };
+      const url = `${baseUrl}/maintenance-plan-item/${maintenancePlanItemId}`;
+
+      // Act
+      service
+        .updateMaintenancePlanItem(maintenancePlanItemId, payload)
+        .subscribe((response) => {
+          // Assert
+          expect(response).toBeUndefined();
+        });
+
+      // Assert
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('PUT');
+      expect(req.request.body).toEqual(payload);
+      req.flush(null);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const maintenancePlanItemId = 88;
+      const payload = {
+        maintenanceItemId: 1,
+        kmInterval: 10000,
+        timeInterval: 6,
+      };
+      const mockError = new ErrorEvent('Network error');
+      const url = `${baseUrl}/maintenance-plan-item/${maintenancePlanItemId}`;
+
+      // Act
+      service
+        .updateMaintenancePlanItem(maintenancePlanItemId, payload)
+        .subscribe({
+          next: () => {
+            fail('Expected an error, but got a successful response');
+          },
+          error: (error) => {
+            // Assert
+            expect(error.error).toBe(mockError);
+          },
+        });
+
+      // Assert
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('PUT');
       expect(req.request.body).toEqual(payload);
       req.error(mockError);
     });

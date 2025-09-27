@@ -7,6 +7,7 @@
     <hr>
 
     <div class="container">
+         <ng-container *ngIf="!isInitialLoading; else loadingTpl">
         <form [formGroup]="maintenanceForm" class="container__body">
             <mat-form-field class="w-100" appearance="outline">
                 <mat-label>Item de mantenimiento</mat-label>
@@ -80,14 +81,6 @@
             </div>
         </form>
         <div class="container__footer d-flex justify-content-end mt-4">
-            <mp-button
-                *ngIf="canEditSelectedItem"
-                type="secondary"
-                class="me-2"
-                [disabled]="isLoading"
-                (click)="onEditSelectedItem()">
-                Editar
-            </mp-button>
             <mp-button 
                 type="primary" 
                 (click)="onSave()" 
@@ -96,5 +89,11 @@
                 Guardar
             </mp-button>
         </div>
+        </ng-container>
+         <ng-template #loadingTpl>
+            <div class="d-flex justify-content-center align-items-center" style="width: 100%;">
+                <mp-loading></mp-loading>
+            </div>
+        </ng-template>
     </div>
 </div>

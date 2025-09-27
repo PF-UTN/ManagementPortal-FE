@@ -4,6 +4,7 @@ import {
   ButtonComponent,
   InputComponent,
   LateralDrawerService,
+  LoadingComponent,
 } from '@Common-UI';
 
 import { CommonModule, Location } from '@angular/common';
@@ -55,6 +56,7 @@ import { CreateUpdateMaintenanceItemLateralDrawerComponent } from '../create-upd
     ButtonComponent,
     InputComponent,
     MatButtonModule,
+    LoadingComponent,
   ],
   templateUrl: './create-maintenance-plan.component.html',
   styleUrl: './create-maintenance-plan.component.scss',
@@ -69,7 +71,10 @@ export class CreateMaintenancePlanComponent implements OnInit {
 
   vehicleId!: number;
   isLoading = false;
+  isInitialLoading = false;
   isSearching = false;
+  isEditMode = false;
+
   maintenanceItems: MaintenanceItemSearchResult[] = [];
   filteredMaintenanceItems$!: Observable<MaintenanceItemSearchResult[]>;
   readonly MANAGE_MAINTENANCE_ITEM_OPTION: MaintenanceItemSearchResult = {
@@ -88,21 +93,57 @@ export class CreateMaintenancePlanComponent implements OnInit {
 
   ngOnInit(): void {
     this.vehicleId = Number(this.route.snapshot.paramMap.get('vehicleId'));
+    const planFromState: {
+      kmInterval: number | null;
+      timeInterval: number | null;
+      description: string;
+    } | null =
+      history.state && 'plan' in history.state ? history.state.plan : null;
+    this.isEditMode = !!planFromState;
+
+    if (this.isEditMode) {
+      this.isInitialLoading = true;
+    }
+
     this.maintenanceForm = this.fb.group(
       {
         maintenanceItem: new FormControl<MaintenanceItemSearchResult | null>(
           null,
-          [Validators.required, this.maintenanceItemObjectValidator()],
+          [this.maintenanceItemObjectValidator()],
         ),
         maintenanceItemId: new FormControl<number | null>(
           null,
-          Validators.required,
+          this.isEditMode ? [] : [Validators.required],
         ),
         kmInterval: new FormControl<number | null>(null),
         timeInterval: new FormControl<number | null>(null),
       },
       { validators: this.intervalValidator },
     );
+
+    this.maintenanceForm.controls.maintenanceItem.valueChanges.subscribe(
+      (item) => this.syncMaintenanceItemId(item),
+    );
+
+    if (planFromState) {
+      this.vehicleService
+        .postSearchMaintenanceItem({
+          searchText: planFromState.description,
+          page: 1,
+          pageSize: 10,
+        })
+        .subscribe((res) => {
+          const found =
+            res.results.find(
+              (item: MaintenanceItemSearchResult) =>
+                item.description === planFromState.description,
+            ) ?? null;
+          this.patchFormWithPlan(planFromState, found);
+          this.isInitialLoading = false;
+        });
+    } else {
+      this.isInitialLoading = false;
+    }
 
     this.filteredMaintenanceItems$ =
       this.maintenanceForm.controls.maintenanceItem.valueChanges.pipe(
@@ -123,6 +164,27 @@ export class CreateMaintenancePlanComponent implements OnInit {
             );
         }),
       );
+  }
+
+  private syncMaintenanceItemId(
+    item: MaintenanceItemSearchResult | null,
+  ): void {
+    const id = item?.id ?? null;
+    this.maintenanceForm.controls.maintenanceItemId.setValue(id, {
+      emitEvent: false,
+    });
+  }
+
+  private patchFormWithPlan(
+    plan: { kmInterval: number | null; timeInterval: number | null },
+    found: MaintenanceItemSearchResult | null,
+  ): void {
+    this.maintenanceForm.patchValue({
+      maintenanceItem: found,
+      maintenanceItemId: found?.id ?? null,
+      kmInterval: plan.kmInterval,
+      timeInterval: plan.timeInterval,
+    });
   }
 
   displayMaintenanceItem(item: MaintenanceItemSearchResult): string {
@@ -199,38 +261,59 @@ export class CreateMaintenancePlanComponent implements OnInit {
     this.isLoading = true;
     const { maintenanceItemId, kmInterval, timeInterval } =
       this.maintenanceForm.value;
+    const planId =
+      this.route.snapshot.paramMap.get('id') ?? history.state.plan?.id;
     const payload = {
-      vehicleId: this.vehicleId,
       maintenanceItemId: maintenanceItemId!,
       kmInterval: kmInterval ?? null,
       timeInterval: timeInterval ?? null,
     };
-    this.vehicleService.createMaintenancePlanItem(payload).subscribe({
-      next: () => {
-        this.snackBar.open(
-          'Item de mantenimiento creado correctamente',
-          'Cerrar',
-          { duration: 3000 },
-        );
-        this.isLoading = false;
-        this.location.back();
-      },
-      error: () => {
-        this.snackBar.open('Ocurrió un error al crear el item', 'Cerrar', {
-          duration: 3000,
+
+    if (planId) {
+      this.vehicleService
+        .updateMaintenancePlanItem(Number(planId), payload)
+        .subscribe({
+          next: () => {
+            this.snackBar.open(
+              'Item de mantenimiento actualizado correctamente',
+              'Cerrar',
+              { duration: 3000 },
+            );
+            this.isLoading = false;
+            this.location.back();
+          },
+          error: () => {
+            this.snackBar.open(
+              'Ocurrió un error al actualizar el item',
+              'Cerrar',
+              { duration: 3000 },
+            );
+            this.isLoading = false;
+          },
         });
-        this.isLoading = false;
-      },
-    });
-  }
-
-  get canEditSelectedItem(): boolean {
-    const item = this.maintenanceForm.controls.maintenanceItem.value;
-    return !!item && item.id !== -1;
-  }
-
-  onEditSelectedItem() {
-    const item = this.maintenanceForm.controls.maintenanceItem.value;
-    console.log('Editar item:', item);
+    } else {
+      this.vehicleService
+        .createMaintenancePlanItem({
+          vehicleId: this.vehicleId,
+          ...payload,
+        })
+        .subscribe({
+          next: () => {
+            this.snackBar.open(
+              'Item de mantenimiento creado correctamente',
+              'Cerrar',
+              { duration: 3000 },
+            );
+            this.isLoading = false;
+            this.location.back();
+          },
+          error: () => {
+            this.snackBar.open('Ocurrió un error al crear el item', 'Cerrar', {
+              duration: 3000,
+            });
+            this.isLoading = false;
+          },
+        });
+    }
   }
 }

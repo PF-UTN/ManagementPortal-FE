@@ -31,12 +31,19 @@ describe('CreateMaintenancePlanComponent', () => {
 
   beforeEach(async () => {
     vehicleService = {
-      postSearchMaintenanceItem: jest.fn(),
+      postSearchMaintenanceItem: jest
+        .fn()
+        .mockReturnValue(of({ results: [], total: 0 })),
       createMaintenancePlanItem: jest.fn(),
     } as unknown as jest.Mocked<VehicleService>;
 
     snackBar = { open: jest.fn() };
     location = { back: jest.fn() };
+
+    Object.defineProperty(history, 'state', {
+      value: {},
+      writable: true,
+    });
 
     await TestBed.configureTestingModule({
       imports: [CreateMaintenancePlanComponent, NoopAnimationsModule],
@@ -118,6 +125,103 @@ describe('CreateMaintenancePlanComponent', () => {
         items.some((i) => i.description === '+ Crear item de mantenimiento'),
       ).toBe(true);
       sub.unsubscribe();
+    }));
+
+    it('should set isEditMode and isInitialLoading to true if planFromState exists', fakeAsync(() => {
+      // Arrange
+      Object.defineProperty(history, 'state', {
+        value: {
+          plan: {
+            id: 1,
+            description: 'desc',
+            kmInterval: 1000,
+            timeInterval: 12,
+          },
+        },
+        writable: true,
+      });
+      vehicleService.postSearchMaintenanceItem.mockReturnValue(
+        of({ results: [], total: 0 }),
+      );
+      const newFixture = TestBed.createComponent(
+        CreateMaintenancePlanComponent,
+      );
+      const newComponent = newFixture.componentInstance;
+
+      // Act
+      newComponent.ngOnInit();
+
+      // Assert
+      expect(newComponent.isEditMode).toBe(true);
+      tick();
+      expect(newComponent.isInitialLoading).toBe(false);
+    }));
+
+    it('should patch form with found item and set isInitialLoading to false', fakeAsync(() => {
+      // Arrange
+      const plan = {
+        id: 1,
+        description: 'desc',
+        kmInterval: 1000,
+        timeInterval: 12,
+      };
+      Object.defineProperty(history, 'state', {
+        value: { plan },
+        writable: true,
+      });
+      const foundItem = { id: 42, description: 'desc' };
+      vehicleService.postSearchMaintenanceItem.mockReturnValue(
+        of({ results: [foundItem], total: 1 }),
+      );
+      const newFixture = TestBed.createComponent(
+        CreateMaintenancePlanComponent,
+      );
+      const newComponent = newFixture.componentInstance;
+
+      // Act
+      newComponent.ngOnInit();
+      tick();
+
+      // Assert
+      expect(newComponent.maintenanceForm.value.maintenanceItem).toEqual(
+        foundItem,
+      );
+      expect(newComponent.maintenanceForm.value.maintenanceItemId).toBe(42);
+      expect(newComponent.maintenanceForm.value.kmInterval).toBe(1000);
+      expect(newComponent.maintenanceForm.value.timeInterval).toBe(12);
+      expect(newComponent.isInitialLoading).toBe(false);
+    }));
+
+    it('should patch form with nulls if item not found and set isInitialLoading to false', fakeAsync(() => {
+      // Arrange
+      const plan = {
+        id: 1,
+        description: 'desc',
+        kmInterval: 1000,
+        timeInterval: 12,
+      };
+      Object.defineProperty(history, 'state', {
+        value: { plan },
+        writable: true,
+      });
+      vehicleService.postSearchMaintenanceItem.mockReturnValue(
+        of({ results: [{ id: 99, description: 'otra' }], total: 1 }),
+      );
+      const newFixture = TestBed.createComponent(
+        CreateMaintenancePlanComponent,
+      );
+      const newComponent = newFixture.componentInstance;
+
+      // Act
+      newComponent.ngOnInit();
+      tick();
+
+      // Assert
+      expect(newComponent.maintenanceForm.value.maintenanceItem).toBeNull();
+      expect(newComponent.maintenanceForm.value.maintenanceItemId).toBeNull();
+      expect(newComponent.maintenanceForm.value.kmInterval).toBe(1000);
+      expect(newComponent.maintenanceForm.value.timeInterval).toBe(12);
+      expect(newComponent.isInitialLoading).toBe(false);
     }));
   });
 
@@ -325,6 +429,193 @@ describe('CreateMaintenancePlanComponent', () => {
         'Cerrar',
         { duration: 3000 },
       );
+    });
+
+    it('should call update service, show snackbar and go back on update success', () => {
+      // Arrange
+      component.maintenanceForm.setValue({
+        maintenanceItem: { id: 1, description: 'desc' },
+        maintenanceItemId: 1,
+        kmInterval: 1000,
+        timeInterval: null,
+      });
+      Object.defineProperty(history, 'state', {
+        value: {
+          plan: {
+            id: 55,
+            description: 'desc',
+            kmInterval: 1000,
+            timeInterval: null,
+          },
+        },
+        writable: true,
+      });
+      vehicleService.updateMaintenancePlanItem = jest
+        .fn()
+        .mockReturnValue(of({}));
+
+      // Act
+      component.onSave();
+
+      // Assert
+      expect(component.isLoading).toBe(false);
+      expect(vehicleService.updateMaintenancePlanItem).toHaveBeenCalledWith(
+        55,
+        {
+          maintenanceItemId: 1,
+          kmInterval: 1000,
+          timeInterval: null,
+        },
+      );
+      expect(snackBar.open).toHaveBeenCalledWith(
+        'Item de mantenimiento actualizado correctamente',
+        'Cerrar',
+        { duration: 3000 },
+      );
+      expect(location.back).toHaveBeenCalled();
+    });
+
+    it('should show error snackbar on update service error', () => {
+      // Arrange
+      component.maintenanceForm.setValue({
+        maintenanceItem: { id: 1, description: 'desc' },
+        maintenanceItemId: 1,
+        kmInterval: 1000,
+        timeInterval: null,
+      });
+      Object.defineProperty(history, 'state', {
+        value: {
+          plan: {
+            id: 55,
+            description: 'desc',
+            kmInterval: 1000,
+            timeInterval: null,
+          },
+        },
+        writable: true,
+      });
+      vehicleService.updateMaintenancePlanItem = jest
+        .fn()
+        .mockReturnValue(throwError(() => new Error('error')));
+
+      // Act
+      component.onSave();
+
+      // Assert
+      expect(component.isLoading).toBe(false);
+      expect(snackBar.open).toHaveBeenCalledWith(
+        'Ocurrió un error al actualizar el item',
+        'Cerrar',
+        { duration: 3000 },
+      );
+    });
+  });
+
+  describe('handleCreateOrUpdateMaintenanceItemLateralDrawer', () => {
+    it('should reset maintenanceItem control after drawer closes', () => {
+      // Arrange
+      const item: MaintenanceItemSearchResult = {
+        id: 3,
+        description: 'Drawer item',
+      };
+      jest.spyOn(lateralDrawerService, 'open').mockReturnValue(of(void 0));
+      const resetSpy = jest.spyOn(
+        component.maintenanceForm.controls.maintenanceItem,
+        'reset',
+      );
+
+      // Act
+      (component as CreateMaintenancePlanComponent)[
+        'handleCreateOrUpdateMaintenanceItemLateralDrawer'
+      ](item);
+
+      // Assert
+      expect(lateralDrawerService.open).toHaveBeenCalled();
+      expect(resetSpy).toHaveBeenCalled();
+      resetSpy.mockRestore();
+    });
+  });
+
+  describe('maintenanceItem valueChanges', () => {
+    it('should set maintenanceItemId when maintenanceItem is an object with id', () => {
+      // Arrange
+      const item: MaintenanceItemSearchResult = {
+        id: 10,
+        description: 'Sync item',
+      };
+
+      // Act
+      component.maintenanceForm.controls.maintenanceItem.setValue(item);
+
+      // Assert
+      expect(component.maintenanceForm.controls.maintenanceItemId.value).toBe(
+        10,
+      );
+    });
+
+    it('should set maintenanceItemId to null when maintenanceItem is not an object with id', () => {
+      // Arrange
+      // Act
+      component.maintenanceForm.controls.maintenanceItem.setValue(
+        'string' as unknown as MaintenanceItemSearchResult,
+      );
+
+      // Assert
+      expect(
+        component.maintenanceForm.controls.maintenanceItemId.value,
+      ).toBeNull();
+    });
+  });
+
+  describe('maintenanceItemId control validators', () => {
+    it('should NOT have required validator in edit mode', () => {
+      // Arrange
+      Object.defineProperty(history, 'state', {
+        value: {
+          plan: {
+            id: 1,
+            description: 'desc',
+            kmInterval: 1000,
+            timeInterval: 12,
+          },
+        },
+        writable: true,
+      });
+      vehicleService.postSearchMaintenanceItem.mockReturnValue(
+        of({ results: [], total: 0 }),
+      );
+      const newFixture = TestBed.createComponent(
+        CreateMaintenancePlanComponent,
+      );
+      const newComponent = newFixture.componentInstance;
+
+      // Act
+      newComponent.ngOnInit();
+
+      // Assert
+      const control = newComponent.maintenanceForm.controls.maintenanceItemId;
+      control.setValue(null);
+      expect(control.hasError('required')).toBe(false);
+    });
+
+    it('should have required validator in create mode', () => {
+      // Arrange
+      Object.defineProperty(history, 'state', {
+        value: {},
+        writable: true,
+      });
+      const newFixture = TestBed.createComponent(
+        CreateMaintenancePlanComponent,
+      );
+      const newComponent = newFixture.componentInstance;
+
+      // Act
+      newComponent.ngOnInit();
+
+      // Assert
+      const control = newComponent.maintenanceForm.controls.maintenanceItemId;
+      control.setValue(null);
+      expect(control.hasError('required')).toBe(true);
     });
   });
 });
