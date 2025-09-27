@@ -121,7 +121,6 @@ export class CreateMaintenancePlanComponent implements OnInit {
       { validators: this.intervalValidator },
     );
 
-    // Refactor valueChanges logic
     this.maintenanceForm.controls.maintenanceItem.valueChanges.subscribe(
       (item) => this.syncMaintenanceItemId(item),
     );
