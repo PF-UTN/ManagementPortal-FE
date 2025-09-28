@@ -7,7 +7,6 @@ import {
   input,
   signal,
   OnDestroy,
-  effect,
 } from '@angular/core';
 import { MatTooltip, MatTooltipModule } from '@angular/material/tooltip';
 
@@ -32,16 +31,6 @@ export class EllipsisTextComponent implements AfterViewInit, OnDestroy {
 
   private resizeObserver?: ResizeObserver;
 
-  constructor() {
-    effect(() => {
-      if (this.isTruncated() && this.isHovered()) {
-        this.tooltip.show();
-      } else {
-        this.tooltip.hide();
-      }
-    });
-  }
-
   ngAfterViewInit(): void {
     const el = this.textContainer.nativeElement;
 
@@ -58,7 +47,11 @@ export class EllipsisTextComponent implements AfterViewInit, OnDestroy {
 
   private checkTruncation() {
     const el = this.textContainer.nativeElement;
-    this.isTruncated.set(el.scrollHeight > el.clientHeight);
+
+    const isVerticallyTruncated = el.scrollHeight > el.clientHeight;
+    const isHorizontallyTruncated = el.scrollWidth > el.clientWidth;
+
+    this.isTruncated.set(isVerticallyTruncated || isHorizontallyTruncated);
   }
 
   onMouseEnter() {
