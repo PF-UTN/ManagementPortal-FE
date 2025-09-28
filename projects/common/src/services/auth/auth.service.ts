@@ -16,7 +16,8 @@ import { User } from '../../models/user.model';
   providedIn: 'root',
 })
 export class AuthService {
-  userRole?: string;
+  userRole: string;
+  userName: string;
 
   private readonly apiUrl = environment.apiBaseUrl + '/authentication';
 
@@ -27,7 +28,7 @@ export class AuthService {
     const token = localStorage.getItem('token');
 
     if (token) {
-      this.setUserRole(token);
+      this.setPayloadProperties(token);
     }
   }
 
@@ -82,14 +83,15 @@ export class AuthService {
     );
   }
 
-  private setUserRole(token: string): void {
+  private setPayloadProperties(token: string): void {
     const decodedToken: TokenPayload = jwtDecode(token);
     this.userRole = decodedToken.role;
+    this.userName = decodedToken.userName;
   }
 
   private setToken(token: string): void {
     localStorage.setItem('token', token);
 
-    this.setUserRole(token);
+    this.setPayloadProperties(token);
   }
 }

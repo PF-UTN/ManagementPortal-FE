@@ -1,5 +1,5 @@
 import { AuthService, RolesEnum } from '@Common';
-import { ModalComponent, ModalConfig } from '@Common-UI';
+import { EllipsisTextComponent, ModalComponent, ModalConfig } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
@@ -14,11 +14,18 @@ import { NavBarItem } from '../../models/nav-bar-item.model';
   templateUrl: './nav-bar.component.html',
   styleUrls: ['./nav-bar.component.scss'],
   standalone: true,
-  imports: [CommonModule, MatIconModule, RouterModule, MatButtonModule],
+  imports: [
+    CommonModule,
+    MatIconModule,
+    RouterModule,
+    MatButtonModule,
+    EllipsisTextComponent,
+  ],
 })
 export class NavBarComponent implements OnInit {
   items: NavBarItem[];
   isOpen = true;
+  userName: string;
 
   constructor(
     private authService: AuthService,
@@ -26,6 +33,7 @@ export class NavBarComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.userName = this.authService.userName;
     this.items = [
       {
         title: 'Inicio',

@@ -19,7 +19,12 @@ describe('NavBarComponent', () => {
       imports: [NavBarComponent],
       providers: [
         provideRouter([]),
-        { provide: AuthService, useValue: mockDeep(AuthService) },
+        {
+          provide: AuthService,
+          useValue: mockDeep<AuthService>({
+            userName: 'Jhon Doe',
+          }),
+        },
         { provide: MatDialog, useValue: mockDeep(MatDialog) },
       ],
     });
@@ -253,6 +258,27 @@ describe('NavBarComponent', () => {
 
       // Assert
       expect(logOutSpy).toHaveBeenCalled();
+    });
+
+    it('should not call logOut if dialog is cancelled', () => {
+      // Arrange
+      const logOutSpy = jest.spyOn(authService, 'logOut');
+      const afterClosed$ = of(false);
+      (dialog.open as jest.Mock).mockReturnValue({
+        afterClosed: () => afterClosed$,
+      });
+      // Act
+      component.handleLogOutClick();
+      // Assert
+      expect(logOutSpy).not.toHaveBeenCalled();
+    });
+
+    it('should get the userName from AuthService', () => {
+      // Arrange && Act
+      component.ngOnInit();
+
+      // Assert
+      expect(component.userName).toBe('Jhon Doe');
     });
   });
 
