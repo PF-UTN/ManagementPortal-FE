@@ -23,6 +23,11 @@
       </nav>
     </div>
     <div class="container__body__footer">
+      @if (isOpen) {
+        <div class="container__body__menu__item__title">
+          <mp-ellipsis-text [text]="userName"></mp-ellipsis-text>
+        </div>
+      }
       <div class="container__body__menu__item" (click)="handleLogOutClick()">
         <mat-icon>logout</mat-icon>
         <p class="container__body__menu__item__title" *ngIf="isOpen">Cerrar Sesión</p>

@@ -1,6 +1,6 @@
 <div 
   class="ellipsis-wrapper"
-  [matTooltip]="text()"
+  [matTooltip]="isTruncated() ? text() : ''"
   #tooltip="matTooltip"
   (mouseenter)="onMouseEnter()" 
   (mouseleave)="onMouseLeave()">
