@@ -1116,4 +1116,62 @@ describe('VehicleService', () => {
       req.error(mockError);
     });
   });
+
+  describe('updateMaintenance', () => {
+    it('should send a PUT request with the correct id and payload and return void', () => {
+      // Arrange
+      const maintenanceId = 55;
+      const payload = {
+        date: '2025-11-15',
+        kmPerformed: 20500,
+        serviceSupplierId: 4,
+        maintenancePlanItemId: 99,
+      };
+      const url = `${baseUrl}/maintenance/${maintenanceId}`;
+
+      // Act
+      service
+        .updateMaintenance(maintenanceId, payload)
+        .subscribe((response) => {
+          // Assert
+          expect(response).toBeUndefined();
+        });
+
+      // Assert
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('PUT');
+      expect(req.request.body).toEqual(payload);
+      req.flush(null);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const maintenanceId = 55;
+      const payload = {
+        date: '2025-11-15',
+        kmPerformed: 20500,
+        serviceSupplierId: 4,
+        maintenancePlanItemId: 99,
+      };
+      const mockError = new ErrorEvent('Network error');
+      const url = `${baseUrl}/maintenance/${maintenanceId}`;
+
+      // Act
+      service.updateMaintenance(maintenanceId, payload).subscribe({
+        next: () => {
+          fail('Expected an error, but got a successful response');
+        },
+        error: (error) => {
+          // Assert
+          expect(error.error).toBe(mockError);
+        },
+      });
+
+      // Assert
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('PUT');
+      expect(req.request.body).toEqual(payload);
+      req.error(mockError);
+    });
+  });
 });

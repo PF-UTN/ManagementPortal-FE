@@ -175,6 +175,14 @@ export class VehicleService {
     return this.http.put<void>(url, payload);
   }
 
+  updateMaintenance(
+    id: number,
+    payload: MaintenancePerformRequest,
+  ): Observable<void> {
+    const url = `${this.baseUrl}/maintenance/${id}`;
+    return this.http.put<void>(url, payload);
+  }
+
   deleteMaintenancePlanItem(id: number) {
     const url = `${this.baseUrl}/maintenance-plan-item/${id}`;
     return this.http.delete<void>(url);
