@@ -42,12 +42,22 @@ export class MaintenancePlanListComponent implements OnInit {
       columnDef: 'nextMaintenanceKm',
       header: 'Próximo KM',
       type: ColumnTypeEnum.VALUE,
-      value: (
-        element: MaintenancePlanListItem & { lastMaintenanceKm?: number },
-      ) => {
-        if (element.lastMaintenanceKm == null || element.kmInterval == null)
-          return '-';
-        return element.lastMaintenanceKm + element.kmInterval + ' km';
+      value: (element: MaintenancePlanListItem) => {
+        const e = element as MaintenancePlanListItem & {
+          lastMaintenanceKm?: number;
+          currentKm?: number;
+        };
+        if (e.kmInterval == null) return '-';
+        let value: number | null = null;
+        if (e.lastMaintenanceKm != null) {
+          value = e.lastMaintenanceKm + e.kmInterval;
+        } else if (e.currentKm != null) {
+          value = e.currentKm + e.kmInterval;
+        }
+        if (value != null) {
+          return this.decimalPipe.transform(value, '1.0-0') + ' km';
+        }
+        return '-';
       },
     },
     {
@@ -121,54 +131,73 @@ export class MaintenancePlanListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const vehicleId = this.vehicleId();
     this.isLoading = true;
     const params = {
       searchText: '',
       page: this.pageIndex + 1,
       pageSize: this.pageSize,
     };
-    this.vechicleService
-      .postSearchMaintenancePlanItemVehicle(this.vehicleId(), params)
-      .subscribe({
-        next: (response: {
-          results: MaintenancePlanListItem[];
-          total: number;
-        }) => {
-          this.vechicleService
-            .postSearchMaintenanceVehicle(this.vehicleId(), params)
-            .subscribe({
-              next: (maintResponse: { results: MaintenanceItem[] }) => {
-                this.maintenances = maintResponse.results;
-                const plansWithExtras = response.results.map((plan) => {
-                  const last = this.maintenances
-                    .filter((m) => m.description === plan.description)
-                    .sort(
-                      (a, b) =>
-                        new Date(b.date).getTime() - new Date(a.date).getTime(),
-                    )[0];
-                  return {
-                    ...plan,
-                    lastMaintenanceDate: last?.date,
-                    lastMaintenanceKm: last?.kmPerformed,
-                  };
+    this.vechicleService.getVehicleById(vehicleId).subscribe({
+      next: (vehicle) => {
+        const currentKm = vehicle.kmTraveled;
+        this.vechicleService
+          .postSearchMaintenancePlanItemVehicle(this.vehicleId(), params)
+          .subscribe({
+            next: (response: {
+              results: MaintenancePlanListItem[];
+              total: number;
+            }) => {
+              this.vechicleService
+                .postSearchMaintenanceVehicle(this.vehicleId(), params)
+                .subscribe({
+                  next: (maintResponse: { results: MaintenanceItem[] }) => {
+                    this.maintenances = maintResponse.results;
+                    const plansWithExtras = response.results.map((plan) => {
+                      const maints = this.maintenances.filter(
+                        (m) => m.description === plan.description,
+                      );
+                      const lastKm = maints.length
+                        ? Math.max(...maints.map((m) => m.kmPerformed ?? 0))
+                        : null;
+                      const lastDate = maints.length
+                        ? maints.sort(
+                            (a, b) =>
+                              new Date(b.date).getTime() -
+                              new Date(a.date).getTime(),
+                          )[0]?.date
+                        : null;
+                      return {
+                        ...plan,
+                        lastMaintenanceDate: lastDate,
+                        lastMaintenanceKm: lastKm,
+                        currentKm,
+                      };
+                    });
+                    this.dataSource$.next(plansWithExtras);
+                    this.itemsNumber = response.total;
+                    this.isLoading = false;
+                  },
+                  error: () => {
+                    this.dataSource$.next([]);
+                    this.itemsNumber = 0;
+                    this.isLoading = false;
+                  },
                 });
-                this.dataSource$.next(plansWithExtras);
-                this.itemsNumber = response.total;
-                this.isLoading = false;
-              },
-              error: () => {
-                this.dataSource$.next([]);
-                this.itemsNumber = 0;
-                this.isLoading = false;
-              },
-            });
-        },
-        error: () => {
-          this.dataSource$.next([]);
-          this.itemsNumber = 0;
-          this.isLoading = false;
-        },
-      });
+            },
+            error: () => {
+              this.dataSource$.next([]);
+              this.itemsNumber = 0;
+              this.isLoading = false;
+            },
+          });
+      },
+      error: () => {
+        this.dataSource$.next([]);
+        this.itemsNumber = 0;
+        this.isLoading = false;
+      },
+    });
   }
 
   handlePageChange(event: { pageIndex: number; pageSize: number }): void {

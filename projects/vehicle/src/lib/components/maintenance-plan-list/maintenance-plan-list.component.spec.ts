@@ -34,6 +34,7 @@ describe('MaintenancePlanListComponent', () => {
       postSearchMaintenanceVehicle: jest
         .fn()
         .mockReturnValue(of({ results: [], total: 0 })),
+      getVehicleById: jest.fn().mockReturnValue(of({ kmTraveled: 0 })),
     } as unknown as jest.Mocked<VehicleService>;
 
     await TestBed.configureTestingModule({
@@ -240,11 +241,13 @@ describe('MaintenancePlanListComponent', () => {
           ...mockResponse.results[0],
           lastMaintenanceDate: '2023-01-01T00:00:00.000Z',
           lastMaintenanceKm: 50000,
+          currentKm: 0,
         },
         {
           ...mockResponse.results[1],
           lastMaintenanceDate: '2023-02-01T00:00:00.000Z',
           lastMaintenanceKm: 60000,
+          currentKm: 0,
         },
       ]);
       expect(component.itemsNumber).toBe(2);
@@ -332,7 +335,7 @@ describe('MaintenancePlanListComponent', () => {
       column && column.value ? column.value(planWithExtras) : undefined;
 
     // Assert
-    expect(result).toBe('60000 km');
+    expect(result).toBe('60,000 km');
   });
 
   it('should show "-" for nextMaintenanceDate if no last maintenance', () => {
