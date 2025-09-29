@@ -34,7 +34,16 @@ describe('MaintenancePlanListComponent', () => {
       postSearchMaintenanceVehicle: jest
         .fn()
         .mockReturnValue(of({ results: [], total: 0 })),
-      getVehicleById: jest.fn().mockReturnValue(of({ kmTraveled: 0 })),
+      getVehicleById: jest.fn().mockReturnValue(
+        of({
+          id: 1,
+          licensePlate: 'ABC123',
+          brand: 'Toyota',
+          model: 'Corolla',
+          year: 2020,
+          kmTraveled: 0,
+        }),
+      ),
     } as unknown as jest.Mocked<VehicleService>;
 
     await TestBed.configureTestingModule({
@@ -270,6 +279,129 @@ describe('MaintenancePlanListComponent', () => {
       expect(component.itemsNumber).toBe(0);
       expect(component.isLoading).toBe(false);
     });
+
+    it('should set lastMaintenanceKm and lastMaintenanceDate to null if there are no maintenances for a plan', async () => {
+      // Arrange
+      const mockResponse = {
+        results: [
+          {
+            id: 1,
+            description: 'Cambio de aceite',
+            kmInterval: 10000,
+            timeInterval: 6,
+          },
+        ],
+        total: 1,
+      };
+
+      const mockMaintenances = {
+        results: [],
+        total: 0,
+      };
+
+      const vehicleService = TestBed.inject(VehicleService);
+      jest
+        .spyOn(vehicleService, 'postSearchMaintenancePlanItemVehicle')
+        .mockReturnValue(of(mockResponse));
+      jest
+        .spyOn(vehicleService, 'postSearchMaintenanceVehicle')
+        .mockReturnValue(of(mockMaintenances));
+
+      hostComponent.vehicleId = 1;
+      // Act
+      component.ngOnInit();
+      // Assert
+      const data = await firstValueFrom(component.dataSource$);
+      expect(data).toEqual([
+        {
+          ...mockResponse.results[0],
+          lastMaintenanceDate: null,
+          lastMaintenanceKm: null,
+          currentKm: 0,
+        },
+      ]);
+    });
+
+    it('should clear dataSource$, itemsNumber and isLoading if getVehicleById fails', async () => {
+      // Arrange
+      const vehicleService = TestBed.inject(VehicleService);
+      jest
+        .spyOn(vehicleService, 'getVehicleById')
+        .mockReturnValue(throwError(() => new Error('fail')));
+      component.itemsNumber = 5;
+      component.isLoading = true;
+      hostComponent.vehicleId = 1;
+      // Act
+      component.ngOnInit();
+      // Assert
+      const data = await firstValueFrom(component.dataSource$);
+      expect(data).toEqual([]);
+      expect(component.itemsNumber).toBe(0);
+      expect(component.isLoading).toBe(false);
+    });
+
+    it('should clear dataSource$, itemsNumber and isLoading if postSearchMaintenancePlanItemVehicle fails', async () => {
+      // Arrange
+      const vehicleService = TestBed.inject(VehicleService);
+      jest.fn().mockReturnValue(
+        of({
+          id: 1,
+          licensePlate: 'ABC123',
+          brand: 'Toyota',
+          model: 'Corolla',
+          year: 2020,
+          kmTraveled: 0,
+          enabled: true,
+          admissionDate: '2023-01-01T00:00:00.000Z',
+        }),
+      );
+      jest
+        .spyOn(vehicleService, 'postSearchMaintenancePlanItemVehicle')
+        .mockReturnValue(throwError(() => new Error('fail')));
+      component.itemsNumber = 5;
+      component.isLoading = true;
+      hostComponent.vehicleId = 1;
+      // Act
+      component.ngOnInit();
+      // Assert
+      const data = await firstValueFrom(component.dataSource$);
+      expect(data).toEqual([]);
+      expect(component.itemsNumber).toBe(0);
+      expect(component.isLoading).toBe(false);
+    });
+
+    it('should clear dataSource$, itemsNumber and isLoading if postSearchMaintenanceVehicle fails', async () => {
+      // Arrange
+      const vehicleService = TestBed.inject(VehicleService);
+      jest.fn().mockReturnValue(
+        of({
+          id: 1,
+          licensePlate: 'ABC123',
+          brand: 'Toyota',
+          model: 'Corolla',
+          year: 2020,
+          kmTraveled: 0,
+          enabled: true,
+          admissionDate: '2023-01-01T00:00:00.000Z',
+        }),
+      );
+      jest
+        .spyOn(vehicleService, 'postSearchMaintenancePlanItemVehicle')
+        .mockReturnValue(of({ results: [], total: 0 }));
+      jest
+        .spyOn(vehicleService, 'postSearchMaintenanceVehicle')
+        .mockReturnValue(throwError(() => new Error('fail')));
+      component.itemsNumber = 5;
+      component.isLoading = true;
+      hostComponent.vehicleId = 1;
+      // Act
+      component.ngOnInit();
+      // Assert
+      const data = await firstValueFrom(component.dataSource$);
+      expect(data).toEqual([]);
+      expect(component.itemsNumber).toBe(0);
+      expect(component.isLoading).toBe(false);
+    });
   });
 
   it('should navigate to realizar route with correct params when Realizar is clicked', () => {
@@ -393,6 +525,52 @@ describe('MaintenancePlanListComponent', () => {
         'timeInterval',
         'actions',
       ]);
+    });
+
+    it('should show "-" for nextMaintenanceKm if kmInterval is null', () => {
+      // Arrange
+      const plan: MaintenancePlanListItem = {
+        id: 1,
+        description: 'Cambio de aceite',
+        kmInterval: null,
+        timeInterval: 6,
+      };
+      const planWithExtras = {
+        ...plan,
+        lastMaintenanceKm: 50000,
+        currentKm: 100000,
+      };
+      const column = component.columns.find(
+        (col) => col.columnDef === 'nextMaintenanceKm',
+      );
+
+      // Act
+      const result =
+        column && column.value ? column.value(planWithExtras) : undefined;
+
+      // Assert
+      expect(result).toBe('-');
+    });
+
+    it('should calculate nextMaintenanceKm based on currentKm and kmInterval if no lastMaintenanceKm', () => {
+      // Arrange
+      const plan: MaintenancePlanListItem = {
+        id: 1,
+        description: 'Cambio de filtro',
+        kmInterval: 20000,
+        timeInterval: 12,
+      };
+      const planWithExtras = { ...plan, currentKm: 80000 };
+      const column = component.columns.find(
+        (col) => col.columnDef === 'nextMaintenanceKm',
+      );
+
+      // Act
+      const result =
+        column && column.value ? column.value(planWithExtras) : undefined;
+
+      // Assert
+      expect(result).toBe('100,000 km');
     });
   });
 

@@ -179,25 +179,25 @@ export class MaintenancePlanListComponent implements OnInit {
                     this.isLoading = false;
                   },
                   error: () => {
-                    this.dataSource$.next([]);
-                    this.itemsNumber = 0;
-                    this.isLoading = false;
+                    this.handleLoadError();
                   },
                 });
             },
             error: () => {
-              this.dataSource$.next([]);
-              this.itemsNumber = 0;
-              this.isLoading = false;
+              this.handleLoadError();
             },
           });
       },
       error: () => {
-        this.dataSource$.next([]);
-        this.itemsNumber = 0;
-        this.isLoading = false;
+        this.handleLoadError();
       },
     });
+  }
+
+  private handleLoadError(): void {
+    this.dataSource$.next([]);
+    this.itemsNumber = 0;
+    this.isLoading = false;
   }
 
   handlePageChange(event: { pageIndex: number; pageSize: number }): void {
