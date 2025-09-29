@@ -90,6 +90,12 @@ describe('NavBarComponent', () => {
           shouldRender: true,
         },
         {
+          title: 'Mis pedidos',
+          icon: 'assignment',
+          route: 'pedidos/cliente',
+          shouldRender: true,
+        },
+        {
           title: 'Pedidos',
           icon: 'assignment',
           route: 'pedidos',
@@ -157,10 +163,16 @@ describe('NavBarComponent', () => {
           shouldRender: true,
         },
         {
+          title: 'Mis pedidos',
+          icon: 'assignment',
+          route: 'pedidos/cliente',
+          shouldRender: false,
+        },
+        {
           title: 'Pedidos',
           icon: 'assignment',
           route: 'pedidos',
-          shouldRender: false,
+          shouldRender: true,
         },
         {
           title: 'Carrito',
@@ -225,10 +237,16 @@ describe('NavBarComponent', () => {
         shouldRender: false,
       },
       {
+        title: 'Mis pedidos',
+        icon: 'assignment',
+        route: 'pedidos/cliente',
+        shouldRender: true,
+      },
+      {
         title: 'Pedidos',
         icon: 'assignment',
         route: 'pedidos',
-        shouldRender: true,
+        shouldRender: false,
       },
       {
         title: 'Carrito',
