@@ -1,0 +1,80 @@
+<ng-container *ngIf="isLoading(); else loaded">
+  <mp-loading></mp-loading>
+</ng-container>
+
+<ng-template #loaded>
+  <ng-container *ngIf="!error(); else errorContent">
+    <ng-container *ngIf="data() as order">
+      <div class="container py-4">
+        <div class="card shadow-sm mb-4">
+          <div class="card-header custom-header text-white">
+            <h5 class="mb-0">Detalles generales</h5>
+          </div>
+          <div class="card-body">
+            <div class="row gy-3">
+              <div class="col-md-6">
+                <strong>Número de pedido</strong>
+                <p class="mb-0">{{ order.id }}</p>
+              </div>
+              <div class="col-md-6">
+                <strong>Estado</strong>
+                <p class="mb-0">{{ order.orderStatus.name }}</p>
+              </div>
+              <div class="col-md-6">
+                <strong>Fecha de emisión</strong>
+                <p class="mb-0">
+                  {{ order.createdAt | date: 'dd/MM/yyyy' }}
+                </p>
+              </div>
+              <div class="col-md-6">
+                <strong>Forma de entrega</strong>
+                <p class="mb-0">{{ order.deliveryMethodName }}</p>
+              </div>
+              <div class="col-md-6">
+                <strong>Dirección de entrega</strong>
+                <p class="mb-0">
+                  {{ order.client.address.street }}, {{ order.client.address.streetNumber }}
+                </p>
+              </div>
+              <div class="col-md-6">
+                <strong>Forma de pago</strong>
+                <p class="mb-0">{{ order.paymentDetail.paymentType.name}}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="py-4">
+          <div class="card shadow-sm mb-4 mx-auto">
+            <div class="card-header custom-header-products text-white">
+              <h5 class="mb-0">Productos</h5>
+            </div>
+            <div class="table-scroll p-3">
+              <mp-list
+                [columns]="productColumns"
+                [items]="order.orderItems || []"
+                [isLoading]="false"
+                noDataMessage="No hay productos en este pedido"
+              >
+              </mp-list>
+            </div>
+          </div>
+          <div class="card-footer d-flex justify-content-end border-top pt-3">
+            <h3 class="mb-0">
+              Total:
+              <strong>{{
+                order.totalAmount | currency: 'ARS' : 'symbol' : '1.2-2'
+              }}</strong>
+            </h3>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </ng-container>
+
+  <ng-template #errorContent>
+    <div class="container py-3">
+      <p class="text-danger">{{ error() }}</p>
+    </div>
+  </ng-template>
+</ng-template>

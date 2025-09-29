@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 
 import { OrderClientSearchRequest } from '../models/order-client-request-model';
 import { OrderClientSearchResponse } from '../models/order-client-response.model';
+import { OrderClientDetail } from '../models/order-detail-client.model';
 
 @Injectable({
   providedIn: 'root',
@@ -29,5 +30,10 @@ export class OrderService {
       body,
       headers ? { headers } : {},
     );
+  }
+
+  getOrderClientDetail(orderId: number): Observable<OrderClientDetail> {
+    const url = `${this.baseUrl}/client/${orderId}`;
+    return this.http.get<OrderClientDetail>(url);
   }
 }

@@ -8,7 +8,9 @@ import { TestBed } from '@angular/core/testing';
 import { OrderService } from './order.service';
 import { OrderClientSearchRequest } from '../models/order-client-request-model';
 import { OrderClientSearchResponse } from '../models/order-client-response.model';
+import { mockOrderClientDetail } from '../testing/mock-data.model';
 
+const url = 'https://dev-management-portal-be.vercel.app/order';
 describe('OrderService', () => {
   let service: OrderService;
   let httpMock: HttpTestingController;
@@ -163,5 +165,49 @@ describe('OrderService', () => {
     // Assert
     expect(req.request.headers.get('Authorization')).toBe(`Bearer ${token}`);
     expect(response).toEqual(mockResponse);
+  });
+  describe('getOrderClientDetail', () => {
+    it('should GET to the correct endpoint and return the order detail', () => {
+      // Arrange
+      let response: typeof mockOrderClientDetail | undefined;
+
+      // Act
+      service
+        .getOrderClientDetail(mockOrderClientDetail.id)
+        .subscribe((res) => {
+          response = res;
+        });
+
+      const req = httpMock.expectOne(
+        `${url}/client/${mockOrderClientDetail.id}`,
+      );
+      req.flush(mockOrderClientDetail);
+
+      // Assert
+      expect(req.request.method).toBe('GET');
+      expect(response).toEqual(mockOrderClientDetail);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      let errorResponse: unknown;
+
+      // Act
+      service.getOrderClientDetail(mockOrderClientDetail.id).subscribe({
+        next: () => {},
+        error: (err) => {
+          errorResponse = err;
+        },
+      });
+
+      const req = httpMock.expectOne(
+        `${url}/client/${mockOrderClientDetail.id}`,
+      );
+      req.flush('Error', { status: 404, statusText: 'Not Found' });
+
+      // Assert
+      expect(errorResponse).toBeDefined();
+      expect((errorResponse as { status: number }).status).toBe(404);
+    });
   });
 });
