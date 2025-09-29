@@ -1,9 +1,12 @@
+import { ModalComponent } from '@Common-UI';
 import { VehicleService } from '@Vehicle';
 
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 import { MaintenanceListComponent } from './maintenance-list.component';
 import { MaintenanceItem } from '../../models/maintenance-item.model';
@@ -16,13 +19,24 @@ describe('MaintenanceListComponent', () => {
   beforeEach(async () => {
     const vehicleServiceMock = {
       postSearchMaintenanceVehicle: jest.fn(),
+      deleteMaintenanceItem: jest.fn(),
     } as unknown as jest.Mocked<VehicleService>;
+
+    const dialogMock = {
+      open: jest.fn(),
+    };
+
+    const snackBarMock = {
+      open: jest.fn(),
+    };
 
     await TestBed.configureTestingModule({
       imports: [MaintenanceListComponent, NoopAnimationsModule],
       providers: [
         provideHttpClientTesting(),
         { provide: VehicleService, useValue: vehicleServiceMock },
+        { provide: MatDialog, useValue: dialogMock },
+        { provide: MatSnackBar, useValue: snackBarMock },
       ],
     }).compileComponents();
 
@@ -95,12 +109,22 @@ describe('MaintenanceListComponent', () => {
       };
       const col = component.columns.find((c) => c.columnDef === 'actions');
       const spyLog = jest.spyOn(console, 'log').mockImplementation();
+      const dialogRefMock: Partial<MatDialogRef<ModalComponent, boolean>> = {
+        afterClosed: () => of(false),
+      };
+      const dialog = TestBed.inject(MatDialog);
+      jest
+        .spyOn(dialog, 'open')
+        .mockReturnValue(
+          dialogRefMock as MatDialogRef<ModalComponent, boolean>,
+        );
+
       // Act
       col?.actions?.[0].action(item);
       col?.actions?.[1].action(item);
+
       // Assert
       expect(spyLog).toHaveBeenCalledWith('Modificar', item);
-      expect(spyLog).toHaveBeenCalledWith('Eliminar', item);
       spyLog.mockRestore();
     });
   });
@@ -192,6 +216,118 @@ describe('MaintenanceListComponent', () => {
       expect(component.isLoading).toBe(true);
       expect(spy).toHaveBeenCalled();
       spy.mockRestore();
+    });
+  });
+
+  describe('deleteMaintenanceItem', () => {
+    it('should open the modal, call delete service, refresh list and show snackbar on confirm', () => {
+      // Arrange
+      const item: MaintenanceItem = {
+        id: 123,
+        date: '2023-01-01',
+        description: 'Cambio de aceite',
+        kmPerformed: 15000,
+      };
+      const dialogRefMock: Partial<MatDialogRef<ModalComponent, boolean>> = {
+        afterClosed: () => of(true),
+      };
+      const dialog = TestBed.inject(MatDialog);
+      const dialogSpy = jest
+        .spyOn(dialog, 'open')
+        .mockReturnValue(
+          dialogRefMock as MatDialogRef<ModalComponent, boolean>,
+        );
+      const vehicleService = TestBed.inject(VehicleService);
+      const deleteSpy = jest
+        .spyOn(vehicleService, 'deleteMaintenanceItem')
+        .mockReturnValue(of(void 0));
+      const ngOnInitSpy = jest.spyOn(component, 'ngOnInit');
+      const snackBar = TestBed.inject(MatSnackBar);
+      const snackBarSpy = jest.spyOn(snackBar, 'open');
+
+      // Act
+      component.deleteMaintenanceItem(item);
+
+      // Assert
+      expect(dialogSpy).toHaveBeenCalledWith(
+        ModalComponent,
+        expect.objectContaining({
+          data: expect.objectContaining({
+            title: 'Eliminar mantenimiento',
+            message: expect.stringContaining('¿Está seguro'),
+          }),
+        }),
+      );
+      expect(deleteSpy).toHaveBeenCalledWith(item.id);
+      expect(ngOnInitSpy).toHaveBeenCalled();
+      expect(snackBarSpy).toHaveBeenCalledWith(
+        'Mantenimiento eliminado exitosamente',
+        'Cerrar',
+        { duration: 3000 },
+      );
+    });
+
+    it('should NOT call delete service if user cancels', () => {
+      // Arrange
+      const item: MaintenanceItem = {
+        id: 123,
+        date: '2023-01-01',
+        description: 'Cambio de aceite',
+        kmPerformed: 15000,
+      };
+      const dialogRefMock: Partial<MatDialogRef<ModalComponent, boolean>> = {
+        afterClosed: () => of(false),
+      };
+      const dialog = TestBed.inject(MatDialog);
+      jest
+        .spyOn(dialog, 'open')
+        .mockReturnValue(
+          dialogRefMock as MatDialogRef<ModalComponent, boolean>,
+        );
+      const vehicleService = TestBed.inject(VehicleService);
+      const deleteSpy = jest.spyOn(vehicleService, 'deleteMaintenanceItem');
+
+      // Act
+      component.deleteMaintenanceItem(item);
+
+      // Assert
+      expect(deleteSpy).not.toHaveBeenCalled();
+    });
+
+    it('should show error snackbar if deletion fails', () => {
+      // Arrange
+      const item: MaintenanceItem = {
+        id: 123,
+        date: '2023-01-01',
+        description: 'Cambio de aceite',
+        kmPerformed: 15000,
+      };
+      const dialogRefMock: Partial<MatDialogRef<ModalComponent, boolean>> = {
+        afterClosed: () => of(true),
+      };
+      const dialog = TestBed.inject(MatDialog);
+      jest
+        .spyOn(dialog, 'open')
+        .mockReturnValue(
+          dialogRefMock as MatDialogRef<ModalComponent, boolean>,
+        );
+      const vehicleService = TestBed.inject(VehicleService);
+      jest
+        .spyOn(vehicleService, 'deleteMaintenanceItem')
+        .mockReturnValue(throwError(() => new Error('fail')));
+      const snackBar = TestBed.inject(MatSnackBar);
+      const snackBarSpy = jest.spyOn(snackBar, 'open');
+
+      // Act
+      component.deleteMaintenanceItem(item);
+
+      // Assert
+      expect(snackBarSpy).toHaveBeenCalledWith(
+        'Ocurrió un error al eliminar el mantenimiento.',
+        'Cerrar',
+        { duration: 4000 },
+      );
+      expect(component.isLoading).toBe(false);
     });
   });
 });

@@ -18,8 +18,10 @@ import { MaintenanceRepairParams } from '../models/maintenance-repair-param.mode
 import { SearchMaintenanceRepairResponse } from '../models/maintenance-response.model';
 import { SearchVehicleResponse } from '../models/search-vehicle-response.model';
 import { ServiceSupplierCreateUpdate } from '../models/supplier-create-update.model';
-import { ServiceSupplierDetailResponse } from '../models/supplier-response-create-update.model';
-import { ServiceSupplierResponse } from '../models/supplier-response-create-update.model';
+import {
+  ServiceSupplierDetailResponse,
+  ServiceSupplierResponse,
+} from '../models/supplier-response-create-update.model';
 import { SupplierSearchResponseModel } from '../models/supplier-search-response-model';
 import { VehicleCreate } from '../models/vehicle-create.model';
 import { VehicleListItem } from '../models/vehicle-item.model';
