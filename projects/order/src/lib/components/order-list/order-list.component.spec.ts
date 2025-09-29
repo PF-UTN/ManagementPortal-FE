@@ -18,8 +18,8 @@ import { OrderSearchResult } from '../../models/order-response-model';
 import { OrderStatusOptions } from '../../models/order-status.enum';
 import { OrderService } from '../../services/order.service';
 import { mockOrderSearchResponse } from '../../testing/mock-data.model';
-
 jest.mock('@Common', () => ({
+  ...jest.requireActual('@Common'),
   downloadFileFromResponse: jest.fn(),
   OrderDirection: {
     ASC: 'asc',

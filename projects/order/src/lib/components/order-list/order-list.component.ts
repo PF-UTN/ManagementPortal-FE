@@ -1,4 +1,8 @@
-import { downloadFileFromResponse, OrderDirection } from '@Common';
+import {
+  downloadFileFromResponse,
+  OrderDirection,
+  OrderListUtils,
+} from '@Common';
 import {
   ColumnTypeEnum,
   TableColumn,
@@ -199,49 +203,11 @@ export class OrderListComponent implements OnInit {
   }
 
   getStatusLabel(status: OrderStatusOptions): string {
-    switch (status) {
-      case OrderStatusOptions.Pending:
-        return 'Pendiente';
-      case OrderStatusOptions.InPreparation:
-        return 'En preparación';
-      case OrderStatusOptions.Prepared:
-        return 'Preparado';
-      case OrderStatusOptions.Shipped:
-        return 'Enviado';
-      case OrderStatusOptions.Finished:
-        return 'Finalizado';
-      case OrderStatusOptions.Cancelled:
-        return 'Cancelado';
-      case OrderStatusOptions.PaymentPending:
-        return 'Pago Pendiente';
-      case OrderStatusOptions.PaymentRejected:
-        return 'Pago Rechazado';
-      default:
-        return 'Pendiente';
-    }
+    return OrderListUtils.getStatusLabel(status);
   }
 
   mapStatusToPillStatus(status: OrderStatusOptions): PillStatusEnum {
-    switch (status) {
-      case OrderStatusOptions.Pending:
-        return PillStatusEnum.Initial;
-      case OrderStatusOptions.InPreparation:
-        return PillStatusEnum.InProgress;
-      case OrderStatusOptions.Prepared:
-        return PillStatusEnum.InProgress;
-      case OrderStatusOptions.Shipped:
-        return PillStatusEnum.InProgress;
-      case OrderStatusOptions.Finished:
-        return PillStatusEnum.Done;
-      case OrderStatusOptions.Cancelled:
-        return PillStatusEnum.Cancelled;
-      case OrderStatusOptions.PaymentPending:
-        return PillStatusEnum.Warning;
-      case OrderStatusOptions.PaymentRejected:
-        return PillStatusEnum.Cancelled;
-      default:
-        return PillStatusEnum.Initial;
-    }
+    return OrderListUtils.mapStatusToPillStatus(status);
   }
 
   private mapToOrderItem(apiResult: OrderSearchResult): OrderItem {
