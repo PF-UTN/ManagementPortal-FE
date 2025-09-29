@@ -84,7 +84,6 @@ export class DetailLateralDrawerComponent
       .getPurchaseOrderById(this.purchaseOrderId)
       .subscribe({
         next: (purchaseOrderDetail) => {
-          console.log(purchaseOrderDetail);
           this.data.set(purchaseOrderDetail);
           this.isLoading.set(false);
         },
