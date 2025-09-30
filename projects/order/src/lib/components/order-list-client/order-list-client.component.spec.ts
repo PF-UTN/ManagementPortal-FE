@@ -1,4 +1,4 @@
-import { PillStatusEnum } from '@Common-UI';
+import { LateralDrawerService, PillStatusEnum } from '@Common-UI';
 
 import { registerLocaleData } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
@@ -11,25 +11,37 @@ import {
   tick,
 } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { mockDeep } from 'jest-mock-extended';
 import { of, Subscription } from 'rxjs';
 
 import { OrderListClientComponent } from './order-list-client.component';
 import { OrderItem } from '../../models/order-item.model';
 import { OrderListOrderOption } from '../../models/order-list-option-order.model';
 import { OrderStatusOptions } from '../../models/order-status.enum';
+import { mockOrderItem } from '../../testing/mock-data.model';
+import { DetailLateralDrawerClientComponent } from '../detail-lateral-drawer-client/detail-lateral-drawer-client.component';
 
 registerLocaleData(localeEsAr);
 
 describe('OrderListClientComponent', () => {
   let component: OrderListClientComponent;
   let fixture: ComponentFixture<OrderListClientComponent>;
+  let lateralDrawerService: LateralDrawerService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [OrderListClientComponent, NoopAnimationsModule],
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        {
+          provide: LateralDrawerService,
+          useValue: mockDeep<LateralDrawerService>(),
+        },
+      ],
     }).compileComponents();
 
+    lateralDrawerService = TestBed.inject(LateralDrawerService);
     fixture = TestBed.createComponent(OrderListClientComponent);
     component = fixture.componentInstance;
   });
@@ -153,27 +165,29 @@ describe('OrderListClientComponent', () => {
   });
 
   describe('onDetailDrawer', () => {
-    it('should log order detail', () => {
-      // Arrange
-      const order: OrderItem = {
-        id: 1,
-        createdAt: '14/09/2025',
-        status: OrderStatusOptions.Pending,
-        totalAmount: 100,
-        quantityProducts: 2,
-      };
-      const logSpy = jest.spyOn(console, 'log').mockImplementation();
+    it('should open drawer with orderId and correct config', () => {
+      //Arrange
+      const openSpy = jest.spyOn(lateralDrawerService, 'open');
 
       // Act
-      component.onDetailDrawer(order);
+      component.onDetailDrawer(mockOrderItem);
 
       // Assert
-      expect(logSpy).toHaveBeenCalledWith('Ver detalle de la orden', order);
-
-      logSpy.mockRestore();
+      expect(openSpy).toHaveBeenCalledWith(
+        DetailLateralDrawerClientComponent,
+        { orderId: mockOrderItem.id },
+        expect.objectContaining({
+          title: 'Detalle Pedido',
+          footer: expect.objectContaining({
+            firstButton: expect.objectContaining({
+              text: 'Cerrar',
+              click: expect.any(Function),
+            }),
+          }),
+        }),
+      );
     });
   });
-
   describe('onRepeatOrder', () => {
     it('should log repeat order', () => {
       // Arrange

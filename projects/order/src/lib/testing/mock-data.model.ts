@@ -1,4 +1,26 @@
-import { OrderClientDetail } from '../models/order-detail-client.model';
+import {
+  OrderClientDetail,
+  OrderDetailItem,
+} from '../models/order-detail-client.model';
+import { OrderItem } from '../models/order-item.model';
+import { OrderStatusOptions } from '../models/order-status.enum';
+
+const orderItems: OrderDetailItem[] = [
+  {
+    product: {
+      name: 'Producto 1',
+      description: 'Descripción del producto',
+      price: 100,
+      weight: 2,
+      category: {
+        name: 'Alimentos',
+      },
+    },
+    unitPrice: 100,
+    quantity: 2,
+    subtotalPrice: 200,
+  },
+];
 
 export const mockOrderClientDetail: OrderClientDetail = {
   id: 123,
@@ -19,20 +41,13 @@ export const mockOrderClientDetail: OrderClientDetail = {
     },
   },
   totalAmount: 201,
-  orderItems: [
-    {
-      product: {
-        name: 'Producto 1',
-        description: 'Descripción del producto',
-        price: 100,
-        weight: 2,
-        category: {
-          name: 'Alimentos',
-        },
-      },
-      unitPrice: 100,
-      quantity: 2,
-      subtotalPrice: 200,
-    },
-  ],
+  orderItems: orderItems,
+};
+
+export const mockOrderItem: OrderItem = {
+  id: 123,
+  createdAt: '2025-09-22',
+  status: OrderStatusOptions.Pending,
+  totalAmount: 201,
+  quantityProducts: 3,
 };
