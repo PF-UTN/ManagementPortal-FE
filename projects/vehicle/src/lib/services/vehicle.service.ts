@@ -18,8 +18,10 @@ import { MaintenanceRepairParams } from '../models/maintenance-repair-param.mode
 import { SearchMaintenanceRepairResponse } from '../models/maintenance-response.model';
 import { SearchVehicleResponse } from '../models/search-vehicle-response.model';
 import { ServiceSupplierCreateUpdate } from '../models/supplier-create-update.model';
-import { ServiceSupplierDetailResponse } from '../models/supplier-response-create-update.model';
-import { ServiceSupplierResponse } from '../models/supplier-response-create-update.model';
+import {
+  ServiceSupplierDetailResponse,
+  ServiceSupplierResponse,
+} from '../models/supplier-response-create-update.model';
 import { SupplierSearchResponseModel } from '../models/supplier-search-response-model';
 import { VehicleCreate } from '../models/vehicle-create.model';
 import { VehicleListItem } from '../models/vehicle-item.model';
@@ -158,6 +160,11 @@ export class VehicleService {
       );
   }
 
+  getSupplierById(id: number): Observable<ServiceSupplierDetailResponse> {
+    const url = `${environment.apiBaseUrl}/service-supplier/${id}`;
+    return this.http.get<ServiceSupplierDetailResponse>(url);
+  }
+
   createServiceSupplier(
     payload: ServiceSupplierCreateUpdate,
   ): Observable<ServiceSupplierResponse> {
@@ -171,5 +178,23 @@ export class VehicleService {
   ): Observable<void> {
     const url = `${this.baseUrl}/maintenance-plan-item/${maintenancePlanItemId}`;
     return this.http.put<void>(url, payload);
+  }
+
+  updateMaintenance(
+    id: number,
+    payload: MaintenancePerformRequest,
+  ): Observable<void> {
+    const url = `${this.baseUrl}/maintenance/${id}`;
+    return this.http.put<void>(url, payload);
+  }
+
+  deleteMaintenancePlanItem(id: number) {
+    const url = `${this.baseUrl}/maintenance-plan-item/${id}`;
+    return this.http.delete<void>(url);
+  }
+
+  deleteMaintenanceItem(id: number) {
+    const url = `${this.baseUrl}/maintenance/${id}`;
+    return this.http.delete<void>(url);
   }
 }
