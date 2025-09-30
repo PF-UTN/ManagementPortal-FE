@@ -1,11 +1,14 @@
-import { OrderListUtils } from '@Common';
+import {
+  downloadFileFromResponse,
+  OrderDirection,
+  OrderListUtils,
+} from '@Common';
 import {
   ColumnTypeEnum,
   TableColumn,
   TableComponent,
   TitleComponent,
   PillStatusEnum,
-  SubtitleComponent,
   InputComponent,
   ButtonComponent,
 } from '@Common-UI';
@@ -21,27 +24,27 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
-import { BehaviorSubject, Subject, Subscription, of } from 'rxjs';
+import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 
-import { OrderClientSearchResult } from '../../models/order-client-response.model';
-import { OrderItem } from '../../models/order-item.model';
+import { OrderItem } from '../../models/order-item-general.model';
 import {
   ORDER_LIST_ORDER_OPTIONS,
   OrderListOrderOption,
 } from '../../models/order-list-option-order.model';
+import { OrderOrderField, OrderParams } from '../../models/order-params.model';
+import { OrderSearchResult } from '../../models/order-response-model';
 import { statusOptions } from '../../models/order-status-option.model';
 import { OrderStatusOptions } from '../../models/order-status.enum';
 import { OrderService } from '../../services/order.service';
 
 @Component({
-  selector: 'mp-order-list-client',
+  selector: 'mp-order-list',
   standalone: true,
   imports: [
     CommonModule,
     TableComponent,
     TitleComponent,
-    SubtitleComponent,
     InputComponent,
     FormsModule,
     MatSelectModule,
@@ -55,16 +58,22 @@ import { OrderService } from '../../services/order.service';
     MatButtonModule,
   ],
   providers: [DatePipe, CurrencyPipe],
-  templateUrl: './order-list-client.component.html',
-  styleUrl: './order-list-client.component.scss',
+  templateUrl: './order-list.component.html',
+  styleUrl: './order-list.component.scss',
 })
-export class OrderListClientComponent implements OnInit {
+export class OrderListComponent implements OnInit {
   columns: TableColumn<OrderItem>[] = [
     {
       columnDef: 'orderId',
       header: 'Número de pedido',
       type: ColumnTypeEnum.VALUE,
       value: (element: OrderItem) => element.id.toString(),
+    },
+    {
+      columnDef: 'clientName',
+      header: 'Nombre del cliente',
+      type: ColumnTypeEnum.VALUE,
+      value: (element: OrderItem) => element.clientName,
     },
     {
       columnDef: 'createdAt',
@@ -77,9 +86,9 @@ export class OrderListClientComponent implements OnInit {
       columnDef: 'status',
       header: 'Estado',
       type: ColumnTypeEnum.PILL,
-      value: (element: OrderItem) => this.getStatusLabel(element.status),
+      value: (element: OrderItem) => this.getStatusLabel(element.orderStatus),
       pillStatus: (element: OrderItem) =>
-        this.mapStatusToPillStatus(element.status),
+        this.mapStatusToPillStatus(element.orderStatus),
     },
     {
       columnDef: 'price',
@@ -95,12 +104,6 @@ export class OrderListClientComponent implements OnInit {
         ) ?? '',
     },
     {
-      columnDef: 'quantityProducts',
-      header: 'Cantidad de productos',
-      type: ColumnTypeEnum.VALUE,
-      value: (element: OrderItem) => element.quantityProducts.toString(),
-    },
-    {
       columnDef: 'actions',
       header: 'Acciones',
       type: ColumnTypeEnum.ACTIONS,
@@ -108,10 +111,6 @@ export class OrderListClientComponent implements OnInit {
         {
           description: 'Ver Detalle',
           action: (element: OrderItem) => this.onDetailDrawer(element),
-        },
-        {
-          description: 'Repetir pedido',
-          action: (element: OrderItem) => this.onRepeatOrder(element),
         },
       ],
     },
@@ -131,8 +130,13 @@ export class OrderListClientComponent implements OnInit {
   selectedStatuses: { key: OrderStatusOptions; value: string }[] = [];
   fromDate: Date | null = null;
   toDate: Date | null = null;
+  selectedStatus: string[] = [];
   orderByOptions = ORDER_LIST_ORDER_OPTIONS;
   selectedOrderBy: OrderListOrderOption = this.orderByOptions[0];
+  selectedCreationDateRange: { start: Date | null; end: Date | null } = {
+    start: null,
+    end: null,
+  };
 
   private searchSubscription?: Subscription;
 
@@ -150,7 +154,6 @@ export class OrderListClientComponent implements OnInit {
           this.isLoading = true;
         }),
         switchMap(() => {
-          const token = localStorage.getItem('token');
           const body = {
             searchText: this.searchText ?? '',
             page: this.pageIndex + 1,
@@ -160,10 +163,10 @@ export class OrderListClientComponent implements OnInit {
                 this.selectedStatuses.length > 0
                   ? this.selectedStatuses.map((s) => s.key)
                   : undefined,
-              fromDate: this.fromDate
+              fromCreatedAtDate: this.fromDate
                 ? this.fromDate.toISOString().slice(0, 10)
                 : undefined,
-              toDate: this.toDate
+              toCreatedAtDate: this.toDate
                 ? this.toDate.toISOString().slice(0, 10)
                 : undefined,
             },
@@ -175,9 +178,7 @@ export class OrderListClientComponent implements OnInit {
               direction: this.selectedOrderBy.direction,
             },
           };
-          return token
-            ? this.orderService.searchClientOrders(body, token)
-            : of({ results: [], total: 0 });
+          return this.orderService.searchOrders(body);
         }),
       )
       .subscribe({
@@ -194,7 +195,6 @@ export class OrderListClientComponent implements OnInit {
         },
       });
 
-    // Primera carga
     this.doSearchSubject$.next();
   }
 
@@ -210,18 +210,18 @@ export class OrderListClientComponent implements OnInit {
     return OrderListUtils.mapStatusToPillStatus(status);
   }
 
-  private mapToOrderItem(apiResult: OrderClientSearchResult): OrderItem {
+  private mapToOrderItem(apiResult: OrderSearchResult): OrderItem {
     return {
       id: apiResult.id,
       createdAt: apiResult.createdAt,
-      status:
+      clientName: apiResult.clientName,
+      orderStatus:
         this.statusOptions.find(
           (opt) =>
             opt.value.toLowerCase() ===
-            (apiResult.orderStatusName ?? '').toLowerCase(),
+            (apiResult.orderStatus ?? '').toLowerCase(),
         )?.key ?? OrderStatusOptions.Pending,
       totalAmount: apiResult.totalAmount,
-      quantityProducts: apiResult.productsCount,
     };
   }
 
@@ -252,10 +252,6 @@ export class OrderListClientComponent implements OnInit {
     console.log('Ver detalle de la orden', order);
   }
 
-  onRepeatOrder(order: OrderItem) {
-    console.log('Repetir pedido', order);
-  }
-
   onSearchTextChange(): void {
     this.pageIndex = 0;
     this.isLoading = true;
@@ -271,5 +267,37 @@ export class OrderListClientComponent implements OnInit {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
     this.doSearchSubject$.next();
+  }
+
+  private getOrderParams(): OrderParams {
+    const params: OrderParams = {
+      page: this.pageIndex + 1,
+      pageSize: this.pageSize,
+      searchText: this.searchText,
+      filters: {},
+      orderBy: {
+        field: this.selectedOrderBy?.field || OrderOrderField.CreatedAt,
+        direction: this.selectedOrderBy?.direction || OrderDirection.DESC,
+      },
+    };
+
+    if (this.selectedStatus.length > 0) {
+      params.filters.statusName = this.selectedStatus;
+    }
+    if (this.selectedCreationDateRange.start) {
+      params.filters.fromCreatedAtDate = this.selectedCreationDateRange.start;
+    }
+    if (this.selectedCreationDateRange.end) {
+      params.filters.toCreatedAtDate = this.selectedCreationDateRange.end;
+    }
+    return params;
+  }
+
+  handleDownloadClick(): void {
+    const params = this.getOrderParams();
+
+    this.orderService.downloadOrderList(params).subscribe((response) => {
+      downloadFileFromResponse(response, 'pedidos.xlsx');
+    });
   }
 }

@@ -1,8 +1,10 @@
 export enum OrderStatusOptions {
   Pending = 'Pending',
   InPreparation = 'InPreparation',
+  Prepared = 'Prepared',
   Shipped = 'Shipped',
-  Delivered = 'Delivered',
+  Finished = 'Finished',
   Cancelled = 'Cancelled',
-  Returned = 'Returned',
+  PaymentPending = 'PaymentPending',
+  PaymentRejected = 'PaymentRejected',
 }
