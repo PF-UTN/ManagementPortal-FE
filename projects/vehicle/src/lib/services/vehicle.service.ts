@@ -16,6 +16,7 @@ import {
 import { SearchMaintenancePlanResponse } from '../models/maintenance-plan-response.model';
 import { MaintenanceRepairParams } from '../models/maintenance-repair-param.model';
 import { SearchMaintenanceRepairResponse } from '../models/maintenance-response.model';
+import { RepairCreate } from '../models/repair-create.model';
 import { SearchVehicleResponse } from '../models/search-vehicle-response.model';
 import { ServiceSupplierCreateUpdate } from '../models/supplier-create-update.model';
 import {
@@ -195,6 +196,24 @@ export class VehicleService {
 
   deleteMaintenanceItem(id: number) {
     const url = `${this.baseUrl}/maintenance/${id}`;
+    return this.http.delete<void>(url);
+  }
+
+  createRepairAsync(
+    vehicleId: number,
+    payload: RepairCreate,
+  ): Observable<void> {
+    const url = `${this.baseUrl}/${vehicleId}/repair`;
+    return this.http.post<void>(url, payload);
+  }
+
+  updateRepairAsync(repairId: number, payload: RepairCreate): Observable<void> {
+    const url = `${this.baseUrl}/repair/${repairId}`;
+    return this.http.put<void>(url, payload);
+  }
+
+  deleteRepairAsync(repairId: number): Observable<void> {
+    const url = `${this.baseUrl}/repair/${repairId}`;
     return this.http.delete<void>(url);
   }
 }

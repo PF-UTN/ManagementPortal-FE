@@ -75,7 +75,9 @@ export class MaintenanceHistoryComponent implements OnInit {
   }
 
   onCreateRepairDrawer() {
-    // Logic to open the create/update repair drawer
+    this.router.navigate(['crear-reparacion'], {
+      relativeTo: this.route,
+    });
   }
 
   handleDownloadClick() {

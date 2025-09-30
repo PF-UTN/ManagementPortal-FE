@@ -1,0 +1,88 @@
+<div class="container-fluid">
+  <div class="d-flex align-items-center mb-2">
+    <mp-back-arrow [backTo]="''" [color]="'muted-purple'"></mp-back-arrow>
+    <mp-title>Registrar Reparación</mp-title>
+  </div>
+  <hr>
+  <div class="container">
+    <form [formGroup]="repairForm" class="container__body">
+      <div class="row">
+        <div class="col-6">
+          <mat-form-field class="w-100" appearance="outline">
+            <mat-label>Fecha</mat-label>
+            <input 
+              matInput 
+              [matDatepicker]="picker" 
+              formControlName="date" 
+              readonly
+            >
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-error
+              *ngIf="repairForm.controls.date.hasError('required') && repairForm.controls.date.touched">
+              La fecha es requerida
+            </mat-error>
+          </mat-form-field>
+        </div>
+        <div class="col-6">
+          <mp-input 
+            type="number" 
+            formControlName="kmPerformed" 
+            [min]="1" 
+            placeholder="Kilometraje al momento de la reparación"
+            label="Kilometraje al momento de la reparación"
+            icon="close">
+          </mp-input>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-12">
+          <mp-input 
+            type="text" 
+            formControlName="description" 
+            placeholder="Descripción"
+            label="Descripción"
+            icon="close">
+          </mp-input>
+        </div>
+      </div>
+      <mat-form-field class="w-100 mt-3" appearance="outline">
+        <mat-label>Proveedor</mat-label>
+        <input 
+          type="text" 
+          matInput 
+          formControlName="supplier" 
+          [matAutocomplete]="autoSupplier"
+          placeholder="Buscar proveedor" 
+          [attr.autocomplete]="'off'" 
+        />
+        <mat-autocomplete #autoSupplier="matAutocomplete" [displayWith]="displaySupplier"
+          (optionSelected)="onSupplierSelected($event)">
+          <mat-option *ngFor="let supplier of filteredSuppliers$ | async" [value]="supplier"
+            [ngClass]="{'create-supplier-option': supplier.id === -1}">
+            <span *ngIf="supplier.id === -1" class="span">+ Gestionar proveedores</span>
+            <span *ngIf="supplier.id !== -1">{{ supplier.businessName }}</span>
+          </mat-option>
+        </mat-autocomplete>
+        <mat-error
+          *ngIf="repairForm.controls.supplier?.hasError('required') && repairForm.controls.supplier?.touched">
+          El proveedor es requerido
+        </mat-error>
+        <mat-error
+          *ngIf="repairForm.controls.supplier?.hasError('invalidSupplier') && repairForm.controls.supplier?.touched">
+          Debe seleccionar un proveedor de la lista.
+        </mat-error>
+      </mat-form-field>
+    </form>
+    <div class="container__footer d-flex justify-content-end mt-4">
+      <mp-button 
+        type="primary" 
+        (click)="onSave()" 
+        [disabled]="repairForm.invalid" 
+        [loading]="isLoading"
+        (keydown)="onButtonKeyDown($event)">
+        Guardar
+      </mp-button>
+    </div>
+  </div>
+</div>
