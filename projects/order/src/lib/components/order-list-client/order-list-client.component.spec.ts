@@ -1,3 +1,4 @@
+import { OrderDirection } from '@Common';
 import { PillStatusEnum } from '@Common-UI';
 
 import { registerLocaleData } from '@angular/common';
@@ -16,6 +17,7 @@ import { of, Subscription } from 'rxjs';
 import { OrderListClientComponent } from './order-list-client.component';
 import { OrderItem } from '../../models/order-item.model';
 import { OrderListOrderOption } from '../../models/order-list-option-order.model';
+import { OrderOrderField } from '../../models/order-params.model';
 import { OrderStatusOptions } from '../../models/order-status.enum';
 
 registerLocaleData(localeEsAr);
@@ -271,7 +273,7 @@ describe('OrderListClientComponent', () => {
       const completado: OrderItem = {
         id: 3,
         createdAt: '',
-        status: OrderStatusOptions.Delivered,
+        status: OrderStatusOptions.Finished,
         totalAmount: 0,
         quantityProducts: 0,
       };
@@ -300,10 +302,18 @@ describe('OrderListClientComponent', () => {
         { input: OrderStatusOptions.Pending, expected: 'Pendiente' },
         { input: OrderStatusOptions.InPreparation, expected: 'En preparación' },
         { input: OrderStatusOptions.Shipped, expected: 'Enviado' },
-        { input: OrderStatusOptions.Delivered, expected: 'Entregado' },
+        { input: OrderStatusOptions.Finished, expected: 'Finalizado' },
         { input: OrderStatusOptions.Cancelled, expected: 'Cancelado' },
-        { input: OrderStatusOptions.Returned, expected: 'Devuelto' },
         { input: 'otro' as OrderStatusOptions, expected: 'Pendiente' },
+        { input: OrderStatusOptions.Prepared, expected: 'Preparado' },
+        {
+          input: OrderStatusOptions.PaymentPending,
+          expected: 'Pago pendiente',
+        },
+        {
+          input: OrderStatusOptions.PaymentRejected,
+          expected: 'Pago rechazado',
+        },
       ];
 
       // Act & Assert
@@ -326,14 +336,22 @@ describe('OrderListClientComponent', () => {
           input: OrderStatusOptions.Shipped,
           expected: PillStatusEnum.InProgress,
         },
-        { input: OrderStatusOptions.Delivered, expected: PillStatusEnum.Done },
+        { input: OrderStatusOptions.Finished, expected: PillStatusEnum.Done },
         {
           input: OrderStatusOptions.Cancelled,
           expected: PillStatusEnum.Cancelled,
         },
         {
-          input: OrderStatusOptions.Returned,
+          input: OrderStatusOptions.Prepared,
+          expected: PillStatusEnum.InProgress,
+        },
+        {
+          input: OrderStatusOptions.PaymentPending,
           expected: PillStatusEnum.Warning,
+        },
+        {
+          input: OrderStatusOptions.PaymentRejected,
+          expected: PillStatusEnum.Cancelled,
         },
         {
           input: 'otro' as OrderStatusOptions,
@@ -409,8 +427,8 @@ describe('OrderListClientComponent', () => {
       // Arrange
       const option: OrderListOrderOption = {
         label: 'Price',
-        field: 'price',
-        direction: 'desc',
+        field: OrderOrderField.totalAmount,
+        direction: OrderDirection.ASC,
       };
       component.pageIndex = 3;
       const nextSpy = jest.spyOn(component.doSearchSubject$, 'next');
@@ -505,8 +523,8 @@ describe('OrderListClientComponent', () => {
       component.toDate = new Date('2025-09-30');
       const orderOption: OrderListOrderOption = {
         label: 'Price',
-        field: 'price',
-        direction: 'desc',
+        field: OrderOrderField.totalAmount,
+        direction: OrderDirection.DESC,
       };
       component.selectedOrderBy = orderOption;
 
@@ -545,8 +563,8 @@ describe('OrderListClientComponent', () => {
         .mockReturnValue(of({ results: [], total: 0 }));
       const orderOption: OrderListOrderOption = {
         label: 'Price',
-        field: 'price',
-        direction: 'asc',
+        field: OrderOrderField.totalAmount,
+        direction: OrderDirection.ASC,
       };
       component.selectedOrderBy = orderOption;
 
@@ -590,8 +608,8 @@ describe('OrderListClientComponent', () => {
         .mockReturnValue(of({ results: [], total: 0 }));
       const orderOption: OrderListOrderOption = {
         label: 'Price',
-        field: 'price',
-        direction: 'asc',
+        field: OrderOrderField.totalAmount,
+        direction: OrderDirection.ASC,
       };
       component.selectedOrderBy = orderOption;
 
@@ -614,8 +632,8 @@ describe('OrderListClientComponent', () => {
         .mockReturnValue(of({ results: [], total: 0 }));
       const orderOption: OrderListOrderOption = {
         label: 'Created',
-        field: 'createdAt',
-        direction: 'asc',
+        field: OrderOrderField.CreatedAt,
+        direction: OrderDirection.ASC,
       };
       component.selectedOrderBy = orderOption;
 

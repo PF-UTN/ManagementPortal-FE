@@ -1,30 +1,32 @@
-export type OrderListOrderField = 'createdAt' | 'price';
+import { OrderDirection } from '@Common';
+
+import { OrderOrderField } from './order-params.model';
 
 export interface OrderListOrderOption {
   label: string;
-  field: OrderListOrderField;
-  direction: 'asc' | 'desc';
+  field: OrderOrderField;
+  direction: OrderDirection;
 }
 
 export const ORDER_LIST_ORDER_OPTIONS: OrderListOrderOption[] = [
   {
     label: 'Fecha creacion: Ascendente',
-    field: 'createdAt',
-    direction: 'asc',
+    field: OrderOrderField.CreatedAt,
+    direction: OrderDirection.ASC,
   },
   {
     label: 'Fecha creacion: Descendente',
-    field: 'createdAt',
-    direction: 'desc',
+    field: OrderOrderField.CreatedAt,
+    direction: OrderDirection.DESC,
   },
   {
     label: 'Precio: Menor a Mayor',
-    field: 'price',
-    direction: 'asc',
+    field: OrderOrderField.totalAmount,
+    direction: OrderDirection.ASC,
   },
   {
     label: 'Precio: Mayor a Menor',
-    field: 'price',
-    direction: 'desc',
+    field: OrderOrderField.totalAmount,
+    direction: OrderDirection.DESC,
   },
 ];
