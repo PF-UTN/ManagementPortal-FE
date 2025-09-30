@@ -1,3 +1,5 @@
+import { OrderDirection } from '@Common';
+
 import { provideHttpClient } from '@angular/common/http';
 import {
   provideHttpClientTesting,
@@ -8,9 +10,13 @@ import { TestBed } from '@angular/core/testing';
 import { OrderService } from './order.service';
 import { OrderClientSearchRequest } from '../models/order-client-request-model';
 import { OrderClientSearchResponse } from '../models/order-client-response.model';
+import { OrderOrderField, OrderParams } from '../models/order-params.model';
+import { OrderSearchRequest } from '../models/order-request-model';
+import { mockOrderListItems } from '../testing/mock-data.model';
 import { mockOrderClientDetail } from '../testing/mock-data.model2';
 
-const url = 'https://dev-management-portal-be.vercel.app/order';
+const baseUrl = 'https://dev-management-portal-be.vercel.app/order';
+
 describe('OrderService', () => {
   let service: OrderService;
   let httpMock: HttpTestingController;
@@ -166,6 +172,115 @@ describe('OrderService', () => {
     expect(req.request.headers.get('Authorization')).toBe(`Bearer ${token}`);
     expect(response).toEqual(mockResponse);
   });
+  describe('searchOrders', () => {
+    it('should POST to /order/search and return the response', () => {
+      // Arrange
+      const params: OrderSearchRequest = {
+        searchText: 'pendiente',
+        page: 1,
+        pageSize: 5,
+        filters: {},
+        orderBy: { field: 'createdAt', direction: 'desc' },
+      };
+      const url = `${baseUrl}/search`;
+
+      // Act & Assert
+      service.searchOrders(params).subscribe((response) => {
+        expect(response).toEqual(mockOrderListItems);
+      });
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(params);
+      req.flush(mockOrderListItems);
+    });
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const params: OrderSearchRequest = {
+        searchText: 'pendiente',
+        page: 1,
+        pageSize: 5,
+        filters: {},
+        orderBy: { field: 'createdAt', direction: 'desc' },
+      };
+      const url = `${baseUrl}/search`;
+      const mockError = new ErrorEvent('Network error');
+
+      //Act & Assert
+      service.searchOrders(params).subscribe({
+        next: () => {
+          fail('Expected an error, but got a successful response');
+        },
+        error: (error) => {
+          expect(error.error).toBe(mockError);
+        },
+      });
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
+      req.error(mockError);
+    });
+  });
+  describe('downloadOrderList', () => {
+    it('should send a POST request with the correct parameters and return a blob response', () => {
+      // Arrange
+      const params: OrderParams = {
+        page: 1,
+        pageSize: 10,
+        searchText: 'Order',
+        filters: {
+          statusName: ['Pending', 'Cancelled'],
+          fromCreatedAtDate: new Date('2024-07-01'),
+          toCreatedAtDate: new Date('2024-07-31'),
+        },
+        orderBy: {
+          field: OrderOrderField.CreatedAt,
+          direction: OrderDirection.ASC,
+        },
+      };
+      const url = `${baseUrl}/download`;
+      const mockBlob = new Blob(['test'], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      });
+
+      // Act & Assert
+      service.downloadOrderList(params).subscribe((response) => {
+        expect(response.body).toEqual(mockBlob);
+        expect(response.status).toBe(200);
+      });
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(params);
+      req.flush(mockBlob, { status: 200, statusText: 'OK' });
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const params: OrderParams = {
+        page: 1,
+        pageSize: 10,
+        filters: {},
+        searchText: '',
+        orderBy: {
+          field: OrderOrderField.CreatedAt,
+          direction: OrderDirection.ASC,
+        },
+      };
+      const url = `${baseUrl}/download`;
+      const mockError = new ErrorEvent('Network error');
+
+      // Act & Assert
+      service.downloadOrderList(params).subscribe({
+        next: () => {
+          fail('Expected an error, but got a successful response');
+        },
+        error: (error) => {
+          expect(error.error).toBe(mockError);
+        },
+      });
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
+      req.error(mockError);
+    });
+  });
   describe('getOrderClientDetail', () => {
     it('should GET to the correct endpoint and return the order detail', () => {
       // Arrange
@@ -179,7 +294,7 @@ describe('OrderService', () => {
         });
 
       const req = httpMock.expectOne(
-        `${url}/client/${mockOrderClientDetail.id}`,
+        `${baseUrl}/client/${mockOrderClientDetail.id}`,
       );
       req.flush(mockOrderClientDetail);
 
@@ -201,7 +316,7 @@ describe('OrderService', () => {
       });
 
       const req = httpMock.expectOne(
-        `${url}/client/${mockOrderClientDetail.id}`,
+        `${baseUrl}/client/${mockOrderClientDetail.id}`,
       );
       req.flush('Error', { status: 404, statusText: 'Not Found' });
 

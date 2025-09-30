@@ -75,10 +75,16 @@ export class NavBarComponent implements OnInit {
         shouldRender: this.authService.hasAccess([RolesEnum.Employee]),
       },
       {
+        title: 'Mis pedidos',
+        icon: 'assignment',
+        route: 'pedidos/cliente',
+        shouldRender: this.authService.hasAccess([RolesEnum.Client]),
+      },
+      {
         title: 'Pedidos',
         icon: 'assignment',
         route: 'pedidos',
-        shouldRender: this.authService.hasAccess([RolesEnum.Client]),
+        shouldRender: this.authService.hasAccess([RolesEnum.Employee]),
       },
       {
         title: 'Carrito',

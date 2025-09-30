@@ -10,6 +10,7 @@ import { TestBed } from '@angular/core/testing';
 import { MaintenancePerformRequest } from '../models/maintenance-perform.model';
 import { MaintenancePlanCreate } from '../models/maintenance-plan-create.model';
 import { MaintenanceRepairParams } from '../models/maintenance-repair-param.model';
+import { RepairCreate } from '../models/repair-create.model';
 import { ServiceSupplierCreateUpdate } from '../models/supplier-create-update.model';
 import {
   ServiceSupplierDetailResponse,
@@ -1027,6 +1028,349 @@ describe('VehicleService', () => {
       const req = httpMock.expectOne(url);
       expect(req.request.method).toBe('PUT');
       expect(req.request.body).toEqual(payload);
+      req.error(mockError);
+    });
+  });
+
+  describe('deleteMaintenancePlanItem', () => {
+    it('should send a DELETE request with the correct id and return void', () => {
+      // Arrange
+      const maintenancePlanItemId = 77;
+      const url = `${baseUrl}/maintenance-plan-item/${maintenancePlanItemId}`;
+
+      // Act
+      service
+        .deleteMaintenancePlanItem(maintenancePlanItemId)
+        .subscribe((response) => {
+          // Assert
+          expect(response).toBeUndefined();
+        });
+
+      // Assert
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('DELETE');
+      req.flush(null);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const maintenancePlanItemId = 77;
+      const mockError = new ErrorEvent('Network error');
+      const url = `${baseUrl}/maintenance-plan-item/${maintenancePlanItemId}`;
+
+      // Act
+      service.deleteMaintenancePlanItem(maintenancePlanItemId).subscribe({
+        next: () => {
+          fail('Expected an error, but got a successful response');
+        },
+        error: (error) => {
+          // Assert
+          expect(error.error).toBe(mockError);
+        },
+      });
+
+      // Assert
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('DELETE');
+      req.error(mockError);
+    });
+  });
+
+  describe('deleteMaintenanceItem', () => {
+    it('should send a DELETE request with the correct id and return void', () => {
+      // Arrange
+      const maintenanceItem = 77;
+      const url = `${baseUrl}/maintenance/${maintenanceItem}`;
+
+      // Act
+      service.deleteMaintenanceItem(maintenanceItem).subscribe((response) => {
+        // Assert
+        expect(response).toBeUndefined();
+      });
+
+      // Assert
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('DELETE');
+      req.flush(null);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const maintenanceItem = 77;
+      const mockError = new ErrorEvent('Network error');
+      const url = `${baseUrl}/maintenance/${maintenanceItem}`;
+
+      // Act
+      service.deleteMaintenanceItem(maintenanceItem).subscribe({
+        next: () => {
+          fail('Expected an error, but got a successful response');
+        },
+        error: (error) => {
+          // Assert
+          expect(error.error).toBe(mockError);
+        },
+      });
+
+      // Assert
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('DELETE');
+      req.error(mockError);
+    });
+  });
+
+  describe('updateMaintenance', () => {
+    it('should send a PUT request with the correct id and payload and return void', () => {
+      // Arrange
+      const maintenanceId = 55;
+      const payload = {
+        date: '2025-11-15',
+        kmPerformed: 20500,
+        serviceSupplierId: 4,
+        maintenancePlanItemId: 99,
+      };
+      const url = `${baseUrl}/maintenance/${maintenanceId}`;
+
+      // Act
+      service
+        .updateMaintenance(maintenanceId, payload)
+        .subscribe((response) => {
+          // Assert
+          expect(response).toBeUndefined();
+        });
+
+      // Assert
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('PUT');
+      expect(req.request.body).toEqual(payload);
+      req.flush(null);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const maintenanceId = 55;
+      const payload = {
+        date: '2025-11-15',
+        kmPerformed: 20500,
+        serviceSupplierId: 4,
+        maintenancePlanItemId: 99,
+      };
+      const mockError = new ErrorEvent('Network error');
+      const url = `${baseUrl}/maintenance/${maintenanceId}`;
+
+      // Act
+      service.updateMaintenance(maintenanceId, payload).subscribe({
+        next: () => {
+          fail('Expected an error, but got a successful response');
+        },
+        error: (error) => {
+          // Assert
+          expect(error.error).toBe(mockError);
+        },
+      });
+
+      // Assert
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('PUT');
+      expect(req.request.body).toEqual(payload);
+      req.error(mockError);
+    });
+  });
+
+  describe('getSupplierById', () => {
+    it('should send a GET request with the correct id and return the supplier detail', () => {
+      // Arrange
+      const supplierId = 42;
+      const mockResponse: ServiceSupplierDetailResponse = {
+        id: 42,
+        businessName: 'Proveedor Test',
+        documentType: 'CUIT',
+        documentNumber: '20-12345678-9',
+        email: 'proveedor@test.com',
+        phone: '123456789',
+        addressId: 1,
+        address: {
+          id: 1,
+          townId: 100,
+          street: 'Calle Falsa',
+          streetNumber: 123,
+          town: {
+            id: 100,
+            name: 'Ciudad',
+            zipCode: '1000',
+            provinceId: 1,
+          },
+        },
+      };
+      const url = `${environment.apiBaseUrl}/service-supplier/${supplierId}`;
+
+      // Act & Assert
+      service.getSupplierById(supplierId).subscribe((response) => {
+        expect(response).toEqual(mockResponse);
+      });
+
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('GET');
+      req.flush(mockResponse);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const supplierId = 42;
+      const mockError = new ErrorEvent('Network error');
+      const url = `${environment.apiBaseUrl}/service-supplier/${supplierId}`;
+
+      // Act
+      service.getSupplierById(supplierId).subscribe({
+        next: () => {
+          fail('Expected an error, but got a successful response');
+        },
+        error: (error) => {
+          expect(error.error).toBe(mockError);
+        },
+      });
+
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('GET');
+      req.error(mockError);
+    });
+  });
+
+  describe('createRepairAsync', () => {
+    it('should send a POST request with the correct payload and return void', () => {
+      // Arrange
+      const vehicleId = 1;
+      const payload: RepairCreate = {
+        date: '1990-01-15',
+        description: 'Puncture',
+        kmPerformed: 25000,
+        serviceSupplierId: 1,
+      };
+      const url = `${baseUrl}/${vehicleId}/repair`;
+
+      // Act
+      service.createRepairAsync(vehicleId, payload).subscribe((response) => {
+        expect(response).toBeUndefined();
+      });
+
+      // Assert
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(payload);
+      req.flush(null);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const vehicleId = 1;
+      const payload: RepairCreate = {
+        date: '1990-01-15',
+        description: 'Puncture',
+        kmPerformed: 25000,
+        serviceSupplierId: 1,
+      };
+      const mockError = new ErrorEvent('Network error');
+      const url = `${baseUrl}/${vehicleId}/repair`;
+
+      // Act
+      service.createRepairAsync(vehicleId, payload).subscribe({
+        next: () => {
+          fail('Expected an error, but got a successful response');
+        },
+        error: (error) => {
+          expect(error.error).toBe(mockError);
+        },
+      });
+
+      // Assert
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
+      req.error(mockError);
+    });
+  });
+
+  describe('updateRepairAsync', () => {
+    it('should send a PUT request with the correct repairId and payload and return void', () => {
+      // Arrange
+      const repairId = 99;
+      const payload: RepairCreate = {
+        date: '2025-10-01',
+        description: 'Cambio de correa',
+        kmPerformed: 30000,
+        serviceSupplierId: 5,
+      };
+      const url = `${baseUrl}/repair/${repairId}`;
+
+      // Act
+      service.updateRepairAsync(repairId, payload).subscribe((response) => {
+        // Assert
+        expect(response).toBeUndefined();
+      });
+
+      // Assert
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('PUT');
+      expect(req.request.body).toEqual(payload);
+      req.flush(null);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const repairId = 99;
+      const payload: RepairCreate = {
+        date: '2025-10-01',
+        description: 'Cambio de correa',
+        kmPerformed: 30000,
+        serviceSupplierId: 5,
+      };
+      const mockError = new ErrorEvent('Network error');
+      const url = `${baseUrl}/repair/${repairId}`;
+
+      // Act
+      service.updateRepairAsync(repairId, payload).subscribe({
+        next: () => {
+          fail('Expected an error, but got a successful response');
+        },
+        error: (error) => {
+          // Assert
+          expect(error.error).toBe(mockError);
+        },
+      });
+
+      // Assert
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('PUT');
+      req.error(mockError);
+    });
+  });
+
+  describe('deleteRepairAsync', () => {
+    it('should send a DELETE request to the correct repairId and return void', () => {
+      const repairId = 42;
+      const url = `${baseUrl}/repair/${repairId}`;
+
+      service.deleteRepairAsync(repairId).subscribe((response) => {
+        expect(response).toBeUndefined();
+      });
+
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('DELETE');
+      req.flush(null);
+    });
+
+    it('should handle HTTP errors', () => {
+      const repairId = 42;
+      const url = `${baseUrl}/repair/${repairId}`;
+      const mockError = new ErrorEvent('Network error');
+
+      service.deleteRepairAsync(repairId).subscribe({
+        next: () => fail('Expected error'),
+        error: (error) => {
+          expect(error.error).toBe(mockError);
+        },
+      });
+
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('DELETE');
       req.error(mockError);
     });
   });
