@@ -206,4 +206,14 @@ export class VehicleService {
     const url = `${this.baseUrl}/${vehicleId}/repair`;
     return this.http.post<void>(url, payload);
   }
+
+  updateRepairAsync(repairId: number, payload: RepairCreate): Observable<void> {
+    const url = `${this.baseUrl}/repair/${repairId}`;
+    return this.http.put<void>(url, payload);
+  }
+
+  deleteRepairAsync(repairId: number): Observable<void> {
+    const url = `${this.baseUrl}/repair/${repairId}`;
+    return this.http.delete<void>(url);
+  }
 }

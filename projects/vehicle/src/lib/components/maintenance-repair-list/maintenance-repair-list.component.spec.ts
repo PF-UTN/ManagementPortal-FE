@@ -4,6 +4,8 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { fakeAsync, tick } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { throwError, of, firstValueFrom } from 'rxjs';
 
@@ -30,13 +32,24 @@ describe('MaintenanceRepairListComponent', () => {
   beforeEach(async () => {
     vehicleServiceMock = {
       postSearchRepairVehicle: jest.fn(),
+      deleteRepairAsync: jest.fn(),
     } as unknown as jest.Mocked<VehicleService>;
+
+    const dialogMock = {
+      open: jest.fn(),
+    };
+
+    const snackBarMock = {
+      open: jest.fn(),
+    };
 
     await TestBed.configureTestingModule({
       imports: [HostComponent, NoopAnimationsModule],
       providers: [
         provideHttpClientTesting(),
         { provide: VehicleService, useValue: vehicleServiceMock },
+        { provide: MatDialog, useValue: dialogMock },
+        { provide: MatSnackBar, useValue: snackBarMock },
       ],
     }).compileComponents();
 
@@ -56,6 +69,7 @@ describe('MaintenanceRepairListComponent', () => {
     it('should format maintenanceDate using datePipe', () => {
       // Arrange
       const item: RepairItem = {
+        id: 1,
         date: '2023-01-01',
         description: 'Reparación',
         kmPerformed: 15000,
@@ -72,6 +86,7 @@ describe('MaintenanceRepairListComponent', () => {
     it('should return description as is', () => {
       // Arrange
       const item: RepairItem = {
+        id: 1,
         date: '2023-01-02',
         description: 'Cambio de correa',
         kmPerformed: 20000,
@@ -86,6 +101,7 @@ describe('MaintenanceRepairListComponent', () => {
     it('should format repairKm using decimalPipe', () => {
       // Arrange
       const item: RepairItem = {
+        id: 1,
         date: '2023-01-03',
         description: 'Cambio de bujías',
         kmPerformed: 12345,
@@ -99,7 +115,16 @@ describe('MaintenanceRepairListComponent', () => {
 
     it('should call action handlers for actions column', () => {
       // Arrange
+      const dialogMock = TestBed.inject(MatDialog) as unknown as {
+        open: jest.Mock;
+      };
+      dialogMock.open.mockReturnValue({
+        afterClosed: () => ({
+          subscribe: (cb: (result: boolean) => void) => cb(false),
+        }),
+      });
       const item: RepairItem = {
+        id: 1,
         date: '2023-01-04',
         description: 'Cambio de filtro',
         kmPerformed: 30000,
@@ -111,7 +136,6 @@ describe('MaintenanceRepairListComponent', () => {
       col?.actions?.[1].action(item); // Eliminar
       // Assert
       expect(spyLog).toHaveBeenCalledWith('Modificar', item);
-      expect(spyLog).toHaveBeenCalledWith('Eliminar', item);
       spyLog.mockRestore();
     });
   });
@@ -247,8 +271,8 @@ describe('MaintenanceRepairListComponent', () => {
       // Assert
       const data = await firstValueFrom(component.dataSource$);
       expect(data).toEqual([
-        { date: '2023-01-01', description: 'Change', kmPerformed: 1000 },
-        { date: '2023-01-02', description: 'Other', kmPerformed: 2000 },
+        { id: 1, date: '2023-01-01', description: 'Change', kmPerformed: 1000 },
+        { id: 2, date: '2023-01-02', description: 'Other', kmPerformed: 2000 },
       ]);
       expect(component.itemsNumber).toBe(2);
       expect(component.isLoading).toBe(false);
@@ -311,6 +335,83 @@ describe('MaintenanceRepairListComponent', () => {
       expect(component.isLoading).toBe(true);
       expect(spy).toHaveBeenCalled();
       spy.mockRestore();
+    });
+  });
+
+  describe('deleteRepairWithConfirmation', () => {
+    const repair: RepairItem = {
+      id: 123,
+      date: '2024-01-01',
+      description: 'Test repair',
+      kmPerformed: 1000,
+    };
+
+    it('should call deleteRepairWithConfirmation when Eliminar action is triggered', () => {
+      // Arrange
+      const dialogMock = TestBed.inject(MatDialog) as unknown as {
+        open: jest.Mock;
+      };
+      dialogMock.open.mockReturnValue({
+        afterClosed: () => ({
+          subscribe: (cb: (result: boolean) => void) => cb(false),
+        }),
+      });
+      const col = component.columns.find((c) => c.columnDef === 'actions');
+      const spy = jest.spyOn(component, 'deleteRepairWithConfirmation');
+      // Act
+      col?.actions?.[1].action(repair);
+      // Assert
+      expect(spy).toHaveBeenCalledWith(repair);
+      spy.mockRestore();
+    });
+
+    it('should call deleteRepairAsync, doSearchSubject$.next and snackBar.open when dialog is confirmed', () => {
+      // Arrange
+      const dialogMock = TestBed.inject(MatDialog) as unknown as {
+        open: jest.Mock;
+      };
+      const snackBarMock = TestBed.inject(MatSnackBar) as unknown as {
+        open: jest.Mock;
+      };
+      dialogMock.open.mockReturnValue({
+        afterClosed: () => ({
+          subscribe: (cb: (result: boolean) => void) => cb(true),
+        }),
+      });
+      vehicleServiceMock.deleteRepairAsync.mockReturnValue(of(void 0));
+      const doSearchSpy = jest.spyOn(component.doSearchSubject$, 'next');
+      // Act
+      component.deleteRepairWithConfirmation(repair);
+      // Assert
+      expect(dialogMock.open).toHaveBeenCalled();
+      expect(vehicleServiceMock.deleteRepairAsync).toHaveBeenCalledWith(123);
+      expect(doSearchSpy).toHaveBeenCalled();
+      expect(snackBarMock.open).toHaveBeenCalledWith(
+        'Reparación eliminada exitosamente',
+        'Cerrar',
+        { duration: 3000 },
+      );
+      doSearchSpy.mockRestore();
+    });
+
+    it('should not call deleteRepairAsync or snackBar.open when dialog is cancelled', () => {
+      // Arrange
+      const dialogMock = TestBed.inject(MatDialog) as unknown as {
+        open: jest.Mock;
+      };
+      const snackBarMock = TestBed.inject(MatSnackBar) as unknown as {
+        open: jest.Mock;
+      };
+      dialogMock.open.mockReturnValue({
+        afterClosed: () => ({
+          subscribe: (cb: (result: boolean) => void) => cb(false),
+        }),
+      });
+      // Act
+      component.deleteRepairWithConfirmation(repair);
+      // Assert
+      expect(vehicleServiceMock.deleteRepairAsync).not.toHaveBeenCalled();
+      expect(snackBarMock.open).not.toHaveBeenCalled();
     });
   });
 });
