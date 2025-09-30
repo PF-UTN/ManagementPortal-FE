@@ -4,7 +4,7 @@ import { of } from 'rxjs';
 
 import { DetailLateralDrawerClientComponent } from './detail-lateral-drawer-client.component';
 import { OrderService } from '../../services/order.service';
-import { mockOrderClientDetail } from '../../testing/mock-data.model';
+import { mockOrderClientDetail } from '../../testing/mock-data.model2';
 
 describe('DetailLateralDrawerClientComponent', () => {
   let component: DetailLateralDrawerClientComponent;

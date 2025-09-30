@@ -18,7 +18,7 @@ import { OrderListClientComponent } from './order-list-client.component';
 import { OrderItem } from '../../models/order-item.model';
 import { OrderListOrderOption } from '../../models/order-list-option-order.model';
 import { OrderStatusOptions } from '../../models/order-status.enum';
-import { mockOrderItem } from '../../testing/mock-data.model';
+import { mockOrderItem } from '../../testing/mock-data.model2';
 import { DetailLateralDrawerClientComponent } from '../detail-lateral-drawer-client/detail-lateral-drawer-client.component';
 
 registerLocaleData(localeEsAr);

@@ -8,7 +8,7 @@ import { TestBed } from '@angular/core/testing';
 import { OrderService } from './order.service';
 import { OrderClientSearchRequest } from '../models/order-client-request-model';
 import { OrderClientSearchResponse } from '../models/order-client-response.model';
-import { mockOrderClientDetail } from '../testing/mock-data.model';
+import { mockOrderClientDetail } from '../testing/mock-data.model2';
 
 const url = 'https://dev-management-portal-be.vercel.app/order';
 describe('OrderService', () => {
