@@ -160,6 +160,11 @@ export class VehicleService {
       );
   }
 
+  getSupplierById(id: number): Observable<ServiceSupplierDetailResponse> {
+    const url = `${environment.apiBaseUrl}/service-supplier/${id}`;
+    return this.http.get<ServiceSupplierDetailResponse>(url);
+  }
+
   createServiceSupplier(
     payload: ServiceSupplierCreateUpdate,
   ): Observable<ServiceSupplierResponse> {

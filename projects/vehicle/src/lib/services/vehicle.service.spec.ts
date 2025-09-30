@@ -1174,4 +1174,63 @@ describe('VehicleService', () => {
       req.error(mockError);
     });
   });
+
+  describe('getSupplierById', () => {
+    it('should send a GET request with the correct id and return the supplier detail', () => {
+      // Arrange
+      const supplierId = 42;
+      const mockResponse: ServiceSupplierDetailResponse = {
+        id: 42,
+        businessName: 'Proveedor Test',
+        documentType: 'CUIT',
+        documentNumber: '20-12345678-9',
+        email: 'proveedor@test.com',
+        phone: '123456789',
+        addressId: 1,
+        address: {
+          id: 1,
+          townId: 100,
+          street: 'Calle Falsa',
+          streetNumber: 123,
+          town: {
+            id: 100,
+            name: 'Ciudad',
+            zipCode: '1000',
+            provinceId: 1,
+          },
+        },
+      };
+      const url = `${environment.apiBaseUrl}/service-supplier/${supplierId}`;
+
+      // Act & Assert
+      service.getSupplierById(supplierId).subscribe((response) => {
+        expect(response).toEqual(mockResponse);
+      });
+
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('GET');
+      req.flush(mockResponse);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const supplierId = 42;
+      const mockError = new ErrorEvent('Network error');
+      const url = `${environment.apiBaseUrl}/service-supplier/${supplierId}`;
+
+      // Act
+      service.getSupplierById(supplierId).subscribe({
+        next: () => {
+          fail('Expected an error, but got a successful response');
+        },
+        error: (error) => {
+          expect(error.error).toBe(mockError);
+        },
+      });
+
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('GET');
+      req.error(mockError);
+    });
+  });
 });
