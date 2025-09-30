@@ -187,4 +187,18 @@ describe('MaintenanceHistoryComponent', () => {
       });
     });
   });
+
+  describe('onCreateRepairDrawer', () => {
+    it('should navigate to crear-reparacion with relative route', () => {
+      // Arrange
+      const router = TestBed.inject(Router);
+      const navigateSpy = jest.spyOn(router, 'navigate');
+      // Act
+      component.onCreateRepairDrawer();
+      // Assert
+      expect(navigateSpy).toHaveBeenCalledWith(['crear-reparacion'], {
+        relativeTo: expect.any(Object),
+      });
+    });
+  });
 });
