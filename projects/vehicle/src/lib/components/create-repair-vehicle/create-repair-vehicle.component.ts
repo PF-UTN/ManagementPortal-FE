@@ -177,6 +177,12 @@ export class CreateRepairVehicleComponent implements OnInit {
     };
   }
 
+  onButtonKeyDown(event: KeyboardEvent): void {
+    if (event.key === 'Enter' || event.key === ' ') {
+      this.onSave();
+    }
+  }
+
   onSave() {
     if (this.repairForm.invalid) {
       this.repairForm.markAllAsTouched();

@@ -79,7 +79,8 @@
         type="primary" 
         (click)="onSave()" 
         [disabled]="repairForm.invalid" 
-        [loading]="isLoading">
+        [loading]="isLoading"
+        (keydown)="onButtonKeyDown($event)">
         Guardar
       </mp-button>
     </div>

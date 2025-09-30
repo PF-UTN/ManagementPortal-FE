@@ -259,4 +259,27 @@ describe('CreateRepairVehicleComponent', () => {
       expect(component.isLoading).toBe(false);
     });
   });
+
+  describe('Keyboard interaction', () => {
+    it('should call onSave when Enter key is pressed', () => {
+      const onSaveSpy = jest.spyOn(component, 'onSave');
+      const event = new KeyboardEvent('keydown', { key: 'Enter' });
+      component.onButtonKeyDown(event);
+      expect(onSaveSpy).toHaveBeenCalled();
+    });
+
+    it('should call onSave when Space key is pressed', () => {
+      const onSaveSpy = jest.spyOn(component, 'onSave');
+      const event = new KeyboardEvent('keydown', { key: ' ' });
+      component.onButtonKeyDown(event);
+      expect(onSaveSpy).toHaveBeenCalled();
+    });
+
+    it('should NOT call onSave for other keys', () => {
+      const onSaveSpy = jest.spyOn(component, 'onSave');
+      const event = new KeyboardEvent('keydown', { key: 'Tab' });
+      component.onButtonKeyDown(event);
+      expect(onSaveSpy).not.toHaveBeenCalled();
+    });
+  });
 });
