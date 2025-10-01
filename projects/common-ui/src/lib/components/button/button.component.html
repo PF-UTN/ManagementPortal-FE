@@ -4,29 +4,35 @@
     [matTooltipPosition]="tooltipPosition"
     style="display: inline-block"
   >
-  <button
-    mat-icon-button
-    [disabled]="disabled() || loading()"
-    [attr.aria-label]="ariaLabel"
-    (click)="clickEvent($event)"
-  >
-    <mat-icon *ngIf="icon">{{ icon }}</mat-icon>
-  </button>
+    <button
+      mat-icon-button
+      [disabled]="disabled() || loading()"
+      [attr.aria-label]="ariaLabel"
+      (click)="clickEvent($event)"
+      [matBadge]="matBadge"
+      [matBadgeColor]="matBadgeColor"
+      [matBadgeOverlap]="matBadgeOverlap"
+      [matBadgePosition]="matBadgePosition"
+    >
+      <mat-icon *ngIf="icon">{{ icon }}</mat-icon>
+    </button>
   </span>
 </ng-container>
 <ng-template #normalButton>
-  <button class="button button__{{type}}" 
-    mat-raised-button  
+  <button
+    class="button button__{{ type }}"
+    mat-raised-button
     [disabled]="disabled() || loading()"
     [attr.type]="type"
-    (click)="clickEvent()">
-    
+    (click)="clickEvent()"
+  >
     <ng-container *ngIf="loading(); else content">
-      <mat-progress-spinner 
+      <mat-progress-spinner
         mode="indeterminate"
         diameter="20"
         strokeWidth="3"
-        color="primary">
+        color="primary"
+      >
       </mat-progress-spinner>
     </ng-container>
 

@@ -1,0 +1,15 @@
+@import '../../../../../../src/styles/varibles';
+
+.cart-fab-btn {
+  position: relative;
+  border-radius: 50%;
+  background-color: #ffffff !important;
+  color: $dark-muted-purple !important;
+  width: 56px;
+  height: 56px;
+  min-width: 56px;
+  min-height: 56px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

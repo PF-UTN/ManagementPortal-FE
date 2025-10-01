@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, Output, EventEmitter, input } from '@angular/core';
+import { MatBadgeModule, MatBadgePosition } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
+import { ThemePalette } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -17,6 +19,7 @@ import { ButtonType } from '../../models/button-type.model';
     MatProgressSpinnerModule,
     MatTooltipModule,
     MatIconModule,
+    MatBadgeModule,
   ],
   templateUrl: './button.component.html',
   styleUrl: './button.component.scss',
@@ -27,6 +30,10 @@ export class ButtonComponent {
   @Input() tooltip: string = '';
   @Input() tooltipPosition: 'above' | 'below' | 'left' | 'right' = 'above';
   @Input() ariaLabel: string = '';
+  @Input() matBadge: number | null = null;
+  @Input() matBadgeColor: ThemePalette = 'accent';
+  @Input() matBadgeOverlap: boolean = false;
+  @Input() matBadgePosition: MatBadgePosition = 'above after';
   disabled = input(false);
   loading = input(false);
 
