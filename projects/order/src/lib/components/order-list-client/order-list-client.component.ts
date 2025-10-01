@@ -8,6 +8,7 @@ import {
   SubtitleComponent,
   InputComponent,
   ButtonComponent,
+  LateralDrawerService,
 } from '@Common-UI';
 
 import { DatePipe, CurrencyPipe, CommonModule } from '@angular/common';
@@ -33,6 +34,7 @@ import {
 import { statusOptions } from '../../models/order-status-option.model';
 import { OrderStatusOptions } from '../../models/order-status.enum';
 import { OrderService } from '../../services/order.service';
+import { DetailLateralDrawerClientComponent } from '../detail-lateral-drawer-client/detail-lateral-drawer-client.component';
 
 @Component({
   selector: 'mp-order-list-client',
@@ -140,6 +142,7 @@ export class OrderListClientComponent implements OnInit {
     private datePipe: DatePipe,
     private currencyPipe: CurrencyPipe,
     private orderService: OrderService,
+    private lateralDrawerService: LateralDrawerService,
   ) {}
 
   ngOnInit(): void {
@@ -248,8 +251,21 @@ export class OrderListClientComponent implements OnInit {
     this.doSearchSubject$.next();
   }
 
-  onDetailDrawer(order: OrderItem) {
-    console.log('Ver detalle de la orden', order);
+  onDetailDrawer(request: OrderItem): void {
+    this.lateralDrawerService.open(
+      DetailLateralDrawerClientComponent,
+      { orderId: request.id },
+      {
+        title: 'Detalle Pedido',
+        footer: {
+          firstButton: {
+            text: 'Cerrar',
+            click: () => this.lateralDrawerService.close(),
+          },
+        },
+        size: 'medium',
+      },
+    );
   }
 
   onRepeatOrder(order: OrderItem) {
