@@ -24,6 +24,7 @@ describe('PerformMaintenancePlanComponent', () => {
     searchServiceSuppliers: jest.Mock;
     createMaintenanceAsync: jest.Mock;
     updateMaintenance: jest.Mock;
+    getSupplierById: jest.Mock;
   };
   let snackBarMock: { open: jest.Mock };
   let locationMock: { back: jest.Mock };
@@ -35,6 +36,7 @@ describe('PerformMaintenancePlanComponent', () => {
       searchServiceSuppliers: jest.fn(),
       createMaintenanceAsync: jest.fn(),
       updateMaintenance: jest.fn(),
+      getSupplierById: jest.fn(),
     };
     snackBarMock = { open: jest.fn() };
     locationMock = { back: jest.fn() };
@@ -93,6 +95,85 @@ describe('PerformMaintenancePlanComponent', () => {
       expect(
         component.maintenanceForm.controls.kmPerformed.hasError('min'),
       ).toBe(true);
+    });
+
+    it('should patch form and fetch supplier if maintenanceFromState exists', () => {
+      // Arrange
+      const maintenanceMock = {
+        id: 123,
+        date: '2025-10-01',
+        description: 'desc',
+        kmPerformed: 1500,
+        serviceSupplierId: 42,
+      };
+      const supplierMock: SupplierSearchResult = {
+        id: 42,
+        businessName: 'Proveedor Test',
+      };
+      const originalHistoryState = { ...history.state };
+      Object.defineProperty(history, 'state', {
+        value: { maintenance: maintenanceMock },
+        configurable: true,
+      });
+      vehicleServiceMock.getSupplierById = jest
+        .fn()
+        .mockReturnValue(of(supplierMock));
+
+      // Act
+      const testFixture = TestBed.createComponent(
+        PerformMaintenancePlanComponent,
+      );
+      const testComponent = testFixture.componentInstance;
+      testFixture.detectChanges();
+
+      // Assert
+      expect(testComponent.maintenanceFromState).toEqual(maintenanceMock);
+      expect(testComponent.isLoading).toBe(false);
+      expect(testComponent.maintenanceForm.value.date).toBe(
+        maintenanceMock.date,
+      );
+      expect(testComponent.maintenanceForm.value.kmPerformed).toBe(
+        maintenanceMock.kmPerformed,
+      );
+      expect(testComponent.maintenanceForm.value.supplier).toEqual(
+        supplierMock,
+      );
+      Object.defineProperty(history, 'state', {
+        value: originalHistoryState,
+        configurable: true,
+      });
+    });
+
+    it('should set isLoading false if getSupplierById fails', () => {
+      // Arrange
+      const maintenanceMock = {
+        id: 123,
+        date: '2025-10-01',
+        description: 'desc',
+        kmPerformed: 1500,
+        serviceSupplierId: 42,
+      };
+      Object.defineProperty(history, 'state', {
+        value: { maintenance: maintenanceMock },
+        configurable: true,
+      });
+      vehicleServiceMock.getSupplierById = jest
+        .fn()
+        .mockReturnValue(throwError(() => new Error('fail')));
+
+      // Act
+      const testFixture = TestBed.createComponent(
+        PerformMaintenancePlanComponent,
+      );
+      const testComponent = testFixture.componentInstance;
+      testFixture.detectChanges();
+
+      // Assert
+      expect(testComponent.isLoading).toBe(false);
+      Object.defineProperty(history, 'state', {
+        value: {},
+        configurable: true,
+      });
     });
   });
 
