@@ -6,6 +6,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { ActivatedRoute, Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
 import { MaintenanceListComponent } from './maintenance-list.component';
@@ -30,6 +31,10 @@ describe('MaintenanceListComponent', () => {
       open: jest.fn(),
     };
 
+    const routerMock = {
+      navigate: jest.fn(),
+    };
+
     await TestBed.configureTestingModule({
       imports: [MaintenanceListComponent, NoopAnimationsModule],
       providers: [
@@ -37,6 +42,8 @@ describe('MaintenanceListComponent', () => {
         { provide: VehicleService, useValue: vehicleServiceMock },
         { provide: MatDialog, useValue: dialogMock },
         { provide: MatSnackBar, useValue: snackBarMock },
+        { provide: ActivatedRoute, useValue: {} },
+        { provide: Router, useValue: routerMock },
       ],
     }).compileComponents();
 
@@ -61,6 +68,7 @@ describe('MaintenanceListComponent', () => {
         date: '01/01/2023',
         description: 'Cambio de aceite',
         kmPerformed: 15000,
+        serviceSupplierId: 1,
       };
       const col = component.columns.find((c) => c.columnDef === 'date');
       // Act
@@ -76,6 +84,7 @@ describe('MaintenanceListComponent', () => {
         date: '01/01/1999',
         description: 'Filtro de aire',
         kmPerformed: 20000,
+        serviceSupplierId: 1,
       };
       const col = component.columns.find((c) => c.columnDef === 'description');
       // Act
@@ -91,6 +100,7 @@ describe('MaintenanceListComponent', () => {
         date: '01/01/1999',
         description: 'Cambio de correa',
         kmPerformed: 12345,
+        serviceSupplierId: 1,
       };
       const col = component.columns.find((c) => c.columnDef === 'kmPerformed');
       // Act
@@ -99,33 +109,28 @@ describe('MaintenanceListComponent', () => {
       expect(result).toBe('12,345 km');
     });
 
-    it('should call action handlers for actions column', () => {
+    it('should call router.navigate with correct params when Modificar action is triggered', () => {
       // Arrange
       const item: MaintenanceItem = {
         id: 1,
         date: '01/01/1999',
         description: 'Cambio de bujías',
         kmPerformed: 30000,
+        serviceSupplierId: 1,
       };
       const col = component.columns.find((c) => c.columnDef === 'actions');
-      const spyLog = jest.spyOn(console, 'log').mockImplementation();
-      const dialogRefMock: Partial<MatDialogRef<ModalComponent, boolean>> = {
-        afterClosed: () => of(false),
-      };
-      const dialog = TestBed.inject(MatDialog);
-      jest
-        .spyOn(dialog, 'open')
-        .mockReturnValue(
-          dialogRefMock as MatDialogRef<ModalComponent, boolean>,
-        );
+      const router = TestBed.inject(Router);
+      const routerSpy = jest.spyOn(router, 'navigate').mockImplementation();
 
       // Act
       col?.actions?.[0].action(item);
-      col?.actions?.[1].action(item);
 
       // Assert
-      expect(spyLog).toHaveBeenCalledWith('Modificar', item);
-      spyLog.mockRestore();
+      expect(routerSpy).toHaveBeenCalledWith(['realizar', item.id], {
+        relativeTo: TestBed.inject(ActivatedRoute),
+        state: { maintenance: item },
+      });
+      routerSpy.mockRestore();
     });
   });
 
@@ -227,6 +232,7 @@ describe('MaintenanceListComponent', () => {
         date: '2023-01-01',
         description: 'Cambio de aceite',
         kmPerformed: 15000,
+        serviceSupplierId: 1,
       };
       const dialogRefMock: Partial<MatDialogRef<ModalComponent, boolean>> = {
         afterClosed: () => of(true),
@@ -274,6 +280,7 @@ describe('MaintenanceListComponent', () => {
         date: '2023-01-01',
         description: 'Cambio de aceite',
         kmPerformed: 15000,
+        serviceSupplierId: 1,
       };
       const dialogRefMock: Partial<MatDialogRef<ModalComponent, boolean>> = {
         afterClosed: () => of(false),
@@ -301,6 +308,7 @@ describe('MaintenanceListComponent', () => {
         date: '2023-01-01',
         description: 'Cambio de aceite',
         kmPerformed: 15000,
+        serviceSupplierId: 1,
       };
       const dialogRefMock: Partial<MatDialogRef<ModalComponent, boolean>> = {
         afterClosed: () => of(true),
