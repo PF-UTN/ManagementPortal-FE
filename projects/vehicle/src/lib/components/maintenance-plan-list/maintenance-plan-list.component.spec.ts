@@ -224,6 +224,7 @@ describe('MaintenancePlanListComponent', () => {
             date: '2023-01-01T00:00:00.000Z',
             description: 'Cambio de aceite',
             kmPerformed: 50000,
+            serviceSupplierId: 1,
           },
           {
             id: 102,
@@ -231,6 +232,7 @@ describe('MaintenancePlanListComponent', () => {
             date: '2023-02-01T00:00:00.000Z',
             description: 'Cambio de filtro',
             kmPerformed: 60000,
+            serviceSupplierId: 1,
           },
         ],
         total: 2,
