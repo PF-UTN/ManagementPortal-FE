@@ -1,5 +1,6 @@
+import { CartService } from '@Cart';
 import { NavBarService } from '@Common';
-import { LateralDrawerComponent } from '@Common-UI';
+import { CartBadgeButtonComponent, LateralDrawerComponent } from '@Common-UI';
 
 import {
   CommonModule,
@@ -24,6 +25,7 @@ registerLocaleData(localeEsAr);
     RouterOutlet,
     NavBarComponent,
     LateralDrawerComponent,
+    CartBadgeButtonComponent,
   ],
   providers: [
     NavBarService,
@@ -39,10 +41,12 @@ registerLocaleData(localeEsAr);
 export class AppComponent {
   isNavBarVisible: Signal<boolean>;
   isIndexPage: Signal<boolean>;
+  cartCount = 0;
 
   constructor(
     private navBarService: NavBarService,
     private router: Router,
+    private cartService: CartService,
   ) {
     const url$ = this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
@@ -53,5 +57,10 @@ export class AppComponent {
     this.isIndexPage = computed(() => urlSignal() === '/');
 
     this.isNavBarVisible = this.navBarService.isNavBarVisible;
+  }
+  ngOnInit(): void {
+    this.cartService.getCart().subscribe((cart) => {
+      this.cartService.updateCart(cart);
+    });
   }
 }

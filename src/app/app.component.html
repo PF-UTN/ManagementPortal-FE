@@ -1,5 +1,8 @@
 <mp-nav-bar *ngIf="isNavBarVisible() && !isIndexPage()"></mp-nav-bar>
 <mp-lateral-drawer></mp-lateral-drawer>
+<div *ngIf="isNavBarVisible() && !isIndexPage()" class="top-space">
+  <mp-cart-badge-button></mp-cart-badge-button>
+</div>
 <div class="content-container">
     <router-outlet></router-outlet>
 </div>
