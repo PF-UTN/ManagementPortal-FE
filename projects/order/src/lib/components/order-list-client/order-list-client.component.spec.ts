@@ -1,5 +1,4 @@
 import { OrderDirection } from '@Common';
-import { PillStatusEnum } from '@Common-UI';
 import { LateralDrawerService, PillStatusEnum } from '@Common-UI';
 
 import { registerLocaleData } from '@angular/common';
