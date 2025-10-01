@@ -1,0 +1,232 @@
+import { downloadFileFromResponse } from '@Common';
+import { PillStatusEnum } from '@Common-UI';
+
+import { DatePipe, CurrencyPipe } from '@angular/common';
+import { HttpResponse } from '@angular/common/http';
+import {
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick,
+} from '@angular/core/testing';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { mockDeep } from 'jest-mock-extended';
+import { of, throwError } from 'rxjs';
+
+import { OrderListComponent } from './order-list.component';
+import { OrderSearchResult } from '../../models/order-response-model';
+import { OrderStatusOptions } from '../../models/order-status.enum';
+import { OrderService } from '../../services/order.service';
+import { mockOrderSearchResponse } from '../../testing/mock-data.model';
+jest.mock('@Common', () => ({
+  ...jest.requireActual('@Common'),
+  downloadFileFromResponse: jest.fn(),
+  OrderDirection: {
+    ASC: 'asc',
+    DESC: 'desc',
+  },
+}));
+describe('OrderListComponent', () => {
+  let component: OrderListComponent;
+  let fixture: ComponentFixture<OrderListComponent>;
+  let service: OrderService;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [OrderListComponent, NoopAnimationsModule],
+      providers: [
+        { provide: OrderService, useValue: mockDeep<OrderService>() },
+        DatePipe,
+        CurrencyPipe,
+      ],
+    }).compileComponents();
+
+    service = TestBed.inject(OrderService);
+    fixture = TestBed.createComponent(OrderListComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+  describe('ngOnInit', () => {
+    it('should fetch data on init and update dataSource$', fakeAsync(() => {
+      jest
+        .spyOn(service, 'searchOrders')
+        .mockReturnValue(of(mockOrderSearchResponse));
+      component.ngOnInit();
+      tick(500);
+
+      expect(component.dataSource$.value).toEqual(
+        mockOrderSearchResponse.results.map((r: OrderSearchResult) =>
+          component['mapToOrderItem'](r),
+        ),
+      );
+    }));
+
+    it('should set loading to false when data is fetched', fakeAsync(() => {
+      jest
+        .spyOn(service, 'searchOrders')
+        .mockReturnValue(of(mockOrderSearchResponse));
+      component.ngOnInit();
+      tick(500);
+
+      expect(component.isLoading).toBe(false);
+    }));
+
+    it('should handle error and set loading to false', fakeAsync(() => {
+      jest
+        .spyOn(service, 'searchOrders')
+        .mockReturnValue(throwError(() => new Error('Error')));
+      component.ngOnInit();
+      tick(500);
+
+      expect(component.isLoading).toBe(false);
+      expect(component.dataSource$.value).toEqual([]);
+    }));
+  });
+  describe('handlePageChange', () => {
+    it('should update pageIndex and pageSize and trigger search', () => {
+      const spy = jest.spyOn(component.doSearchSubject$, 'next');
+      const event = { pageIndex: 2, pageSize: 20 };
+
+      component.handlePageChange(event);
+
+      expect(component.pageIndex).toBe(2);
+      expect(component.pageSize).toBe(20);
+      expect(spy).toHaveBeenCalledWith();
+    });
+  });
+
+  describe('onApplyDateFilter', () => {
+    it('should reset pageIndex and trigger search', () => {
+      const spy = jest.spyOn(component.doSearchSubject$, 'next');
+      component.pageIndex = 5;
+
+      component.onApplyDateFilter();
+
+      expect(component.pageIndex).toBe(0);
+      expect(spy).toHaveBeenCalledWith();
+    });
+  });
+
+  describe('onClearDateFilter', () => {
+    it('should clear dates and trigger search', () => {
+      const spy = jest.spyOn(component.doSearchSubject$, 'next');
+      component.fromDate = new Date();
+      component.toDate = new Date();
+
+      component.onClearDateFilter();
+
+      expect(component.fromDate).toBeNull();
+      expect(component.toDate).toBeNull();
+      expect(component.pageIndex).toBe(0);
+      expect(spy).toHaveBeenCalledWith();
+    });
+  });
+  describe('onSearchTextChange', () => {
+    it('should reset pageIndex, set loading and trigger search', () => {
+      const spy = jest.spyOn(component.doSearchSubject$, 'next');
+      component.pageIndex = 3;
+
+      component.onSearchTextChange();
+
+      expect(component.pageIndex).toBe(0);
+      expect(component.isLoading).toBe(true);
+      expect(spy).toHaveBeenCalledWith();
+    });
+  });
+
+  describe('onClearSearch', () => {
+    it('should clear searchText and trigger search', () => {
+      const spy = jest.spyOn(component, 'onSearchTextChange');
+      component.searchText = 'test';
+
+      component.onClearSearch();
+
+      expect(component.searchText).toBe('');
+      expect(spy).toHaveBeenCalled();
+    });
+  });
+  describe('onStatusFilterChange', () => {
+    it('should reset pageIndex and trigger search', () => {
+      const spy = jest.spyOn(component.doSearchSubject$, 'next');
+      component.pageIndex = 2;
+
+      component.onStatusFilterChange();
+
+      expect(component.pageIndex).toBe(0);
+      expect(spy).toHaveBeenCalledWith();
+    });
+  });
+
+  describe('setOrderBy', () => {
+    it('should set selectedOrderBy, reset pageIndex and trigger search', () => {
+      const spy = jest.spyOn(component.doSearchSubject$, 'next');
+      const option = component.orderByOptions[1];
+      component.pageIndex = 2;
+
+      component.setOrderBy(option);
+
+      expect(component.selectedOrderBy).toBe(option);
+      expect(component.pageIndex).toBe(0);
+      expect(spy).toHaveBeenCalledWith();
+    });
+  });
+  describe('mapStatusToPillStatus', () => {
+    it('should return correct PillStatusEnum for Finished', () => {
+      expect(component.mapStatusToPillStatus(OrderStatusOptions.Finished)).toBe(
+        PillStatusEnum.Done,
+      );
+    });
+    it('should return correct PillStatusEnum for Cancelled', () => {
+      expect(
+        component.mapStatusToPillStatus(OrderStatusOptions.Cancelled),
+      ).toBe(PillStatusEnum.Cancelled);
+    });
+  });
+  describe('handleDownloadClick', () => {
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('should call orderService.downloadOrderList with correct params and trigger file download', () => {
+      // Arrange
+      const params = component['getOrderParams']();
+      const mockResponse = new HttpResponse({
+        body: new Blob(['test'], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }),
+        status: 200,
+        statusText: 'OK',
+      });
+      jest
+        .spyOn(service, 'downloadOrderList')
+        .mockReturnValue(of(mockResponse));
+
+      // Act
+      component.handleDownloadClick();
+
+      // Assert
+      expect(service.downloadOrderList).toHaveBeenCalledWith(params);
+      expect(downloadFileFromResponse).toHaveBeenCalledWith(
+        mockResponse,
+        'pedidos.xlsx',
+      );
+    });
+
+    it('should handle errors from purchaseOrderService.downloadPurchaseOrderList', () => {
+      // Arrange
+      jest
+        .spyOn(service, 'downloadOrderList')
+        .mockReturnValueOnce(throwError(() => new Error('Download error')));
+
+      // Act
+      component.handleDownloadClick();
+
+      // Assert
+      expect(downloadFileFromResponse).not.toHaveBeenCalled();
+    });
+  });
+});

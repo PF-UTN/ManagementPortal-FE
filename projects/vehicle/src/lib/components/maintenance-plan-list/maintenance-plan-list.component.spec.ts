@@ -1,9 +1,12 @@
+import { ModalComponent } from '@Common-UI';
 import { VehicleService } from '@Vehicle';
 
 import { DecimalPipe } from '@angular/common';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { of, throwError, firstValueFrom } from 'rxjs';
 
@@ -34,6 +37,17 @@ describe('MaintenancePlanListComponent', () => {
       postSearchMaintenanceVehicle: jest
         .fn()
         .mockReturnValue(of({ results: [], total: 0 })),
+      deleteMaintenancePlanItem: jest.fn().mockReturnValue(of(void 0)),
+      getVehicleById: jest.fn().mockReturnValue(
+        of({
+          id: 1,
+          licensePlate: 'ABC123',
+          brand: 'Toyota',
+          model: 'Corolla',
+          year: 2020,
+          kmTraveled: 0,
+        }),
+      ),
     } as unknown as jest.Mocked<VehicleService>;
 
     await TestBed.configureTestingModule({
@@ -128,7 +142,6 @@ describe('MaintenancePlanListComponent', () => {
       (col) => col.columnDef === 'actions',
     );
     const routerSpy = jest.spyOn(component['router'], 'navigate');
-    const spyEliminar = jest.spyOn(console, 'log');
     // Act
     actionsColumn?.actions?.[0].action(item);
     actionsColumn?.actions?.[1].action(item);
@@ -141,8 +154,9 @@ describe('MaintenancePlanListComponent', () => {
       relativeTo: component['route'],
       state: { plan: item },
     });
-    expect(spyEliminar).toHaveBeenCalledWith('Eliminar', item);
-    spyEliminar.mockRestore();
+    const deleteSpy = jest.spyOn(component, 'deleteMaintenancePlanItem');
+    actionsColumn?.actions?.[2].action(item);
+    expect(deleteSpy).toHaveBeenCalledWith(item);
   });
 
   it('should show "-" for kmInterval when null', () => {
@@ -240,11 +254,13 @@ describe('MaintenancePlanListComponent', () => {
           ...mockResponse.results[0],
           lastMaintenanceDate: '2023-01-01T00:00:00.000Z',
           lastMaintenanceKm: 50000,
+          currentKm: 0,
         },
         {
           ...mockResponse.results[1],
           lastMaintenanceDate: '2023-02-01T00:00:00.000Z',
           lastMaintenanceKm: 60000,
+          currentKm: 0,
         },
       ]);
       expect(component.itemsNumber).toBe(2);
@@ -255,6 +271,129 @@ describe('MaintenancePlanListComponent', () => {
       const vehicleService = TestBed.inject(VehicleService);
       jest
         .spyOn(vehicleService, 'postSearchMaintenancePlanItemVehicle')
+        .mockReturnValue(throwError(() => new Error('fail')));
+      component.itemsNumber = 5;
+      component.isLoading = true;
+      hostComponent.vehicleId = 1;
+      // Act
+      component.ngOnInit();
+      // Assert
+      const data = await firstValueFrom(component.dataSource$);
+      expect(data).toEqual([]);
+      expect(component.itemsNumber).toBe(0);
+      expect(component.isLoading).toBe(false);
+    });
+
+    it('should set lastMaintenanceKm and lastMaintenanceDate to null if there are no maintenances for a plan', async () => {
+      // Arrange
+      const mockResponse = {
+        results: [
+          {
+            id: 1,
+            description: 'Cambio de aceite',
+            kmInterval: 10000,
+            timeInterval: 6,
+          },
+        ],
+        total: 1,
+      };
+
+      const mockMaintenances = {
+        results: [],
+        total: 0,
+      };
+
+      const vehicleService = TestBed.inject(VehicleService);
+      jest
+        .spyOn(vehicleService, 'postSearchMaintenancePlanItemVehicle')
+        .mockReturnValue(of(mockResponse));
+      jest
+        .spyOn(vehicleService, 'postSearchMaintenanceVehicle')
+        .mockReturnValue(of(mockMaintenances));
+
+      hostComponent.vehicleId = 1;
+      // Act
+      component.ngOnInit();
+      // Assert
+      const data = await firstValueFrom(component.dataSource$);
+      expect(data).toEqual([
+        {
+          ...mockResponse.results[0],
+          lastMaintenanceDate: null,
+          lastMaintenanceKm: null,
+          currentKm: 0,
+        },
+      ]);
+    });
+
+    it('should clear dataSource$, itemsNumber and isLoading if getVehicleById fails', async () => {
+      // Arrange
+      const vehicleService = TestBed.inject(VehicleService);
+      jest
+        .spyOn(vehicleService, 'getVehicleById')
+        .mockReturnValue(throwError(() => new Error('fail')));
+      component.itemsNumber = 5;
+      component.isLoading = true;
+      hostComponent.vehicleId = 1;
+      // Act
+      component.ngOnInit();
+      // Assert
+      const data = await firstValueFrom(component.dataSource$);
+      expect(data).toEqual([]);
+      expect(component.itemsNumber).toBe(0);
+      expect(component.isLoading).toBe(false);
+    });
+
+    it('should clear dataSource$, itemsNumber and isLoading if postSearchMaintenancePlanItemVehicle fails', async () => {
+      // Arrange
+      const vehicleService = TestBed.inject(VehicleService);
+      jest.fn().mockReturnValue(
+        of({
+          id: 1,
+          licensePlate: 'ABC123',
+          brand: 'Toyota',
+          model: 'Corolla',
+          year: 2020,
+          kmTraveled: 0,
+          enabled: true,
+          admissionDate: '2023-01-01T00:00:00.000Z',
+        }),
+      );
+      jest
+        .spyOn(vehicleService, 'postSearchMaintenancePlanItemVehicle')
+        .mockReturnValue(throwError(() => new Error('fail')));
+      component.itemsNumber = 5;
+      component.isLoading = true;
+      hostComponent.vehicleId = 1;
+      // Act
+      component.ngOnInit();
+      // Assert
+      const data = await firstValueFrom(component.dataSource$);
+      expect(data).toEqual([]);
+      expect(component.itemsNumber).toBe(0);
+      expect(component.isLoading).toBe(false);
+    });
+
+    it('should clear dataSource$, itemsNumber and isLoading if postSearchMaintenanceVehicle fails', async () => {
+      // Arrange
+      const vehicleService = TestBed.inject(VehicleService);
+      jest.fn().mockReturnValue(
+        of({
+          id: 1,
+          licensePlate: 'ABC123',
+          brand: 'Toyota',
+          model: 'Corolla',
+          year: 2020,
+          kmTraveled: 0,
+          enabled: true,
+          admissionDate: '2023-01-01T00:00:00.000Z',
+        }),
+      );
+      jest
+        .spyOn(vehicleService, 'postSearchMaintenancePlanItemVehicle')
+        .mockReturnValue(of({ results: [], total: 0 }));
+      jest
+        .spyOn(vehicleService, 'postSearchMaintenanceVehicle')
         .mockReturnValue(throwError(() => new Error('fail')));
       component.itemsNumber = 5;
       component.isLoading = true;
@@ -332,7 +471,7 @@ describe('MaintenancePlanListComponent', () => {
       column && column.value ? column.value(planWithExtras) : undefined;
 
     // Assert
-    expect(result).toBe('60000 km');
+    expect(result).toBe('60,000 km');
   });
 
   it('should show "-" for nextMaintenanceDate if no last maintenance', () => {
@@ -391,6 +530,52 @@ describe('MaintenancePlanListComponent', () => {
         'actions',
       ]);
     });
+
+    it('should show "-" for nextMaintenanceKm if kmInterval is null', () => {
+      // Arrange
+      const plan: MaintenancePlanListItem = {
+        id: 1,
+        description: 'Cambio de aceite',
+        kmInterval: null,
+        timeInterval: 6,
+      };
+      const planWithExtras = {
+        ...plan,
+        lastMaintenanceKm: 50000,
+        currentKm: 100000,
+      };
+      const column = component.columns.find(
+        (col) => col.columnDef === 'nextMaintenanceKm',
+      );
+
+      // Act
+      const result =
+        column && column.value ? column.value(planWithExtras) : undefined;
+
+      // Assert
+      expect(result).toBe('-');
+    });
+
+    it('should calculate nextMaintenanceKm based on currentKm and kmInterval if no lastMaintenanceKm', () => {
+      // Arrange
+      const plan: MaintenancePlanListItem = {
+        id: 1,
+        description: 'Cambio de filtro',
+        kmInterval: 20000,
+        timeInterval: 12,
+      };
+      const planWithExtras = { ...plan, currentKm: 80000 };
+      const column = component.columns.find(
+        (col) => col.columnDef === 'nextMaintenanceKm',
+      );
+
+      // Act
+      const result =
+        column && column.value ? column.value(planWithExtras) : undefined;
+
+      // Assert
+      expect(result).toBe('100,000 km');
+    });
   });
 
   describe('formatTimeInterval', () => {
@@ -413,6 +598,138 @@ describe('MaintenancePlanListComponent', () => {
       const result = component.formatTimeInterval(8);
       // Assert
       expect(result).toBe('8 Meses');
+    });
+  });
+
+  describe('deleteMaintenancePlanItem', () => {
+    it('should open the modal, call delete service, refresh list and show snackbar on confirm', () => {
+      // Arrange
+      const item: MaintenancePlanListItem = {
+        id: 123,
+        description: 'Test',
+        kmInterval: 10000,
+        timeInterval: 12,
+      };
+      const dialogRefMock = {
+        afterClosed: () => of(true),
+      };
+      const dialog = TestBed.inject(MatDialog);
+      const dialogSpy = jest
+        .spyOn(dialog, 'open')
+        .mockReturnValue(dialogRefMock as ReturnType<typeof dialog.open>);
+      const vehicleService = TestBed.inject(VehicleService);
+      const deleteSpy = jest
+        .spyOn(vehicleService, 'deleteMaintenancePlanItem')
+        .mockReturnValue(of(void 0));
+      const ngOnInitSpy = jest.spyOn(component, 'ngOnInit');
+      const snackBar = TestBed.inject(MatSnackBar);
+      const snackBarSpy = jest.spyOn(snackBar, 'open');
+
+      // Act
+      component.deleteMaintenancePlanItem(item);
+
+      // Assert
+      expect(dialogSpy).toHaveBeenCalledWith(
+        ModalComponent,
+        expect.objectContaining({
+          data: expect.objectContaining({
+            title: 'Eliminar ítem',
+            message: expect.stringContaining('¿Está seguro'),
+          }),
+        }),
+      );
+      expect(deleteSpy).toHaveBeenCalledWith(item.id);
+      expect(ngOnInitSpy).toHaveBeenCalled();
+      expect(snackBarSpy).toHaveBeenCalledWith(
+        'Mantenimiento eliminado exitosamente',
+        'Cerrar',
+        { duration: 3000 },
+      );
+    });
+
+    it('should NOT call delete service if user cancels', () => {
+      // Arrange
+      const item: MaintenancePlanListItem = {
+        id: 123,
+        description: 'Test',
+        kmInterval: 10000,
+        timeInterval: 12,
+      };
+      const dialogRefMock = {
+        afterClosed: () => of(false),
+      };
+      const dialog = TestBed.inject(MatDialog);
+      jest
+        .spyOn(dialog, 'open')
+        .mockReturnValue(dialogRefMock as ReturnType<typeof dialog.open>);
+
+      const vehicleService = TestBed.inject(VehicleService);
+      const deleteSpy = jest.spyOn(vehicleService, 'deleteMaintenancePlanItem');
+
+      // Act
+      component.deleteMaintenancePlanItem(item);
+
+      // Assert
+      expect(deleteSpy).not.toHaveBeenCalled();
+    });
+
+    it('should call deleteMaintenancePlanItem when Eliminar is clicked', () => {
+      // Arrange
+      const item: MaintenancePlanListItem = {
+        id: 1,
+        description: 'Cambio de correa',
+        kmInterval: 50000,
+        timeInterval: 24,
+      };
+      const actionsColumn = component.columns.find(
+        (col) => col.columnDef === 'actions',
+      );
+      const deleteSpy = jest.spyOn(component, 'deleteMaintenancePlanItem');
+      // Act
+      actionsColumn?.actions?.[2].action(item);
+      // Assert
+      expect(deleteSpy).toHaveBeenCalledWith(item);
+    });
+
+    it('should show translated error snackbar if item is used in a maintenance', () => {
+      // Arrange
+      const item: MaintenancePlanListItem = {
+        id: 123,
+        description: 'Test',
+        kmInterval: 10000,
+        timeInterval: 12,
+      };
+      const dialogRefMock = {
+        afterClosed: () => of(true),
+      };
+      const dialog = TestBed.inject(MatDialog);
+      jest
+        .spyOn(dialog, 'open')
+        .mockReturnValue(dialogRefMock as ReturnType<typeof dialog.open>);
+
+      const errorResponse = {
+        error: {
+          message:
+            'Maintenance plan item with id 123 is being used in a Maintenance and cannot be deleted.',
+        },
+      };
+      const vehicleService = TestBed.inject(VehicleService);
+      jest
+        .spyOn(vehicleService, 'deleteMaintenancePlanItem')
+        .mockReturnValue(throwError(() => errorResponse));
+
+      const snackBar = TestBed.inject(MatSnackBar);
+      const snackBarSpy = jest.spyOn(snackBar, 'open');
+
+      // Act
+      component.deleteMaintenancePlanItem(item);
+
+      // Assert
+      expect(snackBarSpy).toHaveBeenCalledWith(
+        'No se puede eliminar el ítem porque ya fue utilizado en un mantenimiento.',
+        'Cerrar',
+        { duration: 4000 },
+      );
     });
   });
 });

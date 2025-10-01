@@ -3,12 +3,16 @@ import {
   TableColumn,
   ColumnTypeEnum,
   TableComponent,
+  ModalComponent,
+  ModalConfig,
 } from '@Common-UI';
 import { VehicleService } from '@Vehicle';
 
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component, input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, debounceTime, Subject, switchMap, tap } from 'rxjs';
 
 import { RepairItem } from '../../models/repair-item.model';
@@ -54,7 +58,8 @@ export class MaintenanceRepairListComponent implements OnInit {
         },
         {
           description: 'Eliminar',
-          action: (element: RepairItem) => console.log('Eliminar', element),
+          action: (element: RepairItem) =>
+            this.deleteRepairWithConfirmation(element),
         },
       ],
     },
@@ -73,6 +78,8 @@ export class MaintenanceRepairListComponent implements OnInit {
     private readonly datePipe: DatePipe,
     private readonly decimalPipe: DecimalPipe,
     private readonly vehicleService: VehicleService,
+    private readonly dialog: MatDialog,
+    private readonly snackBar: MatSnackBar,
   ) {}
 
   ngOnInit(): void {
@@ -97,6 +104,7 @@ export class MaintenanceRepairListComponent implements OnInit {
       .subscribe({
         next: (response) => {
           const mappedResults: RepairItem[] = response.results.map((item) => ({
+            id: item.id,
             date: item.date,
             description: item.description,
             kmPerformed: item.kmPerformed,
@@ -127,5 +135,31 @@ export class MaintenanceRepairListComponent implements OnInit {
     this.pageIndex = 0;
     this.isLoading = true;
     this.doSearchSubject$.next();
+  }
+
+  deleteRepairWithConfirmation(repair: RepairItem): void {
+    const dialogRef = this.dialog.open(ModalComponent, {
+      data: {
+        title: 'Confirmar eliminación',
+        message: '¿Está seguro que desea eliminar esta reparación?',
+        confirmText: 'Confirmar',
+        cancelText: 'Cancelar',
+      } as ModalConfig,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      this.isLoading = true;
+      if (result) {
+        this.vehicleService.deleteRepairAsync(repair.id).subscribe({
+          next: () => {
+            this.doSearchSubject$.next();
+            this.snackBar.open('Reparación eliminada exitosamente', 'Cerrar', {
+              duration: 3000,
+            });
+          },
+          error: () => {},
+        });
+      }
+    });
   }
 }

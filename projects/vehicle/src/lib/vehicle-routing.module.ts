@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { CreateMaintenancePlanComponent } from './components/create-maintenance-plan/create-maintenance-plan.component';
+import { CreateRepairVehicleComponent } from './components/create-repair-vehicle/create-repair-vehicle.component';
 import { MaintenanceHistoryComponent } from './components/maintenance-history/maintenance-history.component';
 import { PerformMaintenancePlanComponent } from './components/perform-maintenance-plan/perform-maintenance-plan.component';
 import { VehicleListComponent } from './components/vehicle-list/vehicle-list.component';
@@ -26,6 +27,10 @@ const routes: Routes = [
   {
     path: ':vehicleId/mantenimiento/realizar/:maintenanceId',
     component: PerformMaintenancePlanComponent,
+  },
+  {
+    path: ':vehicleId/mantenimiento/crear-reparacion',
+    component: CreateRepairVehicleComponent,
   },
 ];
 
