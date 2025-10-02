@@ -1,6 +1,5 @@
-import { CartService } from '@Cart';
 import { NavBarService } from '@Common';
-import { CartBadgeButtonComponent, LateralDrawerComponent } from '@Common-UI';
+import { LateralDrawerComponent } from '@Common-UI';
 
 import {
   CommonModule,
@@ -15,6 +14,7 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
 
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
+import { NavBarHorizontalComponent } from './components/nav-bar-horizontal/nav-bar-horizontal.component';
 
 registerLocaleData(localeEsAr);
 @Component({
@@ -25,7 +25,7 @@ registerLocaleData(localeEsAr);
     RouterOutlet,
     NavBarComponent,
     LateralDrawerComponent,
-    CartBadgeButtonComponent,
+    NavBarHorizontalComponent,
   ],
   providers: [
     NavBarService,
@@ -41,12 +41,14 @@ registerLocaleData(localeEsAr);
 export class AppComponent {
   isNavBarVisible: Signal<boolean>;
   isIndexPage: Signal<boolean>;
-  cartCount = 0;
+
+  showHorizontalNavbar = computed(
+    () => this.isNavBarVisible() && !this.isIndexPage(),
+  );
 
   constructor(
     private navBarService: NavBarService,
     private router: Router,
-    private cartService: CartService,
   ) {
     const url$ = this.router.events.pipe(
       filter((event) => event instanceof NavigationEnd),
@@ -57,10 +59,5 @@ export class AppComponent {
     this.isIndexPage = computed(() => urlSignal() === '/');
 
     this.isNavBarVisible = this.navBarService.isNavBarVisible;
-  }
-  ngOnInit(): void {
-    this.cartService.getCart().subscribe((cart) => {
-      this.cartService.updateCart(cart);
-    });
   }
 }

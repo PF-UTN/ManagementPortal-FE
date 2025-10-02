@@ -25,6 +25,7 @@ export class CartBadgeButtonComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.cartService.getCart().subscribe(); // Fuerza la carga inicial
     this.cartSub = this.cartService.cart$.subscribe((cart) => {
       this.count = cart.items ? cart.items.length : 0;
     });
