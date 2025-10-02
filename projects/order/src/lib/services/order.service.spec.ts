@@ -228,8 +228,8 @@ describe('OrderService', () => {
         searchText: 'Order',
         filters: {
           statusName: ['Pending', 'Cancelled'],
-          fromCreatedAtDate: new Date('2024-07-01'),
-          toCreatedAtDate: new Date('2024-07-31'),
+          fromCreatedAtDate: '2024-07-01',
+          toCreatedAtDate: '2024-07-31',
         },
         orderBy: {
           field: OrderOrderField.CreatedAt,

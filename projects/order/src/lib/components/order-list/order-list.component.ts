@@ -160,8 +160,8 @@ export class OrderListComponent implements OnInit {
             pageSize: this.pageSize,
             filters: {
               statusName:
-                this.selectedStatuses.length > 0
-                  ? this.selectedStatuses.map((s) => s.key)
+                this.selectedStatus.length > 0
+                  ? this.selectedStatus
                   : undefined,
               fromCreatedAtDate: this.fromDate
                 ? this.fromDate.toISOString().slice(0, 10)
@@ -196,6 +196,9 @@ export class OrderListComponent implements OnInit {
       });
 
     this.doSearchSubject$.next();
+  }
+  get isDateRangeValid(): boolean {
+    return !this.fromDate || !this.toDate || this.fromDate <= this.toDate;
   }
 
   ngOnDestroy(): void {
@@ -284,18 +287,19 @@ export class OrderListComponent implements OnInit {
     if (this.selectedStatus.length > 0) {
       params.filters.statusName = this.selectedStatus;
     }
-    if (this.selectedCreationDateRange.start) {
-      params.filters.fromCreatedAtDate = this.selectedCreationDateRange.start;
+    if (this.fromDate) {
+      params.filters.fromCreatedAtDate = this.fromDate
+        .toISOString()
+        .slice(0, 10);
     }
-    if (this.selectedCreationDateRange.end) {
-      params.filters.toCreatedAtDate = this.selectedCreationDateRange.end;
+    if (this.toDate) {
+      params.filters.toCreatedAtDate = this.toDate.toISOString().slice(0, 10);
     }
     return params;
   }
 
   handleDownloadClick(): void {
     const params = this.getOrderParams();
-
     this.orderService.downloadOrderList(params).subscribe((response) => {
       downloadFileFromResponse(response, 'pedidos.xlsx');
     });

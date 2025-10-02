@@ -99,6 +99,7 @@
               </mp-button>
               <mp-button 
                 type="primary" 
+                [disabled]="!isDateRangeValid"
                 (click)="applyFilters(); 
                 filtersMenu.closed.emit()">
                 Aplicar
