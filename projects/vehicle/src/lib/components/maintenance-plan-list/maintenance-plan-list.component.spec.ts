@@ -451,7 +451,9 @@ describe('MaintenancePlanListComponent', () => {
     // Assert
     const expectedDate = new Date(lastMaintenanceDate);
     expectedDate.setMonth(expectedDate.getMonth() + plan.timeInterval!);
-    expect(result).toBe(expectedDate.toLocaleDateString());
+    const expectedISO = expectedDate.toISOString().slice(0, 10);
+    const resultISO = new Date(result as string).toISOString().slice(0, 10);
+    expect(resultISO).toBe(expectedISO);
   });
 
   it('should calculate nextMaintenanceKm based on last maintenance and kmInterval', () => {
