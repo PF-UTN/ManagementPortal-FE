@@ -13,6 +13,7 @@ import { Component, input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router, ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, debounceTime, Subject, switchMap, tap } from 'rxjs';
 
 import { RepairItem } from '../../models/repair-item.model';
@@ -54,7 +55,17 @@ export class MaintenanceRepairListComponent implements OnInit {
       actions: [
         {
           description: 'Modificar',
-          action: (element: RepairItem) => console.log('Modificar', element),
+          action: (element: RepairItem) => {
+            this.router.navigate(['../mantenimiento/crear-reparacion'], {
+              relativeTo: this.route,
+              state: {
+                repair: {
+                  ...element,
+                  serviceSupplierId: element.serviceSupplierId,
+                },
+              },
+            });
+          },
         },
         {
           description: 'Eliminar',
@@ -80,6 +91,8 @@ export class MaintenanceRepairListComponent implements OnInit {
     private readonly vehicleService: VehicleService,
     private readonly dialog: MatDialog,
     private readonly snackBar: MatSnackBar,
+    private readonly router: Router,
+    private readonly route: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
@@ -108,6 +121,7 @@ export class MaintenanceRepairListComponent implements OnInit {
             date: item.date,
             description: item.description,
             kmPerformed: item.kmPerformed,
+            serviceSupplierId: item.serviceSupplierId,
           }));
           this.dataSource$.next(mappedResults);
           this.itemsNumber = response.total;
