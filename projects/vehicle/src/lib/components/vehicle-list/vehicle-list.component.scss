@@ -1,45 +1,31 @@
 @import '../../../../../../src/styles/varibles';
 
-.mp-table {
-  width: 100%;
-  max-width: 65%;
-
-  &__grid-container {
-    width: 100%;
-    margin-top: 20px;
-    display: grid;
-
-    &__item {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      justify-content: center;
-      align-items: center;
-    }
-  }
+.main-container__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 8px 0 8px;
 }
 
-.mat-mdc-form-field {
+.filters-toolbar {
+  display: flex;
+  flex-direction: row;
   font-size: 14px;
   width: 100%;
-  padding: 16px;
-}
+  padding: 16px 0;
+  gap: 8px;
 
-.filters-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  justify-content: center;
-  align-items: center;
-  margin: 15px;
+  &__search {
+    flex: 1;
+  }
 
-  &__dropdown {
-    margin-bottom: $input-footer-height;
-    padding: 0 10px;
+  &__actions {
     display: flex;
-    flex-direction: row;
-    gap: 22px;
-    justify-content: space-between;
-    align-items: center;
+    gap: 8px;
+
+    &__icon {
+      margin-top: 5px;
+      display: flex;
+    }
   }
 }

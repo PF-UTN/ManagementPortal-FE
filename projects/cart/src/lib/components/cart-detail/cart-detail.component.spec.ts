@@ -56,7 +56,7 @@ describe('CartDetailComponent', () => {
       component.data.set(mockCart);
       jest
         .spyOn(cartService, 'deleteCartProduct')
-        .mockReturnValue(of(undefined));
+        .mockReturnValue(of(mockCart));
 
       // Act
       component.removeItem(mockItem);
@@ -72,7 +72,7 @@ describe('CartDetailComponent', () => {
       component.data.set(mockCart);
       const spy = jest
         .spyOn(cartService, 'deleteCartProduct')
-        .mockReturnValue(of(undefined));
+        .mockReturnValue(of(mockCart));
 
       // Act
       component.removeItem(mockItem);
@@ -88,9 +88,7 @@ describe('CartDetailComponent', () => {
       const mockItem = mockCartItem;
       const mockCart = { cartId: 'cart:1', items: [mockItem] };
       component.data.set(mockCart);
-      jest
-        .spyOn(cartService, 'addProductToCart')
-        .mockReturnValue(of(undefined));
+      jest.spyOn(cartService, 'addProductToCart').mockReturnValue(of(mockCart));
 
       // Act
       component.updateQuantity(mockItem, 5);
@@ -106,7 +104,7 @@ describe('CartDetailComponent', () => {
       component.data.set(mockCart);
       const spy = jest
         .spyOn(cartService, 'addProductToCart')
-        .mockReturnValue(of(undefined));
+        .mockReturnValue(of(mockCart));
 
       // Act
       component.updateQuantity(mockItem, 5);

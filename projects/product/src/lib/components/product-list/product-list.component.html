@@ -1,36 +1,35 @@
 <div class="container-fluid">
-  <div class="filters-container">
-    
-    <div class="filters-container__selector col">
+  <div class="main-container__header">
+    <mp-title>Productos</mp-title>
+    <mp-dropdown-button type="primary" [items]="dropdownItems">
+      Nuevo
+    </mp-dropdown-button>
+  </div>
+
+  <div class="filters-toolbar">
+    <div class="filters-toolbar__search">
       <mp-input 
-          label="Buscar productos" 
-          placeholder="Buscar por nombre o descripción del producto"
-          [(ngModel)]="searchText"
-          icon="close"
-          [iconAction]="onClearSearch.bind(this)"
-          (input)="onSearchTextChange()" />
+        label="Buscar productos" 
+        placeholder="Buscar por nombre o descripción del producto"
+        [(ngModel)]="searchText"
+        icon="close"
+        [iconAction]="onClearSearch.bind(this)"
+        (input)="onSearchTextChange()" />
     </div>
-    
-    <div class="filters-container__selector col">
-      <mat-form-field appearance="outline">
-      <mat-label>Filtrar por categoría</mat-label>
-      <mat-select [(ngModel)]="selectedCategories" (selectionChange)="onCategoryFilterChange()" multiple>
-        <mat-option *ngFor="let category of categories" [value]="category.name">{{ category.name }}</mat-option>
-      </mat-select>
-    </mat-form-field>
-    </div>
-  
-    <div class="filters-container__selector col">
-      <mat-form-field appearance="outline">
+    <div class="filters-toolbar__actions">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Filtrar por categoría</mat-label>
+        <mat-select [(ngModel)]="selectedCategories" (selectionChange)="onCategoryFilterChange()" multiple>
+          <mat-option *ngFor="let category of categories" [value]="category.name">{{ category.name }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="w-100">
         <mat-label>Filtrar por proveedor</mat-label>
         <mat-select [(ngModel)]="selectedSuppliers" (selectionChange)="onSupplierFilterChange()" multiple>
           <mat-option *ngFor="let supplier of suppliers" [value]="supplier.businessName">{{supplier.businessName}}</mat-option>
         </mat-select>
       </mat-form-field>
-    </div>
-
-    <div class="filters-container__selector col">
-      <mat-form-field appearance="outline">
+      <mat-form-field appearance="outline" class="w-100">
         <mat-label>Filtrar por estado</mat-label>
         <mat-select [(ngModel)]="selectedEnabled" (selectionChange)="onEnabledFilterChange()">
           <mat-option [value]=" ">Todos</mat-option>
@@ -38,21 +37,18 @@
           <mat-option [value]="false">Deshabilitado</mat-option>
         </mat-select>
       </mat-form-field>
-    </div>
-    <div class="filters-container__dropdown">
-      <mp-button 
+      <div class="filters-toolbar__actions__icon">
+        <mp-button 
           type="icon"
           icon="download"
           ariaLabel="Descargar XLSX"
           [disabled]="isLoading"
           (onClick)="handleDownloadClick()">
-      </mp-button>
-      <mp-dropdown-button type="primary" [items]="dropdownItems">
-        Nuevo
-      </mp-dropdown-button>
+        </mp-button>
+      </div>
     </div>
   </div>
-  
+
   <mp-table [columns]="columns" [dataSource$]="dataSource$" [isLoading]="isLoading"
     noDataMessage="No existen productos disponibles" [itemsNumber]="itemsNumber" [pageSize]="pageSize"
     [pageIndex]="pageIndex" (pageChange)="handlePageChange($event)">

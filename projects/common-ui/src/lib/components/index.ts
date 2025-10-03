@@ -16,4 +16,3 @@ export * from './dropdown-button/dropdown-button.component';
 export * from './dropdown-button/constants/dropdown-item';
 export * from './error-modal/error-modal.component';
 export * from './list/list.component';
-export * from './cart-badge-button/cart-badge-button.component';

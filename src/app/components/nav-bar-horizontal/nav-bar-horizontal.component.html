@@ -1,3 +1,14 @@
 <div *ngIf="shouldRender" class="top-space">
-  <mp-cart-badge-button></mp-cart-badge-button>
+  <mp-button
+  [type]="'icon'"
+  [icon]="'shopping_cart'"
+  [ariaLabel]="'Carrito'"
+  class="cart-fab-btn"
+  [matBadge]="count > 0 ? count : null"
+  [matBadgeColor]="'warn'"
+  [matBadgeOverlap]="true"
+  [matBadgePosition]="'above after'"
+  (onClick)="goToCart()"
+>
+</mp-button>
 </div>

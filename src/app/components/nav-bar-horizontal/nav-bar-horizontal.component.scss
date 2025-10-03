@@ -1,15 +1,32 @@
 @import '../../../styles/varibles';
 
 .top-space {
-  position: fixed;
+  position: relative;
   top: 0;
   left: 256px;
   width: calc(100% - 256px);
-  height: 72px;
+  height: 65px;
   background-color: $white-color;
   display: flex;
   justify-content: flex-end;
   align-items: center;
   padding: 0 1rem;
   z-index: 0;
+}
+
+.cart-fab-btn {
+  position: relative;
+  border-radius: 50%;
+  background-color: #ffffff !important;
+  color: $dark-muted-purple !important;
+  width: 56px;
+  height: 56px;
+  min-width: 56px;
+  min-height: 56px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15px;
+  margin-top: 35px;
+  margin-bottom: 15px;
 }
