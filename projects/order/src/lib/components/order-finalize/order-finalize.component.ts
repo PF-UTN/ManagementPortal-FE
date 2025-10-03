@@ -44,10 +44,10 @@ export class OrderFinalizeComponent implements OnInit {
   isSubmitting = false;
 
   constructor(
-    private cartService: CartService,
-    private orderService: OrderService,
-    private snackBar: MatSnackBar,
-    private authService: AuthService,
+    private readonly cartService: CartService,
+    private readonly orderService: OrderService,
+    private readonly snackBar: MatSnackBar,
+    private readonly authService: AuthService,
   ) {}
 
   ngOnInit(): void {
@@ -75,11 +75,6 @@ export class OrderFinalizeComponent implements OnInit {
       this.selectedShipping === 'sucursal'
     ) {
       orderStatusId = 2;
-    } else if (
-      this.selectedPayment === 'entrega' &&
-      this.selectedShipping === 'domicilio'
-    ) {
-      orderStatusId = 1;
     }
 
     const payload: OrderCreatePayload = {
@@ -104,11 +99,11 @@ export class OrderFinalizeComponent implements OnInit {
         this.cartService.deleteCart().subscribe({
           complete: () => {
             this.isSubmitting = false;
-            window.location.href = '/pedidos/cliente';
+            globalThis.location.href = '/pedidos/cliente';
           },
           error: () => {
             this.isSubmitting = false;
-            window.location.href = '/pedidos/cliente';
+            globalThis.location.href = '/pedidos/cliente';
           },
         });
       },

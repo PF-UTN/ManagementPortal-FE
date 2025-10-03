@@ -4,7 +4,10 @@ import { OrderService } from '@Order';
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {
+  BrowserAnimationsModule,
+  NoopAnimationsModule,
+} from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
 
 import { OrderFinalizeComponent } from './order-finalize.component';
@@ -67,7 +70,11 @@ describe('OrderFinalizeComponent', () => {
     } as unknown as jest.Mocked<MatSnackBar>;
 
     await TestBed.configureTestingModule({
-      imports: [OrderFinalizeComponent, BrowserAnimationsModule],
+      imports: [
+        OrderFinalizeComponent,
+        BrowserAnimationsModule,
+        NoopAnimationsModule,
+      ],
       providers: [
         { provide: CartService, useValue: cartServiceMock },
         { provide: OrderService, useValue: orderServiceMock },
@@ -134,6 +141,45 @@ describe('OrderFinalizeComponent', () => {
       component.createOrder();
       // Assert
       expect(component.isSubmitting).toBe(false);
+    });
+
+    it('should set orderStatusId = 7 when payment is tarjeta', () => {
+      // Arrange
+      component.cart = mockCart;
+      component.selectedPayment = 'tarjeta';
+      component.selectedShipping = 'domicilio';
+      // Act
+      component.createOrder();
+      // Assert
+      expect(orderServiceMock.createOrder).toHaveBeenCalledWith(
+        expect.objectContaining({ orderStatusId: 7 }),
+      );
+    });
+
+    it('should set orderStatusId = 2 when payment is entrega and shipping is sucursal', () => {
+      // Arrange
+      component.cart = mockCart;
+      component.selectedPayment = 'entrega';
+      component.selectedShipping = 'sucursal';
+      // Act
+      component.createOrder();
+      // Assert
+      expect(orderServiceMock.createOrder).toHaveBeenCalledWith(
+        expect.objectContaining({ orderStatusId: 2 }),
+      );
+    });
+
+    it('should set orderStatusId = 1 for entrega and shipping domicilio', () => {
+      // Arrange
+      component.cart = mockCart;
+      component.selectedPayment = 'entrega';
+      component.selectedShipping = 'domicilio';
+      // Act
+      component.createOrder();
+      // Assert
+      expect(orderServiceMock.createOrder).toHaveBeenCalledWith(
+        expect.objectContaining({ orderStatusId: 1 }),
+      );
     });
   });
 

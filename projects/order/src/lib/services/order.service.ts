@@ -16,9 +16,9 @@ import { OrderSearchResponse } from '../models/order-response-model';
   providedIn: 'root',
 })
 export class OrderService {
-  private baseUrl = environment.apiBaseUrl + '/order';
+  private readonly baseUrl = environment.apiBaseUrl + '/order';
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   searchClientOrders(
     body: OrderClientSearchRequest,
