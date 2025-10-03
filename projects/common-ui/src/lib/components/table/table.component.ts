@@ -7,7 +7,9 @@ import {
   Component,
   ViewChild,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -40,6 +42,8 @@ import { PillComponent } from '../pill';
     LoadingComponent,
     PillComponent,
     EllipsisTextComponent,
+    MatCheckboxModule,
+    FormsModule,
   ],
   templateUrl: './table.component.html',
   styleUrl: './table.component.scss',
@@ -59,6 +63,7 @@ export class TableComponent<T> implements OnInit {
     pageSize: number;
   }>();
   @Output() actionClicked = new EventEmitter<{ action: string; row: T }>();
+  @Output() rowSelected = new EventEmitter<T>();
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -86,6 +91,10 @@ export class TableComponent<T> implements OnInit {
 
   onActionClick(action: string, row: T) {
     this.actionClicked.emit({ action, row });
+  }
+
+  onRowSelect(row: T) {
+    this.rowSelected.emit(row);
   }
 
   onPageChange(event: PageEvent): void {

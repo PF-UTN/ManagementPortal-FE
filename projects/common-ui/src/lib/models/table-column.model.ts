@@ -10,4 +10,5 @@ export interface TableColumn<T> {
   pillStatus?: (element: T) => PillStatus;
   actions?: TableColumnAction<T>[];
   width?: string;
+  disabled?: (element: T) => boolean;
 }

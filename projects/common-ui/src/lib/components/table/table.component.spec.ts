@@ -193,4 +193,31 @@ describe('TableComponent', () => {
       });
     });
   });
+
+  describe('Row Selection', () => {
+    it('should emit rowSelected event when onRowSelect is called', () => {
+      // Arrange
+      const row = { id: 1, name: 'John Doe' };
+      jest.spyOn(component.rowSelected, 'emit');
+
+      // Act
+      component.onRowSelect(row);
+
+      // Assert
+      expect(component.rowSelected.emit).toHaveBeenCalledWith(row);
+    });
+
+    it('should emit rowSelected event with correct row data', () => {
+      // Arrange
+      const row = { id: 2, name: 'Jane Smith' };
+      const emitSpy = jest.spyOn(component.rowSelected, 'emit');
+
+      // Act
+      component.onRowSelect(row);
+
+      // Assert
+      expect(emitSpy).toHaveBeenCalledTimes(1);
+      expect(emitSpy).toHaveBeenCalledWith({ id: 2, name: 'Jane Smith' });
+    });
+  });
 });
