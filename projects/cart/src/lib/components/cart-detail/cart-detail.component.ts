@@ -233,13 +233,19 @@ export class CartDetailComponent implements OnInit {
       this.emitQuantityChangeInput(item, 1);
     }
   }
+
   goToProducts(): void {
     this.router.navigate(['productos/cliente']);
   }
+
   onCartItemKeyDown(event: KeyboardEvent, item: CartItem) {
     if (event.key === 'Enter' || event.key === ' ') {
       this.openProductDrawer(item.product.id, item.quantity);
       event.preventDefault();
     }
+  }
+
+  goToCheckout(): void {
+    this.router.navigate(['/pedidos/finalizar']);
   }
 }

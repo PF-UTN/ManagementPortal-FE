@@ -1,0 +1,211 @@
+<div class="container-fluid">
+    <div class="header">
+        <div class="header__tittle">
+            <div class="header__row">
+                <mp-back-arrow [backTo]="''" [color]="'muted-purple'"></mp-back-arrow>
+                <mp-title>Finalizar compra</mp-title>
+            </div>
+        </div>
+    </div>
+
+    <ng-container *ngIf="isLoading; else loadedStepper">
+        <mp-loading></mp-loading>
+    </ng-container>
+
+    <ng-template #loadedStepper>
+        <div class="body">
+            <div class="row" *ngIf="cart && cart.items.length > 0; else emptyCartMain">
+                <div class="body__stepper">
+                    <mat-stepper [linear]="isLinear" #stepper>
+                        <mat-step>
+                            <ng-template matStepLabel>Envío</ng-template>
+                            <div class="shipping-options">
+                                <label class="shipping-option" [class.selected]="selectedShipping === 'sucursal'">
+                                    <input 
+                                        type="radio" 
+                                        name="shipping" 
+                                        value="sucursal"
+                                        [(ngModel)]="selectedShipping"/>
+                                    <span class="option-text">
+                                        Retirar en sucursal
+                                        <div class="option-address">Sucursal Central: Calle Falsa 123, Rosario - Santa Fe</div>
+                                    </span>
+                                    <span class="option-price">
+                                        {{ cartTotal | currency: 'ARS' : 'symbol' : '1.2-2' }}
+                                    </span>
+                                </label>
+
+                                <label class="shipping-option" [class.selected]="selectedShipping === 'domicilio'">
+                                    <input 
+                                        type="radio" 
+                                        name="shipping" 
+                                        value="domicilio"
+                                        [(ngModel)]="selectedShipping"/>
+                                    <span class="option-text">
+                                        Envío a domicilio
+                                        <div class="option-address">Dirección 123, Rosario - Santa Fe</div>
+                                    </span>
+                                    <span class="option-price">
+                                        {{ (cartTotal + 15000) | currency: 'ARS' : 'symbol' : '1.2-2' }}
+                                    </span>
+                                </label>
+                            </div>
+                            <div class="d-flex justify-content-end">
+                                <mp-button 
+                                    type="primary" 
+                                    [disabled]="!selectedShipping" 
+                                    (onClick)="stepper.next()">
+                                    Siguiente
+                                </mp-button>
+                            </div>
+                        </mat-step>
+                        
+                        <mat-step>
+                            <ng-template matStepLabel>Pago</ng-template>
+                            <div class="shipping-options">
+                                <label class="shipping-option" [class.selected]="selectedPayment === 'tarjeta'">
+                                    <input 
+                                        type="radio" 
+                                        name="payment" 
+                                        value="tarjeta" 
+                                        [(ngModel)]="selectedPayment"/>
+                                    <span class="option-text">Tarjeta de Crédito/Débito</span>
+                                    <span class="option-price">
+                                        {{ finalTotal | currency: 'ARS' : 'symbol' : '1.2-2' }}
+                                    </span>
+                                </label>
+                                <label class="shipping-option" [class.selected]="selectedPayment === 'entrega'">
+                                    <input 
+                                        type="radio" 
+                                        name="payment" 
+                                        value="entrega" 
+                                        [(ngModel)]="selectedPayment"/>
+                                    <span class="option-text">
+                                        Al momento de la entrega
+                                        <div class="option-address">No se da cambio en caso de pagar en efectivo</div>
+                                    </span>
+                                    <span class="option-price">
+                                        {{ finalTotal | currency: 'ARS' : 'symbol' : '1.2-2' }}
+                                    </span>
+                                </label>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <mp-button 
+                                    type="secondary" 
+                                    (onClick)="stepper.previous()" >
+                                    Volver
+                                </mp-button>
+                                <mp-button 
+                                    type="primary" 
+                                    [disabled]="!selectedPayment" 
+                                    (onClick)="stepper.next()">
+                                    Siguiente
+                                </mp-button>
+                            </div>
+                        </mat-step>
+                        <mat-step>
+                            <ng-template matStepLabel>Confirmar</ng-template>
+                            <div>
+                                <mp-title>Resumen de tu compra</mp-title>
+                                <div class="body__stepper__summary-items mb-3">
+                                    <div *ngFor="let item of cart?.items" class="summary-item">
+                                        <span class="body__stepper__summary-item__name">
+                                        {{ item.product.name }}
+                                        </span>
+                                        <span class="body__stepper__summary-item__price">
+                                        x{{ item.quantity }}
+                                        {{ (item.product.price * item.quantity) | currency: 'ARS' : 'symbol' : '1.2-2' }}
+                                        </span>
+                                    </div>
+                                </div>
+
+                               <div class="mb-2">
+                                    <strong>Método de pago</strong>
+                                    <div>
+                                        {{ selectedPayment === 'tarjeta' ? 'Tarjeta de Crédito/Débito' : 'Al momento de la entrega' }}
+                                    </div>
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Entrega</strong>
+                                        <div>
+                                            {{ selectedShipping === 'sucursal' ? 'Retiro en sucursal' : 'Envío a domicilio' }}
+                                            <span *ngIf="selectedShipping === 'sucursal'">
+                                            - Sucursal Central: Calle Falsa 123, Rosario - Santa Fe
+                                            </span>
+                                            <span *ngIf="selectedShipping === 'domicilio'">
+                                            - Dirección 123, Rosario - Santa Fe
+                                            </span>
+                                        </div>
+                                </div>
+                                <div>
+                                    <div class="d-flex justify-content-between">
+                                        <span>Subtotal</span>
+                                        <span>{{ cartTotal | currency: 'ARS' : 'symbol' : '1.2-2' }}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span>Costo de envío</span>
+                                        <span>{{ shippingCost | currency: 'ARS' : 'symbol' : '1.2-2' }}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span>Impuestos</span>
+                                        <span>{{ taxes | currency: 'ARS' : 'symbol' : '1.2-2' }}</span>
+                                    </div>
+                                    <hr>
+                                    <div class="d-flex justify-content-between fw-bold">
+                                        <span>Total</span>
+                                        <span>{{ finalTotal | currency: 'ARS' : 'symbol' : '1.2-2' }}</span>
+                                    </div>
+                                </div>
+                                <div class="mt-4 d-flex justify-content-between">
+                                    <mp-button 
+                                        type="secondary" 
+                                        (onClick)="stepper.previous()">
+                                        Volver
+                                    </mp-button>
+                                    <mp-button 
+                                        type="primary" 
+                                        [loading]="isSubmitting" 
+                                        (onClick)="createOrder()">
+                                        Finalizar compra
+                                    </mp-button>
+                                </div>
+                            </div>
+                        </mat-step>
+                    </mat-stepper>
+                </div>
+
+                <div class="body__summary">
+                    <h2 class="fw-bold">Carrito</h2>
+                    <ng-container *ngIf="cart && cart.items.length > 0; else emptyCart">
+                        <div class="body__summary__items">
+                            <div *ngFor="let item of cart.items" class="body__summary__item">
+                                <span class="body__summary__item__name">
+                                    {{ item.product.name }}
+                                </span>
+                                <span class="body__summary__item__price">
+                                    x {{ item.quantity }}
+                                    {{ (item.product.price * item.quantity) | currency: 'ARS' : 'symbol' : '1.2-2' }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="body__summary__detail mt-3">
+                            <hr>
+                            <div class="d-flex justify-content-between fw-bold">
+                                <span>Total</span>
+                                <span>{{ finalTotal | currency: 'ARS' : 'symbol' : '1.2-2' }}</span>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <ng-template #emptyCart>
+                        <p>No hay productos en el carrito.</p>
+                    </ng-template>
+                </div>
+            </div>
+            <ng-template #emptyCartMain>
+                <div class="d-flex justify-content-center align-items-center" style="height: 400px;">
+                    <h3>No tienes productos en el carrito</h3>
+                </div>
+            </ng-template>
+        </div>
+    </ng-template>
+</div>

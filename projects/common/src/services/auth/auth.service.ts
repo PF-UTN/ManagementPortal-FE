@@ -18,6 +18,7 @@ import { User } from '../../models/user.model';
 export class AuthService {
   userRole: string;
   userName: string;
+  userId: string;
 
   private readonly apiUrl = environment.apiBaseUrl + '/authentication';
 
@@ -87,6 +88,7 @@ export class AuthService {
     const decodedToken: TokenPayload = jwtDecode(token);
     this.userRole = decodedToken.role;
     this.userName = decodedToken.userName;
+    this.userId = decodedToken.sub;
   }
 
   private setToken(token: string): void {
