@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 
 import { OrderClientSearchRequest } from '../models/order-client-request-model';
 import { OrderClientSearchResponse } from '../models/order-client-response.model';
+import { OrderCreatePayload } from '../models/order-created.model';
 import { OrderClientDetail } from '../models/order-detail-client.model';
 import { OrderParams } from '../models/order-params.model';
 import { OrderSearchRequest } from '../models/order-request-model';
@@ -15,9 +16,9 @@ import { OrderSearchResponse } from '../models/order-response-model';
   providedIn: 'root',
 })
 export class OrderService {
-  private baseUrl = environment.apiBaseUrl + '/order';
+  private readonly baseUrl = environment.apiBaseUrl + '/order';
 
-  constructor(private http: HttpClient) {}
+  constructor(private readonly http: HttpClient) {}
 
   searchClientOrders(
     body: OrderClientSearchRequest,
@@ -34,6 +35,7 @@ export class OrderService {
       headers ? { headers } : {},
     );
   }
+
   searchOrders(body: OrderSearchRequest): Observable<OrderSearchResponse> {
     const url = `${this.baseUrl}/search`;
     return this.http.post<OrderSearchResponse>(url, body);
@@ -50,5 +52,10 @@ export class OrderService {
   getOrderClientDetail(orderId: number): Observable<OrderClientDetail> {
     const url = `${this.baseUrl}/client/${orderId}`;
     return this.http.get<OrderClientDetail>(url);
+  }
+
+  createOrder(payload: OrderCreatePayload): Observable<void> {
+    const url = `${this.baseUrl}`;
+    return this.http.post<void>(url, payload);
   }
 }

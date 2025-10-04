@@ -325,4 +325,61 @@ describe('OrderService', () => {
       expect((errorResponse as { status: number }).status).toBe(404);
     });
   });
+
+  describe('createOrder', () => {
+    it('should POST to /order and send the correct payload', () => {
+      // Arrange
+      const payload = {
+        clientId: '1',
+        orderStatusId: 1,
+        paymentDetail: { paymentTypeId: 1 },
+        deliveryMethodId: 1,
+        orderItems: [{ productId: 1, quantity: 2, unitPrice: 100.5 }],
+      };
+
+      // Act
+      service.createOrder(payload).subscribe((response) => {
+        expect(response).toBeUndefined();
+      });
+
+      const req = httpMock.expectOne(
+        'https://dev-management-portal-be.vercel.app/order',
+      );
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(payload);
+      req.flush(null);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const payload = {
+        clientId: '1',
+        orderStatusId: 1,
+        paymentDetail: { paymentTypeId: 1 },
+        deliveryMethodId: 1,
+        orderItems: [{ productId: 1, quantity: 2, unitPrice: 100.5 }],
+      };
+      let errorResponse: unknown;
+
+      // Act
+      service.createOrder(payload).subscribe({
+        next: () => {
+          fail('Expected an error, but got a successful response');
+        },
+        error: (err) => {
+          errorResponse = err;
+        },
+      });
+
+      const req = httpMock.expectOne(
+        'https://dev-management-portal-be.vercel.app/order',
+      );
+      expect(req.request.method).toBe('POST');
+      req.flush('Error', { status: 500, statusText: 'Server Error' });
+
+      // Assert
+      expect(errorResponse).toBeDefined();
+      expect((errorResponse as { status: number }).status).toBe(500);
+    });
+  });
 });
