@@ -38,6 +38,7 @@ import {
   finalize,
 } from 'rxjs/operators';
 
+import { MaintenanceItem } from '../../models/maintenance-item.model';
 import { MaintenancePerformRequest } from '../../models/maintenance-perform.model';
 import { SupplierSearchResult } from '../../models/supplier-search-response-model';
 import { VehicleService } from '../../services/vehicle.service';
@@ -71,6 +72,7 @@ export class PerformMaintenancePlanComponent implements OnInit {
     supplier: FormControl<SupplierSearchResult | null>;
   }>;
 
+  maintenanceFromState: MaintenanceItem | null = null;
   vehicleId!: number;
   maintenancePlanItemId!: number;
   isLoading = false;
@@ -109,6 +111,32 @@ export class PerformMaintenancePlanComponent implements OnInit {
       ]),
     });
 
+    this.maintenanceFromState =
+      history.state && 'maintenance' in history.state
+        ? history.state.maintenance
+        : null;
+
+    if (this.maintenanceFromState) {
+      this.isLoading = true;
+      this.maintenanceForm.patchValue({
+        date: this.maintenanceFromState.date
+          ? this.maintenanceFromState.date
+          : null,
+        kmPerformed: this.maintenanceFromState.kmPerformed,
+      });
+
+      this.vehicleService
+        .getSupplierById(this.maintenanceFromState.serviceSupplierId)
+        .subscribe({
+          next: (supplier) => {
+            this.maintenanceForm.controls.supplier.setValue(supplier);
+            this.isLoading = false;
+          },
+          error: () => {
+            this.isLoading = false;
+          },
+        });
+    }
     this.filteredSuppliers$ =
       this.maintenanceForm.controls.supplier.valueChanges.pipe(
         startWith(''),
@@ -190,6 +218,7 @@ export class PerformMaintenancePlanComponent implements OnInit {
       this.maintenanceForm.markAllAsTouched();
       return;
     }
+
     this.isLoading = true;
     const { date, kmPerformed, supplier } = this.maintenanceForm.value;
     const payload: MaintenancePerformRequest = {
@@ -198,26 +227,50 @@ export class PerformMaintenancePlanComponent implements OnInit {
       maintenancePlanItemId: this.maintenancePlanItemId,
       serviceSupplierId: supplier!.id,
     };
-    this.vehicleService
-      .createMaintenanceAsync(this.vehicleId, payload)
-      .subscribe({
-        next: () => {
-          this.snackBar.open(
-            'Mantenimiento realizado correctamente',
-            'Cerrar',
-            { duration: 3000 },
-          );
-          this.isLoading = false;
-          this.location.back();
-        },
-        error: () => {
-          this.snackBar.open(
-            'Ocurrió un error al realizar el mantenimiento',
-            'Cerrar',
-            { duration: 3000 },
-          );
-          this.isLoading = false;
-        },
-      });
+    if (this.maintenanceFromState) {
+      this.vehicleService
+        .updateMaintenance(this.maintenanceFromState.id, payload)
+        .subscribe({
+          next: () => {
+            this.snackBar.open(
+              'Mantenimiento modificado correctamente',
+              'Cerrar',
+              { duration: 3000 },
+            );
+            this.isLoading = false;
+            this.location.back();
+          },
+          error: () => {
+            this.snackBar.open(
+              'Ocurrió un error al modificar el mantenimiento',
+              'Cerrar',
+              { duration: 3000 },
+            );
+            this.isLoading = false;
+          },
+        });
+    } else {
+      this.vehicleService
+        .createMaintenanceAsync(this.vehicleId, payload)
+        .subscribe({
+          next: () => {
+            this.snackBar.open(
+              'Mantenimiento realizado correctamente',
+              'Cerrar',
+              { duration: 3000 },
+            );
+            this.isLoading = false;
+            this.location.back();
+          },
+          error: () => {
+            this.snackBar.open(
+              'Ocurrió un error al realizar el mantenimiento',
+              'Cerrar',
+              { duration: 3000 },
+            );
+            this.isLoading = false;
+          },
+        });
+    }
   }
 }

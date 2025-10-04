@@ -42,7 +42,7 @@ export class MaintenancePlanListComponent implements OnInit {
         if (!element.lastMaintenanceDate || !element.timeInterval) return '-';
         const last = new Date(element.lastMaintenanceDate);
         last.setMonth(last.getMonth() + element.timeInterval);
-        return last.toLocaleDateString();
+        return last.toLocaleDateString('es-AR');
       },
     },
     {

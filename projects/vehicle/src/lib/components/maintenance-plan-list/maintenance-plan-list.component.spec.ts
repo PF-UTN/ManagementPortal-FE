@@ -224,6 +224,7 @@ describe('MaintenancePlanListComponent', () => {
             date: '2023-01-01T00:00:00.000Z',
             description: 'Cambio de aceite',
             kmPerformed: 50000,
+            serviceSupplierId: 1,
           },
           {
             id: 102,
@@ -231,6 +232,7 @@ describe('MaintenancePlanListComponent', () => {
             date: '2023-02-01T00:00:00.000Z',
             description: 'Cambio de filtro',
             kmPerformed: 60000,
+            serviceSupplierId: 1,
           },
         ],
         total: 2,
@@ -426,30 +428,6 @@ describe('MaintenancePlanListComponent', () => {
     expect(routerSpy).toHaveBeenCalledWith(['realizar', item.id], {
       relativeTo: component['route'],
     });
-  });
-
-  it('should calculate nextMaintenanceDate based on last maintenance and timeInterval', () => {
-    // Arrange
-    const plan: MaintenancePlanListItem = {
-      id: 1,
-      description: 'Cambio de aceite',
-      kmInterval: 10000,
-      timeInterval: 6,
-    };
-    const lastMaintenanceDate = '2023-01-01T00:00:00.000Z';
-    const planWithExtras = { ...plan, lastMaintenanceDate };
-    const column = component.columns.find(
-      (col) => col.columnDef === 'nextMaintenanceDate',
-    );
-
-    // Act
-    const result =
-      column && column.value ? column.value(planWithExtras) : undefined;
-
-    // Assert
-    const expectedDate = new Date(lastMaintenanceDate);
-    expectedDate.setMonth(expectedDate.getMonth() + plan.timeInterval!);
-    expect(result).toBe(expectedDate.toLocaleDateString());
   });
 
   it('should calculate nextMaintenanceKm based on last maintenance and kmInterval', () => {

@@ -7,6 +7,7 @@ import { fakeAsync, tick } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { Router, ActivatedRoute } from '@angular/router';
 import { throwError, of, firstValueFrom } from 'rxjs';
 
 import { MaintenanceRepairListComponent } from './maintenance-repair-list.component';
@@ -50,6 +51,8 @@ describe('MaintenanceRepairListComponent', () => {
         { provide: VehicleService, useValue: vehicleServiceMock },
         { provide: MatDialog, useValue: dialogMock },
         { provide: MatSnackBar, useValue: snackBarMock },
+        { provide: ActivatedRoute, useValue: {} },
+        { provide: Router, useValue: { navigate: jest.fn() } },
       ],
     }).compileComponents();
 
@@ -73,6 +76,7 @@ describe('MaintenanceRepairListComponent', () => {
         date: '2023-01-01',
         description: 'Reparación',
         kmPerformed: 15000,
+        serviceSupplierId: 1,
       };
       const col = component.columns.find(
         (c) => c.columnDef === 'maintenanceDate',
@@ -90,6 +94,7 @@ describe('MaintenanceRepairListComponent', () => {
         date: '2023-01-02',
         description: 'Cambio de correa',
         kmPerformed: 20000,
+        serviceSupplierId: 1,
       };
       const col = component.columns.find((c) => c.columnDef === 'description');
       // Act
@@ -105,6 +110,7 @@ describe('MaintenanceRepairListComponent', () => {
         date: '2023-01-03',
         description: 'Cambio de bujías',
         kmPerformed: 12345,
+        serviceSupplierId: 1,
       };
       const col = component.columns.find((c) => c.columnDef === 'repairKm');
       // Act
@@ -113,30 +119,35 @@ describe('MaintenanceRepairListComponent', () => {
       expect(result).toBe('12,345 km');
     });
 
-    it('should call action handlers for actions column', () => {
+    it('should navigate with correct state when Modificar action is triggered', () => {
       // Arrange
-      const dialogMock = TestBed.inject(MatDialog) as unknown as {
-        open: jest.Mock;
+      const routerMock = TestBed.inject(Router) as unknown as {
+        navigate: jest.Mock;
       };
-      dialogMock.open.mockReturnValue({
-        afterClosed: () => ({
-          subscribe: (cb: (result: boolean) => void) => cb(false),
-        }),
-      });
+      const routeMock = TestBed.inject(ActivatedRoute);
       const item: RepairItem = {
-        id: 1,
-        date: '2023-01-04',
-        description: 'Cambio de filtro',
-        kmPerformed: 30000,
+        id: 5,
+        date: '2024-10-01',
+        description: 'Test Modificar',
+        kmPerformed: 1234,
+        serviceSupplierId: 42,
       };
       const col = component.columns.find((c) => c.columnDef === 'actions');
-      const spyLog = jest.spyOn(console, 'log').mockImplementation();
       // Act
-      col?.actions?.[0].action(item); // Modificar
-      col?.actions?.[1].action(item); // Eliminar
+      col?.actions?.[0].action(item);
       // Assert
-      expect(spyLog).toHaveBeenCalledWith('Modificar', item);
-      spyLog.mockRestore();
+      expect(routerMock.navigate).toHaveBeenCalledWith(
+        ['../mantenimiento/editar-reparacion'],
+        {
+          relativeTo: routeMock,
+          state: {
+            repair: {
+              ...item,
+              serviceSupplierId: item.serviceSupplierId,
+            },
+          },
+        },
+      );
     });
   });
 
@@ -178,6 +189,7 @@ describe('MaintenanceRepairListComponent', () => {
             date: '2023-01-01',
             description: 'Cambio',
             kmPerformed: 1000,
+            serviceSupplierId: 1,
           },
         ],
         total: 1,
@@ -251,12 +263,14 @@ describe('MaintenanceRepairListComponent', () => {
             date: '2023-01-01',
             description: 'Change',
             kmPerformed: 1000,
+            serviceSupplierId: 1,
           },
           {
             id: 2,
             date: '2023-01-02',
             description: 'Other',
             kmPerformed: 2000,
+            serviceSupplierId: 1,
           },
         ],
         total: 2,
@@ -271,8 +285,20 @@ describe('MaintenanceRepairListComponent', () => {
       // Assert
       const data = await firstValueFrom(component.dataSource$);
       expect(data).toEqual([
-        { id: 1, date: '2023-01-01', description: 'Change', kmPerformed: 1000 },
-        { id: 2, date: '2023-01-02', description: 'Other', kmPerformed: 2000 },
+        {
+          id: 1,
+          date: '2023-01-01',
+          description: 'Change',
+          kmPerformed: 1000,
+          serviceSupplierId: 1,
+        },
+        {
+          id: 2,
+          date: '2023-01-02',
+          description: 'Other',
+          kmPerformed: 2000,
+          serviceSupplierId: 1,
+        },
       ]);
       expect(component.itemsNumber).toBe(2);
       expect(component.isLoading).toBe(false);
@@ -344,6 +370,7 @@ describe('MaintenanceRepairListComponent', () => {
       date: '2024-01-01',
       description: 'Test repair',
       kmPerformed: 1000,
+      serviceSupplierId: 1,
     };
 
     it('should call deleteRepairWithConfirmation when Eliminar action is triggered', () => {
