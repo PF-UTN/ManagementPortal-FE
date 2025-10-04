@@ -28,6 +28,10 @@ import { EllipsisTextComponent } from '../ellipsis-text/ellipsis-text.component'
 import { LoadingComponent } from '../loading/loading.component';
 import { PillComponent } from '../pill';
 
+function hasSelectedProp(obj: unknown): obj is { selected: boolean } {
+  return typeof obj === 'object' && obj !== null && 'selected' in obj;
+}
+
 @Component({
   selector: 'mp-table',
   standalone: true,
@@ -63,7 +67,7 @@ export class TableComponent<T> implements OnInit {
     pageSize: number;
   }>();
   @Output() actionClicked = new EventEmitter<{ action: string; row: T }>();
-  @Output() rowSelected = new EventEmitter<T>();
+  @Output() rowSelected = new EventEmitter<T[]>();
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -75,6 +79,7 @@ export class TableComponent<T> implements OnInit {
 
   tableDataSource = new MatTableDataSource<T>();
   displayedColumns: string[] = [];
+  selectedRows: T[] = [];
 
   ROW_TYPES = ColumnTypeEnum;
 
@@ -94,7 +99,14 @@ export class TableComponent<T> implements OnInit {
   }
 
   onRowSelect(row: T) {
-    this.rowSelected.emit(row);
+    if (hasSelectedProp(row) && row.selected) {
+      if (!this.selectedRows.includes(row)) {
+        this.selectedRows.push(row);
+      }
+    } else {
+      this.selectedRows = this.selectedRows.filter((r) => r !== row);
+    }
+    this.rowSelected.emit(this.selectedRows);
   }
 
   onPageChange(event: PageEvent): void {

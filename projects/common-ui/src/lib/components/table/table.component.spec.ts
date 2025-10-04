@@ -197,27 +197,36 @@ describe('TableComponent', () => {
   describe('Row Selection', () => {
     it('should emit rowSelected event when onRowSelect is called', () => {
       // Arrange
-      const row = { id: 1, name: 'John Doe' };
+      const row = { id: 1, name: 'John Doe', selected: true };
+      component.selectedRows = [];
       jest.spyOn(component.rowSelected, 'emit');
 
       // Act
       component.onRowSelect(row);
 
       // Assert
-      expect(component.rowSelected.emit).toHaveBeenCalledWith(row);
+      expect(component.rowSelected.emit).toHaveBeenCalledWith([row]);
     });
 
-    it('should emit rowSelected event with correct row data', () => {
+    it('should add and remove rows from selectedRows and emit the correct array', () => {
       // Arrange
-      const row = { id: 2, name: 'Jane Smith' };
-      const emitSpy = jest.spyOn(component.rowSelected, 'emit');
+      const row1 = { id: 1, name: 'John Doe', selected: true };
+      const row2 = { id: 2, name: 'Jane Smith', selected: true };
+      component.selectedRows = [];
+      jest.spyOn(component.rowSelected, 'emit');
 
-      // Act
-      component.onRowSelect(row);
+      // Act: select row1
+      component.onRowSelect(row1);
+      expect(component.rowSelected.emit).toHaveBeenLastCalledWith([row1]);
 
-      // Assert
-      expect(emitSpy).toHaveBeenCalledTimes(1);
-      expect(emitSpy).toHaveBeenCalledWith({ id: 2, name: 'Jane Smith' });
+      // Act: select row2
+      component.onRowSelect(row2);
+      expect(component.rowSelected.emit).toHaveBeenLastCalledWith([row1, row2]);
+
+      // Act: deselect row1
+      row1.selected = false;
+      component.onRowSelect(row1);
+      expect(component.rowSelected.emit).toHaveBeenLastCalledWith([row2]);
     });
   });
 });
