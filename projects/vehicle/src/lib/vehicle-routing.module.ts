@@ -32,6 +32,10 @@ const routes: Routes = [
     path: ':vehicleId/mantenimiento/crear-reparacion',
     component: CreateRepairVehicleComponent,
   },
+  {
+    path: ':vehicleId/mantenimiento/editar-reparacion',
+    component: CreateRepairVehicleComponent,
+  },
 ];
 
 @NgModule({

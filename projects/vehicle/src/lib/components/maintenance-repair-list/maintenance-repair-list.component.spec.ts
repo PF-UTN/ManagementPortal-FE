@@ -137,7 +137,7 @@ describe('MaintenanceRepairListComponent', () => {
       col?.actions?.[0].action(item);
       // Assert
       expect(routerMock.navigate).toHaveBeenCalledWith(
-        ['../mantenimiento/crear-reparacion'],
+        ['../mantenimiento/editar-reparacion'],
         {
           relativeTo: routeMock,
           state: {

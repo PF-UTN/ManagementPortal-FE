@@ -56,7 +56,7 @@ export class MaintenanceRepairListComponent implements OnInit {
         {
           description: 'Modificar',
           action: (element: RepairItem) => {
-            this.router.navigate(['../mantenimiento/crear-reparacion'], {
+            this.router.navigate(['../mantenimiento/editar-reparacion'], {
               relativeTo: this.route,
               state: {
                 repair: {
