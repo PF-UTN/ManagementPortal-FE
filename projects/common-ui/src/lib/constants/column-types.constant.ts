@@ -3,4 +3,5 @@ export enum ColumnTypeEnum {
   MULTI_VALUE = 'multiValue',
   ACTIONS = 'actions',
   PILL = 'pill',
+  SELECT = 'select',
 }

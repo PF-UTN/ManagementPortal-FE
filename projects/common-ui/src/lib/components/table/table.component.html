@@ -43,6 +43,13 @@
                   </mat-menu>
                 </div>
               </ng-container>
+              <ng-container *ngSwitchCase="ROW_TYPES.SELECT">
+                <mat-checkbox
+                  [(ngModel)]="element.selected"
+                  [disabled]="column.disabled ? column.disabled(element) : false"
+                  (change)="onRowSelect(element)"
+                ></mat-checkbox>
+              </ng-container>
           </ng-container>
         </td>
       </ng-container>

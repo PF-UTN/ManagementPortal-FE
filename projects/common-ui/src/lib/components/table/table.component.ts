@@ -7,7 +7,9 @@ import {
   Component,
   ViewChild,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -26,6 +28,10 @@ import { EllipsisTextComponent } from '../ellipsis-text/ellipsis-text.component'
 import { LoadingComponent } from '../loading/loading.component';
 import { PillComponent } from '../pill';
 
+function hasSelectedProp(obj: unknown): obj is { selected: boolean } {
+  return typeof obj === 'object' && obj !== null && 'selected' in obj;
+}
+
 @Component({
   selector: 'mp-table',
   standalone: true,
@@ -40,6 +46,8 @@ import { PillComponent } from '../pill';
     LoadingComponent,
     PillComponent,
     EllipsisTextComponent,
+    MatCheckboxModule,
+    FormsModule,
   ],
   templateUrl: './table.component.html',
   styleUrl: './table.component.scss',
@@ -59,6 +67,7 @@ export class TableComponent<T> implements OnInit {
     pageSize: number;
   }>();
   @Output() actionClicked = new EventEmitter<{ action: string; row: T }>();
+  @Output() rowSelected = new EventEmitter<T[]>();
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -70,6 +79,7 @@ export class TableComponent<T> implements OnInit {
 
   tableDataSource = new MatTableDataSource<T>();
   displayedColumns: string[] = [];
+  selectedRows: T[] = [];
 
   ROW_TYPES = ColumnTypeEnum;
 
@@ -86,6 +96,17 @@ export class TableComponent<T> implements OnInit {
 
   onActionClick(action: string, row: T) {
     this.actionClicked.emit({ action, row });
+  }
+
+  onRowSelect(row: T) {
+    if (hasSelectedProp(row) && row.selected) {
+      if (!this.selectedRows.includes(row)) {
+        this.selectedRows.push(row);
+      }
+    } else {
+      this.selectedRows = this.selectedRows.filter((r) => r !== row);
+    }
+    this.rowSelected.emit(this.selectedRows);
   }
 
   onPageChange(event: PageEvent): void {
