@@ -1,4 +1,5 @@
-import { Cart, CartItem, CartService } from '@Cart';
+import { Cart, CartItem } from '@Cart';
+import { CartService } from '@Common';
 import {
   ButtonComponent,
   LateralDrawerService,

@@ -4,9 +4,9 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, switchMap, tap } from 'rxjs';
 
-import { CartUpdateProductQuantity } from '../models/cart-update-product-quantity.model';
-import { Cart } from '../models/cart.model';
-import { DeleteCartProduct } from '../models/delete-cart-product.model';
+import { CartUpdateProductQuantity } from './../../../../cart/src/lib/models/cart-update-product-quantity.model';
+import { Cart } from './../../../../cart/src/lib/models/cart.model';
+import { DeleteCartProduct } from './../../../../cart/src/lib/models/delete-cart-product.model';
 
 @Injectable({
   providedIn: 'root',

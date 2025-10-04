@@ -1,31 +1,30 @@
-import { CartService } from '@Cart';
-import { AuthService, RolesEnum } from '@Common';
-import { ButtonComponent } from '@Common-UI';
+import { CartService } from '@Common';
 
 import { CommonModule } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
+import { ButtonComponent } from './../button/button.component';
+
 @Component({
-  selector: 'mp-nav-bar-horizontal',
+  selector: 'mp-cart-button',
   standalone: true,
   imports: [CommonModule, ButtonComponent],
-  templateUrl: './nav-bar-horizontal.component.html',
-  styleUrl: './nav-bar-horizontal.component.scss',
+  templateUrl: './cart-button.component.html',
+  styleUrl: './cart-button.component.scss',
 })
-export class NavBarHorizontalComponent implements OnInit, OnDestroy {
+export class CartButtonComponent implements OnInit, OnDestroy {
   count = 0;
   private cartSub?: Subscription;
 
   constructor(
-    private authService: AuthService,
     private router: Router,
     private cartService: CartService,
   ) {}
 
   ngOnInit(): void {
-    this.cartService.getCart().subscribe(); // Fuerza la carga inicial
+    this.cartService.getCart().subscribe();
     this.cartSub = this.cartService.cart$.subscribe((cart) => {
       this.count = cart.items ? cart.items.length : 0;
     });
@@ -33,9 +32,6 @@ export class NavBarHorizontalComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.cartSub?.unsubscribe();
-  }
-  get shouldRender(): boolean {
-    return this.authService.hasAccess([RolesEnum.Client, RolesEnum.Admin]);
   }
 
   goToCart(): void {

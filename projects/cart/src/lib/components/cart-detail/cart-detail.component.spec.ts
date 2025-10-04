@@ -1,4 +1,5 @@
 import { mockCartItem, mockEmptyCart } from '@Cart';
+import { CartService } from '@Common';
 import { LateralDrawerService } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
@@ -8,7 +9,6 @@ import { mockDeep } from 'jest-mock-extended';
 import { of } from 'rxjs';
 
 import { CartDetailComponent } from './cart-detail.component';
-import { CartService } from '../../services/cart.service';
 
 describe('CartDetailComponent', () => {
   let component: CartDetailComponent;

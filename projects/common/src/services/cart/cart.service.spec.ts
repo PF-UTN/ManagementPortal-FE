@@ -6,7 +6,10 @@ import {
 import { TestBed } from '@angular/core/testing';
 
 import { CartService } from './cart.service';
-import { mockCart, mockCartUpdateProductQuantity } from '../testing';
+import {
+  mockCart,
+  mockCartUpdateProductQuantity,
+} from '../../../../cart/src/lib/testing';
 
 const baseUrl = 'https://dev-management-portal-be.vercel.app/cart';
 

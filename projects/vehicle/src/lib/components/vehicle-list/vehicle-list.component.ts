@@ -45,39 +45,39 @@ export class VehicleListComponent implements OnInit {
   columns: TableColumn<VehicleListItem>[] = [
     {
       columnDef: 'licensePlate',
-      header: 'Patente',
+      header: 'PATENTE',
       type: ColumnTypeEnum.VALUE,
       value: (element: VehicleListItem) => element.licensePlate,
     },
     {
       columnDef: 'brand',
-      header: 'Marca',
+      header: 'MARCA',
       type: ColumnTypeEnum.VALUE,
       value: (element: VehicleListItem) => element.brand,
     },
     {
       columnDef: 'model',
-      header: 'Modelo',
+      header: 'MODELO',
       type: ColumnTypeEnum.VALUE,
       value: (element: VehicleListItem) => element.model,
     },
     {
       columnDef: 'kmTraveled',
-      header: 'Kilometraje actual',
+      header: 'KILOMETRAJE ACTUAL',
       type: ColumnTypeEnum.VALUE,
       value: (element: VehicleListItem) =>
         this.decimalPipe.transform(element.kmTraveled, '1.0-0')! + ' km',
     },
     {
       columnDef: 'admissionDate',
-      header: 'Fecha de ingreso',
+      header: 'FECHA DE INGRESO',
       type: ColumnTypeEnum.VALUE,
       value: (element: VehicleListItem) =>
         this.datePipe.transform(element.admissionDate, 'dd/MM/yyyy')!,
     },
     {
       columnDef: 'enabled',
-      header: 'Estado',
+      header: 'ESTADO',
       type: ColumnTypeEnum.PILL,
       value: (element: VehicleListItem) =>
         element.enabled ? 'Habilitado' : 'No habilitado',
@@ -86,7 +86,7 @@ export class VehicleListComponent implements OnInit {
     },
     {
       columnDef: 'actions',
-      header: 'Acciones',
+      header: 'ACCIONES',
       type: ColumnTypeEnum.ACTIONS,
       actions: [
         {

@@ -1,10 +1,12 @@
-import { CartService, Cart, CartUpdateProductQuantity } from '@Cart';
+import { Cart, CartUpdateProductQuantity } from '@Cart';
+import { CartService } from '@Common';
 import {
   TitleComponent,
   SubtitleComponent,
   LateralDrawerService,
   LoadingComponent,
   InputComponent,
+  CartButtonComponent,
 } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
@@ -58,6 +60,7 @@ import { ProductCardComponent } from '../product-card/product-card.component';
     ReactiveFormsModule,
     MatTooltipModule,
     InfiniteScrollDirective,
+    CartButtonComponent,
   ],
   templateUrl: './product-list-client.component.html',
   styleUrls: ['./product-list-client.component.scss'],

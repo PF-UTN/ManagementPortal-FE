@@ -8,6 +8,7 @@ import {
   SubtitleComponent,
   InputComponent,
   ButtonComponent,
+  CartButtonComponent,
 } from '@Common-UI';
 
 import { DatePipe, CurrencyPipe, CommonModule } from '@angular/common';
@@ -53,6 +54,7 @@ import { OrderService } from '../../services/order.service';
     MatInputModule,
     MatNativeDateModule,
     MatButtonModule,
+    CartButtonComponent,
   ],
   providers: [DatePipe, CurrencyPipe],
   templateUrl: './order-list-client.component.html',

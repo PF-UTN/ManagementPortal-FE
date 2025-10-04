@@ -48,20 +48,20 @@ export class RegistrationRequestListComponent implements OnInit {
   columns: TableColumn<RegistrationRequestListItem>[] = [
     {
       columnDef: 'name',
-      header: 'Nombre Completo | Razón Social',
+      header: 'NOMBRE COMPLETO / RAZÓN SOCIAL',
       type: ColumnTypeEnum.VALUE,
       value: (element: RegistrationRequestListItem) =>
         element.user.fullNameOrBusinessName,
     },
     {
       columnDef: 'email',
-      header: 'Email',
+      header: 'EMAIL',
       type: ColumnTypeEnum.VALUE,
       value: (element: RegistrationRequestListItem) => element.user.email,
     },
     {
       columnDef: 'status',
-      header: 'Estado',
+      header: 'ESTADO',
       type: ColumnTypeEnum.PILL,
       value: (element: RegistrationRequestListItem) => element.status,
       pillStatus: (element: RegistrationRequestListItem) => {
@@ -80,7 +80,7 @@ export class RegistrationRequestListComponent implements OnInit {
     },
     {
       columnDef: 'requestDate',
-      header: 'Fecha de Solicitud',
+      header: 'FECHA DE SOLICITUD',
       type: ColumnTypeEnum.VALUE,
       value: (element: RegistrationRequestListItem) =>
         new Date(element.requestDate).toLocaleDateString(),
@@ -88,7 +88,7 @@ export class RegistrationRequestListComponent implements OnInit {
     },
     {
       columnDef: 'actions',
-      header: 'Acciones',
+      header: 'ACCIONES',
       type: ColumnTypeEnum.ACTIONS,
       actions: [
         {

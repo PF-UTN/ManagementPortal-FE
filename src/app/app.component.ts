@@ -14,7 +14,6 @@ import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
 
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
-import { NavBarHorizontalComponent } from './components/nav-bar-horizontal/nav-bar-horizontal.component';
 
 registerLocaleData(localeEsAr);
 @Component({
@@ -25,7 +24,6 @@ registerLocaleData(localeEsAr);
     RouterOutlet,
     NavBarComponent,
     LateralDrawerComponent,
-    NavBarHorizontalComponent,
   ],
   providers: [
     NavBarService,
