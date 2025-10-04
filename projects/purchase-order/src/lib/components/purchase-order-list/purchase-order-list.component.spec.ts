@@ -903,4 +903,63 @@ describe('PurchaseOrderListComponent', () => {
       );
     });
   });
+  describe('isDateRangeValid', () => {
+    it('should return true if creation and estimated ranges are valid', () => {
+      // Arrange
+      component.selectedCreationDateRange = {
+        start: new Date('2024-01-01'),
+        end: new Date('2024-01-31'),
+      };
+      component.selectedEstimatedDeliveryDateRange = {
+        start: new Date('2024-02-01'),
+        end: new Date('2024-02-28'),
+      };
+      // Act
+      const result = component.isDateRangeValid;
+      // Assert
+      expect(result).toBe(true);
+    });
+
+    it('should return true if any date in ranges is null', () => {
+      // Arrange
+      component.selectedCreationDateRange = {
+        start: null,
+        end: new Date('2024-01-31'),
+      };
+      component.selectedEstimatedDeliveryDateRange = {
+        start: new Date('2024-02-01'),
+        end: null,
+      };
+      // Act
+      const result = component.isDateRangeValid;
+      // Assert
+      expect(result).toBe(true);
+    });
+
+    it('should return false if creation start is after creation end', () => {
+      // Arrange
+      component.selectedCreationDateRange = {
+        start: new Date('2024-02-01'),
+        end: new Date('2024-01-01'),
+      };
+      component.selectedEstimatedDeliveryDateRange = { start: null, end: null };
+      // Act
+      const result = component.isDateRangeValid;
+      // Assert
+      expect(result).toBe(false);
+    });
+
+    it('should return false if estimated start is after estimated end', () => {
+      // Arrange
+      component.selectedCreationDateRange = { start: null, end: null };
+      component.selectedEstimatedDeliveryDateRange = {
+        start: new Date('2024-03-01'),
+        end: new Date('2024-02-01'),
+      };
+      // Act
+      const result = component.isDateRangeValid;
+      // Assert
+      expect(result).toBe(false);
+    });
+  });
 });
