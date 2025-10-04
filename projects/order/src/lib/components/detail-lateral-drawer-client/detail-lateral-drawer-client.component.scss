@@ -1,0 +1,19 @@
+@import '../../../../../../src/styles/varibles';
+
+.custom-header {
+  background-color: $lavander-primary-dark;
+}
+
+.custom-header-products {
+  background-color: $lavander-primary-light;
+}
+
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table-scroll mp-list {
+  min-width: 1000px;
+  display: block;
+}

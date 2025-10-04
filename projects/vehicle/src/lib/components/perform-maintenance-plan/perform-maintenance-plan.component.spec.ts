@@ -23,6 +23,8 @@ describe('PerformMaintenancePlanComponent', () => {
     getVehicleById: jest.Mock;
     searchServiceSuppliers: jest.Mock;
     createMaintenanceAsync: jest.Mock;
+    updateMaintenance: jest.Mock;
+    getSupplierById: jest.Mock;
   };
   let snackBarMock: { open: jest.Mock };
   let locationMock: { back: jest.Mock };
@@ -33,6 +35,8 @@ describe('PerformMaintenancePlanComponent', () => {
       getVehicleById: jest.fn().mockReturnValue(of({ kmTraveled: 0 })),
       searchServiceSuppliers: jest.fn(),
       createMaintenanceAsync: jest.fn(),
+      updateMaintenance: jest.fn(),
+      getSupplierById: jest.fn(),
     };
     snackBarMock = { open: jest.fn() };
     locationMock = { back: jest.fn() };
@@ -92,6 +96,85 @@ describe('PerformMaintenancePlanComponent', () => {
         component.maintenanceForm.controls.kmPerformed.hasError('min'),
       ).toBe(true);
     });
+
+    it('should patch form and fetch supplier if maintenanceFromState exists', () => {
+      // Arrange
+      const maintenanceMock = {
+        id: 123,
+        date: '2025-10-01',
+        description: 'desc',
+        kmPerformed: 1500,
+        serviceSupplierId: 42,
+      };
+      const supplierMock: SupplierSearchResult = {
+        id: 42,
+        businessName: 'Proveedor Test',
+      };
+      const originalHistoryState = { ...history.state };
+      Object.defineProperty(history, 'state', {
+        value: { maintenance: maintenanceMock },
+        configurable: true,
+      });
+      vehicleServiceMock.getSupplierById = jest
+        .fn()
+        .mockReturnValue(of(supplierMock));
+
+      // Act
+      const testFixture = TestBed.createComponent(
+        PerformMaintenancePlanComponent,
+      );
+      const testComponent = testFixture.componentInstance;
+      testFixture.detectChanges();
+
+      // Assert
+      expect(testComponent.maintenanceFromState).toEqual(maintenanceMock);
+      expect(testComponent.isLoading).toBe(false);
+      expect(testComponent.maintenanceForm.value.date).toBe(
+        maintenanceMock.date,
+      );
+      expect(testComponent.maintenanceForm.value.kmPerformed).toBe(
+        maintenanceMock.kmPerformed,
+      );
+      expect(testComponent.maintenanceForm.value.supplier).toEqual(
+        supplierMock,
+      );
+      Object.defineProperty(history, 'state', {
+        value: originalHistoryState,
+        configurable: true,
+      });
+    });
+
+    it('should set isLoading false if getSupplierById fails', () => {
+      // Arrange
+      const maintenanceMock = {
+        id: 123,
+        date: '2025-10-01',
+        description: 'desc',
+        kmPerformed: 1500,
+        serviceSupplierId: 42,
+      };
+      Object.defineProperty(history, 'state', {
+        value: { maintenance: maintenanceMock },
+        configurable: true,
+      });
+      vehicleServiceMock.getSupplierById = jest
+        .fn()
+        .mockReturnValue(throwError(() => new Error('fail')));
+
+      // Act
+      const testFixture = TestBed.createComponent(
+        PerformMaintenancePlanComponent,
+      );
+      const testComponent = testFixture.componentInstance;
+      testFixture.detectChanges();
+
+      // Assert
+      expect(testComponent.isLoading).toBe(false);
+      Object.defineProperty(history, 'state', {
+        value: {},
+        configurable: true,
+      });
+    });
   });
 
   describe('Supplier Autocomplete', () => {
@@ -105,7 +188,7 @@ describe('PerformMaintenancePlanComponent', () => {
       component.maintenanceForm.controls.supplier.setValue(
         'test' as unknown as SupplierSearchResult,
       );
-      tick(250); // Avanza el tiempo para pasar el debounceTime
+      tick(250);
       // Assert
       const calls = vehicleServiceMock.searchServiceSuppliers.mock.calls;
       expect(calls).toEqual(
@@ -119,7 +202,7 @@ describe('PerformMaintenancePlanComponent', () => {
           ],
         ]),
       );
-      sub.unsubscribe(); // Limpia la suscripción
+      sub.unsubscribe();
     }));
 
     it('should add CREATE_SUPPLIER_OPTION as last option in the supplier list', (done) => {
@@ -168,10 +251,8 @@ describe('PerformMaintenancePlanComponent', () => {
 
     it('should call lateralDrawerService.close when Cancelar button is clicked in the drawer', () => {
       // Arrange
-      // lateralDrawerServiceMock ya tiene el método close mockeado
       lateralDrawerServiceMock.open.mockImplementation(
         (_comp, _data, config) => {
-          // Simula que el usuario hace click en "Cancelar"
           config.footer.firstButton.click();
           return of(undefined);
         },
@@ -279,6 +360,67 @@ describe('PerformMaintenancePlanComponent', () => {
       // Assert
       expect(snackBarMock.open).toHaveBeenCalledWith(
         'Ocurrió un error al realizar el mantenimiento',
+        'Cerrar',
+        { duration: 3000 },
+      );
+    });
+
+    it('should call updateMaintenance and show success message on edit', () => {
+      // Arrange
+      component.maintenanceFromState = {
+        id: 99,
+        date: '2025-10-01',
+        description: 'desc',
+        kmPerformed: 2001,
+        serviceSupplierId: 2,
+      };
+      component.maintenanceForm.controls.date.setValue('2025-10-01');
+      component.maintenanceForm.controls.kmPerformed.setValue(2001);
+      component.maintenanceForm.controls.supplier.setValue({
+        id: 2,
+        businessName: 'Proveedor',
+      });
+      vehicleServiceMock.updateMaintenance = jest.fn().mockReturnValue(of({}));
+      // Act
+      component.onSave();
+      // Assert
+      expect(vehicleServiceMock.updateMaintenance).toHaveBeenCalledWith(99, {
+        date: '2025-10-01',
+        kmPerformed: 2001,
+        maintenancePlanItemId: component.maintenancePlanItemId,
+        serviceSupplierId: 2,
+      });
+      expect(snackBarMock.open).toHaveBeenCalledWith(
+        'Mantenimiento modificado correctamente',
+        'Cerrar',
+        { duration: 3000 },
+      );
+      expect(locationMock.back).toHaveBeenCalled();
+    });
+
+    it('should show error message if updateMaintenance fails', () => {
+      // Arrange
+      component.maintenanceFromState = {
+        id: 99,
+        date: '2025-10-01',
+        description: 'desc',
+        kmPerformed: 2001,
+        serviceSupplierId: 2,
+      };
+      component.maintenanceForm.controls.date.setValue('2025-10-01');
+      component.maintenanceForm.controls.kmPerformed.setValue(2001);
+      component.maintenanceForm.controls.supplier.setValue({
+        id: 2,
+        businessName: 'Proveedor',
+      });
+      vehicleServiceMock.updateMaintenance = jest
+        .fn()
+        .mockReturnValue(throwError(() => new Error('fail')));
+      // Act
+      component.onSave();
+      // Assert
+      expect(snackBarMock.open).toHaveBeenCalledWith(
+        'Ocurrió un error al modificar el mantenimiento',
         'Cerrar',
         { duration: 3000 },
       );

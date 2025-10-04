@@ -12,6 +12,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, debounceTime, Subject, switchMap, tap } from 'rxjs';
 
 import { MaintenanceItem } from '../../models/maintenance-item.model';
@@ -55,8 +56,12 @@ export class MaintenanceListComponent implements OnInit {
       actions: [
         {
           description: 'Modificar',
-          action: (element: MaintenanceItem) =>
-            console.log('Modificar', element),
+          action: (element: MaintenanceItem) => {
+            this.router.navigate(['realizar', element.id], {
+              relativeTo: this.route,
+              state: { maintenance: element },
+            });
+          },
         },
         {
           description: 'Eliminar',
@@ -81,6 +86,8 @@ export class MaintenanceListComponent implements OnInit {
     private readonly vehicleService: VehicleService,
     private readonly dialog: MatDialog,
     private readonly snackBar: MatSnackBar,
+    private readonly router: Router,
+    private readonly route: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
@@ -110,6 +117,7 @@ export class MaintenanceListComponent implements OnInit {
               kmPerformed: item.kmPerformed,
               description: item.description,
               date: item.date,
+              serviceSupplierId: item.serviceSupplierId,
             }),
           );
           this.dataSource$.next(mappedResults);

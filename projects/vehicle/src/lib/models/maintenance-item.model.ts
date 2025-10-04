@@ -5,4 +5,5 @@ export interface MaintenanceItem {
   lastMaintenanceKm?: number;
   description: string;
   kmPerformed: number;
+  serviceSupplierId: number;
 }

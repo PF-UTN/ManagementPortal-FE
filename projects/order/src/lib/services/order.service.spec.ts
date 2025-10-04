@@ -13,6 +13,7 @@ import { OrderClientSearchResponse } from '../models/order-client-response.model
 import { OrderOrderField, OrderParams } from '../models/order-params.model';
 import { OrderSearchRequest } from '../models/order-request-model';
 import { mockOrderListItems } from '../testing/mock-data.model';
+import { mockOrderClientDetail } from '../testing/mock-data.model2';
 
 const baseUrl = 'https://dev-management-portal-be.vercel.app/order';
 
@@ -227,8 +228,8 @@ describe('OrderService', () => {
         searchText: 'Order',
         filters: {
           statusName: ['Pending', 'Cancelled'],
-          fromCreatedAtDate: new Date('2024-07-01'),
-          toCreatedAtDate: new Date('2024-07-31'),
+          fromCreatedAtDate: '2024-07-01',
+          toCreatedAtDate: '2024-07-31',
         },
         orderBy: {
           field: OrderOrderField.CreatedAt,
@@ -278,6 +279,50 @@ describe('OrderService', () => {
       const req = httpMock.expectOne(url);
       expect(req.request.method).toBe('POST');
       req.error(mockError);
+    });
+  });
+  describe('getOrderClientDetail', () => {
+    it('should GET to the correct endpoint and return the order detail', () => {
+      // Arrange
+      let response: typeof mockOrderClientDetail | undefined;
+
+      // Act
+      service
+        .getOrderClientDetail(mockOrderClientDetail.id)
+        .subscribe((res) => {
+          response = res;
+        });
+
+      const req = httpMock.expectOne(
+        `${baseUrl}/client/${mockOrderClientDetail.id}`,
+      );
+      req.flush(mockOrderClientDetail);
+
+      // Assert
+      expect(req.request.method).toBe('GET');
+      expect(response).toEqual(mockOrderClientDetail);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      let errorResponse: unknown;
+
+      // Act
+      service.getOrderClientDetail(mockOrderClientDetail.id).subscribe({
+        next: () => {},
+        error: (err) => {
+          errorResponse = err;
+        },
+      });
+
+      const req = httpMock.expectOne(
+        `${baseUrl}/client/${mockOrderClientDetail.id}`,
+      );
+      req.flush('Error', { status: 404, statusText: 'Not Found' });
+
+      // Assert
+      expect(errorResponse).toBeDefined();
+      expect((errorResponse as { status: number }).status).toBe(404);
     });
   });
 });
