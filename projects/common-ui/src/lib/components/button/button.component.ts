@@ -30,10 +30,10 @@ export class ButtonComponent {
   @Input() tooltip: string = '';
   @Input() tooltipPosition: 'above' | 'below' | 'left' | 'right' = 'above';
   @Input() ariaLabel: string = '';
-  @Input() matBadge: number | null = null;
-  @Input() matBadgeColor: ThemePalette = 'accent';
-  @Input() matBadgeOverlap: boolean = false;
-  @Input() matBadgePosition: MatBadgePosition = 'above after';
+  @Input() badge: number | null = null;
+  @Input() badgeColor: ThemePalette = 'accent';
+  @Input() badgeOverlap: boolean = false;
+  @Input() badgePosition: MatBadgePosition = 'above after';
   disabled = input(false);
   loading = input(false);
 

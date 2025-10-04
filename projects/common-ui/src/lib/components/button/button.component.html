@@ -9,10 +9,10 @@
       [disabled]="disabled() || loading()"
       [attr.aria-label]="ariaLabel"
       (click)="clickEvent($event)"
-      [matBadge]="matBadge"
-      [matBadgeColor]="matBadgeColor"
-      [matBadgeOverlap]="matBadgeOverlap"
-      [matBadgePosition]="matBadgePosition"
+      [matBadge]="badge"
+      [matBadgeColor]="badgeColor"
+      [matBadgeOverlap]="badgeOverlap"
+      [matBadgePosition]="badgePosition"
     >
       <mat-icon *ngIf="icon">{{ icon }}</mat-icon>
     </button>
