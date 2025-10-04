@@ -6,7 +6,10 @@ import {
 import { TestBed } from '@angular/core/testing';
 
 import { CartService } from './cart.service';
-import { mockCart, mockCartUpdateProductQuantity } from '../testing';
+import {
+  mockCart,
+  mockCartUpdateProductQuantity,
+} from '../../../../cart/src/lib/testing';
 
 const baseUrl = 'https://dev-management-portal-be.vercel.app/cart';
 
@@ -35,17 +38,22 @@ describe('CartService', () => {
     const url = `${baseUrl}/product/quantity`;
     it('should send a POST request with correct body', () => {
       // Act
+
       service
         .addProductToCart(mockCartUpdateProductQuantity)
         .subscribe((response) => {
-          expect(response).toBeUndefined();
+          expect(response).toEqual(mockCart);
         });
 
       // Assert
-      const req = httpMock.expectOne(url);
-      expect(req.request.method).toBe('POST');
-      expect(req.request.body).toEqual(mockCartUpdateProductQuantity);
-      req.flush({});
+      const reqPost = httpMock.expectOne(url);
+      expect(reqPost.request.method).toBe('POST');
+      expect(reqPost.request.body).toEqual(mockCartUpdateProductQuantity);
+      reqPost.flush({});
+
+      const reqGet = httpMock.expectOne(baseUrl);
+      expect(reqGet.request.method).toBe('GET');
+      reqGet.flush(mockCart);
     });
 
     it('should handle HTTP errors', () => {
@@ -97,6 +105,16 @@ describe('CartService', () => {
       req.error(mockError);
     });
   });
+  it('should update cartSubject when updateCart is called', () => {
+    // Arrange
+    // Act
+    service.updateCart(mockCart);
+
+    // Assert
+    service.cart$.subscribe((cart) => {
+      expect(cart).toEqual(mockCart);
+    });
+  });
   describe('deleteCartProduct', () => {
     const url = `${baseUrl}/product`;
     const mockDeleteCartProduct = { productId: 123 };
@@ -104,14 +122,18 @@ describe('CartService', () => {
     it('should send a DELETE request with correct body', () => {
       // Act
       service.deleteCartProduct(mockDeleteCartProduct).subscribe((response) => {
-        expect(response).toBeUndefined();
+        expect(response).toEqual(mockCart);
       });
 
       // Assert
-      const req = httpMock.expectOne(url);
-      expect(req.request.method).toBe('DELETE');
-      expect(req.request.body).toEqual(mockDeleteCartProduct);
-      req.flush({});
+      const reqDelete = httpMock.expectOne(url);
+      expect(reqDelete.request.method).toBe('DELETE');
+      expect(reqDelete.request.body).toEqual(mockDeleteCartProduct);
+      reqDelete.flush({});
+
+      const reqGet = httpMock.expectOne(baseUrl);
+      expect(reqGet.request.method).toBe('GET');
+      reqGet.flush(mockCart);
     });
 
     it('should handle HTTP errors', () => {

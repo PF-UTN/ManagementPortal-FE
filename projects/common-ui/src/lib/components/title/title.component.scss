@@ -1,5 +1,11 @@
+@import '../../../../../../src/styles/varibles';
+
 .title {
   margin: 0;
-  padding: 0;
-  color: #65558f;
+  padding-bottom: 8px;
+  color: $dusky-violet;
+  font-size: 2.2rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid $lavender-gray;
 }

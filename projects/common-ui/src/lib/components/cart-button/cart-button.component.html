@@ -1,0 +1,14 @@
+<div class="top-space">
+  <mp-button
+    [type]="'icon'"
+    [icon]="'shopping_cart'"
+    [ariaLabel]="'Carrito'"
+    class="cart-fab-btn"
+    [badge]="count > 0 ? count : null"
+    [badgeColor]="'warn'"
+    [badgeOverlap]="true"
+    [badgePosition]="'above after'"
+    (onClick)="goToCart()"
+  >
+  </mp-button>
+</div>

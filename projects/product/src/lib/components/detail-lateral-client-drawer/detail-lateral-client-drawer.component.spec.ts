@@ -1,4 +1,5 @@
-import { CartService, mockCart } from '@Cart';
+import { mockCart } from '@Cart';
+import { CartService } from '@Common';
 import { LateralDrawerService } from '@Common-UI';
 
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
@@ -204,7 +205,7 @@ describe('DetailLateralClientDrawerComponent', () => {
       jest.spyOn(cartService, 'getCart').mockReturnValue(of(mockCart));
       const addProductSpy = jest
         .spyOn(cartService, 'addProductToCart')
-        .mockReturnValue(of(void 0));
+        .mockReturnValue(of(mockCart));
 
       // Act
       component.confirmAddToCart();
@@ -228,7 +229,7 @@ describe('DetailLateralClientDrawerComponent', () => {
       jest.spyOn(cartService, 'getCart').mockReturnValue(of(mockCart));
       const addProductSpy = jest
         .spyOn(cartService, 'addProductToCart')
-        .mockReturnValue(of(void 0));
+        .mockReturnValue(of(mockCart));
 
       // Act
       component.confirmAddToCart();
@@ -250,7 +251,7 @@ describe('DetailLateralClientDrawerComponent', () => {
       component.quantity = 2;
 
       jest.spyOn(cartService, 'getCart').mockReturnValue(of(mockCart));
-      jest.spyOn(cartService, 'addProductToCart').mockReturnValue(of(void 0));
+      jest.spyOn(cartService, 'addProductToCart').mockReturnValue(of(mockCart));
       const closeSpy = jest
         .spyOn(component, 'closeDrawer')
         .mockImplementation(() => {});
@@ -274,7 +275,7 @@ describe('DetailLateralClientDrawerComponent', () => {
       jest.spyOn(cartService, 'getCart').mockReturnValue(of(mockCart));
       jest
         .spyOn(cartService, 'addProductToCart')
-        .mockReturnValue(of(void 0).pipe(delay(100)));
+        .mockReturnValue(of(mockCart).pipe(delay(100)));
 
       // Act
       component.confirmAddToCart();

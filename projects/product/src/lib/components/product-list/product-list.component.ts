@@ -9,6 +9,7 @@ import {
   PillStatusEnum,
   InputComponent,
   ButtonComponent,
+  TitleComponent,
 } from '@Common-UI';
 import {
   CreateUpdateProductCategoryLateralDrawerComponent,
@@ -57,6 +58,7 @@ import { ToggleProductLatearalDrawerComponent } from '../toggle-product-latearal
     DropdownButtonComponent,
     InputComponent,
     ButtonComponent,
+    TitleComponent,
   ],
   providers: [CurrencyPipe],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

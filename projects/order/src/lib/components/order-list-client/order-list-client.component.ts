@@ -9,6 +9,7 @@ import {
   InputComponent,
   ButtonComponent,
   LateralDrawerService,
+  CartButtonComponent,
 } from '@Common-UI';
 
 import { DatePipe, CurrencyPipe, CommonModule } from '@angular/common';
@@ -55,6 +56,7 @@ import { DetailLateralDrawerClientComponent } from '../detail-lateral-drawer-cli
     MatInputModule,
     MatNativeDateModule,
     MatButtonModule,
+    CartButtonComponent,
   ],
   providers: [DatePipe, CurrencyPipe],
   templateUrl: './order-list-client.component.html',

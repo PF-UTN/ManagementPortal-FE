@@ -40,6 +40,10 @@ export class AppComponent {
   isNavBarVisible: Signal<boolean>;
   isIndexPage: Signal<boolean>;
 
+  showHorizontalNavbar = computed(
+    () => this.isNavBarVisible() && !this.isIndexPage(),
+  );
+
   constructor(
     private navBarService: NavBarService,
     private router: Router,

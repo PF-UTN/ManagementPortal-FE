@@ -1,4 +1,5 @@
-import { mockCart, CartService } from '@Cart';
+import { mockCart } from '@Cart';
+import { CartService } from '@Common';
 import { LateralDrawerService } from '@Common-UI';
 
 import {
@@ -214,7 +215,7 @@ describe('ProductListClientComponent', () => {
         .spyOn(cartService, 'getCart')
         .mockReturnValue(of(existingCart));
 
-      jest.spyOn(cartService, 'addProductToCart').mockReturnValue(of(void 0));
+      jest.spyOn(cartService, 'addProductToCart').mockReturnValue(of(mockCart));
 
       // Act
       component.handleAddToCart(event);
@@ -231,7 +232,7 @@ describe('ProductListClientComponent', () => {
       jest.spyOn(cartService, 'getCart').mockReturnValue(of(existingCart));
       const addProductSpy = jest
         .spyOn(cartService, 'addProductToCart')
-        .mockReturnValue(of(void 0));
+        .mockReturnValue(of(mockCart));
 
       // Act
       component.handleAddToCart(event);
@@ -251,7 +252,7 @@ describe('ProductListClientComponent', () => {
       jest.spyOn(cartService, 'getCart').mockReturnValue(of(existingCart));
       const addProductSpy = jest
         .spyOn(cartService, 'addProductToCart')
-        .mockReturnValue(of(void 0));
+        .mockReturnValue(of(mockCart));
 
       // Act
       component.handleAddToCart(event);
