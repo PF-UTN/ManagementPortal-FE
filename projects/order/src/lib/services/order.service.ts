@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
+import { Client } from '../models/client-response.model';
 import { OrderClientSearchRequest } from '../models/order-client-request-model';
 import { OrderClientSearchResponse } from '../models/order-client-response.model';
 import { OrderCreatePayload } from '../models/order-created.model';
@@ -17,6 +18,7 @@ import { OrderSearchResponse } from '../models/order-response-model';
 })
 export class OrderService {
   private readonly baseUrl = environment.apiBaseUrl + '/order';
+  private readonly clientUrl = environment.apiBaseUrl + '/client';
 
   constructor(private readonly http: HttpClient) {}
 
@@ -54,8 +56,16 @@ export class OrderService {
     return this.http.get<OrderClientDetail>(url);
   }
 
-  createOrder(payload: OrderCreatePayload): Observable<void> {
+  createOrder(payload: OrderCreatePayload): Observable<{ id: number }> {
     const url = `${this.baseUrl}`;
-    return this.http.post<void>(url, payload);
+    return this.http.post<{ id: number }>(url, payload);
+  }
+
+  getClient(token?: string): Observable<Client> {
+    let headers: HttpHeaders | undefined = undefined;
+    if (token) {
+      headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+    }
+    return this.http.get<Client>(this.clientUrl, headers ? { headers } : {});
   }
 }

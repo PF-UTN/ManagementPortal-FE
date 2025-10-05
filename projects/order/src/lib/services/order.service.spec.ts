@@ -339,7 +339,7 @@ describe('OrderService', () => {
 
       // Act
       service.createOrder(payload).subscribe((response) => {
-        expect(response).toBeUndefined();
+        expect(response).toEqual({ id: 52 });
       });
 
       const req = httpMock.expectOne(
@@ -347,7 +347,7 @@ describe('OrderService', () => {
       );
       expect(req.request.method).toBe('POST');
       expect(req.request.body).toEqual(payload);
-      req.flush(null);
+      req.flush({ id: 52 });
     });
 
     it('should handle HTTP errors', () => {
@@ -380,6 +380,75 @@ describe('OrderService', () => {
       // Assert
       expect(errorResponse).toBeDefined();
       expect((errorResponse as { status: number }).status).toBe(500);
+    });
+  });
+
+  describe('getClient', () => {
+    const clientUrl = 'https://dev-management-portal-be.vercel.app/client';
+    const mockClient = {
+      id: 1,
+      address: {
+        street: 'Calle Falsa',
+        streetNumber: 123,
+        town: {
+          name: 'Rosario',
+          zipCode: '2000',
+          province: {
+            name: 'Santa Fe',
+            country: {
+              name: 'Argentina',
+            },
+          },
+        },
+      },
+    };
+
+    it('should GET to the correct endpoint and return the client', () => {
+      let response: typeof mockClient | undefined;
+
+      service.getClient().subscribe((res) => {
+        response = res;
+      });
+
+      const req = httpMock.expectOne(clientUrl);
+      expect(req.request.method).toBe('GET');
+      expect(req.request.headers.has('Authorization')).toBeFalsy();
+      req.flush(mockClient);
+
+      expect(response).toEqual(mockClient);
+    });
+
+    it('should send Authorization header when token is provided', () => {
+      const token = 'mock-token';
+      let response: typeof mockClient | undefined;
+
+      service.getClient(token).subscribe((res) => {
+        response = res;
+      });
+
+      const req = httpMock.expectOne(clientUrl);
+      expect(req.request.method).toBe('GET');
+      expect(req.request.headers.get('Authorization')).toBe(`Bearer ${token}`);
+      req.flush(mockClient);
+
+      expect(response).toEqual(mockClient);
+    });
+
+    it('should handle HTTP errors', () => {
+      let errorResponse: unknown;
+
+      service.getClient().subscribe({
+        next: () => {},
+        error: (err) => {
+          errorResponse = err;
+        },
+      });
+
+      const req = httpMock.expectOne(clientUrl);
+      req.flush('Error', { status: 401, statusText: 'Unauthorized' });
+
+      expect(errorResponse).toBeDefined();
+      expect((errorResponse as { status: number }).status).toBe(401);
     });
   });
 });

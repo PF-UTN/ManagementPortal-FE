@@ -5,16 +5,20 @@ import {
   BackArrowComponent,
   LoadingComponent,
   ButtonComponent,
+  CheckoutService,
+  CheckoutResponse,
 } from '@Common-UI';
 import { OrderService } from '@Order';
 
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatStepperModule } from '@angular/material/stepper';
+import { forkJoin } from 'rxjs';
 
+import { Client } from '../../models/client-response.model';
 import { OrderCreatePayload } from '../../models/order-created.model';
 
 @Component({
@@ -39,33 +43,44 @@ export class OrderFinalizeComponent implements OnInit {
   isLinear = true;
   selectedShipping: string | null = null;
   selectedPayment: string | null = null;
+  clientAddress: Client['address'] | null = null;
   cart: Cart | null = null;
-  isLoading = true;
-  isSubmitting = false;
+  isLoading = signal(false);
+  isSubmitting = signal(false);
+  checkoutPreferences: CheckoutResponse;
 
   constructor(
     private readonly cartService: CartService,
     private readonly orderService: OrderService,
     private readonly snackBar: MatSnackBar,
     private readonly authService: AuthService,
+    private checkoutService: CheckoutService,
   ) {}
 
   ngOnInit(): void {
     this.userId = this.authService.userId;
-    this.cartService.getCart().subscribe({
-      next: (cart) => {
+    const token = localStorage.getItem('token') ?? undefined;
+    this.isLoading.set(true);
+
+    forkJoin({
+      cart: this.cartService.getCart(),
+      client: this.orderService.getClient(token),
+    }).subscribe({
+      next: ({ cart, client }) => {
         this.cart = cart;
-        this.isLoading = false;
+        this.clientAddress = client.address;
+        this.isLoading.set(false);
       },
       error: () => {
-        this.isLoading = false;
+        this.isLoading.set(false);
+        this.clientAddress = null;
       },
     });
   }
 
-  createOrder() {
-    if (!this.cart || this.isSubmitting) return;
-    this.isSubmitting = true;
+  handleFinalizeClick() {
+    if (!this.cart || this.isSubmitting()) return;
+    this.isSubmitting.set(true);
 
     let orderStatusId = 1;
     if (this.selectedPayment === 'tarjeta') {
@@ -92,23 +107,35 @@ export class OrderFinalizeComponent implements OnInit {
     };
 
     this.orderService.createOrder(payload).subscribe({
-      next: () => {
-        this.snackBar.open('¡Su compra fue realizada con éxito!', 'Cerrar', {
-          duration: 3000,
-        });
-        this.cartService.deleteCart().subscribe({
-          complete: () => {
-            this.isSubmitting = false;
-            globalThis.location.href = '/pedidos/cliente';
-          },
-          error: () => {
-            this.isSubmitting = false;
-            globalThis.location.href = '/pedidos/cliente';
-          },
-        });
+      next: (orderResponse: { id: number }) => {
+        if (this.selectedPayment === 'tarjeta') {
+          this.checkoutService
+            .createOrderCheckoutPreferences(orderResponse.id.toString())
+            .subscribe((checkoutPreferences) => {
+              this.checkoutPreferences = checkoutPreferences;
+              this.isLoading.set(false);
+              if (checkoutPreferences && checkoutPreferences.init_point) {
+                window.location.href = checkoutPreferences.init_point;
+              }
+            });
+        } else {
+          this.snackBar.open('¡Su pedido fue realizado con éxito!', 'Cerrar', {
+            duration: 3000,
+          });
+          this.cartService.deleteCart().subscribe({
+            complete: () => {
+              this.isSubmitting.set(false);
+              globalThis.location.href = '/pedidos/cliente';
+            },
+            error: () => {
+              this.isSubmitting.set(false);
+              globalThis.location.href = '/pedidos/cliente';
+            },
+          });
+        }
       },
       error: () => {
-        this.isSubmitting = false;
+        this.isSubmitting.set(false);
       },
     });
   }
@@ -121,12 +148,8 @@ export class OrderFinalizeComponent implements OnInit {
     );
   }
 
-  get shippingCost(): number {
-    return this.selectedShipping === 'domicilio' ? 15000 : 0;
-  }
-
   get finalTotal(): number {
-    return this.cartTotal + this.shippingCost + this.taxes;
+    return this.cartTotal + this.taxes;
   }
 
   get taxes(): number {

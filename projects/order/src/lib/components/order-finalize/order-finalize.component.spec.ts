@@ -1,7 +1,9 @@
 import { CartService, Cart } from '@Cart';
 import { AuthService } from '@Common';
+import { CheckoutService } from '@Common-UI';
 import { OrderService } from '@Order';
 
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {
@@ -58,7 +60,24 @@ describe('OrderFinalizeComponent', () => {
     } as unknown as jest.Mocked<CartService>;
 
     orderServiceMock = {
-      createOrder: jest.fn().mockReturnValue(of(undefined)),
+      createOrder: jest.fn().mockReturnValue(of({ id: 52 })),
+      getClient: jest.fn().mockReturnValue(
+        of({
+          id: 1,
+          address: {
+            street: 'Calle Falsa',
+            streetNumber: 123,
+            town: {
+              name: 'Rosario',
+              zipCode: '2000',
+              province: {
+                name: 'Santa Fe',
+                country: { name: 'Argentina' },
+              },
+            },
+          },
+        }),
+      ),
     } as unknown as jest.Mocked<OrderService>;
 
     authServiceMock = {
@@ -68,6 +87,10 @@ describe('OrderFinalizeComponent', () => {
     snackBarMock = {
       open: jest.fn(),
     } as unknown as jest.Mocked<MatSnackBar>;
+
+    const checkoutServiceMock = {
+      createOrderCheckoutPreferences: jest.fn(),
+    } as unknown as jest.Mocked<CheckoutService>;
 
     await TestBed.configureTestingModule({
       imports: [
@@ -80,6 +103,8 @@ describe('OrderFinalizeComponent', () => {
         { provide: OrderService, useValue: orderServiceMock },
         { provide: AuthService, useValue: authServiceMock },
         { provide: MatSnackBar, useValue: snackBarMock },
+        { provide: CheckoutService, useValue: checkoutServiceMock },
+        provideHttpClientTesting(),
       ],
     }).compileComponents();
 
@@ -96,7 +121,7 @@ describe('OrderFinalizeComponent', () => {
       component.ngOnInit();
       // Assert
       expect(component.cart).toEqual(mockCart);
-      expect(component.isLoading).toBe(false);
+      expect(component.isLoading()).toBe(false);
     });
 
     it('should set isLoading to false on error', () => {
@@ -107,7 +132,7 @@ describe('OrderFinalizeComponent', () => {
       // Act
       component.ngOnInit();
       // Assert
-      expect(component.isLoading).toBe(false);
+      expect(component.isLoading()).toBe(false);
     });
   });
 
@@ -116,7 +141,7 @@ describe('OrderFinalizeComponent', () => {
       // Arrange
       component.cart = null;
       // Act
-      component.createOrder();
+      component.handleFinalizeClick();
       // Assert
       expect(orderServiceMock.createOrder).not.toHaveBeenCalled();
     });
@@ -124,9 +149,9 @@ describe('OrderFinalizeComponent', () => {
     it('should not create order if isSubmitting is true', () => {
       // Arrange
       component.cart = mockCart;
-      component.isSubmitting = true;
+      component.isSubmitting.set(true);
       // Act
-      component.createOrder();
+      component.handleFinalizeClick();
       // Assert
       expect(orderServiceMock.createOrder).not.toHaveBeenCalled();
     });
@@ -138,9 +163,9 @@ describe('OrderFinalizeComponent', () => {
         throwError(() => new Error('error')),
       );
       // Act
-      component.createOrder();
+      component.handleFinalizeClick();
       // Assert
-      expect(component.isSubmitting).toBe(false);
+      expect(component.isSubmitting()).toBe(false);
     });
 
     it('should set orderStatusId = 7 when payment is tarjeta', () => {
@@ -149,7 +174,7 @@ describe('OrderFinalizeComponent', () => {
       component.selectedPayment = 'tarjeta';
       component.selectedShipping = 'domicilio';
       // Act
-      component.createOrder();
+      component.handleFinalizeClick();
       // Assert
       expect(orderServiceMock.createOrder).toHaveBeenCalledWith(
         expect.objectContaining({ orderStatusId: 7 }),
@@ -162,7 +187,7 @@ describe('OrderFinalizeComponent', () => {
       component.selectedPayment = 'entrega';
       component.selectedShipping = 'sucursal';
       // Act
-      component.createOrder();
+      component.handleFinalizeClick();
       // Assert
       expect(orderServiceMock.createOrder).toHaveBeenCalledWith(
         expect.objectContaining({ orderStatusId: 2 }),
@@ -175,7 +200,7 @@ describe('OrderFinalizeComponent', () => {
       component.selectedPayment = 'entrega';
       component.selectedShipping = 'domicilio';
       // Act
-      component.createOrder();
+      component.handleFinalizeClick();
       // Assert
       expect(orderServiceMock.createOrder).toHaveBeenCalledWith(
         expect.objectContaining({ orderStatusId: 1 }),
@@ -203,26 +228,6 @@ describe('OrderFinalizeComponent', () => {
     });
   });
 
-  describe('shippingCost', () => {
-    it('should return 15000 if selectedShipping is domicilio', () => {
-      // Arrange
-      component.selectedShipping = 'domicilio';
-      // Act
-      const cost = component.shippingCost;
-      // Assert
-      expect(cost).toBe(15000);
-    });
-
-    it('should return 0 if selectedShipping is not domicilio', () => {
-      // Arrange
-      component.selectedShipping = 'sucursal';
-      // Act
-      const cost = component.shippingCost;
-      // Assert
-      expect(cost).toBe(0);
-    });
-  });
-
   describe('taxes', () => {
     it('should return 5% of cartTotal', () => {
       // Arrange
@@ -235,14 +240,12 @@ describe('OrderFinalizeComponent', () => {
   });
 
   describe('finalTotal', () => {
-    it('should return the sum of cartTotal, shippingCost, and taxes', () => {
+    it('should return the sum of cartTotal and taxes', () => {
       // Arrange
       component.cart = mockCart;
-      component.selectedShipping = 'domicilio';
       // Act
-      const total = component.finalTotal;
       // Assert
-      expect(total).toBe(2000 + 15000 + 100);
+      expect(component.finalTotal).toBe(2000 + 100);
     });
   });
 });

@@ -8,7 +8,7 @@
         </div>
     </div>
 
-    <ng-container *ngIf="isLoading; else loadedStepper">
+    <ng-container *ngIf="isLoading(); else loadedStepper">
         <mp-loading></mp-loading>
     </ng-container>
 
@@ -43,10 +43,19 @@
                                         [(ngModel)]="selectedShipping"/>
                                     <span class="option-text">
                                         Envío a domicilio
-                                        <div class="option-address">Dirección 123, Rosario - Santa Fe</div>
+                                        <div class="option-address">
+                                            <ng-container *ngIf="clientAddress; else noAddress">
+                                                {{ clientAddress.street }} {{ clientAddress.streetNumber }}, 
+                                                {{ clientAddress.town.name }} - 
+                                                {{ clientAddress.town.province.name }}
+                                            </ng-container>
+                                            <ng-template #noAddress>
+                                                Dirección no disponible
+                                            </ng-template>
+                                        </div>
                                     </span>
                                     <span class="option-price">
-                                        {{ (cartTotal + 15000) | currency: 'ARS' : 'symbol' : '1.2-2' }}
+                                        {{ (cartTotal) | currency: 'ARS' : 'symbol' : '1.2-2' }}
                                     </span>
                                 </label>
                             </div>
@@ -133,7 +142,14 @@
                                             - Sucursal Central: Calle Falsa 123, Rosario - Santa Fe
                                             </span>
                                             <span *ngIf="selectedShipping === 'domicilio'">
-                                            - Dirección 123, Rosario - Santa Fe
+                                            <ng-container *ngIf="clientAddress; else noAddressSummary">
+                                                {{ clientAddress.street }} {{ clientAddress.streetNumber }}, 
+                                                {{ clientAddress.town.name }} - 
+                                                {{ clientAddress.town.province.name }}
+                                            </ng-container>
+                                            <ng-template #noAddressSummary>
+                                                Dirección no disponible
+                                            </ng-template>
                                             </span>
                                         </div>
                                 </div>
@@ -141,10 +157,6 @@
                                     <div class="d-flex justify-content-between">
                                         <span>Subtotal</span>
                                         <span>{{ cartTotal | currency: 'ARS' : 'symbol' : '1.2-2' }}</span>
-                                    </div>
-                                    <div class="d-flex justify-content-between">
-                                        <span>Costo de envío</span>
-                                        <span>{{ shippingCost | currency: 'ARS' : 'symbol' : '1.2-2' }}</span>
                                     </div>
                                     <div class="d-flex justify-content-between">
                                         <span>Impuestos</span>
@@ -164,8 +176,8 @@
                                     </mp-button>
                                     <mp-button 
                                         type="primary" 
-                                        [loading]="isSubmitting" 
-                                        (onClick)="createOrder()">
+                                        [loading]="isSubmitting()" 
+                                        (onClick)="handleFinalizeClick()">
                                         Finalizar compra
                                     </mp-button>
                                 </div>
@@ -189,6 +201,10 @@
                             </div>
                         </div>
                         <div class="body__summary__detail mt-3">
+                            <div class="d-flex justify-content-between">
+                                <span>Impuestos</span>
+                                <span>{{ taxes | currency: 'ARS' : 'symbol' : '1.2-2' }}</span>
+                            </div>
                             <hr>
                             <div class="d-flex justify-content-between fw-bold">
                                 <span>Total</span>
