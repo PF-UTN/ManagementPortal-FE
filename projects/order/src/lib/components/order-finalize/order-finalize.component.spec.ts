@@ -1,7 +1,6 @@
 import { CartService, Cart } from '@Cart';
 import { AuthService } from '@Common';
 import { CheckoutService } from '@Common-UI';
-import { OrderService } from '@Order';
 
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -13,6 +12,7 @@ import {
 import { of, throwError } from 'rxjs';
 
 import { OrderFinalizeComponent } from './order-finalize.component';
+import { OrderService } from '../../services/order.service';
 
 describe('OrderFinalizeComponent', () => {
   let component: OrderFinalizeComponent;

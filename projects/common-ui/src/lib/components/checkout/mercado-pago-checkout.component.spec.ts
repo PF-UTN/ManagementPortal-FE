@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
 
 import { MercadoPagoCheckoutComponent } from './mercado-pago-checkout.component';
-import { CheckoutResponse } from './models/checkout-response.model';
+import { CheckoutResponse } from './modls/checkout-response.model';
 import { CheckoutService } from './services/checkout.service';
 describe('MercadoPagoCheckoutComponent', () => {
   let fixture: ComponentFixture<MercadoPagoCheckoutComponent>;

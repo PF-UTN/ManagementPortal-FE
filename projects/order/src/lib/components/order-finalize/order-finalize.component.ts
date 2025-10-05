@@ -8,7 +8,6 @@ import {
   CheckoutService,
   CheckoutResponse,
 } from '@Common-UI';
-import { OrderService } from '@Order';
 
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
@@ -20,6 +19,7 @@ import { forkJoin } from 'rxjs';
 
 import { Client } from '../../models/client-response.model';
 import { OrderCreatePayload } from '../../models/order-created.model';
+import { OrderService } from '../../services/order.service';
 
 @Component({
   selector: 'mp-order-finalize',
