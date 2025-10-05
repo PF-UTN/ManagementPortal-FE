@@ -67,7 +67,7 @@ export class TableComponent<T> implements OnInit {
     pageSize: number;
   }>();
   @Output() actionClicked = new EventEmitter<{ action: string; row: T }>();
-  @Output() rowSelected = new EventEmitter<T[]>();
+  @Output() selectedRows = new EventEmitter<T[]>();
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
@@ -79,7 +79,7 @@ export class TableComponent<T> implements OnInit {
 
   tableDataSource = new MatTableDataSource<T>();
   displayedColumns: string[] = [];
-  selectedRows: T[] = [];
+  selectedRowsList: T[] = [];
 
   ROW_TYPES = ColumnTypeEnum;
 
@@ -100,13 +100,13 @@ export class TableComponent<T> implements OnInit {
 
   onRowSelect(row: T) {
     if (hasSelectedProp(row) && row.selected) {
-      if (!this.selectedRows.includes(row)) {
-        this.selectedRows.push(row);
+      if (!this.selectedRowsList.includes(row)) {
+        this.selectedRowsList.push(row);
       }
     } else {
-      this.selectedRows = this.selectedRows.filter((r) => r !== row);
+      this.selectedRowsList = this.selectedRowsList.filter((r) => r !== row);
     }
-    this.rowSelected.emit(this.selectedRows);
+    this.selectedRows.emit(this.selectedRowsList);
   }
 
   onPageChange(event: PageEvent): void {
