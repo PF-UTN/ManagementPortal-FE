@@ -65,26 +65,26 @@ export class OrderListComponent implements OnInit {
   columns: TableColumn<OrderItem>[] = [
     {
       columnDef: 'orderId',
-      header: 'Número de pedido',
+      header: 'NÚMERO DE PEDIDO',
       type: ColumnTypeEnum.VALUE,
       value: (element: OrderItem) => element.id.toString(),
     },
     {
       columnDef: 'clientName',
-      header: 'Nombre del cliente',
+      header: 'NOMBRE DEL CLIENTE',
       type: ColumnTypeEnum.VALUE,
       value: (element: OrderItem) => element.clientName,
     },
     {
       columnDef: 'createdAt',
-      header: 'Fecha de creación',
+      header: 'FECHA DE CREACIÓN',
       type: ColumnTypeEnum.VALUE,
       value: (element: OrderItem) =>
         this.datePipe.transform(element.createdAt, 'dd/MM/yyyy')!,
     },
     {
       columnDef: 'status',
-      header: 'Estado',
+      header: 'ESTADO',
       type: ColumnTypeEnum.PILL,
       value: (element: OrderItem) => this.getStatusLabel(element.orderStatus),
       pillStatus: (element: OrderItem) =>
@@ -92,7 +92,7 @@ export class OrderListComponent implements OnInit {
     },
     {
       columnDef: 'price',
-      header: 'Precio',
+      header: 'PRECIO',
       type: ColumnTypeEnum.VALUE,
       value: (item) =>
         this.currencyPipe.transform(
@@ -105,7 +105,7 @@ export class OrderListComponent implements OnInit {
     },
     {
       columnDef: 'actions',
-      header: 'Acciones',
+      header: 'ACCIONES',
       type: ColumnTypeEnum.ACTIONS,
       actions: [
         {
