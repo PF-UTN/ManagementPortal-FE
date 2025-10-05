@@ -7,7 +7,7 @@ import {
 import { TestBed } from '@angular/core/testing';
 
 import { CheckoutService } from './checkout.service';
-import { CheckoutResponse } from '../modls/checkout-response.model';
+import { CheckoutResponse } from '../models/checkout-response.model';
 
 describe('CheckoutService', () => {
   let service: CheckoutService;
