@@ -28,13 +28,13 @@ export class MaintenancePlanListComponent implements OnInit {
   columns: TableColumn<MaintenancePlanListItem>[] = [
     {
       columnDef: 'description',
-      header: 'Descripcion',
+      header: 'DESCRIPCIÓN',
       type: ColumnTypeEnum.VALUE,
       value: (element: MaintenancePlanListItem) => element.description,
     },
     {
       columnDef: 'nextMaintenanceDate',
-      header: 'Próxima fecha',
+      header: 'PRÓXIMA FECHA',
       type: ColumnTypeEnum.VALUE,
       value: (
         element: MaintenancePlanListItem & { lastMaintenanceDate?: string },
@@ -42,12 +42,12 @@ export class MaintenancePlanListComponent implements OnInit {
         if (!element.lastMaintenanceDate || !element.timeInterval) return '-';
         const last = new Date(element.lastMaintenanceDate);
         last.setMonth(last.getMonth() + element.timeInterval);
-        return last.toLocaleDateString();
+        return last.toLocaleDateString('es-AR');
       },
     },
     {
       columnDef: 'nextMaintenanceKm',
-      header: 'Próximo KM',
+      header: 'PRÓXIMO KM',
       type: ColumnTypeEnum.VALUE,
       value: (element: MaintenancePlanListItem) => {
         const e = element as MaintenancePlanListItem & {
@@ -69,7 +69,7 @@ export class MaintenancePlanListComponent implements OnInit {
     },
     {
       columnDef: 'kmInterval',
-      header: 'Intervalo KM',
+      header: 'INTERVALO KM',
       type: ColumnTypeEnum.VALUE,
       value: (element: MaintenancePlanListItem) =>
         element.kmInterval == null
@@ -78,14 +78,14 @@ export class MaintenancePlanListComponent implements OnInit {
     },
     {
       columnDef: 'timeInterval',
-      header: 'Intervalo tiempo',
+      header: 'INTERVALO TIEMPO',
       type: ColumnTypeEnum.VALUE,
       value: (element: MaintenancePlanListItem) =>
         this.formatTimeInterval(element.timeInterval),
     },
     {
       columnDef: 'actions',
-      header: 'Acciones',
+      header: 'ACCIONES',
       type: ColumnTypeEnum.ACTIONS,
       actions: [
         {

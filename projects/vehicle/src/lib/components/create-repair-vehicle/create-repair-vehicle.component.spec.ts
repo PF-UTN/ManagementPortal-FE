@@ -29,6 +29,7 @@ describe('CreateRepairVehicleComponent', () => {
     vehicleServiceMock = {
       searchServiceSuppliers: jest.fn(),
       createRepairAsync: jest.fn(),
+      getSupplierById: jest.fn(),
     } as unknown as jest.Mocked<VehicleService>;
 
     snackBarMock = {
@@ -258,6 +259,65 @@ describe('CreateRepairVehicleComponent', () => {
       );
       expect(component.isLoading).toBe(false);
     });
+
+    it('should call updateRepairAsync and handle success on edit', () => {
+      // Arrange
+      component.repairId = 99;
+      component.repairForm.setValue({
+        date: '2024-09-30',
+        description: 'Cambio de correa',
+        kmPerformed: 54321,
+        supplier: { id: 20, businessName: 'Proveedor Editado' },
+      });
+      vehicleServiceMock.updateRepairAsync = jest
+        .fn()
+        .mockReturnValue(of(undefined));
+      // Act
+      component.onSave();
+      // Assert
+      expect(vehicleServiceMock.updateRepairAsync).toHaveBeenCalledWith(99, {
+        date: '2024-09-30',
+        description: 'Cambio de correa',
+        kmPerformed: 54321,
+        serviceSupplierId: 20,
+      });
+      expect(snackBarMock.open).toHaveBeenCalledWith(
+        'Reparación guardada',
+        'Cerrar',
+        { duration: 2000 },
+      );
+      expect(locationMock.back).toHaveBeenCalled();
+      expect(component.isLoading).toBe(false);
+    });
+
+    it('should call updateRepairAsync and handle error on edit', () => {
+      // Arrange
+      component.repairId = 77;
+      component.repairForm.setValue({
+        date: '2024-10-01',
+        description: 'Frenos',
+        kmPerformed: 88888,
+        supplier: { id: 30, businessName: 'Proveedor Error' },
+      });
+      vehicleServiceMock.updateRepairAsync = jest
+        .fn()
+        .mockReturnValue(throwError(() => new Error('fail')));
+      // Act
+      component.onSave();
+      // Assert
+      expect(vehicleServiceMock.updateRepairAsync).toHaveBeenCalledWith(77, {
+        date: '2024-10-01',
+        description: 'Frenos',
+        kmPerformed: 88888,
+        serviceSupplierId: 30,
+      });
+      expect(snackBarMock.open).toHaveBeenCalledWith(
+        'Error al guardar la reparación',
+        'Cerrar',
+        { duration: 2000 },
+      );
+      expect(component.isLoading).toBe(false);
+    });
   });
 
   describe('Keyboard interaction', () => {
@@ -280,6 +340,43 @@ describe('CreateRepairVehicleComponent', () => {
       const event = new KeyboardEvent('keydown', { key: 'Tab' });
       component.onButtonKeyDown(event);
       expect(onSaveSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('ngOnInit with repairState', () => {
+    const repairState = {
+      id: 123,
+      date: '2024-10-01',
+      description: 'Cambio de pastillas',
+      kmPerformed: 55555,
+      serviceSupplierId: 77,
+    };
+
+    beforeEach(() => {
+      jest
+        .spyOn(history, 'state', 'get')
+        .mockReturnValue({ repair: repairState });
+      vehicleServiceMock.getSupplierById = jest.fn();
+    });
+
+    it('should patch form and set supplier when getSupplierById succeeds', () => {
+      // Arrange
+      const supplier = { id: 77, businessName: 'Proveedor Test' };
+      vehicleServiceMock.getSupplierById = jest
+        .fn()
+        .mockReturnValue(of(supplier));
+      // Act
+      component.ngOnInit();
+      // Assert
+      expect(component.isSupplierLoading).toBe(false);
+      expect(component.repairId).toBe(123);
+      expect(component.repairForm.value).toMatchObject({
+        date: '2024-10-01',
+        description: 'Cambio de pastillas',
+        kmPerformed: 55555,
+        supplier: { id: 77, businessName: 'Proveedor Test' },
+      });
+      expect(vehicleServiceMock.getSupplierById).toHaveBeenCalledWith(77);
     });
   });
 });

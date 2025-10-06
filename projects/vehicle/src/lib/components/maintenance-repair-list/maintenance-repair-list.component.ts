@@ -13,6 +13,7 @@ import { Component, input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router, ActivatedRoute } from '@angular/router';
 import { BehaviorSubject, debounceTime, Subject, switchMap, tap } from 'rxjs';
 
 import { RepairItem } from '../../../../../common/src/models/vehicle/repair-item.model';
@@ -29,32 +30,42 @@ export class MaintenanceRepairListComponent implements OnInit {
   columns: TableColumn<RepairItem>[] = [
     {
       columnDef: 'maintenanceDate',
-      header: 'Fecha de reparación',
+      header: 'FECHA DE REPARACIÓN',
       type: ColumnTypeEnum.VALUE,
       value: (element: RepairItem) =>
         this.datePipe.transform(element.date, 'dd/MM/yyyy')!,
     },
     {
       columnDef: 'description',
-      header: 'Descripcion',
+      header: 'DESCRIPCIÓN',
       type: ColumnTypeEnum.VALUE,
       value: (element: RepairItem) => element.description,
     },
     {
       columnDef: 'repairKm',
-      header: 'Kilometraje',
+      header: 'KILOMETRAJE',
       type: ColumnTypeEnum.VALUE,
       value: (element: RepairItem) =>
         this.decimalPipe.transform(element.kmPerformed, '1.0-0')! + ' km',
     },
     {
       columnDef: 'actions',
-      header: 'Acciones',
+      header: 'ACCIONES',
       type: ColumnTypeEnum.ACTIONS,
       actions: [
         {
           description: 'Modificar',
-          action: (element: RepairItem) => console.log('Modificar', element),
+          action: (element: RepairItem) => {
+            this.router.navigate(['../mantenimiento/editar-reparacion'], {
+              relativeTo: this.route,
+              state: {
+                repair: {
+                  ...element,
+                  serviceSupplierId: element.serviceSupplierId,
+                },
+              },
+            });
+          },
         },
         {
           description: 'Eliminar',
@@ -80,6 +91,8 @@ export class MaintenanceRepairListComponent implements OnInit {
     private readonly vehicleService: VehicleService,
     private readonly dialog: MatDialog,
     private readonly snackBar: MatSnackBar,
+    private readonly router: Router,
+    private readonly route: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
@@ -108,6 +121,7 @@ export class MaintenanceRepairListComponent implements OnInit {
             date: item.date,
             description: item.description,
             kmPerformed: item.kmPerformed,
+            serviceSupplierId: item.serviceSupplierId,
           }));
           this.dataSource$.next(mappedResults);
           this.itemsNumber = response.total;

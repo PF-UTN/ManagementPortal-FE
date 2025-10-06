@@ -229,4 +229,74 @@ describe('OrderListComponent', () => {
       expect(downloadFileFromResponse).not.toHaveBeenCalled();
     });
   });
+
+  describe('isDateRangeValid', () => {
+    it('should return true if fromDate is before toDate', () => {
+      // Arrange
+      component.fromDate = new Date('2024-01-01');
+      component.toDate = new Date('2024-01-31');
+      // Act
+      const result = component.isDateRangeValid;
+      // Assert
+      expect(result).toBe(true);
+    });
+
+    it('should return true if fromDate or toDate is null', () => {
+      // Arrange
+      component.fromDate = null;
+      component.toDate = new Date('2024-01-31');
+      // Act
+      const result1 = component.isDateRangeValid;
+      // Assert
+      expect(result1).toBe(true);
+
+      // Arrange
+      component.fromDate = new Date('2024-01-01');
+      component.toDate = null;
+      // Act
+      const result2 = component.isDateRangeValid;
+      // Assert
+      expect(result2).toBe(true);
+    });
+
+    it('should return false if fromDate is after toDate', () => {
+      // Arrange
+      component.fromDate = new Date('2024-02-01');
+      component.toDate = new Date('2024-01-01');
+      // Act
+      const result = component.isDateRangeValid;
+      // Assert
+      expect(result).toBe(false);
+    });
+  });
+  describe('getOrderParams', () => {
+    it('should not include filters if none are set', () => {
+      // Arrange
+      component.selectedStatus = [];
+      component.fromDate = null;
+      component.toDate = null;
+
+      // Act
+      const params = component['getOrderParams']();
+
+      // Assert
+      expect(params.filters.statusName).toBeUndefined();
+      expect(params.filters.fromCreatedAtDate).toBeUndefined();
+      expect(params.filters.toCreatedAtDate).toBeUndefined();
+    });
+    it('should include all filters if set', () => {
+      // Arrange
+      component.selectedStatus = ['Pending', 'Finished'];
+      component.fromDate = new Date('2024-01-01');
+      component.toDate = new Date('2024-01-31');
+
+      // Act
+      const params = component['getOrderParams']();
+
+      // Assert
+      expect(params.filters.statusName).toEqual(['Pending', 'Finished']);
+      expect(params.filters.fromCreatedAtDate).toBe('2024-01-01');
+      expect(params.filters.toCreatedAtDate).toBe('2024-01-31');
+    });
+  });
 });

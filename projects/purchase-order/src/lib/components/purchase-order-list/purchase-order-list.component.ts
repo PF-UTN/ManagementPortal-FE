@@ -384,6 +384,15 @@ export class PurchaseOrderListComponent implements OnInit {
     this.applyFilters();
   }
 
+  get isDateRangeValid(): boolean {
+    const c = this.selectedCreationDateRange;
+    const e = this.selectedEstimatedDeliveryDateRange;
+    return (
+      (!c.start || !c.end || c.start <= c.end) &&
+      (!e.start || !e.end || e.start <= e.end)
+    );
+  }
+
   applyFilters(): void {
     this.pageIndex = 0;
     this.doSearchSubject$.next();

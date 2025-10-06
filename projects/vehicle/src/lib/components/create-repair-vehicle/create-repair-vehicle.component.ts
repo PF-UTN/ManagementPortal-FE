@@ -5,6 +5,7 @@ import {
   ButtonComponent,
   InputComponent,
   LateralDrawerService,
+  LoadingComponent,
 } from '@Common-UI';
 
 import { CommonModule, Location } from '@angular/common';
@@ -29,7 +30,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import {
   map,
@@ -60,6 +61,7 @@ import { CreateUpdateSupplierServiceDrawerComponent } from '../create-update-sup
     MatButtonModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    LoadingComponent,
   ],
   templateUrl: './create-repair-vehicle.component.html',
   styleUrl: './create-repair-vehicle.component.scss',
@@ -72,7 +74,9 @@ export class CreateRepairVehicleComponent implements OnInit {
     supplier: FormControl<SupplierSearchResult | null>;
   }>;
 
+  repairId?: number;
   vehicleId!: number;
+  isSupplierLoading = false;
   isLoading = false;
   isSearching = false;
   filteredSuppliers$!: Observable<SupplierSearchResult[]>;
@@ -88,6 +92,7 @@ export class CreateRepairVehicleComponent implements OnInit {
     private readonly snackBar: MatSnackBar,
     private readonly location: Location,
     private readonly lateralDrawerService: LateralDrawerService,
+    private readonly router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -105,6 +110,47 @@ export class CreateRepairVehicleComponent implements OnInit {
         this.supplierObjectValidator(),
       ]),
     });
+
+    const repairState =
+      typeof history.state === 'object' &&
+      history.state !== null &&
+      'repair' in history.state
+        ? (history.state.repair as {
+            id?: number;
+            date?: string;
+            description?: string;
+            kmPerformed?: number;
+            serviceSupplierId?: number;
+          })
+        : undefined;
+
+    if (repairState) {
+      this.isSupplierLoading = true;
+      this.repairId = repairState.id;
+      this.repairForm.patchValue({
+        date: repairState.date ?? null,
+        description: repairState.description ?? null,
+        kmPerformed: repairState.kmPerformed ?? null,
+      });
+
+      if (repairState.serviceSupplierId) {
+        this.vehicleService
+          .getSupplierById(repairState.serviceSupplierId)
+          .subscribe({
+            next: (supplier) => {
+              this.repairForm.controls.supplier.setValue({
+                id: supplier.id,
+                businessName: supplier.businessName,
+              });
+              this.isSupplierLoading = false;
+            },
+            error: () => {
+              this.repairForm.controls.supplier.setValue(null);
+              this.isSupplierLoading = false;
+            },
+          });
+      }
+    }
 
     this.filteredSuppliers$ =
       this.repairForm.controls.supplier.valueChanges.pipe(
@@ -196,7 +242,12 @@ export class CreateRepairVehicleComponent implements OnInit {
       kmPerformed: formValue.kmPerformed!,
       serviceSupplierId: formValue.supplier!.id,
     };
-    this.vehicleService.createRepairAsync(this.vehicleId, payload).subscribe({
+
+    const request$ = this.repairId
+      ? this.vehicleService.updateRepairAsync(this.repairId, payload)
+      : this.vehicleService.createRepairAsync(this.vehicleId, payload);
+
+    request$.subscribe({
       next: () => {
         this.isLoading = false;
         this.snackBar.open('Reparación guardada', 'Cerrar', { duration: 2000 });

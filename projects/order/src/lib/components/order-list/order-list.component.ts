@@ -65,26 +65,26 @@ export class OrderListComponent implements OnInit {
   columns: TableColumn<OrderItem>[] = [
     {
       columnDef: 'orderId',
-      header: 'Número de pedido',
+      header: 'NÚMERO DE PEDIDO',
       type: ColumnTypeEnum.VALUE,
       value: (element: OrderItem) => element.id.toString(),
     },
     {
       columnDef: 'clientName',
-      header: 'Nombre del cliente',
+      header: 'NOMBRE DEL CLIENTE',
       type: ColumnTypeEnum.VALUE,
       value: (element: OrderItem) => element.clientName,
     },
     {
       columnDef: 'createdAt',
-      header: 'Fecha de creación',
+      header: 'FECHA DE CREACIÓN',
       type: ColumnTypeEnum.VALUE,
       value: (element: OrderItem) =>
         this.datePipe.transform(element.createdAt, 'dd/MM/yyyy')!,
     },
     {
       columnDef: 'status',
-      header: 'Estado',
+      header: 'ESTADO',
       type: ColumnTypeEnum.PILL,
       value: (element: OrderItem) => this.getStatusLabel(element.orderStatus),
       pillStatus: (element: OrderItem) =>
@@ -92,7 +92,7 @@ export class OrderListComponent implements OnInit {
     },
     {
       columnDef: 'price',
-      header: 'Precio',
+      header: 'PRECIO',
       type: ColumnTypeEnum.VALUE,
       value: (item) =>
         this.currencyPipe.transform(
@@ -105,7 +105,7 @@ export class OrderListComponent implements OnInit {
     },
     {
       columnDef: 'actions',
-      header: 'Acciones',
+      header: 'ACCIONES',
       type: ColumnTypeEnum.ACTIONS,
       actions: [
         {
@@ -160,8 +160,8 @@ export class OrderListComponent implements OnInit {
             pageSize: this.pageSize,
             filters: {
               statusName:
-                this.selectedStatuses.length > 0
-                  ? this.selectedStatuses.map((s) => s.key)
+                this.selectedStatus.length > 0
+                  ? this.selectedStatus
                   : undefined,
               fromCreatedAtDate: this.fromDate
                 ? this.fromDate.toISOString().slice(0, 10)
@@ -196,6 +196,9 @@ export class OrderListComponent implements OnInit {
       });
 
     this.doSearchSubject$.next();
+  }
+  get isDateRangeValid(): boolean {
+    return !this.fromDate || !this.toDate || this.fromDate <= this.toDate;
   }
 
   ngOnDestroy(): void {
@@ -284,18 +287,19 @@ export class OrderListComponent implements OnInit {
     if (this.selectedStatus.length > 0) {
       params.filters.statusName = this.selectedStatus;
     }
-    if (this.selectedCreationDateRange.start) {
-      params.filters.fromCreatedAtDate = this.selectedCreationDateRange.start;
+    if (this.fromDate) {
+      params.filters.fromCreatedAtDate = this.fromDate
+        .toISOString()
+        .slice(0, 10);
     }
-    if (this.selectedCreationDateRange.end) {
-      params.filters.toCreatedAtDate = this.selectedCreationDateRange.end;
+    if (this.toDate) {
+      params.filters.toCreatedAtDate = this.toDate.toISOString().slice(0, 10);
     }
     return params;
   }
 
   handleDownloadClick(): void {
     const params = this.getOrderParams();
-
     this.orderService.downloadOrderList(params).subscribe((response) => {
       downloadFileFromResponse(response, 'pedidos.xlsx');
     });

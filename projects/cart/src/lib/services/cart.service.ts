@@ -29,4 +29,9 @@ export class CartService {
     const url = `${this.baseUrl}/product`;
     return this.http.delete<void>(url, { body: params });
   }
+
+  deleteCart(): Observable<void> {
+    const url = `${this.baseUrl}`;
+    return this.http.delete<void>(url);
+  }
 }

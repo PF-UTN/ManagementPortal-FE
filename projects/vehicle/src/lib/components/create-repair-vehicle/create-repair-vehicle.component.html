@@ -4,7 +4,10 @@
     <mp-title>Registrar Reparación</mp-title>
   </div>
   <hr>
-  <div class="container">
+  <ng-container *ngIf="isSupplierLoading">
+      <mp-loading></mp-loading>
+  </ng-container>
+  <div class="container" *ngIf="!isSupplierLoading">
     <form [formGroup]="repairForm" class="container__body">
       <div class="row">
         <div class="col-6">

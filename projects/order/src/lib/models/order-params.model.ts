@@ -22,8 +22,8 @@ export interface OrderParams {
   pageSize: number;
   filters: {
     statusName?: string[];
-    fromCreatedAtDate?: Date | null;
-    toCreatedAtDate?: Date | null;
+    fromCreatedAtDate?: string | null;
+    toCreatedAtDate?: string | null;
   };
   orderBy: OrderOrderBy;
 }

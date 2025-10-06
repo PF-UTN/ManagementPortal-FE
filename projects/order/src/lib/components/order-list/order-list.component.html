@@ -5,84 +5,122 @@
 
   <div class="filters-toolbar">
     <div class="filters-toolbar__search">
-      <mp-input 
-        label="Buscar por número o cliente del pedido" 
-        [(ngModel)]="searchText" 
+      <mp-input
+        label="Buscar por número o cliente del pedido"
+        [(ngModel)]="searchText"
         (ngModelChange)="onSearchTextChange()"
-        placeholder="Buscar por número o cliente del pedido ..." 
-        icon="close">
+        placeholder="Buscar por número o cliente del pedido ..."
+        icon="close"
+      >
       </mp-input>
     </div>
     <div class="filters-toolbar__actions">
       <mat-form-field appearance="outline">
         <mat-label>Estado</mat-label>
-        <mat-select multiple [(ngModel)]="selectedStatuses" (ngModelChange)="onStatusFilterChange()">
-          <mat-option *ngFor="let option of statusOptions" [value]="option">
+        <mat-select
+          multiple
+          [(ngModel)]="selectedStatus"
+          (selectionChange)="onStatusFilterChange()"
+        >
+          <mat-option *ngFor="let option of statusOptions" [value]="option.key">
             {{ option.value }}
           </mat-option>
         </mat-select>
       </mat-form-field>
 
       <div class="filters-toolbar__actions__icon">
-        <button mat-icon-button [matMenuTriggerFor]="dateMenu" aria-label="Filtrar por fecha">
-          <mat-icon [color]="fromDate || toDate ? 'primary' : undefined">today</mat-icon>
+        <button
+          mat-icon-button
+          [matMenuTriggerFor]="dateMenu"
+          aria-label="Filtrar por fecha"
+        >
+          <mat-icon [color]="fromDate || toDate ? 'primary' : undefined"
+            >today</mat-icon
+          >
         </button>
         <mat-menu #dateMenu="matMenu">
           <div class="filters-toolbar__actions__date">
             <mat-form-field appearance="outline">
               <mat-label>Desde</mat-label>
-              <input matInput [matDatepicker]="pickerFrom" [(ngModel)]="fromDate">
-              <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+              <input
+                matInput
+                [matDatepicker]="pickerFrom"
+                [(ngModel)]="fromDate"
+              />
+              <mat-datepicker-toggle
+                matSuffix
+                [for]="pickerFrom"
+              ></mat-datepicker-toggle>
               <mat-datepicker #pickerFrom></mat-datepicker>
             </mat-form-field>
             <mat-form-field appearance="outline">
               <mat-label>Hasta</mat-label>
-              <input matInput [matDatepicker]="pickerTo" [(ngModel)]="toDate">
-              <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
+              <input matInput [matDatepicker]="pickerTo" [(ngModel)]="toDate" />
+              <mat-datepicker-toggle
+                matSuffix
+                [for]="pickerTo"
+              ></mat-datepicker-toggle>
               <mat-datepicker #pickerTo></mat-datepicker>
             </mat-form-field>
             <div class="filters-toolbar__actions__date__buttons">
-              <mp-button type="secondary" (onClick)="onClearDateFilter()">Limpiar</mp-button>
-              <mp-button type="primary" (onClick)="onApplyDateFilter()">Aplicar</mp-button>
+              <mp-button type="secondary" (onClick)="onClearDateFilter()"
+                >Limpiar</mp-button
+              >
+              <mp-button type="primary" [disabled]="!isDateRangeValid" (onClick)="onApplyDateFilter()"
+                >Aplicar</mp-button
+              >
             </div>
           </div>
         </mat-menu>
 
-        <button mat-icon-button [matMenuTriggerFor]="orderMenu"
-          aria-label="Ordenar">
+        <button
+          mat-icon-button
+          [matMenuTriggerFor]="orderMenu"
+          aria-label="Ordenar"
+        >
           <mat-icon>sort_by_alpha</mat-icon>
         </button>
         <mat-menu #orderMenu="matMenu" panelClass="custom-filters-menu">
-          <button mat-menu-item *ngFor="let option of orderByOptions"
-            (click)="setOrderBy(option); orderMenu.closed.emit()">
+          <button
+            mat-menu-item
+            *ngFor="let option of orderByOptions"
+            (click)="setOrderBy(option); orderMenu.closed.emit()"
+          >
             {{ option.label }}
-            <mat-icon *ngIf="selectedOrderBy.field === option.field && selectedOrderBy.direction === option.direction"
-              color="primary">check</mat-icon>
+            <mat-icon
+              *ngIf="
+                selectedOrderBy.field === option.field &&
+                selectedOrderBy.direction === option.direction
+              "
+              color="primary"
+              >check</mat-icon
+            >
           </button>
         </mat-menu>
 
-        <mp-button 
-          type="icon" 
-          icon="download" 
+        <mp-button
+          type="icon"
+          icon="download"
           ariaLabel="Descargar XLSX"
           [disabled]="isLoading"
-          (onClick)="handleDownloadClick()">
+          (onClick)="handleDownloadClick()"
+        >
         </mp-button>
       </div>
     </div>
   </div>
 
-
   <div class="main-container__body">
-    <mp-table 
-      [columns]="columns" 
-      [dataSource$]="dataSource$" 
+    <mp-table
+      [columns]="columns"
+      [dataSource$]="dataSource$"
       [isLoading]="isLoading"
-      noDataMessage="Todavía no se ha realizado ningún pedido" 
-      [itemsNumber]="itemsNumber" 
+      noDataMessage="Todavía no se ha realizado ningún pedido"
+      [itemsNumber]="itemsNumber"
       [pageSize]="pageSize"
-      [pageIndex]="pageIndex" 
-      (pageChange)="handlePageChange($event)">
+      [pageIndex]="pageIndex"
+      (pageChange)="handlePageChange($event)"
+    >
     </mp-table>
   </div>
 </div>
