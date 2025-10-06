@@ -10,9 +10,13 @@ import { TestBed } from '@angular/core/testing';
 import { OrderService } from './order.service';
 import { OrderClientSearchRequest } from '../models/order-client-request-model';
 import { OrderClientSearchResponse } from '../models/order-client-response.model';
+import { OrderDetail } from '../models/order-detail.model';
 import { OrderOrderField, OrderParams } from '../models/order-params.model';
 import { OrderSearchRequest } from '../models/order-request-model';
-import { mockOrderListItems } from '../testing/mock-data.model';
+import {
+  mockOrderDetail,
+  mockOrderListItems,
+} from '../testing/mock-data.model';
 import { mockOrderClientDetail } from '../testing/mock-data.model2';
 
 const baseUrl = 'https://dev-management-portal-be.vercel.app/order';
@@ -449,6 +453,47 @@ describe('OrderService', () => {
 
       expect(errorResponse).toBeDefined();
       expect((errorResponse as { status: number }).status).toBe(401);
+    });
+  });
+  describe('getOrderDetail', () => {
+    it('should GET to the correct endpoint and return the order detail', () => {
+      // Arrange
+
+      let response: OrderDetail | undefined;
+      const orderId = mockOrderDetail.id;
+
+      // Act
+      service.getOrderDetail(orderId).subscribe((res) => {
+        response = res;
+      });
+
+      const req = httpMock.expectOne(`${baseUrl}/${orderId}`);
+      req.flush(mockOrderDetail);
+
+      // Assert
+      expect(req.request.method).toBe('GET');
+      expect(response).toEqual(mockOrderDetail);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const orderId = 1;
+      let errorResponse: unknown;
+
+      // Act
+      service.getOrderDetail(orderId).subscribe({
+        next: () => {},
+        error: (err) => {
+          errorResponse = err;
+        },
+      });
+
+      const req = httpMock.expectOne(`${baseUrl}/${orderId}`);
+      req.flush('Error', { status: 404, statusText: 'Not Found' });
+
+      // Assert
+      expect(errorResponse).toBeDefined();
+      expect((errorResponse as { status: number }).status).toBe(404);
     });
   });
 });

@@ -11,6 +11,7 @@ import {
   PillStatusEnum,
   InputComponent,
   ButtonComponent,
+  LateralDrawerService,
 } from '@Common-UI';
 
 import { DatePipe, CurrencyPipe, CommonModule } from '@angular/common';
@@ -37,6 +38,7 @@ import { OrderSearchResult } from '../../models/order-response-model';
 import { statusOptions } from '../../models/order-status-option.model';
 import { OrderStatusOptions } from '../../models/order-status.enum';
 import { OrderService } from '../../services/order.service';
+import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-lateral-drawer.component';
 
 @Component({
   selector: 'mp-order-list',
@@ -144,6 +146,7 @@ export class OrderListComponent implements OnInit {
     private datePipe: DatePipe,
     private currencyPipe: CurrencyPipe,
     private orderService: OrderService,
+    private lateralDrawerService: LateralDrawerService,
   ) {}
 
   ngOnInit(): void {
@@ -251,10 +254,6 @@ export class OrderListComponent implements OnInit {
     this.doSearchSubject$.next();
   }
 
-  onDetailDrawer(order: OrderItem) {
-    console.log('Ver detalle de la orden', order);
-  }
-
   onSearchTextChange(): void {
     this.pageIndex = 0;
     this.isLoading = true;
@@ -270,6 +269,23 @@ export class OrderListComponent implements OnInit {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
     this.doSearchSubject$.next();
+  }
+
+  onDetailDrawer(request: OrderItem): void {
+    this.lateralDrawerService.open(
+      DetailLateralDrawerComponent,
+      { orderId: request.id },
+      {
+        title: 'Detalle Pedido',
+        footer: {
+          firstButton: {
+            text: 'Cerrar',
+            click: () => this.lateralDrawerService.close(),
+          },
+        },
+        size: 'medium',
+      },
+    );
   }
 
   private getOrderParams(): OrderParams {
