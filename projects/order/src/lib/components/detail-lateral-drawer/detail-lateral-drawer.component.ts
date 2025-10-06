@@ -5,12 +5,12 @@ import {
   ListComponent,
   LoadingComponent,
 } from '@Common-UI';
-import { OrderService } from '@Order';
 
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 
 import { OrderDetailItem, OrderDetail } from '../../models/order-detail.model';
+import { OrderService } from './../../services/order.service';
 @Component({
   selector: 'mp-detail-lateral-drawer-client',
   standalone: true,
