@@ -1,12 +1,13 @@
-import { environment } from '@Common';
+import {
+  Cart,
+  CartUpdateProductQuantity,
+  DeleteCartProduct,
+  environment,
+} from '@Common';
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, switchMap, tap } from 'rxjs';
-
-import { CartUpdateProductQuantity } from './../../../../cart/src/lib/models/cart-update-product-quantity.model';
-import { Cart } from './../../../../cart/src/lib/models/cart.model';
-import { DeleteCartProduct } from './../../../../cart/src/lib/models/delete-cart-product.model';
 
 @Injectable({
   providedIn: 'root',
@@ -37,6 +38,11 @@ export class CartService {
     return this.http
       .delete<void>(url, { body: params })
       .pipe(switchMap(() => this.getCart()));
+  }
+
+  deleteCart(): Observable<void> {
+    const url = `${this.baseUrl}`;
+    return this.http.delete<void>(url);
   }
 
   updateCart(cart: Cart): void {

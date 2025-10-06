@@ -1,5 +1,4 @@
-import { mockCart } from '@Cart';
-import { CartService, AuthService } from '@Common';
+import { CartService, AuthService, mockCart } from '@Common';
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';

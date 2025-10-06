@@ -1,5 +1,4 @@
-import { mockCart } from '@Cart';
-import { CartService } from '@Common';
+import { CartService, mockCart } from '@Common';
 import { LateralDrawerService } from '@Common-UI';
 
 import {

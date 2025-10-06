@@ -87,3 +87,29 @@ export const mockSupplierWithTown: SupplierDetail = {
     },
   },
 };
+
+export const mockProductDetail = {
+  id: 1,
+  name: 'Producto Test',
+  description: 'Descripción de prueba',
+  category: { name: 'Categoría Test' },
+  price: 100.5,
+  stock: {
+    quantityAvailable: 10,
+    quantityOrdered: 5,
+    quantityReserved: 2,
+  },
+  weight: 1.25,
+  supplier: {
+    businessName: 'Proveedor Test',
+    email: 'proveedor@test.com',
+    phone: '123456789',
+  },
+  enabled: true,
+  imageUrl: null,
+};
+
+export const mockCart = {
+  cartId: '1',
+  items: [{ product: mockProductDetail, quantity: 2 }],
+};

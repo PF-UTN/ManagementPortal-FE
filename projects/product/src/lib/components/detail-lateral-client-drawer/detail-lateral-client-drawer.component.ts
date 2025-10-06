@@ -1,5 +1,4 @@
-import { CartUpdateProductQuantity } from '@Cart';
-import { CartService } from '@Common';
+import { CartService, CartUpdateProductQuantity } from '@Common';
 import {
   LateralDrawerContainer,
   LoadingComponent,
