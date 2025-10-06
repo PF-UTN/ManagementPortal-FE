@@ -1,4 +1,4 @@
-import { TownService, Town } from '@Common';
+import { TownService, Town, VehicleService } from '@Common';
 import { LateralDrawerService, LateralDrawerConfig } from '@Common-UI';
 
 import {
@@ -12,7 +12,6 @@ import { mockDeep } from 'jest-mock-extended';
 import { of, throwError } from 'rxjs';
 
 import { CreateUpdateSupplierServiceDrawerComponent } from './create-update-supplier-service-drawer.component';
-import { VehicleService } from '../../services/vehicle.service';
 
 describe('CreateUpdateSupplierServiceDrawerComponent', () => {
   let component: CreateUpdateSupplierServiceDrawerComponent;

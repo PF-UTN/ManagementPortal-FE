@@ -1,3 +1,4 @@
+import { VehicleService } from '@Common';
 import {
   InputComponent,
   LateralDrawerContainer,
@@ -14,8 +15,7 @@ import {
 } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { MaintenanceItemSearchResult } from '../../models/maintenance-item-response.model';
-import { VehicleService } from '../../services/vehicle.service';
+import { MaintenanceItemSearchResult } from '../../../../../common/src/models/vehicle/maintenance-item-response.model';
 
 @Component({
   selector: 'mp-create-update-product-category-lateral-drawer',

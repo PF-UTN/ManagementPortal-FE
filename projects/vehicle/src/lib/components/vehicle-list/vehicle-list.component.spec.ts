@@ -1,6 +1,9 @@
-import { downloadFileFromResponse } from '@Common';
+import {
+  downloadFileFromResponse,
+  VehicleService,
+  VehicleListItem,
+} from '@Common';
 import { LateralDrawerService, ModalComponent } from '@Common-UI';
-import { VehicleService } from '@Vehicle';
 
 import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import { HttpResponse } from '@angular/common/http';
@@ -23,12 +26,15 @@ import { mockDeep } from 'jest-mock-extended';
 import { of, throwError } from 'rxjs';
 
 import { VehicleListComponent } from './vehicle-list.component';
-import { VehicleListItem } from '../../models/vehicle-item.model';
 import { mockVehicleListItems } from '../../testing/mock-data.model';
 
-jest.mock('@Common', () => ({
-  downloadFileFromResponse: jest.fn(),
-}));
+jest.mock('@Common', () => {
+  const actual = jest.requireActual('@Common');
+  return {
+    ...actual,
+    downloadFileFromResponse: jest.fn(),
+  };
+});
 
 describe('VehicleListComponent', () => {
   let component: VehicleListComponent;

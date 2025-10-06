@@ -1,5 +1,5 @@
+import { VehicleService } from '@Common';
 import { ModalComponent } from '@Common-UI';
-import { VehicleService } from '@Vehicle';
 
 import { DecimalPipe } from '@angular/common';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
@@ -11,7 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 import { of, throwError, firstValueFrom } from 'rxjs';
 
 import { MaintenancePlanListComponent } from './maintenance-plan-list.component';
-import { MaintenancePlanListItem } from '../../models/maintenance-plan.model';
+import { MaintenancePlanListItem } from '../../../../../common/src/models/vehicle/maintenance-plan.model';
 
 @Component({
   template: `<mp-maintenance-plan-list

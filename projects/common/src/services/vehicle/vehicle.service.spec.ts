@@ -1,4 +1,4 @@
-import { environment } from '@Common';
+import { environment, VehicleService } from '@Common';
 
 import { provideHttpClient } from '@angular/common/http';
 import {
@@ -7,20 +7,19 @@ import {
 } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
-import { MaintenancePerformRequest } from '../models/maintenance-perform.model';
-import { MaintenancePlanCreate } from '../models/maintenance-plan-create.model';
-import { MaintenanceRepairParams } from '../models/maintenance-repair-param.model';
-import { RepairCreate } from '../models/repair-create.model';
-import { ServiceSupplierCreateUpdate } from '../models/supplier-create-update.model';
+import { mockVehicleListItems } from '../../../../vehicle/src/lib/testing/mock-data.model';
+import { MaintenancePerformRequest } from '../../models/vehicle/maintenance-perform.model';
+import { MaintenancePlanCreate } from '../../models/vehicle/maintenance-plan-create.model';
+import { MaintenanceRepairParams } from '../../models/vehicle/maintenance-repair-param.model';
+import { RepairCreate } from '../../models/vehicle/repair-create.model';
+import { ServiceSupplierCreateUpdate } from '../../models/vehicle/supplier-create-update.model';
 import {
   ServiceSupplierDetailResponse,
   ServiceSupplierResponse,
-} from '../models/supplier-response-create-update.model';
-import { SupplierSearchResponseModel } from '../models/supplier-search-response-model';
-import { VehicleCreate } from '../models/vehicle-create.model';
-import { VehicleParams } from '../models/vehicle-params.model';
-import { VehicleService } from '../services/vehicle.service';
-import { mockVehicleListItems } from '../testing/mock-data.model';
+} from '../../models/vehicle/supplier-response-create-update.model';
+import { SupplierSearchResponseModel } from '../../models/vehicle/supplier-search-response-model';
+import { VehicleCreate } from '../../models/vehicle/vehicle-create.model';
+import { VehicleParams } from '../../models/vehicle/vehicle-params.model';
 
 const baseUrl = environment.apiBaseUrl + '/vehicle';
 

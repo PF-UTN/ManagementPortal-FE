@@ -1,3 +1,4 @@
+import { VehicleService } from '@Common';
 import {
   InputComponent,
   LateralDrawerContainer,
@@ -27,8 +28,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { VehicleListItem } from '../../models/vehicle-item.model';
-import { VehicleService } from '../../services/vehicle.service';
+import { VehicleListItem } from '../../../../../common/src/models/vehicle/vehicle-item.model';
 @Component({
   selector: 'mp-create-vehicle-drawer',
   standalone: true,

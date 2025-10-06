@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DetailVehicleDrawerComponent } from './detail-vehicle-drawer.component';
-import { VehicleListItem } from '../../models/vehicle-item.model';
+import { VehicleListItem } from '../../../../../common/src/models/vehicle/vehicle-item.model';
 
 describe('DetailVehicleDrawerComponent', () => {
   let component: DetailVehicleDrawerComponent;

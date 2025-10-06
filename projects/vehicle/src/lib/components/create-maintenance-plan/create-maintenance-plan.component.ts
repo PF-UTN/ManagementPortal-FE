@@ -1,3 +1,4 @@
+import { VehicleService } from '@Common';
 import {
   BackArrowComponent,
   TitleComponent,
@@ -37,8 +38,7 @@ import {
   finalize,
 } from 'rxjs/operators';
 
-import { MaintenanceItemSearchResult } from '../../models/maintenance-item-response.model';
-import { VehicleService } from '../../services/vehicle.service';
+import { MaintenanceItemSearchResult } from '../../../../../common/src/models/vehicle/maintenance-item-response.model';
 import { CreateUpdateMaintenanceItemLateralDrawerComponent } from '../create-update-maintenance-item-drawer/create-update-maintenance-item-lateral-drawer.component';
 
 @Component({

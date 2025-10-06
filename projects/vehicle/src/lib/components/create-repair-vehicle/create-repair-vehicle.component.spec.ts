@@ -1,3 +1,4 @@
+import { VehicleService } from '@Common';
 import { LateralDrawerService } from '@Common-UI';
 
 import { Location } from '@angular/common';
@@ -14,8 +15,7 @@ import { ActivatedRoute } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
 import { CreateRepairVehicleComponent } from './create-repair-vehicle.component';
-import { SupplierSearchResult } from '../../models/supplier-search-response-model';
-import { VehicleService } from '../../services/vehicle.service';
+import { SupplierSearchResult } from '../../../../../common/src/models/vehicle/supplier-search-response-model';
 
 describe('CreateRepairVehicleComponent', () => {
   let component: CreateRepairVehicleComponent;

@@ -1,3 +1,5 @@
+import { VehicleService } from '@Common';
+
 import {
   ComponentFixture,
   TestBed,
@@ -10,8 +12,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
 
 import { CreateVehicleDrawerComponent } from './create-vehicle-drawer.component';
-import { VehicleListItem } from '../../models/vehicle-item.model';
-import { VehicleService } from '../../services/vehicle.service';
+import { VehicleListItem } from '../../../../../common/src/models/vehicle/vehicle-item.model';
 
 describe('CreateVehicleDrawerComponent', () => {
   let component: CreateVehicleDrawerComponent;

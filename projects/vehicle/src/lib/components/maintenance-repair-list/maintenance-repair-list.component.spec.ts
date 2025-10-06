@@ -1,4 +1,4 @@
-import { VehicleService } from '@Vehicle';
+import { VehicleService } from '@Common';
 
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { Component } from '@angular/core';
@@ -10,7 +10,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { throwError, of, firstValueFrom } from 'rxjs';
 
 import { MaintenanceRepairListComponent } from './maintenance-repair-list.component';
-import { RepairItem } from '../../models/repair-item.model';
+import { RepairItem } from '../../../../../common/src/models/vehicle/repair-item.model';
 
 @Component({
   template: `<mp-maintenance-repair-list

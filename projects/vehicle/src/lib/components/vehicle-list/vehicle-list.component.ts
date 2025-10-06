@@ -1,4 +1,4 @@
-import { downloadFileFromResponse } from '@Common';
+import { downloadFileFromResponse, VehicleService } from '@Common';
 import {
   ButtonComponent,
   ColumnTypeEnum,
@@ -19,10 +19,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { BehaviorSubject, debounceTime, Subject, switchMap, tap } from 'rxjs';
 
-import { VehicleListItem } from '../../models/vehicle-item.model';
-import { VehicleParams } from '../../models/vehicle-params.model';
-import { VehicleUpdate } from '../../models/vehicle-update.model';
-import { VehicleService } from '../../services/vehicle.service';
+import { VehicleListItem } from '../../../../../common/src/models/vehicle/vehicle-item.model';
+import { VehicleParams } from '../../../../../common/src/models/vehicle/vehicle-params.model';
+import { VehicleUpdate } from '../../../../../common/src/models/vehicle/vehicle-update.model';
 import { CreateVehicleDrawerComponent } from '../create-vehicle-drawer/create-vehicle-drawer.component';
 import { DetailVehicleDrawerComponent } from '../detail-vehicle-drawer/detail-vehicle-drawer.component';
 

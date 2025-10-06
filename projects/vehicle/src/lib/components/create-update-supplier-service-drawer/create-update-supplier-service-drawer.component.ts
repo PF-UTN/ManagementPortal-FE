@@ -1,4 +1,4 @@
-import { TownService, Town } from '@Common';
+import { TownService, Town, VehicleService } from '@Common';
 import {
   InputComponent,
   LateralDrawerContainer,
@@ -24,8 +24,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { debounceTime, map, Observable, startWith, switchMap } from 'rxjs';
-
-import { VehicleService } from '../../services/vehicle.service';
 
 @Component({
   selector: 'lib-create-update-supplier-service-drawer',

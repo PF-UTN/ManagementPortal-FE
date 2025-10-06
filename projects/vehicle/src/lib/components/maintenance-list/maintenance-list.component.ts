@@ -1,3 +1,4 @@
+import { VehicleService } from '@Common';
 import {
   TableComponent,
   TableColumn,
@@ -5,7 +6,6 @@ import {
   InputComponent,
   ModalComponent,
 } from '@Common-UI';
-import { VehicleService } from '@Vehicle';
 
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component, OnInit, Input } from '@angular/core';
@@ -14,7 +14,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, debounceTime, Subject, switchMap, tap } from 'rxjs';
 
-import { MaintenanceItem } from '../../models/maintenance-item.model';
+import { MaintenanceItem } from '../../../../../common/src/models/vehicle/maintenance-item.model';
 
 @Component({
   selector: 'mp-maintenance-list',

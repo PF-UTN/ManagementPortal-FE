@@ -3,7 +3,7 @@ import { LateralDrawerContainer } from '@Common-UI';
 import { CommonModule } from '@angular/common';
 import { Component, signal, Input } from '@angular/core';
 
-import { VehicleListItem } from '../../models/vehicle-item.model';
+import { VehicleListItem } from '../../../../../common/src/models/vehicle/vehicle-item.model';
 
 @Component({
   selector: 'mp-detail-vehicle-drawer',

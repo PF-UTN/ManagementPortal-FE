@@ -3,3 +3,4 @@ export * from './client.model';
 export * from './token-payload.model';
 export * from './user.model';
 export * from './town.model';
+export * from './vehicle/index';
