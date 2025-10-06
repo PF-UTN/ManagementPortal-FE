@@ -34,19 +34,24 @@
         <button 
           mat-icon-button 
           [matMenuTriggerFor]="filtersMenu" 
-          aria-label="Filtrar por fechas">
+          aria-label="Filtrar por fechas"
+          matTooltip="Filtrar por fechas"
+          >
           <mat-icon>today</mat-icon>
         </button>
         <button 
           mat-icon-button 
           [matMenuTriggerFor]="orderMenu" 
-          aria-label="Ordenar">
+          aria-label="Ordenar"
+          matTooltip="Ordenar">
           <mat-icon>sort_by_alpha</mat-icon>
         </button>
         <mp-button 
           type="icon" 
           icon="download" 
           ariaLabel="Descargar XLSX"
+          tooltip="Descargar XLSX"
+          tooltipPosition="below"
           [disabled]="isLoading"
           (onClick)="handleDownloadClick()">
         </mp-button>

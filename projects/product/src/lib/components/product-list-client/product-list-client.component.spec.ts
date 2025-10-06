@@ -1,5 +1,6 @@
 import { CartService, mockCart } from '@Common';
 import { LateralDrawerService } from '@Common-UI';
+import { ProductOrderDirection, ProductOrderField } from '@Product';
 
 import {
   ComponentFixture,
@@ -107,10 +108,19 @@ describe('ProductListClientComponent', () => {
 
     it('should send orderBy param as name-desc', fakeAsync(() => {
       const spy = jest.spyOn(productService, 'postSearchProduct');
-      component.filterForm.get('sort')?.setValue('name-desc');
-      const expectedOrderBy = { field: 'name', direction: 'desc' };
+      const expectedOrderBy = {
+        field: ProductOrderField.Name,
+        direction: ProductOrderDirection.Desc,
+      };
+
+      component.onOrderByChange({
+        label: '',
+        field: ProductOrderField.Name,
+        direction: ProductOrderDirection.Desc,
+      });
       component.ngOnInit();
       tick();
+
       expect(spy).toHaveBeenCalledWith(
         expect.objectContaining({
           orderBy: expectedOrderBy,

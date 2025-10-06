@@ -3,7 +3,7 @@ import {
   ButtonComponent,
   InputComponent,
   SubtitleComponent,
-  TitleComponent,
+  AuthTitleComponent,
 } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
@@ -30,7 +30,7 @@ import { customEmailValidator } from '../../validators/email.validator';
     RouterModule,
     FormsModule,
     ButtonComponent,
-    TitleComponent,
+    AuthTitleComponent,
     SubtitleComponent,
     InputComponent,
   ],
