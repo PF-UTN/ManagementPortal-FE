@@ -1,3 +1,4 @@
+import { OrderDetail } from '../models/order-detail.model';
 import { OrderSearchResponse } from '../models/order-response-model';
 
 export const mockOrderListItems = {
@@ -38,4 +39,65 @@ export const mockOrderSearchResponse: OrderSearchResponse = {
       totalAmount: 300,
     },
   ],
+};
+
+export const mockOrderDetail: OrderDetail = {
+  id: 1,
+  client: {
+    companyName: 'Test Company',
+    user: {
+      firstName: 'John',
+      lastName: 'Doe',
+      email: 'john.doe@example.com',
+      phone: '1234567890',
+    },
+    address: {
+      street: '123 Main St',
+      streetNumber: 456,
+    },
+    taxCategory: {
+      name: 'General',
+      description: 'General Tax Category',
+    },
+  },
+  deliveryMethodName: 'Express',
+  orderStatus: {
+    name: 'Pending',
+  },
+  paymentDetail: {
+    paymentType: {
+      name: 'Credit Card',
+    },
+  },
+  orderItems: [
+    {
+      id: 1,
+      product: {
+        name: 'Product 1',
+        description: 'Description 1',
+        price: 100,
+        enabled: true,
+        weight: 1,
+        category: {
+          name: 'Category 1',
+        },
+        stock: {
+          quantityAvailable: 10,
+          quantityOrdered: 5,
+          quantityReserved: 2,
+        },
+        supplier: {
+          businessName: 'Supplier 1',
+          email: 'supplier1@example.com',
+          phone: '0987654321',
+        },
+      },
+      unitPrice: 100,
+      quantity: 5,
+      subtotalPrice: 500,
+      orderId: 1,
+    },
+  ],
+  totalAmount: 804,
+  createdAt: '2025-09-20T11:02:59.042Z',
 };

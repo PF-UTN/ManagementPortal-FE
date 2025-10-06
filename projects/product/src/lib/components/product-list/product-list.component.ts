@@ -69,20 +69,20 @@ export class ProductListComponent implements OnInit {
   columns: TableColumn<ProductListItem>[] = [
     {
       columnDef: 'name',
-      header: 'Nombre',
+      header: 'NOMBRE',
       type: ColumnTypeEnum.VALUE,
       value: (element: ProductListItem) => element.name,
       width: '350px',
     },
     {
       columnDef: 'category',
-      header: 'Categoría',
+      header: 'CATEGORÍA',
       type: ColumnTypeEnum.VALUE,
       value: (element: ProductListItem) => element.categoryName,
     },
     {
       columnDef: 'price',
-      header: 'Precio',
+      header: 'PRECIO',
       type: ColumnTypeEnum.VALUE,
       value: (item) =>
         this.currencyPipe.transform(
@@ -95,13 +95,13 @@ export class ProductListComponent implements OnInit {
     },
     {
       columnDef: 'stock',
-      header: 'Stock Disponible',
+      header: 'STOCK DISPONIBLE',
       type: ColumnTypeEnum.VALUE,
       value: (element: ProductListItem) => element.stock.toString(),
     },
     {
       columnDef: 'peso',
-      header: 'Peso',
+      header: 'PESO',
       type: ColumnTypeEnum.VALUE,
       value: (element: ProductListItem) =>
         new Intl.NumberFormat('es-AR', { maximumFractionDigits: 2 }).format(
@@ -110,7 +110,7 @@ export class ProductListComponent implements OnInit {
     },
     {
       columnDef: 'enabled',
-      header: 'Estado',
+      header: 'ESTADO',
       type: ColumnTypeEnum.PILL,
       value: (element: ProductListItem) =>
         element.enabled ? 'Activo' : 'Pausado',
@@ -119,7 +119,7 @@ export class ProductListComponent implements OnInit {
     },
     {
       columnDef: 'actions',
-      header: 'Acciones',
+      header: 'ACCIONES',
       type: ColumnTypeEnum.ACTIONS,
       actions: [
         {

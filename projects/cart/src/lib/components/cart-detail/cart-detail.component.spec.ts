@@ -5,6 +5,7 @@ import { LateralDrawerService } from '@Common-UI';
 import { CommonModule } from '@angular/common';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { Router } from '@angular/router';
 import { mockDeep } from 'jest-mock-extended';
 import { of } from 'rxjs';
 
@@ -446,6 +447,20 @@ describe('CartDetailComponent', () => {
 
       // Assert
       expect(spy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('goToCheckout', () => {
+    it('should navigate to /pedidos/finalizar when called', () => {
+      // Arrange
+      const router = TestBed.inject(Router);
+      const navigateSpy = jest.spyOn(router, 'navigate');
+
+      // Act
+      component.goToCheckout();
+
+      // Assert
+      expect(navigateSpy).toHaveBeenCalledWith(['/pedidos/finalizar']);
     });
   });
 });

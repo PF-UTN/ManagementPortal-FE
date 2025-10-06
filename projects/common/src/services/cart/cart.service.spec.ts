@@ -153,4 +153,38 @@ describe('CartService', () => {
       req.error(mockError);
     });
   });
+
+  describe('deleteCart', () => {
+    const url = `${baseUrl}`;
+
+    it('should send a DELETE request to /cart', () => {
+      // Act
+      service.deleteCart().subscribe((response) => {
+        expect(response).toBeUndefined();
+      });
+
+      // Assert
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('DELETE');
+      expect(req.request.body).toBeNull();
+      req.flush({});
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const mockError = new ErrorEvent('Network error');
+
+      // Act & Assert
+      service.deleteCart().subscribe({
+        next: () => fail('Expected an error, but got a successful response'),
+        error: (error) => {
+          expect(error.error).toBe(mockError);
+        },
+      });
+
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('DELETE');
+      req.error(mockError);
+    });
+  });
 });

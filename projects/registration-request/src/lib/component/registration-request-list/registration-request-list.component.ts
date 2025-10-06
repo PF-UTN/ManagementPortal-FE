@@ -48,7 +48,7 @@ export class RegistrationRequestListComponent implements OnInit {
   columns: TableColumn<RegistrationRequestListItem>[] = [
     {
       columnDef: 'name',
-      header: 'NOMBRE COMPLETO / RAZÓN SOCIAL',
+      header: 'NOMBRE COMPLETO | RAZÓN SOCIAL',
       type: ColumnTypeEnum.VALUE,
       value: (element: RegistrationRequestListItem) =>
         element.user.fullNameOrBusinessName,
