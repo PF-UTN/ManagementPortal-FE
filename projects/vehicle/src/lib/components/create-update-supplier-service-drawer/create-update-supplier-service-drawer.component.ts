@@ -307,10 +307,7 @@ export class CreateUpdateSupplierServiceDrawerComponent
       },
       error: (err) => {
         this.isLoading.set(false);
-        if (
-          err?.status === 409 ||
-          (err?.error?.message && err.error.message.includes('document'))
-        ) {
+        if (err?.status === 409 || err?.error?.message?.includes('document')) {
           this.form.controls.documentNumber.setErrors({ documentExists: true });
           this.snackBar.open(
             'Este documento ya se encuentra registrado.',

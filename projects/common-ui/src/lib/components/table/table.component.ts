@@ -71,7 +71,7 @@ export class TableComponent<T> implements OnInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private paginatorIntl: MatPaginatorIntl) {
+  constructor(private readonly paginatorIntl: MatPaginatorIntl) {
     this.paginatorIntl.itemsPerPageLabel = 'Registros por página';
     this.paginatorIntl.getRangeLabel = (page, pageSize, length) =>
       `${page * pageSize + 1} – ${Math.min((page + 1) * pageSize, length)} de ${length}`;
