@@ -14,10 +14,13 @@ import { mockDeep } from 'jest-mock-extended';
 import { of, throwError } from 'rxjs';
 
 import { OrderListComponent } from './order-list.component';
+import { OrderItem } from '../../models/order-item-general.model';
 import { OrderSearchResult } from '../../models/order-response-model';
 import { OrderStatusOptions } from '../../models/order-status.enum';
 import { OrderService } from '../../services/order.service';
 import { mockOrderSearchResponse } from '../../testing/mock-data.model';
+import { CreateShipmentDrawerComponent } from '../create-shipment-drawer/create-shipment-drawer.component';
+
 jest.mock('@Common', () => ({
   ...jest.requireActual('@Common'),
   downloadFileFromResponse: jest.fn(),
@@ -297,6 +300,121 @@ describe('OrderListComponent', () => {
       expect(params.filters.statusName).toEqual(['Pending', 'Finished']);
       expect(params.filters.fromCreatedAtDate).toBe('2024-01-01');
       expect(params.filters.toCreatedAtDate).toBe('2024-01-31');
+    });
+  });
+
+  describe('select column', () => {
+    it('should disable selection if order status is not Pending', () => {
+      // Arrange
+      const column = component.columns.find((c) => c.columnDef === 'select');
+      const order: OrderItem = {
+        id: 1,
+        createdAt: '',
+        clientName: '',
+        orderStatus: OrderStatusOptions.Finished,
+        totalAmount: 100,
+        selected: false,
+      };
+
+      // Act
+      const result = column?.disabled?.(order);
+
+      // Assert
+      expect(result).toBe(true);
+    });
+
+    it('should enable selection if order status is Pending', () => {
+      // Arrange
+      const column = component.columns.find((c) => c.columnDef === 'select');
+      const order: OrderItem = {
+        id: 1,
+        createdAt: '',
+        clientName: '',
+        orderStatus: OrderStatusOptions.Pending,
+        totalAmount: 100,
+        selected: false,
+      };
+
+      // Act
+      const result = column?.disabled?.(order);
+
+      // Assert
+      expect(result).toBe(false);
+    });
+  });
+
+  describe('onCreateShipment', () => {
+    it('should open the create shipment drawer with selected orders', () => {
+      // Arrange
+      const openSpy = jest
+        .spyOn(component['lateralDrawerService'], 'open')
+        .mockReturnValue(of(undefined));
+      const selectedOrders: OrderItem[] = [
+        {
+          id: 1,
+          createdAt: '',
+          clientName: '',
+          orderStatus: OrderStatusOptions.Pending,
+          totalAmount: 100,
+          selected: true,
+        },
+        {
+          id: 2,
+          createdAt: '',
+          clientName: '',
+          orderStatus: OrderStatusOptions.Pending,
+          totalAmount: 200,
+          selected: false,
+        },
+        {
+          id: 3,
+          createdAt: '',
+          clientName: '',
+          orderStatus: OrderStatusOptions.Pending,
+          totalAmount: 300,
+          selected: true,
+        },
+      ];
+      component.dataSource$.next(selectedOrders);
+
+      // Act
+      component.onCreateShipment();
+
+      // Assert
+      expect(openSpy).toHaveBeenCalledWith(
+        CreateShipmentDrawerComponent,
+        { selectedOrders: [selectedOrders[0], selectedOrders[2]] },
+        expect.objectContaining({
+          title: 'Crear Envío',
+          size: 'small',
+          footer: expect.any(Object),
+        }),
+      );
+    });
+
+    it('should refresh the list after closing the drawer', () => {
+      // Arrange
+      jest
+        .spyOn(component['lateralDrawerService'], 'open')
+        .mockReturnValue(of(undefined));
+      const searchSpy = jest.spyOn(component.doSearchSubject$, 'next');
+      const selectedOrders: OrderItem[] = [
+        {
+          id: 1,
+          createdAt: '',
+          clientName: '',
+          orderStatus: OrderStatusOptions.Pending,
+          totalAmount: 100,
+          selected: true,
+        },
+      ];
+      component.dataSource$.next(selectedOrders);
+
+      // Act
+      component.onCreateShipment();
+
+      // Assert
+      expect(searchSpy).toHaveBeenCalled();
     });
   });
 });

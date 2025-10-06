@@ -11,6 +11,7 @@ import {
   PillStatusEnum,
   InputComponent,
   ButtonComponent,
+  LateralDrawerService,
 } from '@Common-UI';
 
 import { DatePipe, CurrencyPipe, CommonModule } from '@angular/common';
@@ -37,6 +38,7 @@ import { OrderSearchResult } from '../../models/order-response-model';
 import { statusOptions } from '../../models/order-status-option.model';
 import { OrderStatusOptions } from '../../models/order-status.enum';
 import { OrderService } from '../../services/order.service';
+import { CreateShipmentDrawerComponent } from '../create-shipment-drawer/create-shipment-drawer.component';
 
 @Component({
   selector: 'mp-order-list',
@@ -63,6 +65,14 @@ import { OrderService } from '../../services/order.service';
 })
 export class OrderListComponent implements OnInit {
   columns: TableColumn<OrderItem>[] = [
+    {
+      columnDef: 'select',
+      header: '',
+      type: ColumnTypeEnum.SELECT,
+      width: '40px',
+      disabled: (order: OrderItem) =>
+        order.orderStatus !== OrderStatusOptions.Pending,
+    },
     {
       columnDef: 'orderId',
       header: 'NÚMERO DE PEDIDO',
@@ -144,6 +154,7 @@ export class OrderListComponent implements OnInit {
     private datePipe: DatePipe,
     private currencyPipe: CurrencyPipe,
     private orderService: OrderService,
+    private readonly lateralDrawerService: LateralDrawerService,
   ) {}
 
   ngOnInit(): void {
@@ -287,6 +298,7 @@ export class OrderListComponent implements OnInit {
     if (this.selectedStatus.length > 0) {
       params.filters.statusName = this.selectedStatus;
     }
+
     if (this.fromDate) {
       params.filters.fromCreatedAtDate = this.fromDate
         .toISOString()
@@ -303,5 +315,44 @@ export class OrderListComponent implements OnInit {
     this.orderService.downloadOrderList(params).subscribe((response) => {
       downloadFileFromResponse(response, 'pedidos.xlsx');
     });
+  }
+
+  get hasSelectedOrders(): boolean {
+    return this.dataSource$.value.some((order) => order.selected);
+  }
+
+  onCreateShipment() {
+    const selectedOrders = this.dataSource$.value.filter(
+      (order) => order.selected,
+    );
+
+    this.lateralDrawerService
+      .open(
+        CreateShipmentDrawerComponent,
+        { selectedOrders },
+        {
+          title: 'Crear Envío',
+          size: 'small',
+          footer: {
+            firstButton: {
+              text: 'Crear',
+              click: () => {},
+            },
+            secondButton: {
+              text: 'Cancelar',
+              click: () => this.lateralDrawerService.close(),
+            },
+          },
+        },
+      )
+      .subscribe(() => {
+        this.doSearchSubject$.next();
+      });
+  }
+
+  get selectedOrderIds(): number[] {
+    return this.dataSource$.value
+      .filter((order) => order.selected)
+      .map((order) => order.id);
   }
 }

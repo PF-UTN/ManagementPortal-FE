@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { Client } from '../models/client-response.model';
+import { CreateShipmentRequest } from '../models/create-shipment-request.model';
 import { OrderClientSearchRequest } from '../models/order-client-request-model';
 import { OrderClientSearchResponse } from '../models/order-client-response.model';
 import { OrderCreatePayload } from '../models/order-created.model';
@@ -12,7 +13,6 @@ import { OrderClientDetail } from '../models/order-detail-client.model';
 import { OrderParams } from '../models/order-params.model';
 import { OrderSearchRequest } from '../models/order-request-model';
 import { OrderSearchResponse } from '../models/order-response-model';
-
 @Injectable({
   providedIn: 'root',
 })
@@ -67,5 +67,10 @@ export class OrderService {
       headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
     }
     return this.http.get<Client>(this.clientUrl, headers ? { headers } : {});
+  }
+
+  createShipment(payload: CreateShipmentRequest): Observable<void> {
+    const url = `${environment.apiBaseUrl}/shipment`;
+    return this.http.post<void>(url, payload);
   }
 }

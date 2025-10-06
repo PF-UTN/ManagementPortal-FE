@@ -1,0 +1,39 @@
+<div>
+    <form [formGroup]="shipmentForm">
+        <mat-form-field class="w-100" appearance="outline">
+            <mat-label>Fecha de envío</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="date" [min]="today" readonly>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-error *ngIf="shipmentForm.controls.date.hasError('required') && shipmentForm.controls.date.touched">
+                La fecha es requerida
+            </mat-error>
+            <mat-error *ngIf="shipmentForm.controls.date.hasError('minToday') && shipmentForm.controls.date.touched">
+                La fecha no puede ser menor que hoy.
+            </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="w-100" appearance="outline">
+            <mat-label>Vehículo</mat-label>
+            <input type="text" matInput formControlName="vehicle" [matAutocomplete]="autoVehicle"
+                placeholder="Buscar vehículo" [attr.autocomplete]="'off'" />
+            <mat-autocomplete #autoVehicle="matAutocomplete" [displayWith]="displayVehicle.bind(this)"
+                (optionSelected)="onVehicleSelected($event)">
+                <mat-option *ngFor="let vehicle of filteredVehicles$ | async" [value]="vehicle">
+                    {{ vehicle.licensePlate }} - {{ vehicle.brand }} {{ vehicle.model }}
+                </mat-option>
+            </mat-autocomplete>
+            <mat-error
+                *ngIf="shipmentForm.controls.vehicle.hasError('required') && shipmentForm.controls.vehicle.touched">
+                El vehículo es requerido
+            </mat-error>
+            <mat-error
+                *ngIf="shipmentForm.controls.vehicle.hasError('invalidVehicle') && shipmentForm.controls.vehicle.touched">
+                Debe seleccionar un vehículo de la lista.
+            </mat-error>
+        </mat-form-field>
+    </form>
+
+    <mp-list [columns]="columns" [items]="selectedOrders" [noDataMessage]="'No hay órdenes seleccionadas'">
+    </mp-list>
+</div>

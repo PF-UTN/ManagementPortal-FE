@@ -1,6 +1,15 @@
 <div class="container-fluid">
   <div class="main-container__header">
     <mp-title>Pedidos</mp-title>
+    <mp-button
+      class="main-container__header__button"
+      [class.visible]="hasSelectedOrders"
+      [class.invisible]="!hasSelectedOrders"
+      type="primary"
+      icon="local_shipping"
+      (onClick)="onCreateShipment()">
+      Crear Envío
+    </mp-button>
   </div>
 
   <div class="filters-toolbar">
