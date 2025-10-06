@@ -1,8 +1,4 @@
-import {
-  downloadFileFromResponse,
-  OrderDirection,
-  OrderListUtils,
-} from '@Common';
+import { downloadFileFromResponse, OrderDirection } from '@Common';
 import {
   ColumnTypeEnum,
   TableColumn,
@@ -38,6 +34,7 @@ import { OrderSearchResult } from '../../models/order-response-model';
 import { statusOptions } from '../../models/order-status-option.model';
 import { OrderStatusOptions } from '../../models/order-status.enum';
 import { OrderService } from '../../services/order.service';
+import { OrderListUtils } from '../../utils/order-list-utils';
 import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-lateral-drawer.component';
 
 @Component({

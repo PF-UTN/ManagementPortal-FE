@@ -1,0 +1,24 @@
+@import '../../../../../../src/styles/varibles';
+
+.top-space {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  margin: 0;
+  background: none;
+  position: static;
+  width: auto;
+  height: auto;
+}
+
+.cart-fab-btn {
+  position: relative;
+  border-radius: 50%;
+  background-color: $white-color !important;
+  color: $dark-muted-purple !important;
+  width: auto;
+  height: auto;
+  display: inline-flex;
+  align-items: center;
+  margin-right: 15px;
+}

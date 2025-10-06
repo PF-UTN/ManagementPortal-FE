@@ -1,5 +1,5 @@
-import { CartUpdateProductQuantity } from '../models/cart-update-product-quantity.model';
-import { Cart, CartItem } from '../models/cart.model';
+import { Cart, CartItem, CartUpdateProductQuantity } from '@Common';
+
 import { mockProductDetail } from './../../../../product/src/lib/testing';
 
 export const mockCart: Cart = {
