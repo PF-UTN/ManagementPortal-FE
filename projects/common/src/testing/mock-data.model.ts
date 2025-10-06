@@ -12,7 +12,8 @@ export const mockClient: Client = {
   firstName: 'Juan',
   lastName: 'Pérez',
   email: 'juan.perez@example.com',
-  password: 'Password123*',
+
+  password: 'Password123*', // NOSONAR
   phone: '123456789',
   birthdate: new Date('1990-01-01'),
   documentNumber: '20123456789',
@@ -35,12 +36,12 @@ export const mockTown: Town = {
 
 export const mockUser: User = {
   email: 'juan.perez@example.com',
-  password: 'password123',
+  password: 'password123', // NOSONAR
 };
 
 export const mockInvalidUser: User = {
   email: 'invalid@example.com',
-  password: 'wrongPassword',
+  password: 'wrongPassword', // NOSONAR
 };
 
 export const mockAuthResponse = { access_token: 'mockJWTToken' };
