@@ -30,27 +30,27 @@ export class MaintenanceRepairListComponent implements OnInit {
   columns: TableColumn<RepairItem>[] = [
     {
       columnDef: 'maintenanceDate',
-      header: 'Fecha de reparación',
+      header: 'FECHA DE REPARACIÓN',
       type: ColumnTypeEnum.VALUE,
       value: (element: RepairItem) =>
         this.datePipe.transform(element.date, 'dd/MM/yyyy')!,
     },
     {
       columnDef: 'description',
-      header: 'Descripcion',
+      header: 'DESCRIPCIÓN',
       type: ColumnTypeEnum.VALUE,
       value: (element: RepairItem) => element.description,
     },
     {
       columnDef: 'repairKm',
-      header: 'Kilometraje',
+      header: 'KILOMETRAJE',
       type: ColumnTypeEnum.VALUE,
       value: (element: RepairItem) =>
         this.decimalPipe.transform(element.kmPerformed, '1.0-0')! + ' km',
     },
     {
       columnDef: 'actions',
-      header: 'Acciones',
+      header: 'ACCIONES',
       type: ColumnTypeEnum.ACTIONS,
       actions: [
         {
