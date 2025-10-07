@@ -193,4 +193,43 @@ describe('TableComponent', () => {
       });
     });
   });
+
+  describe('Row Selection', () => {
+    it('should emit rowSelected event when onRowSelect is called', () => {
+      // Arrange
+      const row = { id: 1, name: 'John Doe', selected: true };
+      component.selectedRowsList = [];
+      jest.spyOn(component.selectedRows, 'emit');
+
+      // Act
+      component.onRowSelect(row);
+
+      // Assert
+      expect(component.selectedRows.emit).toHaveBeenCalledWith([row]);
+    });
+
+    it('should add and remove rows from selectedRows and emit the correct array', () => {
+      // Arrange
+      const row1 = { id: 1, name: 'John Doe', selected: true };
+      const row2 = { id: 2, name: 'Jane Smith', selected: true };
+      component.selectedRowsList = [];
+      jest.spyOn(component.selectedRows, 'emit');
+
+      // Act: select row1
+      component.onRowSelect(row1);
+      expect(component.selectedRows.emit).toHaveBeenLastCalledWith([row1]);
+
+      // Act: select row2
+      component.onRowSelect(row2);
+      expect(component.selectedRows.emit).toHaveBeenLastCalledWith([
+        row1,
+        row2,
+      ]);
+
+      // Act: deselect row1
+      row1.selected = false;
+      component.onRowSelect(row1);
+      expect(component.selectedRows.emit).toHaveBeenLastCalledWith([row2]);
+    });
+  });
 });

@@ -7,7 +7,9 @@ import {
   Component,
   ViewChild,
 } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -26,6 +28,10 @@ import { EllipsisTextComponent } from '../ellipsis-text/ellipsis-text.component'
 import { LoadingComponent } from '../loading/loading.component';
 import { PillComponent } from '../pill';
 
+function hasSelectedProp(obj: unknown): obj is { selected: boolean } {
+  return typeof obj === 'object' && obj !== null && 'selected' in obj;
+}
+
 @Component({
   selector: 'mp-table',
   standalone: true,
@@ -40,6 +46,8 @@ import { PillComponent } from '../pill';
     LoadingComponent,
     PillComponent,
     EllipsisTextComponent,
+    MatCheckboxModule,
+    FormsModule,
   ],
   templateUrl: './table.component.html',
   styleUrl: './table.component.scss',
@@ -59,10 +67,11 @@ export class TableComponent<T> implements OnInit {
     pageSize: number;
   }>();
   @Output() actionClicked = new EventEmitter<{ action: string; row: T }>();
+  @Output() selectedRows = new EventEmitter<T[]>();
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
-  constructor(private paginatorIntl: MatPaginatorIntl) {
+  constructor(private readonly paginatorIntl: MatPaginatorIntl) {
     this.paginatorIntl.itemsPerPageLabel = 'Registros por página';
     this.paginatorIntl.getRangeLabel = (page, pageSize, length) =>
       `${page * pageSize + 1} – ${Math.min((page + 1) * pageSize, length)} de ${length}`;
@@ -70,6 +79,7 @@ export class TableComponent<T> implements OnInit {
 
   tableDataSource = new MatTableDataSource<T>();
   displayedColumns: string[] = [];
+  selectedRowsList: T[] = [];
 
   ROW_TYPES = ColumnTypeEnum;
 
@@ -86,6 +96,17 @@ export class TableComponent<T> implements OnInit {
 
   onActionClick(action: string, row: T) {
     this.actionClicked.emit({ action, row });
+  }
+
+  onRowSelect(row: T) {
+    if (hasSelectedProp(row) && row.selected) {
+      if (!this.selectedRowsList.includes(row)) {
+        this.selectedRowsList.push(row);
+      }
+    } else {
+      this.selectedRowsList = this.selectedRowsList.filter((r) => r !== row);
+    }
+    this.selectedRows.emit(this.selectedRowsList);
   }
 
   onPageChange(event: PageEvent): void {

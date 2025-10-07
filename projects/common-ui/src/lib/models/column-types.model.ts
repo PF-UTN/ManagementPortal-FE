@@ -4,4 +4,5 @@ export type ColumnType =
   | ColumnTypeEnum.VALUE
   | ColumnTypeEnum.MULTI_VALUE
   | ColumnTypeEnum.ACTIONS
-  | ColumnTypeEnum.PILL;
+  | ColumnTypeEnum.PILL
+  | ColumnTypeEnum.SELECT;

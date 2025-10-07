@@ -6,3 +6,4 @@ export * from './town.model';
 export * from './cart.model';
 export * from './cart-update-product-quantity.model';
 export * from './delete-cart-product.model';
+export * from './vehicle/index';

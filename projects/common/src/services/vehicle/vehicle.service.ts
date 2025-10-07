@@ -5,29 +5,29 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-import { CreateMaintenanceItemRequest } from '../models/maintenance-item-create.model';
-import { SearchMaintenanceItemResponse } from '../models/maintenance-item-response.model';
-import { UpdateMaintenanceItemRequest } from '../models/maintenance-item-update.model';
-import { MaintenancePerformRequest } from '../models/maintenance-perform.model';
+import { SearchMaintenanceItemResponse } from '../../models//vehicle/maintenance-item-response.model';
+import { UpdateMaintenanceItemRequest } from '../../models//vehicle/maintenance-item-update.model';
+import { MaintenancePerformRequest } from '../../models//vehicle/maintenance-perform.model';
+import { CreateMaintenanceItemRequest } from '../../models/vehicle/maintenance-item-create.model';
 import {
   MaintenancePlanCreate,
   MaintenancePlanUpdate,
-} from '../models/maintenance-plan-create.model';
-import { SearchMaintenancePlanResponse } from '../models/maintenance-plan-response.model';
-import { MaintenanceRepairParams } from '../models/maintenance-repair-param.model';
-import { SearchMaintenanceRepairResponse } from '../models/maintenance-response.model';
-import { RepairCreate } from '../models/repair-create.model';
-import { SearchVehicleResponse } from '../models/search-vehicle-response.model';
-import { ServiceSupplierCreateUpdate } from '../models/supplier-create-update.model';
+} from '../../models/vehicle/maintenance-plan-create.model';
+import { SearchMaintenancePlanResponse } from '../../models/vehicle/maintenance-plan-response.model';
+import { MaintenanceRepairParams } from '../../models/vehicle/maintenance-repair-param.model';
+import { SearchMaintenanceRepairResponse } from '../../models/vehicle/maintenance-response.model';
+import { RepairCreate } from '../../models/vehicle/repair-create.model';
+import { SearchVehicleResponse } from '../../models/vehicle/search-vehicle-response.model';
+import { ServiceSupplierCreateUpdate } from '../../models/vehicle/supplier-create-update.model';
 import {
   ServiceSupplierDetailResponse,
   ServiceSupplierResponse,
-} from '../models/supplier-response-create-update.model';
-import { SupplierSearchResponseModel } from '../models/supplier-search-response-model';
-import { VehicleCreate } from '../models/vehicle-create.model';
-import { VehicleListItem } from '../models/vehicle-item.model';
-import { VehicleParams } from '../models/vehicle-params.model';
-import { VehicleUpdate } from '../models/vehicle-update.model';
+} from '../../models/vehicle/supplier-response-create-update.model';
+import { SupplierSearchResponseModel } from '../../models/vehicle/supplier-search-response-model';
+import { VehicleCreate } from '../../models/vehicle/vehicle-create.model';
+import { VehicleListItem } from '../../models/vehicle/vehicle-item.model';
+import { VehicleParams } from '../../models/vehicle/vehicle-params.model';
+import { VehicleUpdate } from '../../models/vehicle/vehicle-update.model';
 
 @Injectable({
   providedIn: 'root',

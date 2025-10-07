@@ -496,4 +496,60 @@ describe('OrderService', () => {
       expect((errorResponse as { status: number }).status).toBe(404);
     });
   });
+
+  describe('createShipment', () => {
+    it('should POST to /shipment and send the correct payload', () => {
+      // Arrange
+      const payload = {
+        date: '2024-10-07',
+        vehicleId: 1,
+        orderIds: [1, 2, 3],
+      };
+      const url = 'https://dev-management-portal-be.vercel.app/shipment';
+      let response: unknown;
+
+      // Act
+      service.createShipment(payload).subscribe((res) => {
+        response = res;
+      });
+
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
+      expect(req.request.body).toEqual(payload);
+
+      req.flush(null);
+
+      // Assert
+      expect(response).toBeNull();
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const payload = {
+        date: '2024-10-07',
+        vehicleId: 1,
+        orderIds: [1, 2, 3],
+      };
+      const url = 'https://dev-management-portal-be.vercel.app/shipment';
+      let errorResponse: unknown;
+
+      // Act
+      service.createShipment(payload).subscribe({
+        next: () => {
+          fail('Expected an error, but got a successful response');
+        },
+        error: (err) => {
+          errorResponse = err;
+        },
+      });
+
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('POST');
+      req.flush('Error', { status: 404, statusText: 'Not Found' });
+
+      // Assert
+      expect(errorResponse).toBeDefined();
+      expect((errorResponse as { status: number }).status).toBe(404);
+    });
+  });
 });

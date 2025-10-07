@@ -1,4 +1,10 @@
 import {
+  VehicleService,
+  MaintenanceItem,
+  MaintenancePerformRequest,
+  SupplierSearchResult,
+} from '@Common';
+import {
   BackArrowComponent,
   TitleComponent,
   ButtonComponent,
@@ -38,10 +44,6 @@ import {
   finalize,
 } from 'rxjs/operators';
 
-import { MaintenanceItem } from '../../models/maintenance-item.model';
-import { MaintenancePerformRequest } from '../../models/maintenance-perform.model';
-import { SupplierSearchResult } from '../../models/supplier-search-response-model';
-import { VehicleService } from '../../services/vehicle.service';
 import { CreateUpdateSupplierServiceDrawerComponent } from '../create-update-supplier-service-drawer/create-update-supplier-service-drawer.component';
 
 @Component({

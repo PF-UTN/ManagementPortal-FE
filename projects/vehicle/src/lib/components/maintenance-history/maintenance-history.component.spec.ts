@@ -1,4 +1,4 @@
-import { downloadFileFromResponse } from '@Common';
+import { downloadFileFromResponse, VehicleService } from '@Common';
 
 import { HttpResponse } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
@@ -9,18 +9,23 @@ import { ActivatedRoute } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
 import { MaintenanceHistoryComponent } from './maintenance-history.component';
-import { VehicleService } from '../../services/vehicle.service';
 
-jest.mock('@Common', () => ({
-  environment: {
-    apiBaseUrl: 'https://dev-management-portal-be.vercel.app',
-  },
-  downloadFileFromResponse: jest.fn(),
-}));
+jest.mock('@Common', () => {
+  const actual = jest.requireActual('@Common');
+  return {
+    ...actual,
+    downloadFileFromResponse: jest.fn(),
+  };
+});
 
 describe('MaintenanceHistoryComponent', () => {
   let component: MaintenanceHistoryComponent;
   let fixture: ComponentFixture<MaintenanceHistoryComponent>;
+
+  const mockVehicleService = {
+    getVehicleById: jest.fn(() => of(undefined)), // <-- Devuelve un observable por defecto
+    downloadMaintenanceHistory: jest.fn(),
+  };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -43,6 +48,10 @@ describe('MaintenanceHistoryComponent', () => {
         {
           provide: Router,
           useValue: { navigate: jest.fn() },
+        },
+        {
+          provide: VehicleService,
+          useValue: mockVehicleService,
         },
       ],
     }).compileComponents();

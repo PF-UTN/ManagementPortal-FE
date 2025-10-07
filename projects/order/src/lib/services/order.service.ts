@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { Client } from '../models/client-response.model';
+import { CreateShipmentRequest } from '../models/create-shipment-request.model';
 import { OrderClientSearchRequest } from '../models/order-client-request-model';
 import { OrderClientSearchResponse } from '../models/order-client-response.model';
 import { OrderCreatePayload } from '../models/order-created.model';
@@ -13,7 +14,6 @@ import { OrderDetail } from '../models/order-detail.model';
 import { OrderParams } from '../models/order-params.model';
 import { OrderSearchRequest } from '../models/order-request-model';
 import { OrderSearchResponse } from '../models/order-response-model';
-
 @Injectable({
   providedIn: 'root',
 })
@@ -73,5 +73,10 @@ export class OrderService {
   getOrderDetail(orderId: number): Observable<OrderDetail> {
     const url = `${this.baseUrl}/${orderId}`;
     return this.http.get<OrderDetail>(url);
+  }
+
+  createShipment(payload: CreateShipmentRequest): Observable<void> {
+    const url = `${environment.apiBaseUrl}/shipment`;
+    return this.http.post<void>(url, payload);
   }
 }

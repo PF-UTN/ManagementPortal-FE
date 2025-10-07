@@ -1,3 +1,4 @@
+import { VehicleService } from '@Common';
 import { LateralDrawerService } from '@Common-UI';
 
 import { Location } from '@angular/common';
@@ -18,8 +19,7 @@ import { CreateMaintenancePlanComponent } from './create-maintenance-plan.compon
 import {
   MaintenanceItemSearchResult,
   SearchMaintenanceItemResponse,
-} from '../../models/maintenance-item-response.model';
-import { VehicleService } from '../../services/vehicle.service';
+} from '../../../../../common/src/models/vehicle/maintenance-item-response.model';
 
 describe('CreateMaintenancePlanComponent', () => {
   let component: CreateMaintenancePlanComponent;

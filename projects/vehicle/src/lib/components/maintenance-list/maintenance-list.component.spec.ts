@@ -1,5 +1,5 @@
+import { VehicleService } from '@Common';
 import { ModalComponent } from '@Common-UI';
-import { VehicleService } from '@Vehicle';
 
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -10,7 +10,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
 import { MaintenanceListComponent } from './maintenance-list.component';
-import { MaintenanceItem } from '../../models/maintenance-item.model';
+import { MaintenanceItem } from '../../../../../common/src/models/vehicle/maintenance-item.model';
 
 describe('MaintenanceListComponent', () => {
   let component: MaintenanceListComponent;

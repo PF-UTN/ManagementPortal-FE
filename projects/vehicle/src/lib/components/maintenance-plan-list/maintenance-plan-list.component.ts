@@ -1,10 +1,10 @@
+import { VehicleService } from '@Common';
 import {
   TableComponent,
   TableColumn,
   ColumnTypeEnum,
   ModalComponent,
 } from '@Common-UI';
-import { VehicleService } from '@Vehicle';
 
 import { DecimalPipe } from '@angular/common';
 import { Component, OnInit, input } from '@angular/core';
@@ -13,8 +13,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 
-import { MaintenanceItem } from '../../models/maintenance-item.model';
-import { MaintenancePlanListItem } from '../../models/maintenance-plan.model';
+import { MaintenanceItem } from '../../../../../common/src/models/vehicle/maintenance-item.model';
+import { MaintenancePlanListItem } from '../../../../../common/src/models/vehicle/maintenance-plan.model';
 
 @Component({
   selector: 'mp-maintenance-plan-list',

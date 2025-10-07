@@ -1,5 +1,5 @@
-import { SearchVehicleResponse } from '../models/search-vehicle-response.model';
-import { VehicleListItem } from '../models/vehicle-item.model';
+import { SearchVehicleResponse } from '../../../../common/src/models/vehicle/search-vehicle-response.model';
+import { VehicleListItem } from '../../../../common/src/models/vehicle/vehicle-item.model';
 
 export const mockVehicleListItems: VehicleListItem[] = [
   {

@@ -1,3 +1,4 @@
+import { VehicleService } from '@Common';
 import { LateralDrawerService } from '@Common-UI';
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -8,7 +9,6 @@ import { mockDeep } from 'jest-mock-extended';
 import { of } from 'rxjs';
 
 import { CreateUpdateMaintenanceItemLateralDrawerComponent } from './create-update-maintenance-item-lateral-drawer.component';
-import { VehicleService } from '../../services/vehicle.service';
 
 describe('CreateUpdateMaintenanceItemLateralDrawerComponent', () => {
   let fixture: ComponentFixture<CreateUpdateMaintenanceItemLateralDrawerComponent>;

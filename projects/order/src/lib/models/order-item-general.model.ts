@@ -6,4 +6,5 @@ export interface OrderItem {
   clientName: string;
   orderStatus: OrderStatusOptions;
   totalAmount: number;
+  selected?: boolean;
 }
