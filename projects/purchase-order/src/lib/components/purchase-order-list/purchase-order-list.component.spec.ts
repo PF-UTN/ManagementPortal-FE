@@ -532,7 +532,7 @@ describe('PurchaseOrderListComponent', () => {
         DetailLateralDrawerComponent,
         { purchaseOrderId: mockPurchaseOrderListItems[0].id },
         expect.objectContaining({
-          title: 'Detalle Orden de Compra',
+          title: 'Detalle de Orden',
           footer: expect.objectContaining({
             firstButton: expect.objectContaining({
               text: 'Cerrar',
@@ -599,7 +599,7 @@ describe('PurchaseOrderListComponent', () => {
         expect.any(Function),
         { data: rowItem },
         expect.objectContaining({
-          title: 'Cancelar Orden de Compra',
+          title: 'Cancelar Orden',
           footer: expect.objectContaining({
             firstButton: expect.objectContaining({ text: 'Confirmar' }),
             secondButton: expect.objectContaining({ text: 'Cancelar' }),
@@ -636,7 +636,7 @@ describe('PurchaseOrderListComponent', () => {
         expect.any(Function),
         { purchaseOrderId: rowItem.id },
         expect.objectContaining({
-          title: 'Recepcionar Orden de Compra',
+          title: 'Recepcionar Orden',
           footer: expect.objectContaining({
             firstButton: expect.objectContaining({ text: 'Confirmar' }),
             secondButton: expect.objectContaining({ text: 'Cancelar' }),

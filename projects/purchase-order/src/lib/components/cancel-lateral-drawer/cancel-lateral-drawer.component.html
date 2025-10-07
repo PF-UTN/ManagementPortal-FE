@@ -1,35 +1,35 @@
 <div class="drawer-container__content">
   <div class="drawer-container__row">
-    <p><strong>Proveedor</strong></p>
-    <p>{{ data.supplierBussinesName }}</p>
+    <p><strong class="title">Proveedor</strong></p>
+    <p class="text">{{ data.supplierBussinesName }}</p>
   </div>
 
   <div class="drawer-container__row">
-    <p><strong>Estado de Orden</strong></p>
-    <p>{{ data.purchaseOrderStatusName }}</p>
+    <p class="title"><strong>Estado de Orden</strong></p>
+    <p class="text">{{ data.purchaseOrderStatusName }}</p>
   </div>
 
   <div class="drawer-container__row">
-    <p><strong>Fecha de Creación</strong></p>
-    <p>{{ data.createdAt | date: 'dd/MM/yyyy' }}</p>
+    <p class="title"><strong>Fecha de Creación</strong></p>
+    <p class="text">{{ data.createdAt | date: 'dd/MM/yyyy' }}</p>
   </div>
 
   <div class="drawer-container__row" *ngIf="data.estimatedDeliveryDate">
-    <p><strong>Fecha Estimada de Entrega</strong></p>
-    <p>{{ data.estimatedDeliveryDate | date: 'dd/MM/yyyy' }}</p>
+    <p class="title"><strong>Fecha Estimada de Entrega</strong></p>
+    <p class="text">{{ data.estimatedDeliveryDate | date: 'dd/MM/yyyy' }}</p>
   </div>
 
   <div class="drawer-container__row" *ngIf="data.effectiveDeliveryDate">
-    <p><strong>Fecha Efectiva de Entrega</strong></p>
-    <p>{{ data.effectiveDeliveryDate | date: 'dd/MM/yyyy' }}</p>
+    <p class="title"><strong>Fecha Efectiva de Entrega</strong></p>
+    <p class="text">{{ data.effectiveDeliveryDate | date: 'dd/MM/yyyy' }}</p>
   </div>
 
   <div class="drawer-container__row">
-    <p><strong>Monto Total</strong></p>
-    <p>{{ data.totalAmount | currency:'ARS':'symbol':'1.2-2' }}</p>
+    <p class="title"><strong>Monto Total</strong></p>
+    <p class="text">{{ data.totalAmount | currency:'ARS':'symbol':'1.2-2' }}</p>
   </div>
   <div [formGroup]="form" class="drawer-container__row">
-    <p><strong>Motivo de Rechazo</strong></p>
+    <p class="title"><strong>Motivo de Rechazo</strong></p>
     <mat-form-field appearance="fill" class="drawer-container__input">
       <mat-label>Escribe el motivo</mat-label>
       <textarea matInput formControlName="cancelReason" maxlength="50"></textarea>
