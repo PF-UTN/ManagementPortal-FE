@@ -1,6 +1,5 @@
 import { CartService, mockCart } from '@Common';
 import { LateralDrawerService } from '@Common-UI';
-import { ProductOrderDirection, ProductOrderField } from '@Product';
 
 import {
   ComponentFixture,
@@ -12,6 +11,10 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { mockDeep } from 'jest-mock-extended';
 import { of, throwError } from 'rxjs';
 
+import {
+  ProductOrderDirection,
+  ProductOrderField,
+} from './../../models/product-param.model';
 import { ProductListClientComponent } from './product-list-client.component';
 import { ProductService } from '../../services/product.service';
 import {
