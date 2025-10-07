@@ -86,6 +86,12 @@ export class NavBarComponent implements OnInit {
         route: 'pedidos',
         shouldRender: this.authService.hasAccess([RolesEnum.Employee]),
       },
+      {
+        title: 'Envios',
+        icon: 'local_shipping',
+        route: 'envios',
+        shouldRender: this.authService.hasAccess([RolesEnum.Employee]),
+      },
     ];
   }
 
