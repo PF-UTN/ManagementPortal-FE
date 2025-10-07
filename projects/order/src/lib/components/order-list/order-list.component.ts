@@ -1,8 +1,4 @@
-import {
-  downloadFileFromResponse,
-  OrderDirection,
-  OrderListUtils,
-} from '@Common';
+import { downloadFileFromResponse, OrderDirection } from '@Common';
 import {
   ColumnTypeEnum,
   TableColumn,
@@ -25,6 +21,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTooltip } from '@angular/material/tooltip';
 import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 
@@ -38,7 +35,9 @@ import { OrderSearchResult } from '../../models/order-response-model';
 import { statusOptions } from '../../models/order-status-option.model';
 import { OrderStatusOptions } from '../../models/order-status.enum';
 import { OrderService } from '../../services/order.service';
+import { OrderListUtils } from '../../utils/order-list-utils';
 import { CreateShipmentDrawerComponent } from '../create-shipment-drawer/create-shipment-drawer.component';
+import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-lateral-drawer.component';
 
 @Component({
   selector: 'mp-order-list',
@@ -58,6 +57,7 @@ import { CreateShipmentDrawerComponent } from '../create-shipment-drawer/create-
     MatInputModule,
     MatNativeDateModule,
     MatButtonModule,
+    MatTooltip,
   ],
   providers: [DatePipe, CurrencyPipe],
   templateUrl: './order-list.component.html',
@@ -154,7 +154,7 @@ export class OrderListComponent implements OnInit {
     private datePipe: DatePipe,
     private currencyPipe: CurrencyPipe,
     private orderService: OrderService,
-    private readonly lateralDrawerService: LateralDrawerService,
+    private lateralDrawerService: LateralDrawerService,
   ) {}
 
   ngOnInit(): void {
@@ -262,10 +262,6 @@ export class OrderListComponent implements OnInit {
     this.doSearchSubject$.next();
   }
 
-  onDetailDrawer(order: OrderItem) {
-    console.log('Ver detalle de la orden', order);
-  }
-
   onSearchTextChange(): void {
     this.pageIndex = 0;
     this.isLoading = true;
@@ -281,6 +277,23 @@ export class OrderListComponent implements OnInit {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
     this.doSearchSubject$.next();
+  }
+
+  onDetailDrawer(request: OrderItem): void {
+    this.lateralDrawerService.open(
+      DetailLateralDrawerComponent,
+      { orderId: request.id },
+      {
+        title: 'Detalle Pedido',
+        footer: {
+          firstButton: {
+            text: 'Cerrar',
+            click: () => this.lateralDrawerService.close(),
+          },
+        },
+        size: 'medium',
+      },
+    );
   }
 
   private getOrderParams(): OrderParams {

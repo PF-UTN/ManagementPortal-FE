@@ -18,3 +18,5 @@ export * from './error-modal/error-modal.component';
 export * from './list/list.component';
 export * from './checkout/models';
 export * from './checkout/services';
+export * from './cart-button/cart-button.component';
+export * from './auth-title/auth-title.component';

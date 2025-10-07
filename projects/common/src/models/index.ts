@@ -3,4 +3,7 @@ export * from './client.model';
 export * from './token-payload.model';
 export * from './user.model';
 export * from './town.model';
+export * from './cart.model';
+export * from './cart-update-product-quantity.model';
+export * from './delete-cart-product.model';
 export * from './vehicle/index';

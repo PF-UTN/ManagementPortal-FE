@@ -1,4 +1,4 @@
-import { mockCartItem, mockEmptyCart } from '@Cart';
+import { CartService } from '@Common';
 import { LateralDrawerService } from '@Common-UI';
 
 import { CommonModule } from '@angular/common';
@@ -8,8 +8,11 @@ import { Router } from '@angular/router';
 import { mockDeep } from 'jest-mock-extended';
 import { of } from 'rxjs';
 
+import {
+  mockCartItem,
+  mockEmptyCart,
+} from './../../../lib/testing/mock-data.model';
 import { CartDetailComponent } from './cart-detail.component';
-import { CartService } from '../../services/cart.service';
 
 describe('CartDetailComponent', () => {
   let component: CartDetailComponent;
@@ -57,7 +60,7 @@ describe('CartDetailComponent', () => {
       component.data.set(mockCart);
       jest
         .spyOn(cartService, 'deleteCartProduct')
-        .mockReturnValue(of(undefined));
+        .mockReturnValue(of(mockCart));
 
       // Act
       component.removeItem(mockItem);
@@ -73,7 +76,7 @@ describe('CartDetailComponent', () => {
       component.data.set(mockCart);
       const spy = jest
         .spyOn(cartService, 'deleteCartProduct')
-        .mockReturnValue(of(undefined));
+        .mockReturnValue(of(mockCart));
 
       // Act
       component.removeItem(mockItem);
@@ -89,9 +92,7 @@ describe('CartDetailComponent', () => {
       const mockItem = mockCartItem;
       const mockCart = { cartId: 'cart:1', items: [mockItem] };
       component.data.set(mockCart);
-      jest
-        .spyOn(cartService, 'addProductToCart')
-        .mockReturnValue(of(undefined));
+      jest.spyOn(cartService, 'addProductToCart').mockReturnValue(of(mockCart));
 
       // Act
       component.updateQuantity(mockItem, 5);
@@ -107,7 +108,7 @@ describe('CartDetailComponent', () => {
       component.data.set(mockCart);
       const spy = jest
         .spyOn(cartService, 'addProductToCart')
-        .mockReturnValue(of(undefined));
+        .mockReturnValue(of(mockCart));
 
       // Act
       component.updateQuantity(mockItem, 5);

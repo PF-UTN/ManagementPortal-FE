@@ -1,5 +1,4 @@
-import { CartService, Cart } from '@Cart';
-import { AuthService } from '@Common';
+import { AuthService, CartService, Cart } from '@Common';
 import {
   TitleComponent,
   BackArrowComponent,

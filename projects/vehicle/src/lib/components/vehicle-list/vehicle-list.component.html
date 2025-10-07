@@ -1,41 +1,48 @@
 <div class="container-fluid">
-  <div class="filters-container">
-    <div class="filters-container__selector col">
+  <div class="main-container__header">
+    <mp-title>Vehículos</mp-title>
+    <mp-button 
+      type="primary"
+      (click)="openCreateVehicleDrawer()"
+      (keydown)="onButtonKeyDown($event)">
+      Nuevo
+    </mp-button>
+  </div>
+
+  <div class="filters-toolbar">
+    <div class="filters-toolbar__search">
       <mp-input
         label="Buscar vehículos"
-        [placeholder]="'Buscar por patente, marca o modelo...'"
+        placeholder="Buscar por patente, marca o modelo..."
         [(ngModel)]="searchText"
         icon="close"
-        [iconPosition]="'suffix'"
         [iconAction]="onClearSearch.bind(this)"
         (input)="onSearchTextChange()"
       />
     </div>
-    <div class="filters-container__dropdown">
-      <mp-button 
+    <div class="filters-toolbar__actions">
+      <div class="filters-toolbar__actions__icon">
+        <mp-button 
           type="icon"
           icon="download"
           ariaLabel="Descargar XLSX"
+          tooltip="Descargar XLSX"
+          tooltipPosition="below"
           [disabled]="isLoading"
           (onClick)="handleDownloadClick()">
-      </mp-button>
-      <mp-button 
-        type="primary"
-        (click)="openCreateVehicleDrawer()"
-        (keydown)="onButtonKeyDown($event)">
-        Nuevo 
-      </mp-button>
+        </mp-button>
+      </div>
     </div>
   </div>
+
   <mp-table
     [columns]="columns"
     [dataSource$]="dataSource$"
     [isLoading]="isLoading"
-    noDataMessage="No existen vehiculos disponibles"
+    noDataMessage="No existen vehículos disponibles"
     [itemsNumber]="itemsNumber"
     [pageSize]="pageSize"
     [pageIndex]="pageIndex"
-    (pageChange)="handlePageChange($event)"
-  >
+    (pageChange)="handlePageChange($event)">
   </mp-table>
 </div>

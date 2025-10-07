@@ -1,4 +1,3 @@
-import { OrderListUtils } from '@Common';
 import {
   ColumnTypeEnum,
   TableColumn,
@@ -9,6 +8,7 @@ import {
   InputComponent,
   ButtonComponent,
   LateralDrawerService,
+  CartButtonComponent,
 } from '@Common-UI';
 
 import { DatePipe, CurrencyPipe, CommonModule } from '@angular/common';
@@ -22,6 +22,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTooltip } from '@angular/material/tooltip';
 import { BehaviorSubject, Subject, Subscription, of } from 'rxjs';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 
@@ -34,6 +35,7 @@ import {
 import { statusOptions } from '../../models/order-status-option.model';
 import { OrderStatusOptions } from '../../models/order-status.enum';
 import { OrderService } from '../../services/order.service';
+import { OrderListUtils } from '../../utils/order-list-utils';
 import { DetailLateralDrawerClientComponent } from '../detail-lateral-drawer-client/detail-lateral-drawer-client.component';
 
 @Component({
@@ -55,6 +57,8 @@ import { DetailLateralDrawerClientComponent } from '../detail-lateral-drawer-cli
     MatInputModule,
     MatNativeDateModule,
     MatButtonModule,
+    CartButtonComponent,
+    MatTooltip,
   ],
   providers: [DatePipe, CurrencyPipe],
   templateUrl: './order-list-client.component.html',

@@ -10,6 +10,7 @@ import { OrderClientSearchRequest } from '../models/order-client-request-model';
 import { OrderClientSearchResponse } from '../models/order-client-response.model';
 import { OrderCreatePayload } from '../models/order-created.model';
 import { OrderClientDetail } from '../models/order-detail-client.model';
+import { OrderDetail } from '../models/order-detail.model';
 import { OrderParams } from '../models/order-params.model';
 import { OrderSearchRequest } from '../models/order-request-model';
 import { OrderSearchResponse } from '../models/order-response-model';
@@ -67,6 +68,11 @@ export class OrderService {
       headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
     }
     return this.http.get<Client>(this.clientUrl, headers ? { headers } : {});
+  }
+
+  getOrderDetail(orderId: number): Observable<OrderDetail> {
+    const url = `${this.baseUrl}/${orderId}`;
+    return this.http.get<OrderDetail>(url);
   }
 
   createShipment(payload: CreateShipmentRequest): Observable<void> {

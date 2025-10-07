@@ -2,6 +2,29 @@
 @import 'bootstrap/scss/variables';
 @import '../../../../../../src/styles/varibles';
 
+.filters-toolbar {
+  display: flex;
+  flex-direction: row;
+  font-size: 14px;
+  width: 100%;
+  padding: 16px 0;
+  gap: 8px;
+
+  &__search {
+    flex: 1;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 8px;
+
+    &__icon {
+      margin-top: 5px;
+      display: flex;
+    }
+  }
+}
+
 .main-container {
   padding: 30px;
   box-sizing: border-box;
@@ -46,4 +69,11 @@
     gap: 12px !important;
     padding: 0 !important;
   }
+}
+
+.main-container__header__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
 }

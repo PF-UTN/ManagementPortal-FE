@@ -9,6 +9,7 @@ import {
   ModalComponent,
   ModalConfig,
   PillStatusEnum,
+  TitleComponent,
 } from '@Common-UI';
 
 import { DatePipe, DecimalPipe } from '@angular/common';
@@ -28,7 +29,13 @@ import { DetailVehicleDrawerComponent } from '../detail-vehicle-drawer/detail-ve
 @Component({
   selector: 'mp-vehicle-list',
   standalone: true,
-  imports: [TableComponent, FormsModule, InputComponent, ButtonComponent],
+  imports: [
+    TableComponent,
+    FormsModule,
+    InputComponent,
+    ButtonComponent,
+    TitleComponent,
+  ],
   providers: [DatePipe, DecimalPipe],
   templateUrl: './vehicle-list.component.html',
   styleUrl: './vehicle-list.component.scss',
