@@ -16,7 +16,7 @@
     </div>
     <div class="filters-toolbar__actions">
       <mat-form-field appearance="outline">
-        <mat-label>Estado</mat-label>
+        <mat-label>Filtrar por estado</mat-label>
         <mat-select
           multiple
           [(ngModel)]="selectedStatus"
@@ -33,6 +33,7 @@
           mat-icon-button
           [matMenuTriggerFor]="dateMenu"
           aria-label="Filtrar por fecha"
+          matTooltip="Filtrar por fecha"
         >
           <mat-icon [color]="fromDate || toDate ? 'primary' : undefined"
             >today</mat-icon
@@ -66,7 +67,10 @@
               <mp-button type="secondary" (onClick)="onClearDateFilter()"
                 >Limpiar</mp-button
               >
-              <mp-button type="primary" [disabled]="!isDateRangeValid" (onClick)="onApplyDateFilter()"
+              <mp-button
+                type="primary"
+                [disabled]="!isDateRangeValid"
+                (onClick)="onApplyDateFilter()"
                 >Aplicar</mp-button
               >
             </div>
@@ -77,6 +81,7 @@
           mat-icon-button
           [matMenuTriggerFor]="orderMenu"
           aria-label="Ordenar"
+          matTooltip="Ordenar"
         >
           <mat-icon>sort_by_alpha</mat-icon>
         </button>
@@ -101,6 +106,8 @@
         <mp-button
           type="icon"
           icon="download"
+          tooltip="Descargar XLSX"
+          tooltipPosition="below"
           ariaLabel="Descargar XLSX"
           [disabled]="isLoading"
           (onClick)="handleDownloadClick()"

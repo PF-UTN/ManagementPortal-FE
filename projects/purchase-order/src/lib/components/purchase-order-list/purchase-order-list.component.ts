@@ -24,6 +24,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTooltip } from '@angular/material/tooltip';
 import { Router } from '@angular/router';
 import { BehaviorSubject, debounceTime, Subject, switchMap, tap } from 'rxjs';
 
@@ -66,6 +67,7 @@ import { ReceptionLateralDrawerComponent } from '../reception-lateral-drawer/rec
     MatNativeDateModule,
     MatSnackBarModule,
     TitleComponent,
+    MatTooltip,
   ],
   providers: [DatePipe],
   templateUrl: './purchase-order-list.component.html',

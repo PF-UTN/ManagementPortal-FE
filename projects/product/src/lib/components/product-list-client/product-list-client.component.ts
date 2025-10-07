@@ -21,6 +21,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -60,6 +61,7 @@ import { ProductCardComponent } from '../product-card/product-card.component';
     MatTooltipModule,
     InfiniteScrollDirective,
     CartButtonComponent,
+    MatMenuModule,
   ],
   templateUrl: './product-list-client.component.html',
   styleUrls: ['./product-list-client.component.scss'],
@@ -83,6 +85,29 @@ export class ProductListClientComponent {
     selectedCategories: FormControl<string[]>;
     sort: FormControl<string>;
   }>;
+  orderByOptions = [
+    {
+      label: 'Precio: Menor a Mayor',
+      field: ProductOrderField.Price,
+      direction: ProductOrderDirection.Asc,
+    },
+    {
+      label: 'Precio: Mayor a Menor',
+      field: ProductOrderField.Price,
+      direction: ProductOrderDirection.Desc,
+    },
+    {
+      label: 'A - Z',
+      field: ProductOrderField.Name,
+      direction: ProductOrderDirection.Asc,
+    },
+    {
+      label: 'Z - A',
+      field: ProductOrderField.Name,
+      direction: ProductOrderDirection.Desc,
+    },
+  ];
+  selectedOrderBy = this.orderByOptions[0];
 
   constructor(
     private readonly fb: FormBuilder,
@@ -117,7 +142,8 @@ export class ProductListClientComponent {
 
   private doSearch(): void {
     this.isLoading = true;
-    const { searchText, selectedCategories, sort } = this.filterForm.value;
+    const { searchText, selectedCategories } = this.filterForm.value;
+
     const selectedCategoryNames =
       selectedCategories && selectedCategories.length > 0
         ? this.categories
@@ -131,27 +157,20 @@ export class ProductListClientComponent {
       categoryName: selectedCategoryNames,
     };
 
-    let orderBy;
-    if (sort && typeof sort === 'string' && sort.includes('-')) {
-      const [field, direction] = sort.split('-');
-      orderBy = {
-        field: field as ProductOrderField,
-        direction: direction as ProductOrderDirection,
-      };
-    }
-
     const params: ProductParams = {
       page: this.currentPage,
       pageSize: this.pageSize,
       searchText,
       filters,
-      ...(orderBy && { orderBy }),
+      orderBy: {
+        field: this.selectedOrderBy.field,
+        direction: this.selectedOrderBy.direction,
+      },
     };
 
     this.productService.postSearchProduct(params).subscribe({
       next: (res: SearchProductResponse) => {
         this.products = [...this.products, ...res.results];
-
         this.isLoading = false;
         this.hasMoreProducts = res.results.length === this.pageSize;
       },
@@ -264,6 +283,17 @@ export class ProductListClientComponent {
         },
       });
     });
+  }
+  onOrderByChange(option: {
+    label: string;
+    field: ProductOrderField;
+    direction: ProductOrderDirection;
+  }) {
+    this.selectedOrderBy = option;
+    this.currentPage = 1;
+    this.products = [];
+    this.hasMoreProducts = true;
+    this.doSearch();
   }
   setCartLoading(productId: number, value: boolean) {
     this.isCartLoadingMap.update((map) => ({ ...map, [productId]: value }));

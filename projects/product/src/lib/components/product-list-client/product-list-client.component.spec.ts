@@ -11,6 +11,10 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { mockDeep } from 'jest-mock-extended';
 import { of, throwError } from 'rxjs';
 
+import {
+  ProductOrderDirection,
+  ProductOrderField,
+} from './../../models/product-param.model';
 import { ProductListClientComponent } from './product-list-client.component';
 import { ProductService } from '../../services/product.service';
 import {
@@ -107,10 +111,19 @@ describe('ProductListClientComponent', () => {
 
     it('should send orderBy param as name-desc', fakeAsync(() => {
       const spy = jest.spyOn(productService, 'postSearchProduct');
-      component.filterForm.get('sort')?.setValue('name-desc');
-      const expectedOrderBy = { field: 'name', direction: 'desc' };
+      const expectedOrderBy = {
+        field: ProductOrderField.Name,
+        direction: ProductOrderDirection.Desc,
+      };
+
+      component.onOrderByChange({
+        label: '',
+        field: ProductOrderField.Name,
+        direction: ProductOrderDirection.Desc,
+      });
       component.ngOnInit();
       tick();
+
       expect(spy).toHaveBeenCalledWith(
         expect.objectContaining({
           orderBy: expectedOrderBy,

@@ -22,6 +22,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTooltip } from '@angular/material/tooltip';
 import { BehaviorSubject, Subject, Subscription, of } from 'rxjs';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 
@@ -57,6 +58,7 @@ import { DetailLateralDrawerClientComponent } from '../detail-lateral-drawer-cli
     MatNativeDateModule,
     MatButtonModule,
     CartButtonComponent,
+    MatTooltip,
   ],
   providers: [DatePipe, CurrencyPipe],
   templateUrl: './order-list-client.component.html',
