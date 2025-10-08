@@ -11,6 +11,7 @@ import { ButtonComponent } from '../button/button.component';
 @Component({
   selector: 'mp-abstract-modal',
   templateUrl: './modal.component.html',
+  styleUrl: './modal.component.scss',
   imports: [MatDialogModule, ButtonComponent],
   styles: ``,
   standalone: true,

@@ -217,11 +217,11 @@ export class MaintenancePlanListComponent implements OnInit {
   deleteMaintenancePlanItem(item: MaintenancePlanListItem): void {
     const dialogRef = this.dialog.open(ModalComponent, {
       data: {
-        title: 'Eliminar ítem',
+        title: 'ELIMINAR ITEM',
         message:
           '¿Está seguro que desea eliminar este ítem del plan de mantenimiento?',
         cancelText: 'Cancelar',
-        confirmText: 'Aceptar',
+        confirmText: 'Eliminar',
       },
     });
 
