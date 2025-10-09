@@ -13,10 +13,12 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
 
 import { ShipmentListComponent } from './shipment-list.component';
+import { ShipmentItem } from '../../models/shipment-item.model';
 import {
   ShipmentSearchRequest,
   ShipmentSearchResponse,
 } from '../../models/shipment-search.model';
+import { ShipmentStatusOptions } from '../../models/shipment-status.enum';
 import { ShipmentService } from '../../services/shipment.service';
 
 jest.mock('@Common', () => ({
@@ -94,6 +96,123 @@ describe('ShipmentListComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  describe('columns', () => {
+    it('should return correct id value', () => {
+      // Arrange
+      const item: ShipmentItem = {
+        id: 123,
+        vehicleAssigned: 'AAA111',
+        shipmentStatus: ShipmentStatusOptions.Pending,
+        createdAt: '2025-10-23T00:00:00.000Z',
+      };
+      // Act
+      const idValue = component.columns[0]?.value?.(item);
+      // Assert
+      expect(idValue).toBe('123');
+    });
+
+    it('should return correct vehicleAssigned value', () => {
+      // Arrange
+      const item: ShipmentItem = {
+        id: 123,
+        vehicleAssigned: 'AAA111',
+        shipmentStatus: ShipmentStatusOptions.Pending,
+        createdAt: '2025-10-23T00:00:00.000Z',
+      };
+      // Act
+      const vehicleValue = component.columns[1]?.value?.(item);
+      // Assert
+      expect(vehicleValue).toBe('AAA111');
+    });
+
+    it('should return correct shipmentStatus value', () => {
+      // Arrange
+      const item: ShipmentItem = {
+        id: 123,
+        vehicleAssigned: 'AAA111',
+        shipmentStatus: ShipmentStatusOptions.Pending,
+        createdAt: '2025-10-23T00:00:00.000Z',
+      };
+      // Act
+      const statusValue = component.columns[2]?.value?.(item);
+      // Assert
+      expect(statusValue).toBe('Pending');
+    });
+
+    it('should return correct shipmentStatus value for Finished', () => {
+      // Arrange
+      const item: ShipmentItem = {
+        id: 124,
+        vehicleAssigned: 'BBB222',
+        shipmentStatus: ShipmentStatusOptions.Finished,
+        createdAt: '2025-10-24T00:00:00.000Z',
+      };
+      // Act
+      const statusValue = component.columns[2]?.value?.(item);
+      // Assert
+      expect(statusValue).toBe(ShipmentStatusOptions.Finished);
+    });
+
+    it('should format createdAt date correctly', () => {
+      // Arrange
+      const item: ShipmentItem = {
+        id: 123,
+        vehicleAssigned: 'AAA111',
+        shipmentStatus: ShipmentStatusOptions.Pending,
+        createdAt: '2025-10-23T00:00:00.000Z',
+      };
+      // Act
+      const dateValue = component.columns[3]?.value?.(item);
+      // Assert
+      expect(dateValue).toBe('22/10/2025');
+    });
+
+    it('should call onDetailDrawer when action is triggered', () => {
+      // Arrange
+      const item: ShipmentItem = {
+        id: 123,
+        vehicleAssigned: 'AAA111',
+        shipmentStatus: ShipmentStatusOptions.Pending,
+        createdAt: '2025-10-23T00:00:00.000Z',
+      };
+      const spy = jest.spyOn(component, 'onDetailDrawer');
+      // Act
+      component.columns[4]?.actions?.[0].action(item);
+      // Assert
+      expect(spy).toHaveBeenCalledWith(item);
+    });
+
+    it('should call onSend when action is triggered', () => {
+      // Arrange
+      const item: ShipmentItem = {
+        id: 123,
+        vehicleAssigned: 'AAA111',
+        shipmentStatus: ShipmentStatusOptions.Pending,
+        createdAt: '2025-10-23T00:00:00.000Z',
+      };
+      const spy = jest.spyOn(component, 'onSend');
+      // Act
+      component.columns[4]?.actions?.[1].action(item);
+      // Assert
+      expect(spy).toHaveBeenCalledWith(item);
+    });
+
+    it('should call onFinish when action is triggered', () => {
+      // Arrange
+      const item: ShipmentItem = {
+        id: 123,
+        vehicleAssigned: 'AAA111',
+        shipmentStatus: ShipmentStatusOptions.Pending,
+        createdAt: '2025-10-23T00:00:00.000Z',
+      };
+      const spy = jest.spyOn(component, 'onFinish');
+      // Act
+      component.columns[4]?.actions?.[2].action(item);
+      // Assert
+      expect(spy).toHaveBeenCalledWith(item);
+    });
+  });
+
   describe('ngOnInit', () => {
     it('should fetch shipments on init and update dataSource$', fakeAsync(() => {
       // Arrange
@@ -128,6 +247,192 @@ describe('ShipmentListComponent', () => {
       expect(component.isLoading()).toBe(false);
       expect(component.dataSource$.value).toEqual([]);
     }));
+
+    describe('vehicleControl.valueChanges subscription', () => {
+      it('should set filteredVehicles and selectedVehicle when a vehicle is selected', fakeAsync(() => {
+        // Arrange
+        const vehicle: VehicleListItem = {
+          id: 2,
+          licensePlate: 'BBB222',
+          brand: 'Fiat',
+          model: 'Cronos',
+          kmTraveled: 0,
+          enabled: true,
+          admissionDate: '',
+        };
+        const response = { total: 1, results: [vehicle] };
+        vehicleService.postSearchVehiclesAsync.mockReturnValue(of(response));
+        const spy = jest.spyOn(component, 'emitSearch');
+
+        // Act
+        component.vehicleControl.setValue(vehicle);
+        tick(400);
+
+        // Assert
+        expect(component.filteredVehicles).toEqual([vehicle]);
+        expect(component.selectedVehicle).toBe(vehicle);
+        expect(component.pageIndex).toBe(0);
+        expect(spy).toHaveBeenCalled();
+      }));
+    });
+  });
+
+  describe('onVehicleSearchChange', () => {
+    it('should call vehicleService.postSearchVehiclesAsync and set filteredVehicles', () => {
+      // Arrange
+      const vehicle: VehicleListItem = {
+        id: 1,
+        licensePlate: 'AAA111',
+        brand: 'Focus',
+        model: 'Focus',
+        kmTraveled: 0,
+        enabled: true,
+        admissionDate: '',
+      };
+      const response = { total: 1, results: [vehicle] };
+      vehicleService.postSearchVehiclesAsync.mockReturnValue(of(response));
+      component.vehicleSearchText = 'AAA111';
+
+      // Act
+      component.onVehicleSearchChange();
+
+      // Assert
+      expect(vehicleService.postSearchVehiclesAsync).toHaveBeenCalledWith({
+        page: 1,
+        pageSize: 10,
+        searchText: 'AAA111',
+      });
+      expect(component.filteredVehicles).toEqual([vehicle]);
+    });
+
+    it('should trim and limit searchText to 50 characters', () => {
+      // Arrange
+      const longText = 'A'.repeat(60);
+      component.vehicleSearchText = ` ${longText} `;
+      const response = { total: 0, results: [] };
+      vehicleService.postSearchVehiclesAsync.mockReturnValue(of(response));
+
+      // Act
+      component.onVehicleSearchChange();
+
+      // Assert
+      expect(vehicleService.postSearchVehiclesAsync).toHaveBeenCalledWith({
+        page: 1,
+        pageSize: 10,
+        searchText: 'A'.repeat(50),
+      });
+    });
+  });
+
+  describe('getSearchRequest', () => {
+    it('should return default values when searchText is undefined', () => {
+      // Arrange
+      component.searchText = undefined as unknown as string;
+      component.pageIndex = 1;
+      component.pageSize = 20;
+      component.selectedStatus = ['Pending'];
+      component.fromDate = null;
+      component.toDate = null;
+      component.selectedVehicle = null;
+
+      // Act
+      const result = component.getSearchRequest();
+
+      // Assert
+      expect(result.searchText).toBe('');
+      expect(result.page).toBe(2);
+      expect(result.pageSize).toBe(20);
+      expect(result.filters?.statusName).toEqual(['Pending']);
+      expect(result.filters?.fromDate).toBeUndefined();
+      expect(result.filters?.toDate).toBeUndefined();
+      expect(result.filters?.vehicleId).toBeUndefined();
+    });
+
+    it('should limit searchText to 50 characters', () => {
+      // Arrange
+      component.searchText = 'A'.repeat(60);
+      // Act
+      const result = component.getSearchRequest();
+      // Assert
+      expect(result.searchText.length).toBe(50);
+      expect(result.searchText).toBe('A'.repeat(50));
+    });
+
+    it('should include vehicleId if selectedVehicle is set', () => {
+      // Arrange
+      component.selectedVehicle = {
+        id: 99,
+        licensePlate: 'ZZZ999',
+        brand: 'Toyota',
+        model: 'Corolla',
+        kmTraveled: 0,
+        enabled: true,
+        admissionDate: '',
+      };
+      // Act
+      const result = component.getSearchRequest();
+      // Assert
+      expect(result.filters?.vehicleId).toBe(99);
+    });
+  });
+
+  describe('isDateRangeValid', () => {
+    it('should be true if fromDate is null', () => {
+      // Arrange
+      component.fromDate = null;
+      component.toDate = new Date();
+      // Assert
+      expect(component.isDateRangeValid).toBe(true);
+    });
+
+    it('should be true if toDate is null', () => {
+      // Arrange
+      component.fromDate = new Date();
+      component.toDate = null;
+      // Assert
+      expect(component.isDateRangeValid).toBe(true);
+    });
+
+    it('should be true if fromDate <= toDate', () => {
+      // Arrange
+      component.fromDate = new Date('2024-07-01');
+      component.toDate = new Date('2024-07-31');
+      // Assert
+      expect(component.isDateRangeValid).toBe(true);
+    });
+
+    it('should be false if fromDate > toDate', () => {
+      // Arrange
+      component.fromDate = new Date('2024-08-01');
+      component.toDate = new Date('2024-07-31');
+      // Assert
+      expect(component.isDateRangeValid).toBe(false);
+    });
+  });
+
+  describe('onVehicleSelected', () => {
+    it('should set selectedVehicle, reset pageIndex and trigger search', () => {
+      // Arrange
+      const spy = jest.spyOn(component.doSearchSubject$, 'next');
+      const vehicle: VehicleListItem = {
+        id: 2,
+        licensePlate: 'BBB222',
+        brand: 'Fiat',
+        model: 'Cronos',
+        kmTraveled: 0,
+        enabled: true,
+        admissionDate: '',
+      };
+      component.pageIndex = 5;
+
+      // Act
+      component.onVehicleSelected(vehicle);
+
+      // Assert
+      expect(component.selectedVehicle).toBe(vehicle);
+      expect(component.pageIndex).toBe(0);
+      expect(spy).toHaveBeenCalled();
+    });
   });
 
   describe('handlePageChange', () => {

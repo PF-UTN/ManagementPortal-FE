@@ -134,9 +134,9 @@ export class ShipmentListComponent implements OnInit {
   private searchParams$ = new Subject<ShipmentSearchRequest>();
 
   constructor(
-    private datePipe: DatePipe,
-    private shipmentService: ShipmentService,
-    private vehicleService: VehicleService,
+    private readonly datePipe: DatePipe,
+    private readonly shipmentService: ShipmentService,
+    private readonly vehicleService: VehicleService,
   ) {}
 
   ngOnInit(): void {
