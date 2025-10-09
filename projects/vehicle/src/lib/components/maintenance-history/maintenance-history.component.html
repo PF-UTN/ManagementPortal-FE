@@ -6,10 +6,10 @@
                 <mp-title>Historial de Mantenimiento</mp-title>
             </div>
             <ng-container *ngIf="vehicle">
-                <div>
+                <div class="header__subtitle">
                     <mp-subtitle>{{vehicle.licensePlate}} - {{ vehicle.brand }} {{ vehicle.model }}</mp-subtitle>
                 </div>
-                <div>
+                <div class="header__subtitle">
                     <mp-subtitle>Kilometros del vehículo: {{ vehicle.kmTraveled | number:'1.0-0' }} km</mp-subtitle>
                 </div>
             </ng-container>
@@ -19,6 +19,8 @@
                 type="icon"
                 icon="download"
                 ariaLabel="Descargar XLSX"
+                tooltip="Descargar XLSX"
+                tooltipPosition="below"
                 (onClick)="handleDownloadClick()">
             </mp-button>
             <mp-dropdown-button type="primary" [items]="dropdownItems">

@@ -423,10 +423,10 @@ export class PurchaseOrderListComponent implements OnInit {
 
   confirmDelete(row: PurchaseOrderItem) {
     const config: ModalConfig = {
-      title: 'Confirmar eliminación',
+      title: 'CONFIRMAR ELIMINACIÓN',
       message: '¿Estás seguro que deseas eliminar esta Orden de Compra?',
-      confirmText: 'Sí, eliminar',
-      cancelText: 'No',
+      confirmText: 'Eliminar',
+      cancelText: 'Cancelar',
     };
 
     const dialogRef = this.dialog.open(ModalComponent, {

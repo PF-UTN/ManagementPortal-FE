@@ -154,9 +154,9 @@ export class MaintenanceRepairListComponent implements OnInit {
   deleteRepairWithConfirmation(repair: RepairItem): void {
     const dialogRef = this.dialog.open(ModalComponent, {
       data: {
-        title: 'Confirmar eliminación',
+        title: 'CONFIRMAR ELIMINACIÓN',
         message: '¿Está seguro que desea eliminar esta reparación?',
-        confirmText: 'Confirmar',
+        confirmText: 'Eliminar',
         cancelText: 'Cancelar',
       } as ModalConfig,
     });

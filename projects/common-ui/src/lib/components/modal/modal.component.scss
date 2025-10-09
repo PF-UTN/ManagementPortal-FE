@@ -1,0 +1,23 @@
+@import '../../../../../../src/styles/varibles';
+
+:host ::ng-deep mat-dialog-content {
+  padding: 24px 16px;
+  text-align: center;
+}
+
+.modal-header {
+  background: $muted-purple;
+  align-items: center;
+  padding: 10px;
+}
+
+:host ::ng-deep h2[mat-dialog-title] {
+  color: $white-color;
+  text-align: center !important;
+  justify-content: center;
+  width: 100%;
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+  display: block;
+}

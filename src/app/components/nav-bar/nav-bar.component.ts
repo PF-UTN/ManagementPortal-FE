@@ -91,7 +91,7 @@ export class NavBarComponent implements OnInit {
 
   handleLogOutClick() {
     const config: ModalConfig = {
-      title: 'Confirmar cierre de sesión',
+      title: 'CONFIRMAR CIERRE DE SESIÓN',
       message: '¿Estás seguro que deseas cerrar sesión?',
       confirmText: 'Sí',
       cancelText: 'No',
