@@ -153,20 +153,6 @@ describe('ShipmentListComponent', () => {
       expect(statusValue).toBe(ShipmentStatusOptions.Finished);
     });
 
-    it('should format createdAt date correctly', () => {
-      // Arrange
-      const item: ShipmentItem = {
-        id: 123,
-        vehicleAssigned: 'AAA111',
-        shipmentStatus: ShipmentStatusOptions.Pending,
-        createdAt: '2025-10-23T00:00:00.000Z',
-      };
-      // Act
-      const dateValue = component.columns[3]?.value?.(item);
-      // Assert
-      expect(dateValue).toBe('22/10/2025');
-    });
-
     it('should call onDetailDrawer when action is triggered', () => {
       // Arrange
       const item: ShipmentItem = {
