@@ -14,7 +14,8 @@
       "@Vehicle": ["projects/vehicle/src/public-api"],
       "@PurchaseOrder": ["./projects/purchase-order/src/public-api"],
       "@Order": ["./projects/order/src/public-api"],
-      "@Cart": ["./projects/cart/src/public-api"]
+      "@Cart": ["./projects/cart/src/public-api"],
+      "@Notification": ["./projects/notification/src/public-api"]
     },
     "outDir": "./dist/out-tsc",
     "strict": true,

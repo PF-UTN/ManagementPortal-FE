@@ -44,16 +44,26 @@
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
+
+          &__client-info {
+            padding-top: 15px;
+          }
         }
       }
+    }
+    &__footer {
+      margin-top: 1rem;
     }
   }
 
   &.closed {
-    width: 82px;
+    width: 83px;
 
     .container__header {
       justify-content: center;
+    }
+    .container__body__menu__item__title {
+      margin-left: 0;
     }
   }
 }
