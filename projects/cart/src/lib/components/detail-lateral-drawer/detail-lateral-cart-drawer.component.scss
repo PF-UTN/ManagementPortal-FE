@@ -23,12 +23,10 @@
     height: 180px;
     object-fit: cover;
     margin: 0 auto;
-    border-radius: 10px;
+    border-radius: 12px;
     box-shadow: 0 4px 16px rgba($dusky-violet, 0.9);
     transition: transform 0.3s;
-    display: block;
-    max-width: 100%;
-    height: auto;
+
     &:hover {
       transform: scale(1.08);
     }
