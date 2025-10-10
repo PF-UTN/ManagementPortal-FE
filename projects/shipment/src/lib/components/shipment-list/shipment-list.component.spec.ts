@@ -1,5 +1,9 @@
-import { VehicleService } from '@Common';
-import { downloadFileFromResponse, VehicleListItem } from '@Common';
+import {
+  VehicleService,
+  downloadFileFromResponse,
+  VehicleListItem,
+} from '@Common';
+import { LateralDrawerService } from '@Common-UI';
 
 import { DatePipe } from '@angular/common';
 import { HttpResponse } from '@angular/common/http';
@@ -20,6 +24,7 @@ import {
 } from '../../models/shipment-search.model';
 import { ShipmentStatusOptions } from '../../models/shipment-status.enum';
 import { ShipmentService } from '../../services/shipment.service';
+import { ShipmentDetailDrawerComponent } from '../shipment-detail-drawer/shipment-detail-drawer.component';
 
 jest.mock('@Common', () => ({
   ...jest.requireActual('@Common'),
@@ -151,21 +156,6 @@ describe('ShipmentListComponent', () => {
       const statusValue = component.columns[2]?.value?.(item);
       // Assert
       expect(statusValue).toBe(ShipmentStatusOptions.Finished);
-    });
-
-    it('should call onDetailDrawer when action is triggered', () => {
-      // Arrange
-      const item: ShipmentItem = {
-        id: 123,
-        vehicleAssigned: 'AAA111',
-        shipmentStatus: ShipmentStatusOptions.Pending,
-        createdAt: '2025-10-23T00:00:00.000Z',
-      };
-      const spy = jest.spyOn(component, 'onDetailDrawer');
-      // Act
-      component.columns[4]?.actions?.[0].action(item);
-      // Assert
-      expect(spy).toHaveBeenCalledWith(item);
     });
 
     it('should call onSend when action is triggered', () => {
@@ -571,6 +561,41 @@ describe('ShipmentListComponent', () => {
       const result = component.displayVehicle(null);
       // Assert
       expect(result).toBe('');
+    });
+  });
+
+  describe('onDetailDrawer', () => {
+    it('should open the drawer with correct parameters', () => {
+      // Arrange
+      const lateralDrawerService = TestBed.inject(LateralDrawerService);
+      const spy = jest
+        .spyOn(lateralDrawerService, 'open')
+        .mockImplementation(() => of(undefined));
+      const item: ShipmentItem = {
+        id: 123,
+        vehicleAssigned: 'AAA111',
+        shipmentStatus: ShipmentStatusOptions.Pending,
+        createdAt: '2025-10-23T00:00:00.000Z',
+      };
+
+      // Act
+      component.onDetailDrawer(item);
+
+      // Assert
+      expect(spy).toHaveBeenCalledWith(
+        ShipmentDetailDrawerComponent,
+        { shipmentId: item.id },
+        {
+          title: `Detalle de Envío #${item.id}`,
+          footer: {
+            firstButton: {
+              text: 'Cerrar',
+              click: expect.any(Function),
+            },
+          },
+          size: 'small',
+        },
+      );
     });
   });
 });

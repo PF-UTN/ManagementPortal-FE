@@ -1,0 +1,74 @@
+<ng-container *ngIf="isLoading(); else loaded">
+  <mp-loading></mp-loading>
+</ng-container>
+
+<ng-template #loaded>
+  <ng-container *ngIf="data() as detail">
+    <div class="container">
+      <div class="container__header">
+          <div class="row mt-2">
+            <div class="col-6">
+              <strong>Fecha</strong>
+              <p>{{detail.date | date:'dd/MM/yyyy'}}</p>
+            </div>
+            <div class="col-6 text-end">
+              @if (detail.routeLink) {
+              <a [href]="detail.routeLink" target="_blank" rel="noopener noreferrer" title="Ver ruta">
+                <mat-icon>map</mat-icon>
+              </a>
+              }
+            </div>
+        </div>
+        <div class="row">
+          <div class="col-12">
+              @if (detail.finishedAt) {
+              <strong>Finalizado</strong>
+              <p>{{ detail.finishedAt | date:'dd/MM/yyyy' }}</p>
+            }
+            </div>
+        </div>
+        <div class="row">
+          <div class="col-6">
+            <strong>Estado</strong>
+            <p>{{ getStatusLabel(detail.status)}}</p>
+          </div>
+          <div class="col-6 text-end">
+            <strong>Vehículo</strong>
+            <p>{{ detail.vehicle.licensePlate }} - {{ detail.vehicle.brand }} {{ detail.vehicle.model }}</p>
+          </div>
+        </div>
+      </div>
+      <hr>
+      <div class="container__body">
+        <div class="row text-center">
+          <div class="col-4">
+            @if (detail.estimatedKm !== null) {
+              <strong>Kilómetros estimados</strong>
+              <p>{{ detail.estimatedKm }} km</p> 
+            }
+          </div>
+          <div class="col-4">
+            @if (detail.effectiveKm !== null) {
+              <strong>Kilómetros efectivos</strong>
+              <p>{{ detail.effectiveKm }} km</p> 
+            }
+          </div>
+          <div class="col-4 text-center">
+            <div class="container__body__dif">
+             @if (detail.estimatedKm !== null && detail.effectiveKm !== null) {
+              <strong>Diferencia</strong>
+              <p>{{ (detail.estimatedKm - detail.effectiveKm) | number:'1.2-2' }} km</p>
+             }
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr>
+      <div class="container__order text-center">
+        <div class="container__order__title">Órdenes</div>
+          <ng-container *ngFor="let order of detail.orders; let i = index">
+            {{ order }}<span *ngIf="i < detail.orders.length - 1"> - </span>
+          </ng-container>
+      </div>
+    </div>
+  </ng-container>
