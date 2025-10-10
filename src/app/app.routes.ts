@@ -57,6 +57,13 @@ export const routes: Routes = [
     canActivate: [RoleGuard],
     data: { admittedRoles: [RolesEnum.Client, RolesEnum.Admin] },
   },
+  {
+    path: 'envios',
+    loadChildren: () =>
+      import('@Shipment').then((m) => m.ShipmentRoutingModule),
+    canActivate: [RoleGuard],
+    data: { admittedRoles: [RolesEnum.Client, RolesEnum.Admin] },
+  },
   { path: 'unauthorized', pathMatch: 'full', component: UnauthorizedComponent },
   { path: '**', pathMatch: 'full', redirectTo: 'inicio' },
 ];
