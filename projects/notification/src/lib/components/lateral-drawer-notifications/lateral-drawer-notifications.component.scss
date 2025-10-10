@@ -17,9 +17,10 @@
 
 .drawer-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: end;
   align-items: center;
   margin-bottom: 24px;
+  margin-right: 36px;
 }
 
 .notification-row {

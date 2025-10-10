@@ -29,23 +29,25 @@
       </nav>
     </div>
     <div class="container__body__footer">
-      <div class="container__body__menu__item__title">
-        <div class="container__body__menu__item__title__client-info">
-        @if (isOpen) {
-          <mp-ellipsis-text [text]="userName"></mp-ellipsis-text>
-        }
-        <mp-button
-          type="icon"
-          icon="notifications"
-          ariaLabel="Notificaciones"
-          tooltip="Notificaciones"
-          (onClick)="openNotifications()"
-          [badge]="notificationsCount > 0 ? notificationsCount : null"
-          [badgeColor]="'warn'"
-          [badgeOverlap]="true"
-          [badgePosition]="'above after'"
-        ></mp-button>
-        </div>
+      <div class="container__body__footer__user-info"
+        [class.only-client]="!canSeeNotifications"
+        >
+        @if (canSeeNotifications) {
+          <mp-button
+            type="icon"
+            icon="notifications"
+            ariaLabel="Notificaciones"
+            tooltip="Notificaciones"
+            (onClick)="openNotifications()"
+            [badge]="notificationsCount > 0 ? notificationsCount : null"
+            [badgeColor]="'warn'"
+            [badgeOverlap]="true"
+            [badgePosition]="'above after'"
+          ></mp-button>
+          }
+          @if (isOpen) {
+            <mp-ellipsis-text [text]="userName"></mp-ellipsis-text>
+          }
       </div>
 
       <div class="container__body__menu__item" (click)="handleLogOutClick()">

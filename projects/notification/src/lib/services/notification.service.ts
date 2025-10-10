@@ -33,9 +33,9 @@ export class NotificationService {
       .pipe(switchMap(() => this.getNotifications()));
   }
 
-  markAllAsViewed(id: number): Observable<UserNotification[]> {
+  markAllAsViewed(): Observable<UserNotification[]> {
     return this.http
-      .patch<void>(`${this.baseUrl}/${id}/mark-all-as-viewed`, {})
+      .patch<void>(`${this.baseUrl}/mark-all-as-viewed`, {})
       .pipe(switchMap(() => this.getNotifications()));
   }
 

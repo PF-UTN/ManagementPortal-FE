@@ -34,6 +34,7 @@ export class ButtonComponent {
   @Input() badgeColor: ThemePalette = 'accent';
   @Input() badgeOverlap: boolean = false;
   @Input() badgePosition: MatBadgePosition = 'above after';
+  @Input() iconColor: string = '';
   disabled = input(false);
   loading = input(false);
 

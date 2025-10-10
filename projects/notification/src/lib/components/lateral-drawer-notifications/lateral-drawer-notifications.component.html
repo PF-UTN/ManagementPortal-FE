@@ -6,7 +6,8 @@
         icon="done_all"
         ariaLabel="Marcar todas como leídas"
         tooltip="Marcar todas como leídas"
-        (onClick)="markAllAsViewed(1)"
+        [iconColor]="'#7c3aed'"
+        (onClick)="markAllAsViewed()"
       ></mp-button>
     </div>
 
@@ -35,6 +36,7 @@
         <div class="notification-row__actions">
           <mp-button
             type="icon"
+            [iconColor]="'#7c3aed'"
             icon="done"
             ariaLabel="Marcar como leída"
             tooltip="Marcar como leída"
@@ -45,6 +47,7 @@
             type="icon"
             icon="delete"
             ariaLabel="Eliminar"
+            [iconColor]="'#4b4170'"
             tooltip="Eliminar"
             (onClick)="deleteNotification(notification.id)"
           ></mp-button>

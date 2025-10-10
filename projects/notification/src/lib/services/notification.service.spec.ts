@@ -101,7 +101,7 @@ describe('NotificationService', () => {
 
   describe('markAllAsViewed', () => {
     it('should send a PATCH request and refresh notifications', () => {
-      service.markAllAsViewed(1).subscribe((response) => {
+      service.markAllAsViewed().subscribe((response) => {
         expect(response).toEqual(mockNotifications);
       });
 
@@ -118,7 +118,7 @@ describe('NotificationService', () => {
     it('should handle HTTP errors', () => {
       const mockError = new ErrorEvent('Network error');
 
-      service.markAllAsViewed(1).subscribe({
+      service.markAllAsViewed().subscribe({
         next: () => fail('Expected an error, but got a successful response'),
         error: (error) => {
           expect(error.error).toBe(mockError);

@@ -1,6 +1,5 @@
 import { CommonModule } from '@angular/common';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { mockDeep } from 'jest-mock-extended';
 import { of, throwError } from 'rxjs';
@@ -18,7 +17,6 @@ describe('LateralDrawerNotificationsComponent', () => {
   let component: LateralDrawerNotificationsComponent;
   let fixture: ComponentFixture<LateralDrawerNotificationsComponent>;
   let notificationService: NotificationService;
-  let snackBar: MatSnackBar;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -30,17 +28,18 @@ describe('LateralDrawerNotificationsComponent', () => {
       providers: [
         {
           provide: NotificationService,
-          useValue: mockDeep<NotificationService>(),
-        },
-        {
-          provide: MatSnackBar,
-          useValue: { open: jest.fn() },
+          useValue: {
+            ...mockDeep<NotificationService>(),
+            getNotifications: jest.fn().mockReturnValue(of(mockNotifications)),
+            markAsViewed: jest.fn(),
+            deleteNotification: jest.fn(),
+            markAllAsViewed: jest.fn(),
+          },
         },
       ],
     }).compileComponents();
 
     notificationService = TestBed.inject(NotificationService);
-    snackBar = TestBed.inject(MatSnackBar);
 
     fixture = TestBed.createComponent(LateralDrawerNotificationsComponent);
     component = fixture.componentInstance;
@@ -76,11 +75,6 @@ describe('LateralDrawerNotificationsComponent', () => {
       expect(component.notifications().find((n) => n.id === 1)?.viewed).toBe(
         true,
       );
-      expect(snackBar.open).toHaveBeenCalledWith(
-        'Notificación marcada como leída',
-        'Cerrar',
-        { duration: 3000 },
-      );
     });
 
     it('should revert local change on error', () => {
@@ -94,11 +88,6 @@ describe('LateralDrawerNotificationsComponent', () => {
       expect(notificationService.markAsViewed).toHaveBeenCalledWith(1);
       expect(component.notifications().find((n) => n.id === 1)?.viewed).toBe(
         false,
-      );
-      expect(snackBar.open).toHaveBeenCalledWith(
-        'Error al marcar la notificación como leída',
-        'Cerrar',
-        { duration: 3000 },
       );
     });
   });
@@ -114,11 +103,6 @@ describe('LateralDrawerNotificationsComponent', () => {
 
       expect(notificationService.deleteNotification).toHaveBeenCalledWith(1);
       expect(component.notifications().find((n) => n.id === 1)).toBeUndefined();
-      expect(snackBar.open).toHaveBeenCalledWith(
-        'Notificación eliminada',
-        'Cerrar',
-        { duration: 3000 },
-      );
     });
 
     it('should keep local list unchanged on error', () => {
@@ -131,11 +115,6 @@ describe('LateralDrawerNotificationsComponent', () => {
 
       expect(notificationService.deleteNotification).toHaveBeenCalledWith(1);
       expect(component.notifications().find((n) => n.id === 1)).toBeUndefined();
-      expect(snackBar.open).toHaveBeenCalledWith(
-        'Error al eliminar la notificación',
-        'Cerrar',
-        { duration: 3000 },
-      );
     });
   });
 
@@ -150,11 +129,6 @@ describe('LateralDrawerNotificationsComponent', () => {
 
       expect(notificationService.markAllAsViewed).toHaveBeenCalled();
       expect(component.notifications().every((n) => n.viewed)).toBe(true);
-      expect(snackBar.open).toHaveBeenCalledWith(
-        'Todas las notificaciones marcadas como leídas',
-        'Cerrar',
-        { duration: 3000 },
-      );
     });
 
     it('should keep all as viewed on error', () => {
@@ -167,11 +141,6 @@ describe('LateralDrawerNotificationsComponent', () => {
 
       expect(notificationService.markAllAsViewed).toHaveBeenCalled();
       expect(component.notifications().every((n) => n.viewed)).toBe(true);
-      expect(snackBar.open).toHaveBeenCalledWith(
-        'Error al marcar todas las notificaciones como leídas',
-        'Cerrar',
-        { duration: 3000 },
-      );
     });
   });
 

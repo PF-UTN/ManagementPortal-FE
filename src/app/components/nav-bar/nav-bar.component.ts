@@ -37,6 +37,7 @@ import { NavBarItem } from '../../models/nav-bar-item.model';
 export class NavBarComponent implements OnInit {
   items: NavBarItem[];
   isOpen = true;
+  canSeeNotifications = false;
   userName: string;
   notificationsCount = 0;
   private notifSub?: Subscription;
@@ -50,6 +51,10 @@ export class NavBarComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.canSeeNotifications = this.authService.hasAccess([
+      RolesEnum.Employee,
+      RolesEnum.Admin,
+    ]);
     this.userName = this.authService.userName;
     this.items = [
       {

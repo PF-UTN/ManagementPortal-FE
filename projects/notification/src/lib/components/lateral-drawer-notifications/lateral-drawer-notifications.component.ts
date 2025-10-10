@@ -154,7 +154,7 @@ export class LateralDrawerNotificationsComponent extends LateralDrawerContainer 
     });
   }
 
-  markAllAsViewed(id: number) {
+  markAllAsViewed() {
     const updated = this.notifications().map((n) => ({ ...n, viewed: true }));
     const sorted = [...updated].sort((a, b) => {
       if (a.viewed === b.viewed) {
@@ -166,7 +166,7 @@ export class LateralDrawerNotificationsComponent extends LateralDrawerContainer 
     });
     this.notifications.set(sorted);
 
-    this.notificationService.markAllAsViewed(id).subscribe({
+    this.notificationService.markAllAsViewed().subscribe({
       next: () => {
         this.snackBar.open(
           'Todas las notificaciones marcadas como leídas',
