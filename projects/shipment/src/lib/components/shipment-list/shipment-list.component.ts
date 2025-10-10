@@ -10,6 +10,7 @@ import {
   ColumnTypeEnum,
   TableColumn,
   TableComponent,
+  LateralDrawerService,
 } from '@Common-UI';
 
 import { DatePipe, CommonModule } from '@angular/common';
@@ -37,6 +38,7 @@ import { ShipmentSearchRequest } from '../../models/shipment-search.model';
 import { statusOptions } from '../../models/shipment-status-option.model';
 import { ShipmentStatusOptions } from '../../models/shipment-status.enum';
 import { ShipmentService } from '../../services/shipment.service';
+import { ShipmentDetailDrawerComponent } from '../shipment-detail-drawer/shipment-detail-drawer.component';
 
 @Component({
   selector: 'mp-shipment-list',
@@ -137,6 +139,7 @@ export class ShipmentListComponent implements OnInit {
     private readonly datePipe: DatePipe,
     private readonly shipmentService: ShipmentService,
     private readonly vehicleService: VehicleService,
+    private readonly lateralDrawerService: LateralDrawerService,
   ) {}
 
   ngOnInit(): void {
@@ -287,7 +290,20 @@ export class ShipmentListComponent implements OnInit {
   }
 
   onDetailDrawer(element: ShipmentItem): void {
-    console.log(element);
+    this.lateralDrawerService.open(
+      ShipmentDetailDrawerComponent,
+      { shipmentId: element.id },
+      {
+        title: `Detalle de Envío #${element.id}`,
+        footer: {
+          firstButton: {
+            text: 'Cerrar',
+            click: () => this.lateralDrawerService.close(),
+          },
+        },
+        size: 'small',
+      },
+    );
   }
 
   onSend(element: ShipmentItem): void {

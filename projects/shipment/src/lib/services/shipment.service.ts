@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
+import { ShipmentDetail } from '../models/shipment-deatil.model';
 import {
   ShipmentSearchFilters,
   ShipmentSearchRequest,
@@ -34,5 +35,10 @@ export class ShipmentService {
       observe: 'response',
       responseType: 'blob',
     });
+  }
+
+  getShipmentById(shipmentId: number): Observable<ShipmentDetail> {
+    const url = `${this.baseUrl}/${shipmentId}`;
+    return this.http.get<ShipmentDetail>(url);
   }
 }

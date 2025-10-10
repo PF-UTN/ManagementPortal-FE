@@ -6,6 +6,7 @@ import {
 import { TestBed } from '@angular/core/testing';
 
 import { ShipmentService } from './shipment.service';
+import { ShipmentDetail } from '../models/shipment-deatil.model';
 import {
   ShipmentSearchRequest,
   ShipmentSearchResponse,
@@ -180,6 +181,64 @@ describe('ShipmentService', () => {
       const req = httpMock.expectOne(url);
       expect(req.request.method).toBe('POST');
       req.error(mockError);
+    });
+  });
+
+  describe('getShipmentById', () => {
+    it('should GET /shipment/:id and return the shipment detail', () => {
+      // Arrange
+      const shipmentId = 42;
+      const mockDetail: ShipmentDetail = {
+        id: shipmentId,
+        date: '2025-10-10T00:00:00.000Z',
+        estimatedKm: null,
+        effectiveKm: null,
+        finishedAt: null,
+        routeLink: null,
+        vehicle: {
+          id: 12,
+          licensePlate: 'AAA111',
+          brand: 'Focus',
+          model: 'Focus',
+        },
+        status: 'Shipped',
+        orders: [42, 24],
+      };
+
+      let response: ShipmentDetail | undefined;
+
+      // Act
+      service.getShipmentById(shipmentId).subscribe((res) => {
+        response = res;
+      });
+
+      const req = httpMock.expectOne(`${baseUrl}/${shipmentId}`);
+      req.flush(mockDetail);
+
+      // Assert
+      expect(req.request.method).toBe('GET');
+      expect(response).toEqual(mockDetail);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const shipmentId = 99;
+      let errorResponse: unknown;
+
+      // Act
+      service.getShipmentById(shipmentId).subscribe({
+        next: () => {},
+        error: (err) => {
+          errorResponse = err;
+        },
+      });
+
+      const req = httpMock.expectOne(`${baseUrl}/${shipmentId}`);
+      req.flush('Error', { status: 404, statusText: 'Not Found' });
+
+      // Assert
+      expect(errorResponse).toBeDefined();
+      expect((errorResponse as { status: number }).status).toBe(404);
     });
   });
 });
