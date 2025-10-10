@@ -5,78 +5,101 @@
 <ng-template #loaded>
   <ng-container *ngIf="!error(); else errorContent">
     <ng-container *ngIf="data() as product">
-      <div class="container py-3">
+      <div class="container">
         <div class="container__body">
-          <img class="container__image" 
-            mat-card-image 
-            [src]="product.imageUrl ?? 'https://material.angular.dev/assets/img/examples/shiba2.jpg'"
+          <img
+            class="container__image"
+            mat-card-image
+            [src]="
+              product.imageUrl ??
+              'https://material.angular.dev/assets/img/examples/shiba2.jpg'
+            "
             alt="Shiba Inu"
-          >
-
-          <div class="row mb-3 mt-3">
-            <div class="col-12">
+          />
+          <hr />
+          <div class="row mb-3 mt-3 justify-content-center">
+            <div class="col-12 text-center">
               <strong>Nombre</strong>
-              <p>{{ product.name }}</p>
+              <p class="mb-1 mt-1 text-color">{{ product.name }}</p>
             </div>
           </div>
 
-          <div class="row mb-3">
-            <div class="col-12">
+          <div class="row mb-3 justify-content-center">
+            <div class="col-12 text-center">
               <strong>Descripción</strong>
-              <p>{{ product.description }}</p>
+              <p class="mb-1 mt-1 text-secondary">{{ product.description }}</p>
             </div>
           </div>
 
-          <div class="row mb-3">
-            <div class="col-12">
-              <strong>Stock Disponible</strong>
+          <div>
+            <div class="row mb-3 justify-content-center">
+              <div class="col-6 text-center">
+                <strong>Categoría</strong>
+                <p class="mb-1 mt-1 text-secondary">{{ product.category.name }}</p>
+              </div>
+            </div>
+          </div>
+
+          <hr />
+
+          <div class="row mb-3 justify-content-center">
+            <div class="col-6 text-center">
+              <strong>Disponible</strong>
               <p>{{ product.stock.quantityAvailable }}</p>
             </div>
-          </div>
-
-          <div class="row mb-3">
-            <div class="col-12">
+            <div class="col-6 text-center">
               <strong>Peso</strong>
               <p>{{ product.weight }} kg</p>
             </div>
           </div>
 
-          <div class="row mb-3">
-            <div class="col-12">
-              <strong>Precio Unitario</strong>
-              <p>${{ product.price }}</p>
+          <div class="row mb-3 justify-content-center">
+            <div class="col-12 text-center">
+              <p class="price-highlight">${{ product.price }}</p>
             </div>
           </div>
         </div>
 
-        <div class="container__actions">
+        <hr />
+
+        <div class="container__actions py-4">
           <div class="container__actions__quantity">
-            <mp-button 
-              type="icon" 
-              icon="remove" 
+            <mp-button
+              type="icon"
+              icon="remove"
               ariaLabel="Restar"
-              [disabled]="product.stock.quantityAvailable === 0 || quantity <= 1" 
-              (onClick)="decreaseQuantity()">
+              [disabled]="
+                product.stock.quantityAvailable === 0 || quantity <= 1
+              "
+              (onClick)="decreaseQuantity()"
+            >
             </mp-button>
-            <input 
-              type="number" 
-              min="1" 
-              [max]="product.stock.quantityAvailable" 
+            <input
+              type="number"
+              min="1"
+              [max]="product.stock.quantityAvailable"
               [value]="quantity"
-              (input)="onQuantityInput($event)" [disabled]="product.stock.quantityAvailable === 0" 
+              (input)="onQuantityInput($event)"
+              [disabled]="product.stock.quantityAvailable === 0"
             />
-            <mp-button 
-              type="icon" 
-              icon="add" 
+            <mp-button
+              type="icon"
+              icon="add"
               ariaLabel="Sumar"
-              [disabled]="product.stock.quantityAvailable === 0 || quantity >= product.stock.quantityAvailable"
-              (onClick)="increaseQuantity()">
+              [disabled]="
+                product.stock.quantityAvailable === 0 ||
+                quantity >= product.stock.quantityAvailable
+              "
+              (onClick)="increaseQuantity()"
+            >
             </mp-button>
           </div>
           <div class="container__actions__subtotal">
-            <strong>Subtotal</strong>
-            <br>
-            ${{ (product.price * quantity) | number:'1.2-2' }}
+            <strong class="subtotal-label">Subtotal</strong>
+            <br />
+            <span class="subtotal-value"
+              >${{ product.price * quantity | number: '1.2-2' }}</span
+            >
           </div>
         </div>
       </div>

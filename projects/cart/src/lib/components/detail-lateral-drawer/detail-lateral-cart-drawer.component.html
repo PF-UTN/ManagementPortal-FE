@@ -8,7 +8,7 @@
   <ng-container *ngIf="!error(); else errorContent">
     <ng-container *ngIf="data() as product">
       <div class="container py-4">
-        <div class="container__body">
+        <div class="container__body py-4">
           <div class="text-center mb-4">
             <img
               class="container__image"
@@ -21,37 +21,44 @@
             />
           </div>
 
-          <div class="row mb-3">
-            <div class="col-12">
+          <hr />
+
+          <div class="row mb-3 justify-content-center">
+            <div class="col-12 text-center">
               <strong>Nombre</strong>
-              <p class="mb-1 text-primary">{{ product.name }}</p>
+              <p class="mb-1 mt-1 text-color">{{ product.name }}</p>
             </div>
           </div>
 
-          <div class="row mb-3">
-            <div class="col-12">
+          <div class="row mb-3 justify-content-center">
+            <div class="col-12 text-center">
               <strong>Descripción</strong>
-              <p class="mb-1 text-secondary">{{ product.description }}</p>
+              <p class="mb-1 mt-1 text-secondary">{{ product.description }}</p>
             </div>
           </div>
-
-          <div class="row mb-3">
-            <div class="col-6">
-              <strong>Categoría</strong>
-              <p class="mb-1">{{ product.category.name }}</p>
+          <div>
+            <div class="row mb-3 justify-content-center">
+              <div class="col-6 text-center">
+                <strong>Categoría</strong>
+                <p class="mb-1 mt-1 text-secondary">{{ product.category.name }}</p>
+              </div>
             </div>
-            <div class="col-6">
+          </div>
+          <hr />
+          <div class="row mb-3 justify-content-center">
+            <div class="col-6 text-center">
+              <strong>Disponible</strong>
+              <p>{{ product.stock.quantityAvailable }}</p>
+            </div>
+            <div class="col-6 text-center">
               <strong>Peso</strong>
               <p class="mb-1">{{ product.weight }} kg</p>
             </div>
           </div>
 
-          <div class="row mb-3 align-items-center justify-content-between">
-            <div class="col">
-              <strong>Precio Unitario</strong>
-            </div>
-            <div class="col-auto text-end">
-              <p class="mb-1 price-highlight">${{ product.price }}</p>
+          <div class="row mb-3 justify-content-center">
+            <div class="col-12 text-center">
+              <p class="price-highlight">${{ product.price }}</p>
             </div>
           </div>
         </div>

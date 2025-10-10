@@ -1,78 +1,88 @@
 <div *ngIf="isLoadingData()">
-    <mp-loading></mp-loading>
+  <mp-loading></mp-loading>
 </div>
 
 <ng-container *ngIf="!isLoadingData()">
-
-    <div class="drawer-container__head">
-        <div class="drawer-container__row">
-            <p><strong>Proveedor</strong></p>
-            <p>{{ data()?.supplier?.businessName }}</p>
-        </div>
-        <div class="drawer-container__row">
-            <p><strong>Fecha estimada</strong></p>
-            <p>{{ data()?.estimatedDeliveryDate | date: 'dd/MM/yyyy' }}</p>
-        </div>
-        <div class="drawer-container__row">
-            <p><strong>Fecha efectiva</strong></p>
-            <p>{{ today | date: 'dd/MM/yyyy' }}</p>
-        </div>
-        <div class="drawer-container__row">
-            <p><strong>Observaciones</strong></p>
-            <p>{{ data()?.observation }}</p>
-        </div>
+  <div class="drawer-container__head">
+    <div class="drawer-container__row">
+      <span class="title">Proveedor</span>
+      <span class="text">{{ data()?.supplier?.businessName }}</span>
     </div>
-
-    <div class="drawer-container__body">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Producto</th>
-                    <th>Cantidad</th>
-                    <th>Precio</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let item of form?.controls?.items?.controls; let i = index" [formGroup]="item">
-                    <td>{{ data()?.purchaseOrderItems?.[i]?.productName ?? '' }}</td>
-                    <td>
-                        <div class="drawer-container__body__input">
-                            <mp-input 
-                                type="number" 
-                                formControlName="quantity" 
-                                label="Cantidad" 
-                                [min]=0
-                                placeholder="Cantidad">
-                            </mp-input>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="drawer-container__body__input">
-                            <mp-input 
-                                type="number" 
-                                formControlName="price" 
-                                label="Precio" 
-                                [min]=1 
-                                placeholder="Precio">
-                            </mp-input>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+    <div class="drawer-container__row">
+      <span class="title">Fecha estimada</span>
+      <span class="text">{{
+        data()?.estimatedDeliveryDate | date: 'dd/MM/yyyy'
+      }}</span>
     </div>
-
-    <div class="drawer-footer">
-        <div class="drawer-footer__subtotal">
-            <strong>Subtotal:</strong>
-            {{ subtotal() | currency:'ARS':'symbol':'1.2-2':'es-AR' }}
-        </div>
-    
-        <div class="drawer-footer__error">
-            <mat-error *ngIf="isFormInvalid()">
-                Al menos un producto debe tener cantidad mayores a cero
-            </mat-error>
-        </div>
+    <div class="drawer-container__row">
+      <span class="title">Fecha efectiva</span>
+      <span class="text">{{ today | date: 'dd/MM/yyyy' }}</span>
     </div>
+    <div class="drawer-container__row">
+      <span class="title">Observaciones</span>
+      <span class="text">{{ data()?.observation }}</span>
+    </div>
+  </div>
 
+  <div class="drawer-container__body">
+    <table class="table">
+      <thead>
+        <tr>
+          <th class="column-product">Producto</th>
+          <th class="column-product">Cantidad</th>
+          <th class="column-product">Precio</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let item of form?.controls?.items?.controls; let i = index"
+          [formGroup]="item"
+        >
+          <td>
+            <span class="text">{{
+              data()?.purchaseOrderItems?.[i]?.productName ?? ''
+            }}</span>
+          </td>
+          <td>
+            <div class="drawer-container__body__input input-small">
+              <mp-input
+                type="number"
+                formControlName="quantity"
+                label="Cantidad"
+                [min]="0"
+                placeholder="Cantidad"
+              >
+              </mp-input>
+            </div>
+          </td>
+          <td>
+            <div class="drawer-container__body__input input-large">
+              <mp-input
+                type="number"
+                formControlName="price"
+                label="Precio"
+                [min]="1"
+                placeholder="Precio"
+              >
+              </mp-input>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="drawer-footer">
+    <div class="drawer-footer__subtotal">
+      <strong class="title">Subtotal:</strong>
+      <span class="price-highlight">{{
+        subtotal() | currency: 'ARS' : 'symbol' : '1.2-2' : 'es-AR'
+      }}</span>
+    </div>
+    <div class="drawer-footer__error">
+      <mat-error *ngIf="isFormInvalid()">
+        Al menos un producto debe tener cantidad mayores a cero
+      </mat-error>
+    </div>
+  </div>
 </ng-container>
