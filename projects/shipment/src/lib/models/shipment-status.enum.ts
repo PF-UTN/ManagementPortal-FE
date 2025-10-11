@@ -1,5 +1,5 @@
 export enum ShipmentStatusOptions {
-  Pending = 'Pending',
-  Shipped = 'Shipped',
-  Finished = 'Finished',
+  Pending = 'Pendiente',
+  Shipped = 'Enviado',
+  Finished = 'Finalizado',
 }

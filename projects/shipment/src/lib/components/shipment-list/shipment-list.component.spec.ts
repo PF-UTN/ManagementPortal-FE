@@ -13,6 +13,7 @@ import {
   fakeAsync,
   tick,
 } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
 
@@ -77,6 +78,7 @@ describe('ShipmentListComponent', () => {
     shipmentService = {
       searchShipments: jest.fn(),
       downloadShipments: jest.fn(),
+      sendShipment: jest.fn(),
     } as unknown as jest.Mocked<ShipmentService>;
 
     vehicleService = {
@@ -141,7 +143,7 @@ describe('ShipmentListComponent', () => {
       // Act
       const statusValue = component.columns[2]?.value?.(item);
       // Assert
-      expect(statusValue).toBe('Pending');
+      expect(statusValue).toBe('Pendiente');
     });
 
     it('should return correct shipmentStatus value for Finished', () => {
@@ -186,6 +188,34 @@ describe('ShipmentListComponent', () => {
       component.columns[4]?.actions?.[2].action(item);
       // Assert
       expect(spy).toHaveBeenCalledWith(item);
+    });
+
+    it('should disable "Enviar" action if shipmentStatus is not Pending', () => {
+      // Arrange
+      const item: ShipmentItem = {
+        id: 123,
+        vehicleAssigned: 'AAA111',
+        shipmentStatus: ShipmentStatusOptions.Shipped,
+        createdAt: '2025-10-23T00:00:00.000Z',
+      };
+      // Act
+      const isDisabled = component.columns[4]?.actions?.[1].disabled?.(item);
+      // Assert
+      expect(isDisabled).toBe(true);
+    });
+
+    it('should enable "Enviar" action if shipmentStatus is Pending', () => {
+      // Arrange
+      const item: ShipmentItem = {
+        id: 124,
+        vehicleAssigned: 'BBB222',
+        shipmentStatus: ShipmentStatusOptions.Pending,
+        createdAt: '2025-10-24T00:00:00.000Z',
+      };
+      // Act
+      const isDisabled = component.columns[4]?.actions?.[1].disabled?.(item);
+      // Assert
+      expect(isDisabled).toBe(false);
     });
   });
 
@@ -596,6 +626,53 @@ describe('ShipmentListComponent', () => {
           size: 'small',
         },
       );
+    });
+  });
+
+  describe('getSearchRequest', () => {
+    it('should map selectedStatus from español to inglés for backend', () => {
+      // Arrange
+      component.selectedStatus = ['Pendiente', 'Enviada', 'Finalizado'];
+      // Act
+      const result = component.getSearchRequest();
+      // Assert
+      expect(result.filters?.statusName).toEqual([
+        'Pending',
+        'Shipped',
+        'Finished',
+      ]);
+    });
+  });
+
+  describe('onSend', () => {
+    it('should set isLoading to true when modal is confirmed', () => {
+      // Arrange
+      const item: ShipmentItem = {
+        id: 123,
+        vehicleAssigned: 'AAA111',
+        shipmentStatus: ShipmentStatusOptions.Pending,
+        createdAt: '2025-10-23T00:00:00.000Z',
+      };
+
+      // Mock dialog
+      const dialogRef = {
+        afterClosed: () => of(true),
+      };
+      const dialog = TestBed.inject(MatDialog);
+      jest
+        .spyOn(dialog, 'open')
+        .mockReturnValue(
+          dialogRef as unknown as ReturnType<typeof dialog.open>,
+        );
+      jest
+        .spyOn(shipmentService, 'sendShipment')
+        .mockReturnValue(of({ link: 'test' }));
+
+      // Act
+      component.onSend(item);
+
+      // Assert
+      expect(component.isLoading()).toBe(true);
     });
   });
 });
