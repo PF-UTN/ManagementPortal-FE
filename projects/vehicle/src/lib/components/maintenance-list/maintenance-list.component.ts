@@ -154,10 +154,10 @@ export class MaintenanceListComponent implements OnInit {
   deleteMaintenanceItem(item: MaintenanceItem): void {
     const dialogRef = this.dialog.open(ModalComponent, {
       data: {
-        title: 'Eliminar mantenimiento',
+        title: 'ELIMINAR MANTENIMIENTO',
         message: '¿Está seguro que desea eliminar este mantenimiento?',
         cancelText: 'Cancelar',
-        confirmText: 'Aceptar',
+        confirmText: 'Eliminar',
       },
     });
 

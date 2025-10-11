@@ -343,7 +343,7 @@ export class PurchaseOrderListComponent implements OnInit {
       DetailLateralDrawerComponent,
       { purchaseOrderId: request.id },
       {
-        title: 'Detalle Orden de Compra',
+        title: 'Detalle de Orden',
         footer: {
           firstButton: {
             text: 'Cerrar',
@@ -374,7 +374,7 @@ export class PurchaseOrderListComponent implements OnInit {
               },
             },
           },
-          size: 'small',
+          size: 'medium',
         },
       )
       .subscribe(() => this.doSearchSubject$.next());
@@ -423,10 +423,10 @@ export class PurchaseOrderListComponent implements OnInit {
 
   confirmDelete(row: PurchaseOrderItem) {
     const config: ModalConfig = {
-      title: 'Confirmar eliminación',
+      title: 'CONFIRMAR ELIMINACIÓN',
       message: '¿Estás seguro que deseas eliminar esta Orden de Compra?',
-      confirmText: 'Sí, eliminar',
-      cancelText: 'No',
+      confirmText: 'Eliminar',
+      cancelText: 'Cancelar',
     };
 
     const dialogRef = this.dialog.open(ModalComponent, {
@@ -463,7 +463,7 @@ export class PurchaseOrderListComponent implements OnInit {
         CancelLateralDrawerComponent,
         { data: rowItem },
         {
-          title: 'Cancelar Orden de Compra',
+          title: 'Cancelar Orden',
           footer: {
             firstButton: {
               text: 'Confirmar',
@@ -488,7 +488,7 @@ export class PurchaseOrderListComponent implements OnInit {
         ReceptionLateralDrawerComponent,
         { purchaseOrderId: rowItem.id },
         {
-          title: 'Recepcionar Orden de Compra',
+          title: 'Recepcionar Orden',
           footer: {
             firstButton: {
               text: 'Confirmar',

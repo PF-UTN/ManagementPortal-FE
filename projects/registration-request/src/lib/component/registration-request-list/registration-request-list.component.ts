@@ -197,7 +197,7 @@ export class RegistrationRequestListComponent implements OnInit {
         ApproveLateralDrawerComponent,
         { data: request },
         {
-          title: 'Aprobar Solicitud de Registro',
+          title: 'Aprobar Solicitud',
           footer: {
             firstButton: {
               text: 'Confirmar',
@@ -222,7 +222,7 @@ export class RegistrationRequestListComponent implements OnInit {
         RejectLateralDrawerComponent,
         { data: request },
         {
-          title: 'Rechazar Solicitud de Registro',
+          title: 'Rechazar Solicitud',
           footer: {
             firstButton: {
               text: 'Confirmar',

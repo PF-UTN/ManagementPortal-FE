@@ -1,0 +1,96 @@
+<div class="container-fluid">
+  <div class="main-container__header">
+    <mp-title>Envíos</mp-title>
+  </div>
+
+  <div class="filters-toolbar">
+    <div class="filters-toolbar__search">
+      <mp-input 
+        label="Busca por número de envío o número de orden" 
+        [(ngModel)]="searchText"
+        (ngModelChange)="onSearchTextChange()" 
+        placeholder="Buscar envío..." 
+        icon="close">
+      </mp-input>
+    </div>
+    <div class="filters-toolbar__actions">
+      <mat-form-field appearance="outline" class="filters-toolbar__actions__vehicle">
+  <mat-label>Filtrar por vehículo</mat-label>
+  <input
+    type="text"
+    matInput
+    [formControl]="vehicleControl"
+    [matAutocomplete]="autoVehicle"
+    placeholder="Buscar por patente..."
+    autocomplete="off"
+  />
+  <button
+    mat-icon-button
+    matSuffix
+    *ngIf="vehicleControl.value"
+    aria-label="Limpiar selección de vehículo"
+    (click)="clearVehicleSelection()"
+  >
+    <mat-icon>close</mat-icon>
+  </button>
+  <mat-autocomplete #autoVehicle="matAutocomplete" [displayWith]="displayVehicle"
+    (optionSelected)="onVehicleSelected($event.option.value)">
+    <mat-option *ngFor="let vehicle of filteredVehicles" [value]="vehicle">
+      {{ vehicle.licensePlate }}
+    </mat-option>
+  </mat-autocomplete>
+</mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Filtrar por estado</mat-label>
+        <mat-select multiple [(ngModel)]="selectedStatus" (selectionChange)="onStatusFilterChange()">
+          <mat-option *ngFor="let option of statusOptions" [value]="option?.key">
+            {{ option?.value }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="filters-toolbar__actions__icon">
+      <button mat-icon-button [matMenuTriggerFor]="dateMenu" aria-label="Filtrar por fecha"
+        matTooltip="Filtrar por fecha">
+        <mat-icon [color]="fromDate || toDate ? 'primary' : undefined">today</mat-icon>
+      </button>
+      <mat-menu #dateMenu="matMenu">
+        <div class="filters-toolbar__actions__date">
+          <mat-form-field appearance="outline">
+            <mat-label>Desde</mat-label>
+            <input matInput [matDatepicker]="pickerFrom" [(ngModel)]="fromDate" />
+            <mat-datepicker-toggle matSuffix [for]="pickerFrom"></mat-datepicker-toggle>
+            <mat-datepicker #pickerFrom></mat-datepicker>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Hasta</mat-label>
+            <input matInput [matDatepicker]="pickerTo" [(ngModel)]="toDate" />
+            <mat-datepicker-toggle matSuffix [for]="pickerTo"></mat-datepicker-toggle>
+            <mat-datepicker #pickerTo></mat-datepicker>
+          </mat-form-field>
+          <div class="filters-toolbar__actions__date__buttons">
+            <mp-button type="secondary" (onClick)="onClearDateFilter()">Limpiar</mp-button>
+            <mp-button type="primary" [disabled]="!isDateRangeValid" (onClick)="onApplyDateFilter()">Aplicar</mp-button>
+          </div>
+        </div>
+      </mat-menu>
+
+      <mp-button type="icon" ñ icon="download" tooltip="Descargar XLSX" tooltipPosition="below"
+        ariaLabel="Descargar XLSX" [disabled]="isLoading()" (onClick)="handleDownloadClick()">
+      </mp-button>
+    </div>
+  </div>
+
+  <div class="main-container__body">
+    <mp-table 
+      [columns]="columns" 
+      [dataSource$]="dataSource$" 
+      [isLoading]="isLoading()"
+      noDataMessage="Todavía no se ha realizado ningún pedido" 
+      [itemsNumber]="itemsNumber" 
+      [pageSize]="pageSize"
+      [pageIndex]="pageIndex" 
+      (pageChange)="handlePageChange($event)">
+    </mp-table>
+  </div>
+</div>

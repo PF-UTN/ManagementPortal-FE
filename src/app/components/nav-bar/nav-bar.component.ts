@@ -108,13 +108,19 @@ export class NavBarComponent implements OnInit {
         route: 'pedidos',
         shouldRender: this.authService.hasAccess([RolesEnum.Employee]),
       },
+      {
+        title: 'Envios',
+        icon: 'local_shipping',
+        route: 'envios',
+        shouldRender: this.authService.hasAccess([RolesEnum.Employee]),
+      },
     ];
     this.subscribeToNotifications();
   }
 
   handleLogOutClick() {
     const config: ModalConfig = {
-      title: 'Confirmar cierre de sesión',
+      title: 'CONFIRMAR CIERRE DE SESIÓN',
       message: '¿Estás seguro que deseas cerrar sesión?',
       confirmText: 'Sí',
       cancelText: 'No',

@@ -115,6 +115,12 @@ describe('NavBarComponent', () => {
           route: 'pedidos',
           shouldRender: true,
         },
+        {
+          title: 'Envios',
+          icon: 'local_shipping',
+          route: 'envios',
+          shouldRender: true,
+        },
       ]);
     });
 
@@ -180,6 +186,12 @@ describe('NavBarComponent', () => {
           title: 'Pedidos',
           icon: 'assignment',
           route: 'pedidos',
+          shouldRender: true,
+        },
+        {
+          title: 'Envios',
+          icon: 'local_shipping',
+          route: 'envios',
           shouldRender: true,
         },
       ]);
@@ -248,6 +260,12 @@ describe('NavBarComponent', () => {
         title: 'Pedidos',
         icon: 'assignment',
         route: 'pedidos',
+        shouldRender: false,
+      },
+      {
+        title: 'Envios',
+        icon: 'local_shipping',
+        route: 'envios',
         shouldRender: false,
       },
     ]);

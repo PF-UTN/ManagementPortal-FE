@@ -141,7 +141,7 @@ export class VehicleListComponent implements OnInit {
           action: (element: VehicleListItem) => {
             const dialogRef = this.dialog.open(ModalComponent, {
               data: {
-                title: `${element.enabled ? 'Deshabilitar' : 'Habilitar'} vehículo`,
+                title: `${element.enabled ? 'DESHABILITAR' : 'HABILITAR'} VEHÍCULO`,
                 message: `¿Está seguro que desea ${element.enabled ? 'deshabilitar' : 'habilitar'} este vehículo?`,
                 cancelText: 'Cancelar',
                 confirmText: 'Confirmar',
@@ -179,7 +179,7 @@ export class VehicleListComponent implements OnInit {
           action: (element: VehicleListItem) => {
             const dialogRef = this.dialog.open(ModalComponent, {
               data: {
-                title: 'Eliminar vehículo',
+                title: 'ELIMINAR VEHÍCULO',
                 message:
                   '¿Está seguro que desea eliminar este vehículo? Esta acción no se puede deshacer.',
                 cancelText: 'Cancelar',

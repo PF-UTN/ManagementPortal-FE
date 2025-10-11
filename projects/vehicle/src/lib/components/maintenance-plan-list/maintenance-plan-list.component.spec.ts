@@ -611,7 +611,7 @@ describe('MaintenancePlanListComponent', () => {
         ModalComponent,
         expect.objectContaining({
           data: expect.objectContaining({
-            title: 'Eliminar ítem',
+            title: 'ELIMINAR ITEM',
             message: expect.stringContaining('¿Está seguro'),
           }),
         }),

@@ -3,71 +3,94 @@
 </ng-container>
 
 <ng-template #loaded>
-    <ng-container *ngIf="product as product">
-      <div class="container py-3">
-        <div class="row mb-3">
-          <div class="col-12">
+  <ng-container *ngIf="product as product">
+    <div class="container py-4">
+      <div class="container__body py-4">
+        <img
+          class="container__image"
+          mat-card-image
+          [src]="product.imageUrl ?? 'https://material.angular.dev/assets/img/examples/shiba2.jpg'"
+          alt="Producto"
+        />
+
+        <hr />
+
+        <div class="row mb-2 mt-2 justify-content-center">
+          <div class="col-12 text-center">
             <strong>Nombre</strong>
-            <p>{{ product.name }}</p>
+            <p class="mb-2 mt-1 text-color">{{ product.name }}</p>
           </div>
         </div>
 
-        <div class="row mb-3">
-          <div class="col-12">
+        <div class="row mb-2 justify-content-center">
+          <div class="col-12 mb-2 mt-1 text-center">
             <strong>Descripción</strong>
-            <p>{{ product.description }}</p>
+            <p class="mb-2 text-secondary">{{ product.description }}</p>
           </div>
         </div>
 
-        <div class="row mb-3">
-          <div class="col-12">
+        <div class="row mb-2 justify-content-center">
+          <div class="col-6 mt-1 text-center">
             <strong>Categoría</strong>
-            <p>{{ product.category.name }}</p>
+            <p class="mb-1 text-secondary">{{ product.category.name }}</p>
           </div>
-        </div>
-
-        <div class="row mb-3">
-          <div class="col-12">
-            <strong>Precio</strong>
-            <p>${{ product.price }}</p>
-          </div>
-        </div>
-
-        <div class="row mb-3">
-          <div class="col-12">
-            <strong>Stock</strong>
-            <ul>
-              <li><strong>Disponible:</strong> {{ product.stock.quantityAvailable }}</li>
-              <li><strong>En pedido:</strong> {{ product.stock.quantityOrdered }}</li>
-              <li><strong>Reservado:</strong> {{ product.stock.quantityReserved }}</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="row mb-3">
-          <div class="col-12">
+          <div class="col-6 mt-1 text-center">
             <strong>Peso</strong>
-            <p>{{ product.weight }} kg</p>
+            <p class="mb-1 text-secondary">{{ product.weight }} kg</p>
           </div>
         </div>
 
-        <div class="row mb-3">
-          <div class="col-12">
-            <strong>Proveedor</strong>
-            <ul>
-              <li><strong>Nombre del negocio:</strong> {{ product.supplier.businessName }}</li>
-              <li><strong>Email:</strong> {{ product.supplier.email }}</li>
-              <li><strong>Teléfono:</strong> {{ product.supplier.phone }}</li>
-            </ul>
+        <hr />
+
+        <div class="row mb-2 text-center">
+          <div class="col-4">
+            <strong>Disponible</strong>
+            <br />
+            {{ product.stock.quantityAvailable }}
+          </div>
+          <div class="col-4">
+            <strong>Pedido</strong>
+            <br />
+            {{ product.stock.quantityOrdered }}
+          </div>
+          <div class="col-4">
+            <strong>Reservado</strong>
+            <br />
+            {{ product.stock.quantityReserved }}
           </div>
         </div>
 
-        <div class="row">
-          <div class="col-12">
+        <hr />
+
+        <div class="row mb-2 text-center">
+          <span><strong>Proveedor</strong></span>
+          <div class="col-12 mb-1 text-center">
+            <span>{{ product.supplier.businessName }}</span>
+            <div>
+              <span class="text-muted text-secondary">{{ product.supplier.phone }}</span>
+              <span class="text-muted mx-2 text-secondary">|</span>
+              <span class="text-muted text-secondary">{{ product.supplier.email }}</span>
+            </div>
+          </div>
+        </div>
+
+        <hr />
+
+        <div class="row mb-2 justify-content-center">
+          <div class="col-12 mb-2 mt-1 text-center">
             <strong>Estado del producto:</strong>
             <p>{{ product.enabled ? 'Activo' : 'En Pausa' }}</p>
           </div>
         </div>
+
+        <div class="row mb-3">
+          <div class="col-12 text-center">
+            <span class="price-highlight">
+              {{ product.price | currency: 'ARS' : 'symbol' : '1.2-2' }}
+            </span>
+          </div>
+        </div>
       </div>
-    </ng-container>
+    </div>
+  </ng-container>
 </ng-template>

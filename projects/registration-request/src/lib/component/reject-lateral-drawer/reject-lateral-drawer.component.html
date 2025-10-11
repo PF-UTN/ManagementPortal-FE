@@ -1,34 +1,34 @@
 <div class="drawer-container__content">
   <div class="drawer-container__row">
-    <p><strong>Nombre Completo | Razón Social</strong></p>
-    {{ data.user.fullNameOrBusinessName }}
+    <p><span class="title">Nombre Completo | Razón Social</span></p>
+    <p class="text">{{ data.user.fullNameOrBusinessName }}</p>
   </div>
   <div class="drawer-container__row">
-    <p><strong>Email</strong></p>
-    <p>{{ data.user.email }}</p>
+    <p><span class="title">Email</span></p>
+    <p class="text">{{ data.user.email }}</p>
   </div>
   <div class="drawer-container__row">
-    <p><strong>Telefono</strong></p>
-    <p>{{ data.user.phone }}</p>
+    <p><span class="title">Telefono</span></p>
+    <p class="text">{{ data.user.phone }}</p>
   </div>
   <div class="drawer-container__row">
-    <p><strong>Documento</strong></p>
-    <p>{{ data.user.documentType }} - {{ data.user.documentNumber }}</p>
+    <p><span class="title">Documento</span></p>
+    <p class="text">{{ data.user.documentType }} - {{ data.user.documentNumber }}</p>
   </div>
   <div class="drawer-container__row">
-    <strong>Categoría de IVA</strong>
-    <p>{{ data.user.taxCategory }}</p>
+    <p><span class="title">Categoría de IVA</span></p>
+    <p class="text">{{ data.user.taxCategory }}</p>
   </div>
   <div class="drawer-container__row">
-    <strong>Ciudad</strong>
-    <p>{{ data.user.address.town }} ({{ data.user.address.zipCode }})</p>
+    <p><span class="title">Ciudad</span></p>
+    <p class="text">{{ data.user.address.town }} ({{ data.user.address.zipCode }})</p>
   </div>
   <div class="drawer-container__row">
-    <strong>Dirección</strong>
-    <p>{{ data.user.address.streetAddress }}</p>
+    <p><span class="title">Dirección</span></p>
+    <p class="text">{{ data.user.address.streetAddress }}</p>
   </div>
   <div [formGroup]="form" class="drawer-container__row">
-    <p><strong>Motivo de Rechazo</strong></p>
+    <p><span class="title">Motivo de Rechazo</span></p>
     <mat-form-field appearance="fill" class="drawer-container__input">
       <mat-label>Escribe el motivo</mat-label>
       <textarea matInput formControlName="rejectionReason" maxlength="50"></textarea>
