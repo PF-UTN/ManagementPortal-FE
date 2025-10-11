@@ -131,7 +131,7 @@ describe('LateralDrawerNotificationsComponent', () => {
       expect(component.notifications().every((n) => n.viewed)).toBe(true);
     });
 
-    it('should keep all as viewed on error', () => {
+    it('should revert to original notifications on error', () => {
       jest
         .spyOn(notificationService, 'markAllAsViewed')
         .mockReturnValue(throwError(() => new Error('Error')));
@@ -140,7 +140,7 @@ describe('LateralDrawerNotificationsComponent', () => {
       component.markAllAsViewed();
 
       expect(notificationService.markAllAsViewed).toHaveBeenCalled();
-      expect(component.notifications().every((n) => n.viewed)).toBe(true);
+      expect(component.notifications()).toEqual(mockNotifications);
     });
   });
 
