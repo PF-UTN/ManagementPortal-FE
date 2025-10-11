@@ -155,35 +155,25 @@ export class LateralDrawerNotificationsComponent extends LateralDrawerContainer 
   }
 
   markAllAsViewed() {
-    const updated = this.notifications().map((n) => ({ ...n, viewed: true }));
-    const sorted = [...updated].sort((a, b) => {
-      if (a.viewed === b.viewed) {
-        return (
-          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-        );
-      }
-      return a.viewed ? 1 : -1;
+    const original = this.notifications();
+    this.notifications.set([]);
+    setTimeout(() => {
+      const updated = original.map((n) => ({ ...n, viewed: true }));
+      this.notifications.set(updated);
     });
-    this.notifications.set(sorted);
 
     this.notificationService.markAllAsViewed().subscribe({
       next: () => {
-        this.snackBar.open(
-          'Todas las notificaciones marcadas como leídas',
-          'Cerrar',
-          {
-            duration: 3000,
-          },
-        );
+        this.snackBar.open('Notificaciones marcadas como leídas', 'Cerrar', {
+          duration: 3000,
+        });
       },
       error: () => {
-        this.notifications.set(sorted);
+        this.notifications.set(original);
         this.snackBar.open(
           'Error al marcar todas las notificaciones como leídas',
           'Cerrar',
-          {
-            duration: 3000,
-          },
+          { duration: 3000 },
         );
       },
     });
@@ -191,5 +181,9 @@ export class LateralDrawerNotificationsComponent extends LateralDrawerContainer 
 
   closeDrawer() {
     this.lateralDrawerService.close();
+  }
+
+  get hasUnviewedNotifications(): boolean {
+    return this.notifications().some((n) => !n.viewed);
   }
 }

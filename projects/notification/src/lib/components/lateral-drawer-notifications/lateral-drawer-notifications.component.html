@@ -5,9 +5,10 @@
         type="icon"
         icon="done_all"
         ariaLabel="Marcar todas como leídas"
-        tooltip="Marcar todas como leídas"
+        [tooltip]="hasUnviewedNotifications ? 'Marcar todas como leídas' : 'No hay notificaciones pendientes'"
         [iconColor]="'#7c3aed'"
         (onClick)="markAllAsViewed()"
+        [disabled]="!hasUnviewedNotifications"
       ></mp-button>
     </div>
 
@@ -39,7 +40,7 @@
             [iconColor]="'#7c3aed'"
             icon="done"
             ariaLabel="Marcar como leída"
-            tooltip="Marcar como leída"
+            [tooltip]="notification.viewed ? 'Notificación leída' : 'Marcar como leída'"
             [disabled]="notification.viewed"
             (onClick)="markAsViewed(notification.id)"
           ></mp-button>

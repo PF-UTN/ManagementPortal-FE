@@ -25,6 +25,14 @@
     padding-bottom: 1rem;
 
     &__menu {
+      overflow-y: auto;
+
+      &::-webkit-scrollbar {
+        width: 0px;
+        background: transparent;
+      }
+
+      scrollbar-width: none;
       &__item {
         display: flex;
         align-items: center;
@@ -46,6 +54,9 @@
           text-overflow: ellipsis;
         }
       }
+    }
+    &__footer {
+      padding-top: 1rem;
     }
   }
 
