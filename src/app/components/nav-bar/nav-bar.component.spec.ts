@@ -1,4 +1,5 @@
 import { AuthService, RoleHierarchy, RolesEnum } from '@Common';
+import { NotificationService } from '@Notification';
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
@@ -24,6 +25,14 @@ describe('NavBarComponent', () => {
           useValue: mockDeep<AuthService>({
             userName: 'Jhon Doe',
           }),
+        },
+        {
+          provide: NotificationService,
+          useValue: {
+            ...mockDeep<NotificationService>(),
+            getNotifications: jest.fn().mockReturnValue(of([])),
+            unreadCount$: of(0),
+          },
         },
         { provide: MatDialog, useValue: mockDeep(MatDialog) },
       ],
