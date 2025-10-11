@@ -241,4 +241,58 @@ describe('ShipmentService', () => {
       expect((errorResponse as { status: number }).status).toBe(404);
     });
   });
+
+  describe('sendShipment', () => {
+    it('should PATCH /shipment/:id/send and return the link', () => {
+      // Arrange
+      const shipmentId = 22;
+      const mockResponse = {
+        link: 'https://www.google.com/maps/dir/?api=1&...',
+      };
+      let response: { link: string } | undefined;
+
+      // Act
+      service.sendShipment(shipmentId).subscribe((res) => {
+        response = res;
+      });
+
+      const req = httpMock.expectOne(`${baseUrl}/${shipmentId}/send`);
+      expect(req.request.method).toBe('PATCH');
+      req.flush(mockResponse);
+
+      // Assert
+      expect(response).toEqual(mockResponse);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const shipmentId = 22;
+      let errorResponse: unknown;
+
+      // Act
+      service.sendShipment(shipmentId).subscribe({
+        next: () => {},
+        error: (err) => {
+          errorResponse = err;
+        },
+      });
+
+      const req = httpMock.expectOne(`${baseUrl}/${shipmentId}/send`);
+      req.flush(
+        {
+          statusCode: 400,
+          message: 'Not all orders are prepared',
+          error: 'Bad Request',
+        },
+        { status: 400, statusText: 'Bad Request' },
+      );
+
+      // Assert
+      expect(errorResponse).toBeDefined();
+      expect((errorResponse as { status: number }).status).toBe(400);
+      expect(
+        (errorResponse as { error: { message: string } }).error.message,
+      ).toBe('Not all orders are prepared');
+    });
+  });
 });

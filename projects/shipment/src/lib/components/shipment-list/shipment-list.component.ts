@@ -11,6 +11,7 @@ import {
   TableColumn,
   TableComponent,
   LateralDrawerService,
+  ModalComponent,
 } from '@Common-UI';
 
 import { DatePipe, CommonModule } from '@angular/common';
@@ -20,11 +21,13 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { BehaviorSubject, Subject } from 'rxjs';
 import {
   debounceTime,
@@ -103,6 +106,8 @@ export class ShipmentListComponent implements OnInit {
         {
           description: 'Enviar',
           action: (element: ShipmentItem) => this.onSend(element),
+          disabled: (element: ShipmentItem) =>
+            element.shipmentStatus !== ShipmentStatusOptions.Pending,
         },
         {
           description: 'Finalizar',
@@ -140,6 +145,8 @@ export class ShipmentListComponent implements OnInit {
     private readonly shipmentService: ShipmentService,
     private readonly vehicleService: VehicleService,
     private readonly lateralDrawerService: LateralDrawerService,
+    private readonly dialog: MatDialog,
+    private readonly snackBar: MatSnackBar,
   ) {}
 
   ngOnInit(): void {
@@ -158,7 +165,14 @@ export class ShipmentListComponent implements OnInit {
             response.results.map((item) => ({
               id: item.id,
               vehicleAssigned: item.vehicle.licensePlate,
-              shipmentStatus: item.status as ShipmentStatusOptions,
+              shipmentStatus:
+                item.status === 'Pendiente'
+                  ? ShipmentStatusOptions.Pending
+                  : item.status === 'Enviado'
+                    ? ShipmentStatusOptions.Shipped
+                    : item.status === 'Finalizado'
+                      ? ShipmentStatusOptions.Finished
+                      : ShipmentStatusOptions.Pending,
               createdAt: item.date,
             })),
           );
@@ -262,12 +276,18 @@ export class ShipmentListComponent implements OnInit {
       searchText = searchText.substring(0, 50);
     }
 
+    const statusMap: Record<string, string> = {
+      Pendiente: 'Pending',
+      Enviada: 'Shipped',
+      Finalizado: 'Finished',
+    };
+
     return {
       searchText,
       page: this.pageIndex + 1,
       pageSize: this.pageSize,
       filters: {
-        statusName: this.selectedStatus,
+        statusName: this.selectedStatus.map((s) => statusMap[s] ?? s),
         fromDate: this.fromDate
           ? (this.datePipe.transform(this.fromDate, 'yyyy-MM-dd') ?? undefined)
           : undefined,
@@ -307,7 +327,31 @@ export class ShipmentListComponent implements OnInit {
   }
 
   onSend(element: ShipmentItem): void {
-    console.log(element);
+    const dialogRef = this.dialog.open(ModalComponent, {
+      data: {
+        title: 'Confirmar envío',
+        message: '¿Está seguro de que desea realizar este envío?',
+        confirmText: 'Aceptar',
+        cancelText: 'Cancelar',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: boolean) => {
+      if (result) {
+        this.isLoading.set(true);
+        this.shipmentService.sendShipment(element.id).subscribe({
+          next: () => {
+            this.snackBar.open('Envío realizado con éxito', 'Cerrar', {
+              duration: 3000,
+            });
+            this.emitSearch();
+            this.onDetailDrawer(element);
+            this.isLoading.set(false);
+          },
+          error: () => {},
+        });
+      }
+    });
   }
 
   onFinish(element: ShipmentItem): void {

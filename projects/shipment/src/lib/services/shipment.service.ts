@@ -41,4 +41,9 @@ export class ShipmentService {
     const url = `${this.baseUrl}/${shipmentId}`;
     return this.http.get<ShipmentDetail>(url);
   }
+
+  sendShipment(shipmentId: number): Observable<{ link: string }> {
+    const url = `${this.baseUrl}/${shipmentId}/send`;
+    return this.http.patch<{ link: string }>(url, {});
+  }
 }
