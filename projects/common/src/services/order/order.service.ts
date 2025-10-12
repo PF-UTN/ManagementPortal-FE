@@ -80,4 +80,12 @@ export class OrderService {
     const url = `${environment.apiBaseUrl}/shipment`;
     return this.http.post<void>(url, payload);
   }
+
+  markOrderAsPrepared(
+    orderId: number,
+    orderStatusId: number,
+  ): Observable<void> {
+    const url = `${this.baseUrl}/${orderId}`;
+    return this.http.patch<void>(url, { orderStatusId });
+  }
 }
