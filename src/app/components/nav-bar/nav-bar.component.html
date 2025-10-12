@@ -1,6 +1,10 @@
 <div class="container" [class.closed]="!isOpen">
   <div class="container__header">
-    <button mat-icon-button (click)="toggleNavBar()" class="container__header__toggle">
+    <button
+      mat-icon-button
+      (click)="toggleNavBar()"
+      class="container__header__toggle"
+    >
       <mat-icon>menu</mat-icon>
     </button>
   </div>
@@ -17,20 +21,40 @@
             [class.closed]="!isOpen"
           >
             <mat-icon>{{ item.icon }}</mat-icon>
-            <p class="container__body__menu__item__title" *ngIf="isOpen">{{ item.title }}</p>
+            <p class="container__body__menu__item__title" *ngIf="isOpen">
+              {{ item.title }}
+            </p>
           </div>
         </ng-container>
       </nav>
     </div>
     <div class="container__body__footer">
-      @if (isOpen) {
-        <div class="container__body__menu__item__title">
-          <mp-ellipsis-text [text]="userName"></mp-ellipsis-text>
-        </div>
-      }
+      <div class="container__body__footer__user-info"
+        [class.only-client]="!canSeeNotifications"
+        >
+        @if (canSeeNotifications) {
+          <mp-button
+            type="icon"
+            icon="notifications"
+            ariaLabel="Notificaciones"
+            tooltip="Notificaciones"
+            (onClick)="openNotifications()"
+            [badge]="notificationsCount > 0 ? notificationsCount : null"
+            [badgeColor]="'warn'"
+            [badgeOverlap]="true"
+            [badgePosition]="'above after'"
+          ></mp-button>
+          }
+          @if (isOpen) {
+            <mp-ellipsis-text [text]="userName"></mp-ellipsis-text>
+          }
+      </div>
+
       <div class="container__body__menu__item" (click)="handleLogOutClick()">
         <mat-icon>logout</mat-icon>
-        <p class="container__body__menu__item__title" *ngIf="isOpen">Cerrar Sesión</p>
+        <p class="container__body__menu__item__title" *ngIf="isOpen">
+          Cerrar Sesión
+        </p>
       </div>
     </div>
   </div>

@@ -14,7 +14,7 @@
       [matBadgeOverlap]="badgeOverlap"
       [matBadgePosition]="badgePosition"
     >
-      <mat-icon *ngIf="icon">{{ icon }}</mat-icon>
+      <mat-icon *ngIf="icon" [style.color]="iconColor">{{ icon }}</mat-icon>
     </button>
   </span>
 </ng-container>

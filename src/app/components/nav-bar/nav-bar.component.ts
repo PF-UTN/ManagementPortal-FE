@@ -1,5 +1,15 @@
 import { AuthService, RolesEnum } from '@Common';
-import { EllipsisTextComponent, ModalComponent, ModalConfig } from '@Common-UI';
+import {
+  ButtonComponent,
+  EllipsisTextComponent,
+  LateralDrawerService,
+  ModalComponent,
+  ModalConfig,
+} from '@Common-UI';
+import {
+  NotificationService,
+  LateralDrawerNotificationsComponent,
+} from '@Notification';
 
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
@@ -7,6 +17,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { RouterModule } from '@angular/router';
+import { interval, Subscription } from 'rxjs';
 
 import { NavBarItem } from '../../models/nav-bar-item.model';
 @Component({
@@ -20,19 +31,30 @@ import { NavBarItem } from '../../models/nav-bar-item.model';
     RouterModule,
     MatButtonModule,
     EllipsisTextComponent,
+    ButtonComponent,
   ],
 })
 export class NavBarComponent implements OnInit {
   items: NavBarItem[];
   isOpen = true;
+  canSeeNotifications = false;
   userName: string;
+  notificationsCount = 0;
+  private notifSub?: Subscription;
+  private notifIntervalSub?: Subscription;
 
   constructor(
     private authService: AuthService,
     private dialog: MatDialog,
+    private lateralDrawerService: LateralDrawerService,
+    private notificationService: NotificationService,
   ) {}
 
   ngOnInit(): void {
+    this.canSeeNotifications = this.authService.hasAccess([
+      RolesEnum.Employee,
+      RolesEnum.Admin,
+    ]);
     this.userName = this.authService.userName;
     this.items = [
       {
@@ -93,6 +115,7 @@ export class NavBarComponent implements OnInit {
         shouldRender: this.authService.hasAccess([RolesEnum.Employee]),
       },
     ];
+    this.subscribeToNotifications();
   }
 
   handleLogOutClick() {
@@ -117,5 +140,35 @@ export class NavBarComponent implements OnInit {
 
   toggleNavBar() {
     this.isOpen = !this.isOpen;
+  }
+  openNotifications(): void {
+    this.lateralDrawerService.open(
+      LateralDrawerNotificationsComponent,
+      {},
+      {
+        title: 'Notificaciones',
+        footer: {
+          firstButton: {
+            text: 'Cerrar',
+            click: () => this.lateralDrawerService.close(),
+          },
+        },
+        size: 'medium',
+      },
+    );
+  }
+
+  private subscribeToNotifications(): void {
+    this.notifSub = this.notificationService.unreadCount$.subscribe((count) => {
+      this.notificationsCount = count;
+    });
+    this.notificationService.getNotifications().subscribe();
+    this.notifIntervalSub = interval(21_600_000).subscribe(() => {
+      this.notificationService.getNotifications().subscribe();
+    });
+  }
+  ngOnDestroy(): void {
+    this.notifSub?.unsubscribe();
+    this.notifIntervalSub?.unsubscribe();
   }
 }

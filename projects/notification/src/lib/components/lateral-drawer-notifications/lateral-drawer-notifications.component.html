@@ -1,0 +1,59 @@
+<div class="container">
+  <div class="container__body">
+    <div class="drawer-header">
+      <mp-button
+        type="icon"
+        icon="done_all"
+        ariaLabel="Marcar todas como leídas"
+        [tooltip]="hasUnviewedNotifications ? 'Marcar todas como leídas' : 'No hay notificaciones pendientes'"
+        [iconColor]="'#7c3aed'"
+        (onClick)="markAllAsViewed()"
+        [disabled]="!hasUnviewedNotifications"
+      ></mp-button>
+    </div>
+
+    <mp-loading *ngIf="isLoading()"></mp-loading>
+
+    <div
+      *ngIf="!isLoading() && notifications().length === 0"
+      class="empty-list"
+    >
+      No tienes notificaciones.
+    </div>
+
+    <div *ngIf="!isLoading() && notifications().length > 0">
+      <div
+        *ngFor="let notification of notifications(); let i = index trackBy: trackById"
+        class="notification-row"
+        [class.viewed]="notification.viewed"
+        [attr.style]="'--animation-delay:' + i * 300 + 'ms'"
+      >
+        <div class="notification-row__info">
+          <span class="notification-row__timestamp">
+            {{ notification.timestamp | date: 'dd/MM/yyyy HH:mm' }}
+          </span>
+          <p class="notification-row__message">{{ notification.message }}</p>
+        </div>
+        <div class="notification-row__actions">
+          <mp-button
+            type="icon"
+            [iconColor]="'#7c3aed'"
+            icon="done"
+            ariaLabel="Marcar como leída"
+            [tooltip]="notification.viewed ? 'Notificación leída' : 'Marcar como leída'"
+            [disabled]="notification.viewed"
+            (onClick)="markAsViewed(notification.id)"
+          ></mp-button>
+          <mp-button
+            type="icon"
+            icon="delete"
+            ariaLabel="Eliminar"
+            [iconColor]="'#4b4170'"
+            tooltip="Eliminar"
+            (onClick)="deleteNotification(notification.id)"
+          ></mp-button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

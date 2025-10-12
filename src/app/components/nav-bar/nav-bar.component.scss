@@ -25,6 +25,14 @@
     padding-bottom: 1rem;
 
     &__menu {
+      overflow-y: auto;
+
+      &::-webkit-scrollbar {
+        width: 0px;
+        background: transparent;
+      }
+
+      scrollbar-width: none;
       &__item {
         display: flex;
         align-items: center;
@@ -47,21 +55,31 @@
         }
       }
     }
+    &__footer {
+      padding-top: 1rem;
+    }
   }
 
   &.closed {
-    width: 82px;
+    width: 83px;
 
     .container__header {
       justify-content: center;
     }
+    .container__body__menu__item__title {
+      margin-left: 0;
+    }
   }
-}
 
-.active-link {
-  background-color: $lavender-gray;
-  img {
-    filter: invert(48%) sepia(86%) saturate(1679%) hue-rotate(159deg)
-      brightness(91%) contrast(101%);
+  .active-link {
+    background-color: $lavender-gray;
+    img {
+      filter: invert(48%) sepia(86%) saturate(1679%) hue-rotate(159deg)
+        brightness(91%) contrast(101%);
+    }
+  }
+
+  .container__body__footer__user-info.only-client mp-ellipsis-text {
+    padding-left: 26px;
   }
 }
