@@ -1,3 +1,4 @@
+import { OrderService } from '@Common';
 import {
   LateralDrawerContainer,
   LateralDrawerService,
@@ -9,8 +10,10 @@ import {
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, signal } from '@angular/core';
 
-import { OrderDetailItem, OrderDetail } from '../../models/order-detail.model';
-import { OrderService } from './../../services/order.service';
+import {
+  OrderDetailItem,
+  OrderDetail,
+} from '../../../../../common/src/models/order/order-detail.model';
 @Component({
   selector: 'mp-detail-lateral-drawer-client',
   standalone: true,

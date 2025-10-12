@@ -1,5 +1,5 @@
-import { OrderDetail } from '../models/order-detail.model';
-import { OrderSearchResponse } from '../models/order-response-model';
+import { OrderDetail } from './order-detail.model';
+import { OrderSearchResponse } from './order-response-model';
 
 export const mockOrderListItems = {
   total: 2,

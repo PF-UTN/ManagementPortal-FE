@@ -8,16 +8,19 @@ import {
 import { TestBed } from '@angular/core/testing';
 
 import { OrderService } from './order.service';
-import { OrderClientSearchRequest } from '../models/order-client-request-model';
-import { OrderClientSearchResponse } from '../models/order-client-response.model';
-import { OrderDetail } from '../models/order-detail.model';
-import { OrderOrderField, OrderParams } from '../models/order-params.model';
-import { OrderSearchRequest } from '../models/order-request-model';
 import {
   mockOrderDetail,
   mockOrderListItems,
-} from '../testing/mock-data.model';
-import { mockOrderClientDetail } from '../testing/mock-data.model2';
+} from '../../models/order/mock-data.model';
+import { mockOrderClientDetail } from '../../models/order/mock-data.model2';
+import { OrderClientSearchRequest } from '../../models/order/order-client-request-model';
+import { OrderClientSearchResponse } from '../../models/order/order-client-response.model';
+import { OrderDetail } from '../../models/order/order-detail.model';
+import {
+  OrderOrderField,
+  OrderParams,
+} from '../../models/order/order-params.model';
+import { OrderSearchRequest } from '../../models/order/order-request-model';
 
 const baseUrl = 'https://dev-management-portal-be.vercel.app/order';
 

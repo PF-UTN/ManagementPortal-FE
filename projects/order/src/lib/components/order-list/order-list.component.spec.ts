@@ -1,4 +1,8 @@
-import { downloadFileFromResponse } from '@Common';
+import {
+  downloadFileFromResponse,
+  OrderService,
+  mockOrderSearchResponse,
+} from '@Common';
 import { PillStatusEnum } from '@Common-UI';
 
 import { DatePipe, CurrencyPipe } from '@angular/common';
@@ -14,11 +18,9 @@ import { mockDeep } from 'jest-mock-extended';
 import { of, throwError } from 'rxjs';
 
 import { OrderListComponent } from './order-list.component';
-import { OrderItem } from '../../models/order-item-general.model';
-import { OrderSearchResult } from '../../models/order-response-model';
-import { OrderStatusOptions } from '../../models/order-status.enum';
-import { OrderService } from '../../services/order.service';
-import { mockOrderSearchResponse } from '../../testing/mock-data.model';
+import { OrderItem } from '../../../../../common/src/models/order/order-item-general.model';
+import { OrderSearchResult } from '../../../../../common/src/models/order/order-response-model';
+import { OrderStatusOptions } from '../../../../../common/src/models/order/order-status.enum';
 import { CreateShipmentDrawerComponent } from '../create-shipment-drawer/create-shipment-drawer.component';
 
 jest.mock('@Common', () => ({

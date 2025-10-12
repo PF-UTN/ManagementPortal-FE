@@ -1,9 +1,9 @@
 import {
   OrderClientDetail,
   OrderDetailItem,
-} from '../models/order-detail-client.model';
-import { OrderItem } from '../models/order-item.model';
-import { OrderStatusOptions } from '../models/order-status.enum';
+} from './order-detail-client.model';
+import { OrderItem } from './order-item.model';
+import { OrderStatusOptions } from './order-status.enum';
 
 const orderItems: OrderDetailItem[] = [
   {
