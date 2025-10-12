@@ -131,7 +131,7 @@ export class CreateShipmentDrawerComponent
           return this.vehicleService
             .postSearchVehiclesAsync({ searchText, page: 1, pageSize: 10 })
             .pipe(
-              map((res) => res.results),
+              map((res) => res.results.filter((v) => v.enabled === true)),
               finalize(() => (this.isSearching = false)),
             );
         }),

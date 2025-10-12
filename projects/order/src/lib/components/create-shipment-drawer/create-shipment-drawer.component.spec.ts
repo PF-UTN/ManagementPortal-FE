@@ -194,4 +194,69 @@ describe('CreateShipmentDrawerComponent', () => {
       expect(result).toEqual({ invalidVehicle: true });
     });
   });
+
+  describe('filteredVehicles$', () => {
+    it('should emit only vehicles with enabled=true', (done) => {
+      // Arrange
+      const vehicles: VehicleListItem[] = [
+        {
+          id: 1,
+          licensePlate: 'A',
+          brand: '',
+          model: '',
+          kmTraveled: 0,
+          enabled: true,
+          admissionDate: '',
+        },
+        {
+          id: 2,
+          licensePlate: 'B',
+          brand: '',
+          model: '',
+          kmTraveled: 0,
+          enabled: false,
+          admissionDate: '',
+        },
+        {
+          id: 3,
+          licensePlate: 'C',
+          brand: '',
+          model: '',
+          kmTraveled: 0,
+          enabled: true,
+          admissionDate: '',
+        },
+      ];
+      vehicleService.postSearchVehiclesAsync.mockReturnValue(
+        of({ total: vehicles.length, results: vehicles }),
+      );
+
+      // Act
+      component.shipmentForm.controls.vehicle.setValue({} as VehicleListItem);
+      component.filteredVehicles$.subscribe((result) => {
+        // Assert
+        expect(result).toEqual([
+          {
+            id: 1,
+            licensePlate: 'A',
+            brand: '',
+            model: '',
+            kmTraveled: 0,
+            enabled: true,
+            admissionDate: '',
+          },
+          {
+            id: 3,
+            licensePlate: 'C',
+            brand: '',
+            model: '',
+            kmTraveled: 0,
+            enabled: true,
+            admissionDate: '',
+          },
+        ]);
+        done();
+      });
+    });
+  });
 });
