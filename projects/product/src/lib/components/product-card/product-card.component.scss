@@ -28,6 +28,7 @@
     object-fit: contain;
     display: block;
     margin: 0 auto;
+    margin-bottom: 20px;
   }
 
   &__content {
@@ -36,25 +37,49 @@
   }
 
   &__name {
-    font-weight: bold;
+    font-size: large;
+    color: $lavander-primary-dark;
   }
 
   &__row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 12px;
+    justify-content: center;
+    margin-top: 12px;
     width: 100%;
   }
 
   &__quantity {
     display: flex;
     align-items: center;
+
+    mp-button {
+      padding: 0;
+      margin: 0;
+      border-radius: 50px;
+      background-color: $dusky-violet;
+      color: $white-color;
+    }
+
+    input[type='number'] {
+      text-align: center;
+      width: 50px;
+      height: 40px;
+      font-size: 14px;
+      border: 1px solid $lavender-gray;
+      border-radius: 6px;
+      margin: 0;
+
+      -webkit-appearance: none;
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
   }
 
   &__content-price {
     align-items: center;
-    font-size: 1.1em;
+    font-size: 30px;
+    font-weight: 400;
     white-space: nowrap;
   }
 
@@ -87,4 +112,9 @@
     display: block;
     margin: 0 auto;
   }
+}
+
+.mat-mdc-card-actions {
+  justify-content: center;
+  padding-bottom: 16px;
 }
