@@ -1,6 +1,7 @@
-import { VehicleService, VehicleListItem } from '@Common';
+import { VehicleService, VehicleListItem, OrderService } from '@Common';
 import { LateralDrawerService } from '@Common-UI';
 
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -8,7 +9,6 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
 
 import { CreateShipmentDrawerComponent } from './create-shipment-drawer.component';
-import { OrderService } from '../../services/order.service';
 
 describe('CreateShipmentDrawerComponent', () => {
   let component: CreateShipmentDrawerComponent;
@@ -40,6 +40,7 @@ describe('CreateShipmentDrawerComponent', () => {
     await TestBed.configureTestingModule({
       imports: [CreateShipmentDrawerComponent, NoopAnimationsModule],
       providers: [
+        provideHttpClientTesting(),
         { provide: VehicleService, useValue: vehicleService },
         { provide: OrderService, useValue: orderService },
         { provide: LateralDrawerService, useValue: lateralDrawerService },
@@ -192,6 +193,71 @@ describe('CreateShipmentDrawerComponent', () => {
 
       // Assert
       expect(result).toEqual({ invalidVehicle: true });
+    });
+  });
+
+  describe('filteredVehicles$', () => {
+    it('should emit only vehicles with enabled=true', (done) => {
+      // Arrange
+      const vehicles: VehicleListItem[] = [
+        {
+          id: 1,
+          licensePlate: 'A',
+          brand: '',
+          model: '',
+          kmTraveled: 0,
+          enabled: true,
+          admissionDate: '',
+        },
+        {
+          id: 2,
+          licensePlate: 'B',
+          brand: '',
+          model: '',
+          kmTraveled: 0,
+          enabled: false,
+          admissionDate: '',
+        },
+        {
+          id: 3,
+          licensePlate: 'C',
+          brand: '',
+          model: '',
+          kmTraveled: 0,
+          enabled: true,
+          admissionDate: '',
+        },
+      ];
+      vehicleService.postSearchVehiclesAsync.mockReturnValue(
+        of({ total: vehicles.length, results: vehicles }),
+      );
+
+      // Act
+      component.shipmentForm.controls.vehicle.setValue({} as VehicleListItem);
+      component.filteredVehicles$.subscribe((result) => {
+        // Assert
+        expect(result).toEqual([
+          {
+            id: 1,
+            licensePlate: 'A',
+            brand: '',
+            model: '',
+            kmTraveled: 0,
+            enabled: true,
+            admissionDate: '',
+          },
+          {
+            id: 3,
+            licensePlate: 'C',
+            brand: '',
+            model: '',
+            kmTraveled: 0,
+            enabled: true,
+            admissionDate: '',
+          },
+        ]);
+        done();
+      });
     });
   });
 });

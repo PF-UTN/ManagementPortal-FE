@@ -1,4 +1,4 @@
-import { VehicleService, VehicleListItem } from '@Common';
+import { VehicleService, VehicleListItem, OrderService } from '@Common';
 import {
   ListComponent,
   LateralDrawerContainer,
@@ -34,8 +34,7 @@ import {
   finalize,
 } from 'rxjs/operators';
 
-import { CreateShipmentRequest } from '../../models/create-shipment-request.model';
-import { OrderService } from '../../services/order.service';
+import { CreateShipmentRequest } from '../../../../../common/src/models/order/create-shipment-request.model';
 
 @Component({
   selector: 'lib-create-shipment-drawer',
@@ -129,9 +128,9 @@ export class CreateShipmentDrawerComponent
           const searchText =
             typeof value === 'string' ? value : (value?.licensePlate ?? '');
           return this.vehicleService
-            .postSearchVehiclesAsync({ searchText, page: 1, pageSize: 10 })
+            .postSearchVehiclesAsync({ searchText, page: 1, pageSize: 100 })
             .pipe(
-              map((res) => res.results),
+              map((res) => res.results.filter((v) => v.enabled === true)),
               finalize(() => (this.isSearching = false)),
             );
         }),

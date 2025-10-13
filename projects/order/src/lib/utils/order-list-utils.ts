@@ -1,6 +1,6 @@
 import { PillStatusEnum } from '@Common-UI';
 
-import { OrderStatusOptions } from '../models/order-status.enum';
+import { OrderStatusOptions } from '../../../../common/src/models/order/order-status.enum';
 
 export class OrderListUtils {
   static getStatusLabel(status: OrderStatusOptions): string {

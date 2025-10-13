@@ -1,3 +1,4 @@
+import { OrderService } from '@Common';
 import {
   ColumnTypeEnum,
   TableColumn,
@@ -26,15 +27,14 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { BehaviorSubject, Subject, Subscription, of } from 'rxjs';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 
-import { OrderClientSearchResult } from '../../models/order-client-response.model';
-import { OrderItem } from '../../models/order-item.model';
+import { OrderClientSearchResult } from '../../../../../common/src/models/order/order-client-response.model';
+import { OrderItem } from '../../../../../common/src/models/order/order-item.model';
 import {
   ORDER_LIST_ORDER_OPTIONS,
   OrderListOrderOption,
-} from '../../models/order-list-option-order.model';
-import { statusOptions } from '../../models/order-status-option.model';
-import { OrderStatusOptions } from '../../models/order-status.enum';
-import { OrderService } from '../../services/order.service';
+} from '../../../../../common/src/models/order/order-list-option-order.model';
+import { statusOptions } from '../../../../../common/src/models/order/order-status-option.model';
+import { OrderStatusOptions } from '../../../../../common/src/models/order/order-status.enum';
 import { OrderListUtils } from '../../utils/order-list-utils';
 import { DetailLateralDrawerClientComponent } from '../detail-lateral-drawer-client/detail-lateral-drawer-client.component';
 
@@ -60,7 +60,7 @@ import { DetailLateralDrawerClientComponent } from '../detail-lateral-drawer-cli
     CartButtonComponent,
     MatTooltip,
   ],
-  providers: [DatePipe, CurrencyPipe],
+  providers: [DatePipe, CurrencyPipe, OrderService],
   templateUrl: './order-list-client.component.html',
   styleUrl: './order-list-client.component.scss',
 })

@@ -1,4 +1,8 @@
-import { downloadFileFromResponse } from '@Common';
+import {
+  downloadFileFromResponse,
+  OrderService,
+  mockOrderSearchResponse,
+} from '@Common';
 import { PillStatusEnum } from '@Common-UI';
 
 import { DatePipe, CurrencyPipe } from '@angular/common';
@@ -9,16 +13,16 @@ import {
   fakeAsync,
   tick,
 } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { mockDeep } from 'jest-mock-extended';
 import { of, throwError } from 'rxjs';
 
 import { OrderListComponent } from './order-list.component';
-import { OrderItem } from '../../models/order-item-general.model';
-import { OrderSearchResult } from '../../models/order-response-model';
-import { OrderStatusOptions } from '../../models/order-status.enum';
-import { OrderService } from '../../services/order.service';
-import { mockOrderSearchResponse } from '../../testing/mock-data.model';
+import { OrderItem } from '../../../../../common/src/models/order/order-item-general.model';
+import { OrderSearchResult } from '../../../../../common/src/models/order/order-response-model';
+import { OrderStatusOptions } from '../../../../../common/src/models/order/order-status.enum';
 import { CreateShipmentDrawerComponent } from '../create-shipment-drawer/create-shipment-drawer.component';
 
 jest.mock('@Common', () => ({
@@ -29,6 +33,7 @@ jest.mock('@Common', () => ({
     DESC: 'desc',
   },
 }));
+
 describe('OrderListComponent', () => {
   let component: OrderListComponent;
   let fixture: ComponentFixture<OrderListComponent>;
@@ -341,6 +346,50 @@ describe('OrderListComponent', () => {
       // Assert
       expect(result).toBe(false);
     });
+
+    it('should disable "Marcar como preparada" if order status is not InPreparation', () => {
+      // Arrange
+      const column = component.columns.find((c) => c.columnDef === 'actions');
+      const action = column?.actions?.find(
+        (a) => a.description === 'Marcar como preparada',
+      );
+      const order: OrderItem = {
+        id: 1,
+        createdAt: '',
+        clientName: '',
+        orderStatus: OrderStatusOptions.Finished,
+        totalAmount: 100,
+        selected: false,
+      };
+
+      // Act
+      const result = action?.disabled?.(order);
+
+      // Assert
+      expect(result).toBe(true);
+    });
+
+    it('should enable "Marcar como preparada" if order status is InPreparation', () => {
+      // Arrange
+      const column = component.columns.find((c) => c.columnDef === 'actions');
+      const action = column?.actions?.find(
+        (a) => a.description === 'Marcar como preparada',
+      );
+      const order: OrderItem = {
+        id: 2,
+        createdAt: '',
+        clientName: '',
+        orderStatus: OrderStatusOptions.InPreparation,
+        totalAmount: 200,
+        selected: false,
+      };
+
+      // Act
+      const result = action?.disabled?.(order);
+
+      // Assert
+      expect(result).toBe(false);
+    });
   });
 
   describe('onCreateShipment', () => {
@@ -415,6 +464,72 @@ describe('OrderListComponent', () => {
 
       // Assert
       expect(searchSpy).toHaveBeenCalled();
+    });
+  });
+
+  describe('onMarkAsPrepared', () => {
+    it('should open the modal and call markOrderAsPrepared if confirmed', () => {
+      // Arrange
+      const dialog = TestBed.inject(MatDialog);
+      const snackBar = TestBed.inject(MatSnackBar);
+      const order: OrderItem = {
+        id: 3,
+        createdAt: '',
+        clientName: '',
+        orderStatus: OrderStatusOptions.InPreparation,
+        totalAmount: 300,
+        selected: false,
+      };
+      const dialogRef = { afterClosed: () => of(true) };
+      jest
+        .spyOn(dialog, 'open')
+        .mockReturnValue(dialogRef as ReturnType<typeof dialog.open>);
+      const markSpy = jest
+        .spyOn(service, 'markOrderAsPrepared')
+        .mockReturnValue(of(undefined));
+      const snackSpy = jest.spyOn(snackBar, 'open');
+      const searchSpy = jest.spyOn(component.doSearchSubject$, 'next');
+
+      // Act
+      component.onMarkAsPrepared(order);
+
+      // Assert
+      expect(dialog.open).toHaveBeenCalled();
+      expect(markSpy).toHaveBeenCalledWith(order.id, 6);
+      expect(snackSpy).toHaveBeenCalledWith(
+        'Orden preparada con éxito',
+        'Cerrar',
+        { duration: 3000 },
+      );
+      expect(searchSpy).toHaveBeenCalled();
+      expect(component.isLoading).toBe(true);
+    });
+
+    it('should open the modal and not call markOrderAsPrepared if cancelled', () => {
+      // Arrange
+      const dialog = TestBed.inject(MatDialog);
+      const order: OrderItem = {
+        id: 4,
+        createdAt: '',
+        clientName: '',
+        orderStatus: OrderStatusOptions.InPreparation,
+        totalAmount: 400,
+        selected: false,
+      };
+      const dialogRef = { afterClosed: () => of(false) };
+      jest
+        .spyOn(dialog, 'open')
+        .mockReturnValue(dialogRef as ReturnType<typeof dialog.open>);
+      const markSpy = jest
+        .spyOn(service, 'markOrderAsPrepared')
+        .mockReturnValue(of(undefined));
+
+      // Act
+      component.onMarkAsPrepared(order);
+
+      // Assert
+      expect(dialog.open).toHaveBeenCalled();
+      expect(markSpy).not.toHaveBeenCalled();
     });
   });
 });

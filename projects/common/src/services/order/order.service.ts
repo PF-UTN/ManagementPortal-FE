@@ -4,16 +4,17 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { Client } from '../models/client-response.model';
-import { CreateShipmentRequest } from '../models/create-shipment-request.model';
-import { OrderClientSearchRequest } from '../models/order-client-request-model';
-import { OrderClientSearchResponse } from '../models/order-client-response.model';
-import { OrderCreatePayload } from '../models/order-created.model';
-import { OrderClientDetail } from '../models/order-detail-client.model';
-import { OrderDetail } from '../models/order-detail.model';
-import { OrderParams } from '../models/order-params.model';
-import { OrderSearchRequest } from '../models/order-request-model';
-import { OrderSearchResponse } from '../models/order-response-model';
+import { Client } from '../../models/order/client-response.model';
+import { CreateShipmentRequest } from '../../models/order/create-shipment-request.model';
+import { OrderClientSearchRequest } from '../../models/order/order-client-request-model';
+import { OrderClientSearchResponse } from '../../models/order/order-client-response.model';
+import { OrderCreatePayload } from '../../models/order/order-created.model';
+import { OrderClientDetail } from '../../models/order/order-detail-client.model';
+import { OrderDetail } from '../../models/order/order-detail.model';
+import { OrderParams } from '../../models/order/order-params.model';
+import { OrderSearchRequest } from '../../models/order/order-request-model';
+import { OrderSearchResponse } from '../../models/order/order-response-model';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -78,5 +79,13 @@ export class OrderService {
   createShipment(payload: CreateShipmentRequest): Observable<void> {
     const url = `${environment.apiBaseUrl}/shipment`;
     return this.http.post<void>(url, payload);
+  }
+
+  markOrderAsPrepared(
+    orderId: number,
+    orderStatusId: number,
+  ): Observable<void> {
+    const url = `${this.baseUrl}/${orderId}`;
+    return this.http.patch<void>(url, { orderStatusId });
   }
 }

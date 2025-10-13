@@ -69,7 +69,7 @@ export class DeletedProductLateralDrawerComponent extends LateralDrawerContainer
 
   confirmDelete() {
     const config: ModalConfig = {
-      title: 'Confirmar eliminación',
+      title: 'CONFIRMAR ELIMINACIÓN',
       message: '¿Estás seguro que deseas eliminar este producto?',
       confirmText: 'Sí, eliminar',
       cancelText: 'No',

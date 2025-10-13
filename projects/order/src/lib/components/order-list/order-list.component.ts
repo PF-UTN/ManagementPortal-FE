@@ -1,4 +1,8 @@
-import { downloadFileFromResponse, OrderDirection } from '@Common';
+import {
+  downloadFileFromResponse,
+  OrderDirection,
+  OrderService,
+} from '@Common';
 import {
   ColumnTypeEnum,
   TableColumn,
@@ -8,6 +12,7 @@ import {
   InputComponent,
   ButtonComponent,
   LateralDrawerService,
+  ModalComponent,
 } from '@Common-UI';
 
 import { DatePipe, CurrencyPipe, CommonModule } from '@angular/common';
@@ -16,25 +21,29 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltip } from '@angular/material/tooltip';
 import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 
-import { OrderItem } from '../../models/order-item-general.model';
+import { OrderItem } from '../../../../../common/src/models/order/order-item-general.model';
 import {
   ORDER_LIST_ORDER_OPTIONS,
   OrderListOrderOption,
-} from '../../models/order-list-option-order.model';
-import { OrderOrderField, OrderParams } from '../../models/order-params.model';
-import { OrderSearchResult } from '../../models/order-response-model';
-import { statusOptions } from '../../models/order-status-option.model';
-import { OrderStatusOptions } from '../../models/order-status.enum';
-import { OrderService } from '../../services/order.service';
+} from '../../../../../common/src/models/order/order-list-option-order.model';
+import {
+  OrderOrderField,
+  OrderParams,
+} from '../../../../../common/src/models/order/order-params.model';
+import { OrderSearchResult } from '../../../../../common/src/models/order/order-response-model';
+import { statusOptions } from '../../../../../common/src/models/order/order-status-option.model';
+import { OrderStatusOptions } from '../../../../../common/src/models/order/order-status.enum';
 import { OrderListUtils } from '../../utils/order-list-utils';
 import { CreateShipmentDrawerComponent } from '../create-shipment-drawer/create-shipment-drawer.component';
 import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-lateral-drawer.component';
@@ -122,6 +131,12 @@ export class OrderListComponent implements OnInit {
           description: 'Ver Detalle',
           action: (element: OrderItem) => this.onDetailDrawer(element),
         },
+        {
+          description: 'Marcar como preparada',
+          action: (element: OrderItem) => this.onMarkAsPrepared(element),
+          disabled: (element: OrderItem) =>
+            element.orderStatus !== OrderStatusOptions.InPreparation,
+        },
       ],
     },
   ];
@@ -155,6 +170,8 @@ export class OrderListComponent implements OnInit {
     private currencyPipe: CurrencyPipe,
     private orderService: OrderService,
     private lateralDrawerService: LateralDrawerService,
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog,
   ) {}
 
   ngOnInit(): void {
@@ -367,5 +384,35 @@ export class OrderListComponent implements OnInit {
     return this.dataSource$.value
       .filter((order) => order.selected)
       .map((order) => order.id);
+  }
+
+  onMarkAsPrepared(order: OrderItem) {
+    const dialogRef = this.dialog.open(ModalComponent, {
+      data: {
+        title: 'Preparar orden #' + order.id,
+        message: '¿Estas seguro que deseas marcar esta orden como preparada?',
+        confirmText: 'Confirmar',
+        cancelText: 'Cancelar',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: boolean) => {
+      if (result) {
+        this.isLoading = true;
+        this.orderService.markOrderAsPrepared(order.id, 6).subscribe({
+          next: () => {
+            this.snackBar.open('Orden preparada con éxito', 'Cerrar', {
+              duration: 3000,
+            });
+            this.doSearchSubject$.next();
+          },
+          error: () => {
+            this.snackBar.open('Error al preparar la orden', 'Cerrar', {
+              duration: 3000,
+            });
+          },
+        });
+      }
+    });
   }
 }

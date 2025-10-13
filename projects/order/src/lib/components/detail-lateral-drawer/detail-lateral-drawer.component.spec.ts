@@ -1,10 +1,10 @@
+import { OrderService, mockOrderDetail } from '@Common';
+
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { mockDeep } from 'jest-mock-extended';
 import { of } from 'rxjs';
 
 import { DetailLateralDrawerComponent } from './detail-lateral-drawer.component';
-import { OrderService } from '../../services/order.service';
-import { mockOrderDetail } from '../../testing/mock-data.model';
 
 describe('DetailLateralDrawerComponent', () => {
   let component: DetailLateralDrawerComponent;

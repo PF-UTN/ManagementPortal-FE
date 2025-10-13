@@ -1,4 +1,4 @@
-import { AuthService, CartService, Cart } from '@Common';
+import { AuthService, CartService, Cart, OrderService } from '@Common';
 import { CheckoutService } from '@Common-UI';
 
 import { provideHttpClientTesting } from '@angular/common/http/testing';
@@ -11,7 +11,6 @@ import {
 import { of, throwError } from 'rxjs';
 
 import { OrderFinalizeComponent } from './order-finalize.component';
-import { OrderService } from '../../services/order.service';
 
 describe('OrderFinalizeComponent', () => {
   let component: OrderFinalizeComponent;
