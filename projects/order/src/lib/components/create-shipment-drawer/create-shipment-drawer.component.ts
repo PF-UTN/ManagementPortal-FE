@@ -129,7 +129,7 @@ export class CreateShipmentDrawerComponent
           const searchText =
             typeof value === 'string' ? value : (value?.licensePlate ?? '');
           return this.vehicleService
-            .postSearchVehiclesAsync({ searchText, page: 1, pageSize: 10 })
+            .postSearchVehiclesAsync({ searchText, page: 1, pageSize: 100 })
             .pipe(
               map((res) => res.results.filter((v) => v.enabled === true)),
               finalize(() => (this.isSearching = false)),
