@@ -1,4 +1,4 @@
-import { OrderDirection } from '@Common';
+import { OrderDirection, mockOrderItem } from '@Common';
 import { LateralDrawerService, PillStatusEnum } from '@Common-UI';
 
 import { registerLocaleData } from '@angular/common';
@@ -16,11 +16,10 @@ import { mockDeep } from 'jest-mock-extended';
 import { of, Subscription } from 'rxjs';
 
 import { OrderListClientComponent } from './order-list-client.component';
-import { OrderItem } from '../../models/order-item.model';
-import { OrderListOrderOption } from '../../models/order-list-option-order.model';
-import { OrderOrderField } from '../../models/order-params.model';
-import { OrderStatusOptions } from '../../models/order-status.enum';
-import { mockOrderItem } from '../../testing/mock-data.model2';
+import { OrderItem } from '../../../../../common/src/models/order/order-item.model';
+import { OrderListOrderOption } from '../../../../../common/src/models/order/order-list-option-order.model';
+import { OrderOrderField } from '../../../../../common/src/models/order/order-params.model';
+import { OrderStatusOptions } from '../../../../../common/src/models/order/order-status.enum';
 import { DetailLateralDrawerClientComponent } from '../detail-lateral-drawer-client/detail-lateral-drawer-client.component';
 
 registerLocaleData(localeEsAr);

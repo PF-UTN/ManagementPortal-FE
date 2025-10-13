@@ -1,4 +1,4 @@
-import { AuthService, CartService, Cart } from '@Common';
+import { AuthService, CartService, Cart, OrderService } from '@Common';
 import {
   TitleComponent,
   BackArrowComponent,
@@ -16,9 +16,8 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatStepperModule } from '@angular/material/stepper';
 import { forkJoin } from 'rxjs';
 
-import { Client } from '../../models/client-response.model';
-import { OrderCreatePayload } from '../../models/order-created.model';
-import { OrderService } from '../../services/order.service';
+import { Client } from '../../../../../common/src/models/order/client-response.model';
+import { OrderCreatePayload } from '../../../../../common/src/models/order/order-created.model';
 
 @Component({
   selector: 'mp-order-finalize',

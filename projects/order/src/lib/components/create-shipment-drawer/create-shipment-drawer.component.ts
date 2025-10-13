@@ -1,4 +1,4 @@
-import { VehicleService, VehicleListItem } from '@Common';
+import { VehicleService, VehicleListItem, OrderService } from '@Common';
 import {
   ListComponent,
   LateralDrawerContainer,
@@ -34,8 +34,7 @@ import {
   finalize,
 } from 'rxjs/operators';
 
-import { CreateShipmentRequest } from '../../models/create-shipment-request.model';
-import { OrderService } from '../../services/order.service';
+import { CreateShipmentRequest } from '../../../../../common/src/models/order/create-shipment-request.model';
 
 @Component({
   selector: 'lib-create-shipment-drawer',

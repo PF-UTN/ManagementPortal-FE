@@ -1,7 +1,7 @@
 import { PillStatusEnum } from '@Common-UI';
 
 import { OrderListUtils } from './order-list-utils';
-import { OrderStatusOptions } from '../models/order-status.enum';
+import { OrderStatusOptions } from '../../../../common/src/models/order/order-status.enum';
 
 describe('OrderListUtils', () => {
   describe('getStatusLabel', () => {

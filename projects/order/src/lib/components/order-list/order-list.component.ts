@@ -1,4 +1,8 @@
-import { downloadFileFromResponse, OrderDirection } from '@Common';
+import {
+  downloadFileFromResponse,
+  OrderDirection,
+  OrderService,
+} from '@Common';
 import {
   ColumnTypeEnum,
   TableColumn,
@@ -25,16 +29,18 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 import { debounceTime, switchMap, tap } from 'rxjs/operators';
 
-import { OrderItem } from '../../models/order-item-general.model';
+import { OrderItem } from '../../../../../common/src/models/order/order-item-general.model';
 import {
   ORDER_LIST_ORDER_OPTIONS,
   OrderListOrderOption,
-} from '../../models/order-list-option-order.model';
-import { OrderOrderField, OrderParams } from '../../models/order-params.model';
-import { OrderSearchResult } from '../../models/order-response-model';
-import { statusOptions } from '../../models/order-status-option.model';
-import { OrderStatusOptions } from '../../models/order-status.enum';
-import { OrderService } from '../../services/order.service';
+} from '../../../../../common/src/models/order/order-list-option-order.model';
+import {
+  OrderOrderField,
+  OrderParams,
+} from '../../../../../common/src/models/order/order-params.model';
+import { OrderSearchResult } from '../../../../../common/src/models/order/order-response-model';
+import { statusOptions } from '../../../../../common/src/models/order/order-status-option.model';
+import { OrderStatusOptions } from '../../../../../common/src/models/order/order-status.enum';
 import { OrderListUtils } from '../../utils/order-list-utils';
 import { CreateShipmentDrawerComponent } from '../create-shipment-drawer/create-shipment-drawer.component';
 import { DetailLateralDrawerComponent } from '../detail-lateral-drawer/detail-lateral-drawer.component';

@@ -1,6 +1,7 @@
-import { VehicleService, VehicleListItem } from '@Common';
+import { VehicleService, VehicleListItem, OrderService } from '@Common';
 import { LateralDrawerService } from '@Common-UI';
 
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -8,7 +9,6 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
 
 import { CreateShipmentDrawerComponent } from './create-shipment-drawer.component';
-import { OrderService } from '../../services/order.service';
 
 describe('CreateShipmentDrawerComponent', () => {
   let component: CreateShipmentDrawerComponent;
@@ -40,6 +40,7 @@ describe('CreateShipmentDrawerComponent', () => {
     await TestBed.configureTestingModule({
       imports: [CreateShipmentDrawerComponent, NoopAnimationsModule],
       providers: [
+        provideHttpClientTesting(),
         { provide: VehicleService, useValue: vehicleService },
         { provide: OrderService, useValue: orderService },
         { provide: LateralDrawerService, useValue: lateralDrawerService },
