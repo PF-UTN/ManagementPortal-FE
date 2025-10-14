@@ -96,10 +96,10 @@ describe('ProductListClientComponent', () => {
   });
 
   describe('Sorting', () => {
-    it('should send orderBy param as price-asc', fakeAsync(() => {
+    it('should send orderBy param as name-asc', fakeAsync(() => {
       const spy = jest.spyOn(productService, 'postSearchProduct');
-      component.filterForm.get('sort')?.setValue('price-asc');
-      const expectedOrderBy = { field: 'price', direction: 'asc' };
+      component.filterForm.get('sort')?.setValue('name-asc');
+      const expectedOrderBy = { field: 'name', direction: 'asc' };
       component.ngOnInit();
       tick();
       expect(spy).toHaveBeenCalledWith(

@@ -107,7 +107,7 @@ export class ProductListClientComponent {
       direction: ProductOrderDirection.Desc,
     },
   ];
-  selectedOrderBy = this.orderByOptions[0];
+  selectedOrderBy = this.orderByOptions[2];
 
   constructor(
     private readonly fb: FormBuilder,
