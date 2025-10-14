@@ -15,6 +15,14 @@
     justify-content: right;
     align-items: center;
     transition: justify-content 0.2s;
+
+    &__title {
+      font-size: 1rem;
+      font-weight: 400;
+      color: $white-color;
+      letter-spacing: 1px;
+      align-items: center;
+    }
   }
 
   &__body {
