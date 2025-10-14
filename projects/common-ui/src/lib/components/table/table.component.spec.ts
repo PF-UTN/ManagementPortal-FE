@@ -3,6 +3,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTableModule } from '@angular/material/table';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of } from 'rxjs';
 
 import { TableComponent } from './table.component';
@@ -48,6 +49,7 @@ describe('TableComponent', () => {
         MatMenuModule,
         MatIconModule,
         MatButtonModule,
+        NoopAnimationsModule,
       ],
     }).compileComponents();
 
@@ -230,6 +232,33 @@ describe('TableComponent', () => {
       row1.selected = false;
       component.onRowSelect(row1);
       expect(component.selectedRows.emit).toHaveBeenLastCalledWith([row2]);
+    });
+  });
+
+  describe('Paginator', () => {
+    it('should show paginator only when showPaginator is true', () => {
+      // Arrange
+      component.columns = mockColumns;
+      component.dataSource$ = of(mockData);
+      component.showPaginator = true;
+      fixture.detectChanges();
+
+      // Act
+      const paginator = fixture.nativeElement.querySelector('mat-paginator');
+
+      // Assert
+      expect(paginator).not.toBeNull();
+
+      // Arrange (hide paginator)
+      component.showPaginator = false;
+      fixture.detectChanges();
+
+      // Act
+      const paginatorHidden =
+        fixture.nativeElement.querySelector('mat-paginator');
+
+      // Assert
+      expect(paginatorHidden).toBeNull();
     });
   });
 });

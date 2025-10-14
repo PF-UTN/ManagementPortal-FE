@@ -11,4 +11,5 @@ export interface TableColumn<T> {
   actions?: TableColumnAction<T>[];
   width?: string;
   disabled?: (element: T) => boolean;
+  align?: 'left' | 'center' | 'right';
 }

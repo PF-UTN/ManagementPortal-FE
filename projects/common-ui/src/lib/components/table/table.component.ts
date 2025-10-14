@@ -62,6 +62,7 @@ export class TableComponent<T> implements OnInit {
   @Input() itemsNumber: number = 0;
   @Input() pageSize: number = 10;
   @Input() pageIndex: number = 0;
+  @Input() showPaginator: boolean = true;
   @Output() pageChange = new EventEmitter<{
     pageIndex: number;
     pageSize: number;
