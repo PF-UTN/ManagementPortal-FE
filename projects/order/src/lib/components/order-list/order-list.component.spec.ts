@@ -306,6 +306,34 @@ describe('OrderListComponent', () => {
       expect(params.filters.fromCreatedAtDate).toBe('2024-01-01');
       expect(params.filters.toCreatedAtDate).toBe('2024-01-31');
     });
+
+    it('should include deliveryMethod filter if selectedDeliveryTypes is set', () => {
+      // Arrange
+      component.selectedDeliveryTypes = [
+        'Entrega a Domicilio',
+        'Retiro en Local',
+      ];
+
+      // Act
+      const params = component['getOrderParams']();
+
+      // Assert
+      expect(params.filters.deliveryMethod).toEqual([
+        'Entrega a Domicilio',
+        'Retiro en Local',
+      ]);
+    });
+
+    it('should not include deliveryMethod filter if selectedDeliveryTypes is empty', () => {
+      // Arrange
+      component.selectedDeliveryTypes = [];
+
+      // Act
+      const params = component['getOrderParams']();
+
+      // Assert
+      expect(params.filters.deliveryMethod).toBeUndefined();
+    });
   });
 
   describe('select column', () => {
@@ -319,6 +347,7 @@ describe('OrderListComponent', () => {
         orderStatus: OrderStatusOptions.Finished,
         totalAmount: 100,
         selected: false,
+        deliveryMethod: 'Entrega a Domicilio',
       };
 
       // Act
@@ -338,6 +367,7 @@ describe('OrderListComponent', () => {
         orderStatus: OrderStatusOptions.Pending,
         totalAmount: 100,
         selected: false,
+        deliveryMethod: 'Entrega a Domicilio',
       };
 
       // Act
@@ -360,6 +390,7 @@ describe('OrderListComponent', () => {
         orderStatus: OrderStatusOptions.Finished,
         totalAmount: 100,
         selected: false,
+        deliveryMethod: 'Entrega a Domicilio',
       };
 
       // Act
@@ -382,6 +413,7 @@ describe('OrderListComponent', () => {
         orderStatus: OrderStatusOptions.InPreparation,
         totalAmount: 200,
         selected: false,
+        deliveryMethod: 'Entrega a Domicilio',
       };
 
       // Act
@@ -406,6 +438,7 @@ describe('OrderListComponent', () => {
           orderStatus: OrderStatusOptions.Pending,
           totalAmount: 100,
           selected: true,
+          deliveryMethod: 'Entrega a Domicilio',
         },
         {
           id: 2,
@@ -414,6 +447,7 @@ describe('OrderListComponent', () => {
           orderStatus: OrderStatusOptions.Pending,
           totalAmount: 200,
           selected: false,
+          deliveryMethod: 'Entrega a Domicilio',
         },
         {
           id: 3,
@@ -422,6 +456,7 @@ describe('OrderListComponent', () => {
           orderStatus: OrderStatusOptions.Pending,
           totalAmount: 300,
           selected: true,
+          deliveryMethod: 'Entrega a Domicilio',
         },
       ];
       component.dataSource$.next(selectedOrders);
@@ -455,6 +490,7 @@ describe('OrderListComponent', () => {
           orderStatus: OrderStatusOptions.Pending,
           totalAmount: 100,
           selected: true,
+          deliveryMethod: 'Entrega a Domicilio',
         },
       ];
       component.dataSource$.next(selectedOrders);
@@ -479,6 +515,7 @@ describe('OrderListComponent', () => {
         orderStatus: OrderStatusOptions.InPreparation,
         totalAmount: 300,
         selected: false,
+        deliveryMethod: 'Entrega a Domicilio',
       };
       const dialogRef = { afterClosed: () => of(true) };
       jest
@@ -515,6 +552,7 @@ describe('OrderListComponent', () => {
         orderStatus: OrderStatusOptions.InPreparation,
         totalAmount: 400,
         selected: false,
+        deliveryMethod: 'Entrega a Domicilio',
       };
       const dialogRef = { afterClosed: () => of(false) };
       jest
@@ -530,6 +568,21 @@ describe('OrderListComponent', () => {
       // Assert
       expect(dialog.open).toHaveBeenCalled();
       expect(markSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('onDeliveryTypeFilterChange', () => {
+    it('should reset pageIndex and trigger search', () => {
+      // Arrange
+      const spy = jest.spyOn(component.doSearchSubject$, 'next');
+      component.pageIndex = 5;
+
+      // Act
+      component.onDeliveryTypeFilterChange();
+
+      // Assert
+      expect(component.pageIndex).toBe(0);
+      expect(spy).toHaveBeenCalledWith();
     });
   });
 });

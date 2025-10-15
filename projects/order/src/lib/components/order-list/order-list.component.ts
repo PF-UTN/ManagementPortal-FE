@@ -80,7 +80,8 @@ export class OrderListComponent implements OnInit {
       type: ColumnTypeEnum.SELECT,
       width: '40px',
       disabled: (order: OrderItem) =>
-        order.orderStatus !== OrderStatusOptions.Pending,
+        order.orderStatus !== OrderStatusOptions.Pending ||
+        order.deliveryMethod !== 'Entrega a Domicilio',
     },
     {
       columnDef: 'orderId',
@@ -108,6 +109,12 @@ export class OrderListComponent implements OnInit {
       value: (element: OrderItem) => this.getStatusLabel(element.orderStatus),
       pillStatus: (element: OrderItem) =>
         this.mapStatusToPillStatus(element.orderStatus),
+    },
+    {
+      columnDef: 'deliveryMethod',
+      header: 'MÉTODO DE ENTREGA',
+      type: ColumnTypeEnum.VALUE,
+      value: (element: OrderItem) => element.deliveryMethod,
     },
     {
       columnDef: 'price',
@@ -141,12 +148,18 @@ export class OrderListComponent implements OnInit {
     },
   ];
 
+  deliveryTypeOptions = [
+    { key: 'Retiro en Local', value: 'Retiro en Local' },
+    { key: 'Entrega a Domicilio', value: 'Entrega a Domicilio' },
+  ];
+
   dataSource$ = new BehaviorSubject<OrderItem[]>([]);
   itemsNumber: number = 0;
   isLoading: boolean = false;
 
   pageIndex: number = 0;
   pageSize: number = 10;
+  selectedDeliveryTypes: string[] = [];
 
   doSearchSubject$ = new Subject<void>();
   searchText: string = '';
@@ -197,6 +210,10 @@ export class OrderListComponent implements OnInit {
               toCreatedAtDate: this.toDate
                 ? this.toDate.toISOString().slice(0, 10)
                 : undefined,
+              deliveryMethod:
+                this.selectedDeliveryTypes.length > 0
+                  ? this.selectedDeliveryTypes
+                  : undefined,
             },
             orderBy: {
               field:
@@ -241,6 +258,11 @@ export class OrderListComponent implements OnInit {
     return OrderListUtils.mapStatusToPillStatus(status);
   }
 
+  onDeliveryTypeFilterChange(): void {
+    this.pageIndex = 0;
+    this.doSearchSubject$.next();
+  }
+
   private mapToOrderItem(apiResult: OrderSearchResult): OrderItem {
     return {
       id: apiResult.id,
@@ -253,6 +275,7 @@ export class OrderListComponent implements OnInit {
             (apiResult.orderStatus ?? '').toLowerCase(),
         )?.key ?? OrderStatusOptions.Pending,
       totalAmount: apiResult.totalAmount,
+      deliveryMethod: apiResult.deliveryMethod,
     };
   }
 
@@ -336,6 +359,9 @@ export class OrderListComponent implements OnInit {
     }
     if (this.toDate) {
       params.filters.toCreatedAtDate = this.toDate.toISOString().slice(0, 10);
+    }
+    if (this.selectedDeliveryTypes.length > 0) {
+      params.filters.deliveryMethod = this.selectedDeliveryTypes;
     }
     return params;
   }

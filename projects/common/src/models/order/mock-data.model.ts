@@ -30,6 +30,7 @@ export const mockOrderSearchResponse: OrderSearchResponse = {
       clientName: 'Juan Pérez',
       orderStatus: 'Finished',
       totalAmount: 500,
+      deliveryMethod: 'Express',
     },
     {
       id: 2,
@@ -37,6 +38,7 @@ export const mockOrderSearchResponse: OrderSearchResponse = {
       clientName: 'Ana Gómez',
       orderStatus: 'Cancelled',
       totalAmount: 300,
+      deliveryMethod: 'Standard',
     },
   ],
 };
