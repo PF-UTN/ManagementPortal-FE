@@ -23,9 +23,13 @@ describe('ShipmentDetailDrawerComponent', () => {
       licensePlate: 'AAA111',
       brand: 'Focus',
       model: 'Focus',
+      kmTraveled: 0,
     },
     status: 'Shipped',
-    orders: [42, 24],
+    orders: [
+      { id: 1, status: 'pending' },
+      { id: 2, status: 'pending' },
+    ],
   };
 
   beforeEach(async () => {
