@@ -372,6 +372,17 @@ describe('OrderListComponent', () => {
       // Assert
       expect(params.filters.shipmentId).toBe(123);
     });
+
+    it('should set shipmentId to null in filters if selectedShipmentId is -2', () => {
+      // Arrange
+      component.selectedShipmentId = -2;
+
+      // Act
+      const params = component['getOrderParams']();
+
+      // Assert
+      expect(params.filters.shipmentId).toBeNull();
+    });
   });
 
   describe('select column', () => {
@@ -631,6 +642,92 @@ describe('OrderListComponent', () => {
 
       // Act
       component.onDeliveryTypeFilterChange();
+
+      // Assert
+      expect(component.pageIndex).toBe(0);
+      expect(spy).toHaveBeenCalledWith();
+    });
+  });
+
+  describe('shipmentId column value', () => {
+    it('should show "Envío #id" if shipmentId is a number', () => {
+      // Arrange
+      const column = component.columns.find(
+        (c) => c.columnDef === 'shipmentId',
+      );
+      const order: OrderItem = {
+        id: 1,
+        createdAt: '',
+        clientName: '',
+        orderStatus: OrderStatusOptions.Pending,
+        totalAmount: 100,
+        selected: false,
+        deliveryMethod: 'Entrega a Domicilio',
+        shipmentId: 55,
+      };
+
+      // Act
+      const value = column?.value?.(order);
+
+      // Assert
+      expect(value).toBe('Envío #55');
+    });
+
+    it('should show "Sin asignar" if shipmentId is null', () => {
+      // Arrange
+      const column = component.columns.find(
+        (c) => c.columnDef === 'shipmentId',
+      );
+      const order: OrderItem = {
+        id: 2,
+        createdAt: '',
+        clientName: '',
+        orderStatus: OrderStatusOptions.Pending,
+        totalAmount: 100,
+        selected: false,
+        deliveryMethod: 'Entrega a Domicilio',
+        shipmentId: null,
+      };
+
+      // Act
+      const value = column?.value?.(order);
+
+      // Assert
+      expect(value).toBe('Sin asignar');
+    });
+
+    it('should show "Sin asignar" if shipmentId is undefined', () => {
+      // Arrange
+      const column = component.columns.find(
+        (c) => c.columnDef === 'shipmentId',
+      );
+      const order: OrderItem = {
+        id: 3,
+        createdAt: '',
+        clientName: '',
+        orderStatus: OrderStatusOptions.Pending,
+        totalAmount: 100,
+        selected: false,
+        deliveryMethod: 'Entrega a Domicilio',
+        shipmentId: null,
+      };
+
+      // Act
+      const value = column?.value?.(order);
+
+      // Assert
+      expect(value).toBe('Sin asignar');
+    });
+  });
+
+  describe('onShipmentIdFilterChange', () => {
+    it('should reset pageIndex and trigger search', () => {
+      // Arrange
+      const spy = jest.spyOn(component.doSearchSubject$, 'next');
+      component.pageIndex = 5;
+
+      // Act
+      component.onShipmentIdFilterChange();
 
       // Assert
       expect(component.pageIndex).toBe(0);
