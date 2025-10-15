@@ -8,4 +8,5 @@ export interface OrderItem {
   totalAmount: number;
   deliveryMethod: string;
   selected?: boolean;
+  shipmentId: number | null;
 }

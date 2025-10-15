@@ -16,7 +16,6 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { mockDeep } from 'jest-mock-extended';
 import { of, throwError } from 'rxjs';
 
 import { OrderListComponent } from './order-list.component';
@@ -39,11 +38,17 @@ describe('OrderListComponent', () => {
   let fixture: ComponentFixture<OrderListComponent>;
   let service: OrderService;
 
+  const orderServiceMock = {
+    searchOrders: jest.fn().mockReturnValue(of(mockOrderSearchResponse)),
+    downloadOrderList: jest.fn(),
+    markOrderAsPrepared: jest.fn(),
+  };
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [OrderListComponent, NoopAnimationsModule],
       providers: [
-        { provide: OrderService, useValue: mockDeep<OrderService>() },
+        { provide: OrderService, useValue: orderServiceMock },
         DatePipe,
         CurrencyPipe,
       ],
@@ -334,6 +339,39 @@ describe('OrderListComponent', () => {
       // Assert
       expect(params.filters.deliveryMethod).toBeUndefined();
     });
+
+    it('should not include shipmentId filter if selectedShipmentId is -1', () => {
+      // Arrange
+      component.selectedShipmentId = -1;
+
+      // Act
+      const params = component['getOrderParams']();
+
+      // Assert
+      expect(params.filters.shipmentId).toBeUndefined();
+    });
+
+    it('should include shipmentId filter as null if selectedShipmentId is -2 ("Sin asignar")', () => {
+      // Arrange
+      component.selectedShipmentId = -2;
+
+      // Act
+      const params = component['getOrderParams']();
+
+      // Assert
+      expect(params.filters.shipmentId).toBeNull();
+    });
+
+    it('should include shipmentId filter if selectedShipmentId is a number', () => {
+      // Arrange
+      component.selectedShipmentId = 123;
+
+      // Act
+      const params = component['getOrderParams']();
+
+      // Assert
+      expect(params.filters.shipmentId).toBe(123);
+    });
   });
 
   describe('select column', () => {
@@ -348,6 +386,7 @@ describe('OrderListComponent', () => {
         totalAmount: 100,
         selected: false,
         deliveryMethod: 'Entrega a Domicilio',
+        shipmentId: null,
       };
 
       // Act
@@ -368,6 +407,7 @@ describe('OrderListComponent', () => {
         totalAmount: 100,
         selected: false,
         deliveryMethod: 'Entrega a Domicilio',
+        shipmentId: null,
       };
 
       // Act
@@ -391,6 +431,7 @@ describe('OrderListComponent', () => {
         totalAmount: 100,
         selected: false,
         deliveryMethod: 'Entrega a Domicilio',
+        shipmentId: null,
       };
 
       // Act
@@ -414,6 +455,7 @@ describe('OrderListComponent', () => {
         totalAmount: 200,
         selected: false,
         deliveryMethod: 'Entrega a Domicilio',
+        shipmentId: null,
       };
 
       // Act
@@ -439,6 +481,7 @@ describe('OrderListComponent', () => {
           totalAmount: 100,
           selected: true,
           deliveryMethod: 'Entrega a Domicilio',
+          shipmentId: null,
         },
         {
           id: 2,
@@ -448,6 +491,7 @@ describe('OrderListComponent', () => {
           totalAmount: 200,
           selected: false,
           deliveryMethod: 'Entrega a Domicilio',
+          shipmentId: null,
         },
         {
           id: 3,
@@ -457,6 +501,7 @@ describe('OrderListComponent', () => {
           totalAmount: 300,
           selected: true,
           deliveryMethod: 'Entrega a Domicilio',
+          shipmentId: null,
         },
       ];
       component.dataSource$.next(selectedOrders);
@@ -491,6 +536,7 @@ describe('OrderListComponent', () => {
           totalAmount: 100,
           selected: true,
           deliveryMethod: 'Entrega a Domicilio',
+          shipmentId: null,
         },
       ];
       component.dataSource$.next(selectedOrders);
@@ -516,6 +562,7 @@ describe('OrderListComponent', () => {
         totalAmount: 300,
         selected: false,
         deliveryMethod: 'Entrega a Domicilio',
+        shipmentId: null,
       };
       const dialogRef = { afterClosed: () => of(true) };
       jest
@@ -553,6 +600,7 @@ describe('OrderListComponent', () => {
         totalAmount: 400,
         selected: false,
         deliveryMethod: 'Entrega a Domicilio',
+        shipmentId: null,
       };
       const dialogRef = { afterClosed: () => of(false) };
       jest
@@ -568,6 +616,10 @@ describe('OrderListComponent', () => {
       // Assert
       expect(dialog.open).toHaveBeenCalled();
       expect(markSpy).not.toHaveBeenCalled();
+    });
+
+    afterEach(() => {
+      jest.clearAllMocks();
     });
   });
 
