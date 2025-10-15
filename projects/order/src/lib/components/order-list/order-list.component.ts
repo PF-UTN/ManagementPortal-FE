@@ -170,7 +170,7 @@ export class OrderListComponent implements OnInit {
   toDate: Date | null = null;
   selectedStatus: string[] = [];
   orderByOptions = ORDER_LIST_ORDER_OPTIONS;
-  selectedOrderBy: OrderListOrderOption = this.orderByOptions[0];
+  selectedOrderBy: OrderListOrderOption = this.orderByOptions[1];
   selectedCreationDateRange: { start: Date | null; end: Date | null } = {
     start: null,
     end: null,
