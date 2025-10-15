@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 import { ShipmentDetailDrawerComponent } from './shipment-detail-drawer.component';
 import {
@@ -173,6 +174,34 @@ describe('ShipmentDetailDrawerComponent', () => {
 
       // Assert
       expect(label).toBe(unknownStatus);
+    });
+  });
+
+  describe('orderDataSource$', () => {
+    it('should emit the orders from data', (done) => {
+      // Arrange
+      const orders = [
+        { id: 1, status: 'Prepared' },
+        { id: 2, status: 'Pending' },
+      ];
+      component.data.set({ ...mockDetail, orders });
+
+      // Act & Assert
+      component.orderDataSource$.pipe(take(1)).subscribe((result) => {
+        expect(result).toEqual(orders);
+        done();
+      });
+    });
+
+    it('should emit an empty array if data or orders is undefined', (done) => {
+      // Arrange
+      component.data.set(null);
+
+      // Act & Assert
+      component.orderDataSource$.pipe(take(1)).subscribe((result) => {
+        expect(result).toEqual([]);
+        done();
+      });
     });
   });
 });
