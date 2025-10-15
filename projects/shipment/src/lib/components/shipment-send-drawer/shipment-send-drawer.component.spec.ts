@@ -25,7 +25,11 @@ describe('ShipmentSendDrawerComponent', () => {
 
     detail = {
       id: 1,
-      orders: [1, 2, 3],
+      orders: [
+        { id: 1, status: 'pending' },
+        { id: 2, status: 'pending' },
+        { id: 3, status: 'pending' },
+      ],
       date: '',
       estimatedKm: 0,
       effectiveKm: 0,
@@ -36,6 +40,7 @@ describe('ShipmentSendDrawerComponent', () => {
         licensePlate: '',
         brand: '',
         model: '',
+        kmTraveled: 0,
       },
       routeLink: '',
     };
@@ -108,7 +113,13 @@ describe('ShipmentSendDrawerComponent', () => {
 
     it('should return true from allOrdersChecked if all selected', () => {
       // Arrange
-      component.data.set({ id: 1, orders: [1, 2] } as ShipmentDetail);
+      component.data.set({
+        id: 1,
+        orders: [
+          { id: 1, status: 'pending' },
+          { id: 2, status: 'pending' },
+        ],
+      } as ShipmentDetail);
       component.orderStates.set({ 1: true, 2: true });
 
       // Act
@@ -120,7 +131,13 @@ describe('ShipmentSendDrawerComponent', () => {
 
     it('should return false from allOrdersChecked if not all selected', () => {
       // Arrange
-      component.data.set({ id: 1, orders: [1, 2] } as ShipmentDetail);
+      component.data.set({
+        id: 1,
+        orders: [
+          { id: 1, status: 'pending' },
+          { id: 2, status: 'pending' },
+        ],
+      } as ShipmentDetail);
       component.orderStates.set({ 1: true, 2: false });
 
       // Act

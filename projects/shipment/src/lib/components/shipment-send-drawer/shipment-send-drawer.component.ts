@@ -94,10 +94,10 @@ export class ShipmentSendDrawerComponent
     const detail = this.data();
     const states = this.orderStates();
     const items =
-      detail?.orders?.map((id) => ({
-        id,
+      detail?.orders?.map((order) => ({
+        id: order.id,
         completed: false,
-        selected: states[id] ?? false,
+        selected: states[order.id] ?? false,
       })) ?? [];
     return of(items);
   }
@@ -115,7 +115,7 @@ export class ShipmentSendDrawerComponent
     const orders = detail?.orders ?? [];
     const states = this.orderStates();
     if (orders.length === 0) return false;
-    return orders.every((id) => states[id]);
+    return orders.every((order) => states[order.id]);
   }
 
   ngOnInit(): void {
