@@ -41,6 +41,7 @@ import { statusOptions } from '../../models/shipment-status-option.model';
 import { ShipmentStatusOptions } from '../../models/shipment-status.enum';
 import { ShipmentService } from '../../services/shipment.service';
 import { ShipmentDetailDrawerComponent } from '../shipment-detail-drawer/shipment-detail-drawer.component';
+import { ShipmentFinaliceDrawerComponent } from '../shipment-finalice-drawer/shipment-finalice-drawer.component';
 import { ShipmentSendDrawerComponent } from '../shipment-send-drawer/shipment-send-drawer.component';
 
 @Component({
@@ -112,6 +113,8 @@ export class ShipmentListComponent implements OnInit {
         {
           description: 'Finalizar',
           action: (element: ShipmentItem) => this.onFinish(element),
+          disabled: (element: ShipmentItem) =>
+            element.shipmentStatus !== ShipmentStatusOptions.Shipped,
         },
       ],
     },
@@ -278,7 +281,7 @@ export class ShipmentListComponent implements OnInit {
 
     const statusMap: Record<string, string> = {
       Pendiente: 'Pending',
-      Enviada: 'Shipped',
+      Enviado: 'Shipped',
       Finalizado: 'Finished',
     };
 
@@ -348,7 +351,24 @@ export class ShipmentListComponent implements OnInit {
   }
 
   onFinish(element: ShipmentItem): void {
-    console.log(element);
+    this.lateralDrawerService.open(
+      ShipmentFinaliceDrawerComponent,
+      { shipmentId: element.id },
+      {
+        title: `Finalizar Envío #${element.id}`,
+        footer: {
+          firstButton: {
+            text: 'Finalizar',
+            click: () => {},
+          },
+          secondButton: {
+            text: 'Cerrar',
+            click: () => this.lateralDrawerService.close(),
+          },
+        },
+        size: 'small',
+      },
+    );
   }
 
   onApplyDateFilter(): void {

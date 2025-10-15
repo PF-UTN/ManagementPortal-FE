@@ -7,6 +7,7 @@ import { TestBed } from '@angular/core/testing';
 
 import { ShipmentService } from './shipment.service';
 import { ShipmentDetail } from '../models/shipment-deatil.model';
+import { ShipmentFinishRequest } from '../models/shipment-finisih-request.model';
 import {
   ShipmentSearchRequest,
   ShipmentSearchResponse,
@@ -200,9 +201,13 @@ describe('ShipmentService', () => {
           licensePlate: 'AAA111',
           brand: 'Focus',
           model: 'Focus',
+          kmTraveled: 1000,
         },
         status: 'Shipped',
-        orders: [42, 24],
+        orders: [
+          { id: 42, status: 'pending' },
+          { id: 24, status: 'completed' },
+        ],
       };
 
       let response: ShipmentDetail | undefined;
@@ -293,6 +298,56 @@ describe('ShipmentService', () => {
       expect(
         (errorResponse as { error: { message: string } }).error.message,
       ).toBe('Not all orders are prepared');
+    });
+  });
+
+  describe('finishShipment', () => {
+    it('should PATCH /shipment/:id/finish with the correct body and return void', () => {
+      // Arrange
+      const shipmentId = 1;
+      const body: ShipmentFinishRequest = {
+        finishedAt: '2025-04-08 11:36:48',
+        odometer: 105213,
+        orders: [{ orderId: 1, orderStatusId: 1 }],
+      };
+
+      // Act
+      service.finishShipment(shipmentId, body).subscribe((response) => {
+        expect(response).toBeUndefined();
+      });
+
+      const req = httpMock.expectOne(`${baseUrl}/${shipmentId}/finish`);
+      expect(req.request.method).toBe('PATCH');
+      expect(req.request.body).toEqual(body);
+
+      // Respond with void
+      req.flush(null);
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const shipmentId = 1;
+      const body: ShipmentFinishRequest = {
+        finishedAt: '2025-04-08 11:36:48',
+        odometer: 105213,
+        orders: [{ orderId: 1, orderStatusId: 1 }],
+      };
+      let errorResponse: unknown;
+
+      // Act
+      service.finishShipment(shipmentId, body).subscribe({
+        next: () => {},
+        error: (err) => {
+          errorResponse = err;
+        },
+      });
+
+      const req = httpMock.expectOne(`${baseUrl}/${shipmentId}/finish`);
+      req.flush('Error', { status: 400, statusText: 'Bad Request' });
+
+      // Assert
+      expect(errorResponse).toBeDefined();
+      expect((errorResponse as { status: number }).status).toBe(400);
     });
   });
 });

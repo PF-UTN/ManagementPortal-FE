@@ -1,0 +1,224 @@
+import {
+  LateralDrawerContainer,
+  LoadingComponent,
+  LateralDrawerService,
+  InputComponent,
+} from '@Common-UI';
+
+import { CommonModule } from '@angular/common';
+import { Component, OnInit, signal, effect } from '@angular/core';
+import {
+  ReactiveFormsModule,
+  FormBuilder,
+  FormGroup,
+  FormControl,
+  Validators,
+  FormArray,
+} from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { of } from 'rxjs';
+
+import { ShipmentDetail } from '../../models/shipment-deatil.model';
+import { ShipmentFinishRequest } from '../../models/shipment-finisih-request.model';
+import { statusOptions } from '../../models/shipment-status-option.model';
+import { ShipmentService } from '../../services/shipment.service';
+
+@Component({
+  selector: 'mp-shipment-finalice-drawer',
+  standalone: true,
+  imports: [
+    LoadingComponent,
+    CommonModule,
+    MatIconModule,
+    MatButtonModule,
+    InputComponent,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatDatepickerModule,
+    MatInputModule,
+    MatCheckboxModule,
+  ],
+  providers: [provideNativeDateAdapter()],
+  templateUrl: './shipment-finalice-drawer.component.html',
+  styleUrl: './shipment-finalice-drawer.component.scss',
+})
+export class ShipmentFinaliceDrawerComponent
+  extends LateralDrawerContainer
+  implements OnInit
+{
+  finalizeForm!: FormGroup<{
+    finishedAt: FormControl<Date | null>;
+    odometer: FormControl<number | null>;
+    orderChecks: FormArray<FormControl<boolean>>;
+  }>;
+
+  today: Date = new Date();
+  shipmentId!: number;
+  data = signal<ShipmentDetail | null>(null);
+  isLoading = signal(true);
+  buttonLoading = signal(false);
+  orderStates = signal<Record<number, boolean>>({});
+
+  constructor(
+    private readonly shipmentService: ShipmentService,
+    private readonly lateralDrawerService: LateralDrawerService,
+    private readonly snackBar: MatSnackBar,
+    private readonly fb: FormBuilder,
+  ) {
+    super();
+    effect(() => {
+      if (!this.finalizeForm) return;
+      this.finalizeForm.statusChanges.subscribe(() => {
+        const drawerConfig = {
+          ...this.lateralDrawerService.config,
+          footer: {
+            firstButton: {
+              text: 'Finalizar',
+              click: () => this.finalizeShipment(),
+              loading: this.buttonLoading(),
+              disabled: !this.finalizeForm.valid,
+            },
+            secondButton: {
+              text: 'Cerrar',
+              click: () => this.lateralDrawerService.close(),
+            },
+          },
+        };
+        this.lateralDrawerService.updateConfig(drawerConfig);
+      });
+    });
+  }
+
+  ngOnInit(): void {
+    this.finalizeForm = this.fb.group({
+      finishedAt: new FormControl<Date | null>(this.today, Validators.required),
+      odometer: new FormControl<number | null>(null, [
+        Validators.required,
+        Validators.min(0),
+      ]),
+      orderChecks: new FormArray<FormControl<boolean>>([]),
+    });
+
+    this.shipmentService.getShipmentById(this.shipmentId).subscribe({
+      next: (data: ShipmentDetail) => {
+        this.data.set(data);
+        const checksArray = new FormArray<FormControl<boolean>>(
+          (data.orders ?? []).map(
+            () => new FormControl<boolean>(true, { nonNullable: true }),
+          ),
+        );
+        this.finalizeForm.setControl('orderChecks', checksArray);
+        const initialStates: Record<number, boolean> = {};
+        (data.orders ?? []).forEach((order) => {
+          initialStates[order.id] = true;
+        });
+
+        this.orderStates.set(initialStates);
+
+        const odometerControl = this.finalizeForm.get(
+          'odometer',
+        ) as FormControl;
+        odometerControl.setValidators([
+          Validators.required,
+          Validators.min(data.vehicle.kmTraveled + 1),
+        ]);
+        odometerControl.updateValueAndValidity();
+
+        checksArray.valueChanges.subscribe((values: boolean[]) => {
+          const orders = data.orders ?? [];
+          const newStates: Record<number, boolean> = {};
+          orders.forEach((order, idx) => {
+            newStates[order.id] = values[idx];
+          });
+          this.orderStates.set(newStates);
+        });
+
+        this.isLoading.set(false);
+      },
+      error: () => {
+        this.isLoading.set(false);
+      },
+    });
+  }
+
+  onOrderCheckChange(orderId: number, checked: boolean) {
+    const detail = this.data();
+    if (!detail) return;
+    const idx = (detail.orders ?? []).findIndex(
+      (order) => order.id === orderId,
+    );
+    if (idx !== -1) {
+      (this.finalizeForm.get('orderChecks') as FormArray)
+        .at(idx)
+        .setValue(checked);
+    }
+  }
+
+  getStatusLabel(status: string): string {
+    const found = statusOptions.find((opt) => opt.key === status);
+    return found ? found.value : status;
+  }
+
+  get orderTableItems$() {
+    const detail = this.data();
+    const checks =
+      (this.finalizeForm?.get('orderChecks')?.value as boolean[]) ?? [];
+    const items =
+      detail?.orders?.map((order, idx) => ({
+        id: order.id,
+        completed: checks[idx] ?? true,
+        status: order.status,
+      })) ?? [];
+    return of(items);
+  }
+
+  get orderChecksArray(): FormArray<FormControl<boolean>> {
+    return this.finalizeForm.get('orderChecks') as FormArray<
+      FormControl<boolean>
+    >;
+  }
+
+  finalizeShipment() {
+    this.buttonLoading.set(true);
+
+    const detail = this.data();
+    const finishedAt: Date = this.finalizeForm.value.finishedAt!;
+    const odometer: number = this.finalizeForm.value.odometer!;
+    const checks = this.finalizeForm.value.orderChecks as boolean[];
+
+    const orders = (detail?.orders ?? []).map((order, idx) => ({
+      orderId: order.id,
+      orderStatusId: checks[idx] ? 4 : 1,
+    }));
+
+    const body: ShipmentFinishRequest = {
+      finishedAt: finishedAt.toISOString().slice(0, 19).replace('T', ' '),
+      odometer,
+      orders,
+    };
+
+    this.shipmentService.finishShipment(this.shipmentId, body).subscribe({
+      next: () => {
+        this.buttonLoading.set(false);
+        this.snackBar.open('Envío finalizado con éxito', 'Cerrar', {
+          duration: 3000,
+        });
+        this.lateralDrawerService.close();
+        this.emitSuccess();
+      },
+      error: () => {
+        this.buttonLoading.set(false);
+        this.snackBar.open('Error al finalizar el envío', 'Cerrar', {
+          duration: 3000,
+        });
+      },
+    });
+  }
+}
