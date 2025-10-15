@@ -274,7 +274,8 @@ export class OrderListComponent implements OnInit {
       .searchOrders({
         searchText: '',
         page: 1,
-        pageSize: 1,
+        pageSize: 100,
+        filters: {},
         orderBy: {
           field: 'createdAt',
           direction: 'desc',
