@@ -41,7 +41,7 @@ import { statusOptions } from '../../models/shipment-status-option.model';
 import { ShipmentStatusOptions } from '../../models/shipment-status.enum';
 import { ShipmentService } from '../../services/shipment.service';
 import { ShipmentDetailDrawerComponent } from '../shipment-detail-drawer/shipment-detail-drawer.component';
-import { ShipmentFinaliceDrawerComponent } from '../shipment-finalice-drawer/shipment-finalice-drawer.component';
+import { ShipmentFinalizeDrawerComponent } from '../shipment-finalize-drawer/shipment-finalize-drawer.component';
 import { ShipmentSendDrawerComponent } from '../shipment-send-drawer/shipment-send-drawer.component';
 
 @Component({
@@ -352,7 +352,7 @@ export class ShipmentListComponent implements OnInit {
 
   onFinish(element: ShipmentItem): void {
     this.lateralDrawerService.open(
-      ShipmentFinaliceDrawerComponent,
+      ShipmentFinalizeDrawerComponent,
       { shipmentId: element.id },
       {
         title: `Finalizar Envío #${element.id}`,

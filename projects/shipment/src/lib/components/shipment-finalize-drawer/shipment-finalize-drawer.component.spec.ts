@@ -10,13 +10,13 @@ import {
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { of, throwError } from 'rxjs';
 
-import { ShipmentFinaliceDrawerComponent } from './shipment-finalice-drawer.component';
+import { ShipmentFinalizeDrawerComponent } from './shipment-finalize-drawer.component';
 import { ShipmentDetail } from '../../models/shipment-deatil.model';
 import { ShipmentService } from '../../services/shipment.service';
 
-describe('ShipmentFinaliceDrawerComponent', () => {
-  let component: ShipmentFinaliceDrawerComponent;
-  let fixture: ComponentFixture<ShipmentFinaliceDrawerComponent>;
+describe('ShipmentFinalizeDrawerComponent', () => {
+  let component: ShipmentFinalizeDrawerComponent;
+  let fixture: ComponentFixture<ShipmentFinalizeDrawerComponent>;
   let shipmentServiceMock: jest.Mocked<ShipmentService>;
   let lateralDrawerServiceMock: jest.Mocked<LateralDrawerService>;
   let snackBarMock: jest.Mocked<MatSnackBar>;
@@ -62,7 +62,7 @@ describe('ShipmentFinaliceDrawerComponent', () => {
     fb = new FormBuilder();
 
     await TestBed.configureTestingModule({
-      imports: [ShipmentFinaliceDrawerComponent],
+      imports: [ShipmentFinalizeDrawerComponent],
       providers: [
         { provide: ShipmentService, useValue: shipmentServiceMock },
         { provide: LateralDrawerService, useValue: lateralDrawerServiceMock },
@@ -71,7 +71,7 @@ describe('ShipmentFinaliceDrawerComponent', () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ShipmentFinaliceDrawerComponent);
+    fixture = TestBed.createComponent(ShipmentFinalizeDrawerComponent);
     component = fixture.componentInstance;
     component.shipmentId = 1;
   });
