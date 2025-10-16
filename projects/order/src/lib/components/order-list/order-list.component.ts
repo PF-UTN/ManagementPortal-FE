@@ -211,6 +211,13 @@ export class OrderListComponent implements OnInit {
           this.isLoading = true;
         }),
         switchMap(() => {
+          const shipmentIdFilter: { shipmentId?: number | null } = {};
+          if (this.selectedShipmentId === -2) {
+            shipmentIdFilter.shipmentId = null;
+          } else if (this.selectedShipmentId !== -1) {
+            shipmentIdFilter.shipmentId = this.selectedShipmentId;
+          }
+
           const body = {
             searchText: this.searchText ?? '',
             page: this.pageIndex + 1,
@@ -230,11 +237,7 @@ export class OrderListComponent implements OnInit {
                 this.selectedDeliveryTypes.length > 0
                   ? this.selectedDeliveryTypes
                   : undefined,
-              ...(this.selectedShipmentId === -2
-                ? { shipmentId: null }
-                : this.selectedShipmentId !== -1
-                  ? { shipmentId: this.selectedShipmentId }
-                  : {}),
+              ...shipmentIdFilter,
             },
             orderBy: {
               field:
@@ -295,7 +298,7 @@ export class OrderListComponent implements OnInit {
       { key: -2, value: 'Sin asignar' },
       ...this.allShipmentIds
         .filter((id) => id !== null)
-        .map((id) => ({ key: id as number, value: `Envío #${id}` })),
+        .map((id) => ({ key: id, value: `Envío #${id}` })),
     ];
   }
 
