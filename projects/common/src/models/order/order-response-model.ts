@@ -5,6 +5,7 @@ export interface OrderSearchResult {
   createdAt: string;
   totalAmount: number;
   deliveryMethod: string;
+  shipmentId: number | null;
 }
 
 export interface OrderSearchResponse {
