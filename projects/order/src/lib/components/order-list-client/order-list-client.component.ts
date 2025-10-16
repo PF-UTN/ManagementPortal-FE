@@ -138,7 +138,7 @@ export class OrderListClientComponent implements OnInit {
   fromDate: Date | null = null;
   toDate: Date | null = null;
   orderByOptions = ORDER_LIST_ORDER_OPTIONS;
-  selectedOrderBy: OrderListOrderOption = this.orderByOptions[0];
+  selectedOrderBy: OrderListOrderOption = this.orderByOptions[1];
 
   private searchSubscription?: Subscription;
 

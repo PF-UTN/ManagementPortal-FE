@@ -49,13 +49,13 @@
             </div>
             <div class="col-6 text-center">
               <strong>Peso</strong>
-              <p>{{ product.weight }} kg</p>
+              <p>{{ product.weight  | number: '1.2-2' }} kg</p>
             </div>
           </div>
 
           <div class="row mb-3 justify-content-center">
             <div class="col-12 text-center">
-              <p class="price-highlight">${{ product.price }}</p>
+              <p class="price-highlight">${{ product.price | number: '1.2-2' }}</p>
             </div>
           </div>
         </div>

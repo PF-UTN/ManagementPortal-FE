@@ -4,6 +4,8 @@ export interface OrderSearchResult {
   orderStatus: string;
   createdAt: string;
   totalAmount: number;
+  deliveryMethod: string;
+  shipmentId: number | null;
 }
 
 export interface OrderSearchResponse {

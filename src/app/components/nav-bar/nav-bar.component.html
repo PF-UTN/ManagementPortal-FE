@@ -1,12 +1,15 @@
 <div class="container" [class.closed]="!isOpen">
   <div class="container__header">
+    @if(isOpen) {
+      <span class="container__header__title">MANAGEMENT PORTAL</span>
+    }
     <button
       mat-icon-button
       (click)="toggleNavBar()"
       class="container__header__toggle"
     >
       <mat-icon>menu</mat-icon>
-    </button>
+    </button> 
   </div>
   <div class="container__body">
     <div class="container__body__menu">

@@ -344,7 +344,7 @@ describe('VehicleListComponent', () => {
       expect(actionsColumn).toBeDefined();
       expect(actionsColumn?.actions).toBeDefined();
       const editAction = actionsColumn?.actions?.find(
-        (a) => a.description === 'Editar',
+        (a) => a.description === 'Modificar',
       );
       expect(editAction).toBeDefined();
       editAction?.action(vehicle);

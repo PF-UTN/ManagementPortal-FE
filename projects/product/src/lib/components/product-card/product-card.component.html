@@ -1,57 +1,68 @@
 @let isDisabled = product.stock === 0 || !product.enabled;
 
-<mat-card 
-  class="product-card" 
+<mat-card
+  class="product-card"
   (keydown)="onCardKeyDown($event)"
-  [ngClass]="{'product-card--disabled': isDisabled}"
+  [ngClass]="{ 'product-card--disabled': isDisabled }"
   apparence="outlined"
-  (click)="openProductDrawer()">
-
+  (click)="openProductDrawer()"
+>
   <mat-card-header class="mat-card__header">
-    <img 
-      class="product-card__image" 
-      mat-card-image 
-      [src]="product.imageUrl ?? 'https://material.angular.dev/assets/img/examples/shiba2.jpg'"
+    <img
+      class="product-card__image"
+      mat-card-image
+      [src]="
+        product.imageUrl ??
+        'https://material.angular.dev/assets/img/examples/shiba2.jpg'
+      "
       alt="Shiba Inu"
-    >
+    />
   </mat-card-header>
 
   <mat-card-content class="product-card__content">
-    <mp-ellipsis-text class="product-card__name" [text]="product.name"></mp-ellipsis-text>
-    <p>{{ product.weight }} kg</p>
-    <div class="product-card__row row">
-      <span class="product-card__content-price">$ {{ product.price }}</span>
-      <div class="product-card__quantity col">
-        <mp-button 
+    <mp-ellipsis-text
+      class="product-card__name"
+      [text]="product.name"
+    ></mp-ellipsis-text>
+    <div class="product-card__row">
+      <span class="product-card__content-price">${{ product.price  | number: '1.2-2' }}</span>
+    </div>
+    <div class="product-card__row">
+      <div class="product-card__quantity">
+        <mp-button
           type="icon"
           icon="remove"
           ariaLabel="Restar"
           [disabled]="quantity <= 1 || isDisabled"
           (onClick)="!isDisabled && onQuantityChange(quantity - 1)"
           (keydown.enter)="!isDisabled && onQuantityChange(quantity - 1)"
-          (click)="$event.stopPropagation()">
+          (click)="$event.stopPropagation()"
+        >
         </mp-button>
 
-        <input 
-          type="number" 
-          min="1" 
+        <input
+          type="number"
+          min="1"
           [max]="product.stock"
-          class="mx-2 mat-card__content-input col" 
+          class="mx-2 mat-card__content-input col"
           [value]="quantity"
-          (click)="$event.stopPropagation()" 
+          (click)="$event.stopPropagation()"
           (input)="onQuantityInput($event)"
         />
 
-        <mp-button 
+        <mp-button
           type="icon"
           icon="add"
           ariaLabel="Sumar"
           [disabled]="quantity >= product.stock || isDisabled"
-          [tooltip]="quantity >= product.stock ? 'No hay más stock disponible' : ''"
+          [tooltip]="
+            quantity >= product.stock ? 'No hay más stock disponible' : ''
+          "
           tooltipPosition="above"
           (onClick)="!isDisabled && onQuantityChange(quantity + 1)"
           (keydown.enter)="!isDisabled && onQuantityChange(quantity + 1)"
-          (click)="$event.stopPropagation()">
+          (click)="$event.stopPropagation()"
+        >
         </mp-button>
       </div>
     </div>
@@ -59,24 +70,28 @@
 
   <mat-card-actions>
     <ng-container *ngIf="!isDisabled">
-      <mp-button 
-        class="w-100"
+      <mp-button
+        class="w-80"
         [disabled]="quantity > product.stock"
-        (onClick)="onAddToCartClick();"
+        (onClick)="onAddToCartClick()"
         (click)="$event.stopPropagation()"
-        [loading]="loading">
-          Agregar al carrito
+        [loading]="loading"
+      >
+        Agregar al carrito
       </mp-button>
     </ng-container>
 
     <ng-container *ngIf="isDisabled">
-      <mp-button 
-        class="w-100"
+      <mp-button
+        class="w-80"
         [disabled]="true"
         (click)="$event.stopPropagation()"
         [type]="'secondary'"
-        (onKeyDown)="null">
-          {{ product.enabled ? 'No hay stock disponible' : 'El producto se encuentra temporalmente inhabilitado'}}
+        (onKeyDown)="(null)"
+      >
+        {{
+          product.enabled ? 'Sin stock' : 'Producto inhabilitado'
+        }}
       </mp-button>
     </ng-container>
   </mat-card-actions>

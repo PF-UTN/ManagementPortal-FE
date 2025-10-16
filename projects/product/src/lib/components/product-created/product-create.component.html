@@ -1,11 +1,13 @@
 <mp-loading *ngIf="isLoading()"></mp-loading>
 
 <div *ngIf="!isLoading()">
-  <div class="d-flex align-items-center mb-2">
+  <div class="d-flex align-items-center mb-2 pt-3">
     <button mat-icon-button (click)="goBack()" aria-label="Volver" class="me-2">
       <mat-icon>arrow_back</mat-icon>
     </button>
-    <mp-title>Nuevo Producto</mp-title>
+    <mp-title>
+      {{ title }}
+    </mp-title>
   </div>
   <hr />
 
@@ -331,16 +333,16 @@
             </div>
           </div>
           <div *ngIf="stockOnlyMode">
-             <mp-input
-                label="Motivo del ajuste"
-                formControlName="stockChangeReason"
-                [textarea]="true"
-                [rows]="3"
-                [maxlength]="50"
-                [hint]="stockReasonHint"
-                required
-              ></mp-input>
-            </div>
+            <mp-input
+              label="Motivo del ajuste"
+              formControlName="stockChangeReason"
+              [textarea]="true"
+              [rows]="3"
+              [maxlength]="50"
+              [hint]="stockReasonHint"
+              required
+            ></mp-input>
+          </div>
         </div>
       </div>
       <div class="row mb-3 align-items-start">

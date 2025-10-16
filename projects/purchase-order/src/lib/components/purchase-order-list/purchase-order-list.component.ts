@@ -87,7 +87,7 @@ export class PurchaseOrderListComponent implements OnInit {
       header: 'PROVEEDOR',
       type: ColumnTypeEnum.VALUE,
       value: (element: PurchaseOrderItem) => element.supplierBussinesName,
-      width: '500px',
+      width: '400px',
     },
     {
       columnDef: 'purchaseOrderStatusName',
@@ -130,6 +130,7 @@ export class PurchaseOrderListComponent implements OnInit {
       columnDef: 'totalAmount',
       header: 'TOTAL',
       type: ColumnTypeEnum.VALUE,
+      width: '250px',
       value: (element: PurchaseOrderItem) =>
         new Intl.NumberFormat('es-AR', {
           style: 'currency',

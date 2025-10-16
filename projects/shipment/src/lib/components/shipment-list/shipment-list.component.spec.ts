@@ -116,7 +116,7 @@ describe('ShipmentListComponent', () => {
         id: 123,
         vehicleAssigned: 'AAA111',
         shipmentStatus: ShipmentStatusOptions.Pending,
-        createdAt: '2025-10-23T00:00:00.000Z',
+        date: '2025-10-23T00:00:00.000Z',
       };
       // Act
       const idValue = component.columns[0]?.value?.(item);
@@ -130,7 +130,7 @@ describe('ShipmentListComponent', () => {
         id: 123,
         vehicleAssigned: 'AAA111',
         shipmentStatus: ShipmentStatusOptions.Pending,
-        createdAt: '2025-10-23T00:00:00.000Z',
+        date: '2025-10-23T00:00:00.000Z',
       };
       // Act
       const vehicleValue = component.columns[1]?.value?.(item);
@@ -144,7 +144,7 @@ describe('ShipmentListComponent', () => {
         id: 123,
         vehicleAssigned: 'AAA111',
         shipmentStatus: ShipmentStatusOptions.Pending,
-        createdAt: '2025-10-23T00:00:00.000Z',
+        date: '2025-10-23T00:00:00.000Z',
       };
       // Act
       const statusValue = component.columns[2]?.value?.(item);
@@ -158,7 +158,7 @@ describe('ShipmentListComponent', () => {
         id: 124,
         vehicleAssigned: 'BBB222',
         shipmentStatus: ShipmentStatusOptions.Finished,
-        createdAt: '2025-10-24T00:00:00.000Z',
+        date: '2025-10-24T00:00:00.000Z',
       };
       // Act
       const statusValue = component.columns[2]?.value?.(item);
@@ -172,7 +172,7 @@ describe('ShipmentListComponent', () => {
         id: 123,
         vehicleAssigned: 'AAA111',
         shipmentStatus: ShipmentStatusOptions.Pending,
-        createdAt: '2025-10-23T00:00:00.000Z',
+        date: '2025-10-23T00:00:00.000Z',
       };
       const spy = jest.spyOn(component, 'onSend');
       const lateralDrawerService = TestBed.inject(LateralDrawerService);
@@ -193,7 +193,7 @@ describe('ShipmentListComponent', () => {
         id: 123,
         vehicleAssigned: 'AAA111',
         shipmentStatus: ShipmentStatusOptions.Pending,
-        createdAt: '2025-10-23T00:00:00.000Z',
+        date: '2025-10-23T00:00:00.000Z',
       };
       const spy = jest.spyOn(component, 'onFinish');
       // Act
@@ -208,7 +208,7 @@ describe('ShipmentListComponent', () => {
         id: 123,
         vehicleAssigned: 'AAA111',
         shipmentStatus: ShipmentStatusOptions.Shipped,
-        createdAt: '2025-10-23T00:00:00.000Z',
+        date: '2025-10-23T00:00:00.000Z',
       };
       // Act
       const isDisabled = component.columns[4]?.actions?.[1].disabled?.(item);
@@ -222,7 +222,7 @@ describe('ShipmentListComponent', () => {
         id: 124,
         vehicleAssigned: 'BBB222',
         shipmentStatus: ShipmentStatusOptions.Pending,
-        createdAt: '2025-10-24T00:00:00.000Z',
+        date: '2025-10-24T00:00:00.000Z',
       };
       // Act
       const isDisabled = component.columns[4]?.actions?.[1].disabled?.(item);
@@ -273,7 +273,7 @@ describe('ShipmentListComponent', () => {
           id: r.id,
           vehicleAssigned: r.vehicle.licensePlate,
           shipmentStatus: r.status,
-          createdAt: r.date,
+          date: r.date,
         })),
       );
       expect(component.itemsNumber).toBe(mockShipmentResponse.total);
@@ -645,7 +645,7 @@ describe('ShipmentListComponent', () => {
         id: 123,
         vehicleAssigned: 'AAA111',
         shipmentStatus: ShipmentStatusOptions.Pending,
-        createdAt: '2025-10-23T00:00:00.000Z',
+        date: '2025-10-23T00:00:00.000Z',
       };
 
       // Act
@@ -695,7 +695,7 @@ describe('ShipmentListComponent', () => {
         id: 123,
         vehicleAssigned: 'AAA111',
         shipmentStatus: ShipmentStatusOptions.Pending,
-        createdAt: '2025-10-23T00:00:00.000Z',
+        date: '2025-10-23T00:00:00.000Z',
       };
 
       // Act

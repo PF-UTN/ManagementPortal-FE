@@ -201,12 +201,12 @@ describe('ShipmentService', () => {
           licensePlate: 'AAA111',
           brand: 'Focus',
           model: 'Focus',
-          kmTraveled: 1000,
+          kmTraveled: 15000,
         },
         status: 'Shipped',
         orders: [
-          { id: 42, status: 'pending' },
-          { id: 24, status: 'completed' },
+          { id: 42, status: 'Prepared' },
+          { id: 24, status: 'InPreparation' },
         ],
       };
 

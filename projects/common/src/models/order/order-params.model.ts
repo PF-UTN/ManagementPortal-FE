@@ -24,6 +24,8 @@ export interface OrderParams {
     statusName?: string[];
     fromCreatedAtDate?: string | null;
     toCreatedAtDate?: string | null;
+    deliveryMethod?: string[] | null;
+    shipmentId?: number | null;
   };
   orderBy: OrderOrderBy;
 }

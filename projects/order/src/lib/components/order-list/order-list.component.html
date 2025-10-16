@@ -36,6 +36,31 @@
           </mat-option>
         </mat-select>
       </mat-form-field>
+      
+      <mat-form-field appearance="outline">
+        <mat-label>Filtrar entrega</mat-label>
+        <mat-select
+          multiple
+          [(ngModel)]="selectedDeliveryTypes"
+          (selectionChange)="onDeliveryTypeFilterChange()"
+        >
+          <mat-option *ngFor="let option of deliveryTypeOptions" [value]="option.key">
+            {{ option.value }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Filtrar por envío</mat-label>
+        <mat-select
+          [(ngModel)]="selectedShipmentId"
+          (ngModelChange)="onShipmentIdFilterChange()"
+        >
+          <mat-option *ngFor="let option of shipmentIdOptions" [value]="option.key">
+            {{ option.value }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
 
       <div class="filters-toolbar__actions__icon">
         <button

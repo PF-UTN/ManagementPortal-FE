@@ -353,7 +353,7 @@ export class ProductListComponent implements OnInit {
         DeletedProductLateralDrawerComponent,
         { productId: request.id },
         {
-          title: 'Eliminar producto',
+          title: 'Eliminar Producto',
           footer: {
             firstButton: {
               text: 'Eliminar',
@@ -379,7 +379,7 @@ export class ProductListComponent implements OnInit {
         ToggleProductLatearalDrawerComponent,
         { productId: request.id, isPause: true },
         {
-          title: 'Pausar producto',
+          title: isEnabled ? 'Pausar Producto' : 'Reanudar Producto',
           footer: {
             firstButton: {
               text: isEnabled ? 'Pausar' : 'Reanudar',
