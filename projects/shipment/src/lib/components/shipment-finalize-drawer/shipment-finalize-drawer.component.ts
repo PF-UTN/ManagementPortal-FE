@@ -28,6 +28,7 @@ import { of } from 'rxjs';
 import { ShipmentDetail } from '../../models/shipment-deatil.model';
 import { ShipmentFinishRequest } from '../../models/shipment-finisih-request.model';
 import { statusOptions } from '../../models/shipment-status-option.model';
+import { ShipmentStatusOptions } from '../../models/shipment-status.enum';
 import { ShipmentService } from '../../services/shipment.service';
 
 @Component({
@@ -163,9 +164,23 @@ export class ShipmentFinalizeDrawerComponent
     }
   }
 
-  getStatusLabel(status: string): string {
-    const found = statusOptions.find((opt) => opt.key === status);
-    return found ? found.value : status;
+  getShipmentStatusLabel(status: string | number): string {
+    let keyToMatch: string | number = status;
+
+    if (typeof status === 'string') {
+      const enumMap = ShipmentStatusOptions as unknown as Record<
+        string,
+        number | string
+      >;
+      if (Object.prototype.hasOwnProperty.call(enumMap, status)) {
+        keyToMatch = enumMap[status];
+      }
+    }
+
+    const found = statusOptions.find(
+      (opt) => String(opt.key) === String(keyToMatch),
+    );
+    return found ? found.value : String(status);
   }
 
   get orderTableItems$() {

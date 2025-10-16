@@ -121,12 +121,12 @@ describe('ShipmentFinalizeDrawerComponent', () => {
     });
   });
 
-  describe('getStatusLabel', () => {
+  describe('getShipmentStatusLabel', () => {
     it('should return correct label for known status', () => {
       // Arrange
       const status = 'pending';
       // Act
-      const label = component.getStatusLabel(status);
+      const label = component.getShipmentStatusLabel(status);
       // Assert
       expect(typeof label).toBe('string');
     });
@@ -135,7 +135,7 @@ describe('ShipmentFinalizeDrawerComponent', () => {
       // Arrange
       const status = 'unknown_status';
       // Act
-      const label = component.getStatusLabel(status);
+      const label = component.getShipmentStatusLabel(status);
       // Assert
       expect(label).toBe('unknown_status');
     });
