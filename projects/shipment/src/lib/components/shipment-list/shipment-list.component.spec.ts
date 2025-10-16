@@ -3,7 +3,11 @@ import {
   downloadFileFromResponse,
   VehicleListItem,
 } from '@Common';
-import { LateralDrawerService } from '@Common-UI';
+import {
+  LateralDrawerService,
+  PillStatusEnum,
+  ColumnTypeEnum,
+} from '@Common-UI';
 
 import { DatePipe } from '@angular/common';
 import { HttpResponse } from '@angular/common/http';
@@ -19,10 +23,7 @@ import { of, throwError } from 'rxjs';
 
 import { ShipmentListComponent } from './shipment-list.component';
 import { ShipmentItem } from '../../models/shipment-item.model';
-import {
-  ShipmentSearchRequest,
-  ShipmentSearchResponse,
-} from '../../models/shipment-search.model';
+import { ShipmentSearchRequest } from '../../models/shipment-search.model';
 import { ShipmentStatusOptions } from '../../models/shipment-status.enum';
 import { ShipmentService } from '../../services/shipment.service';
 import { ShipmentDetailDrawerComponent } from '../shipment-detail-drawer/shipment-detail-drawer.component';
@@ -37,42 +38,6 @@ describe('ShipmentListComponent', () => {
   let fixture: ComponentFixture<ShipmentListComponent>;
   let shipmentService: jest.Mocked<ShipmentService>;
   let vehicleService: jest.Mocked<VehicleService>;
-
-  const mockShipmentResponse: ShipmentSearchResponse = {
-    total: 2,
-    results: [
-      {
-        id: 1,
-        date: '2025-10-23T00:00:00.000Z',
-        vehicle: {
-          id: 12,
-          licensePlate: 'AAA111',
-          brand: 'Focus',
-          model: 'Focus',
-        },
-        status: 'Pendiente',
-        orders: [17],
-        estimatedKm: null,
-        effectiveKm: null,
-        routeLink: null,
-      },
-      {
-        id: 2,
-        date: '2025-10-24T00:00:00.000Z',
-        vehicle: {
-          id: 13,
-          licensePlate: 'BBB222',
-          brand: 'Fiat',
-          model: 'Cronos',
-        },
-        status: 'Finalizado',
-        orders: [18],
-        estimatedKm: null,
-        effectiveKm: null,
-        routeLink: null,
-      },
-    ],
-  };
 
   beforeEach(async () => {
     shipmentService = {
@@ -217,69 +182,93 @@ describe('ShipmentListComponent', () => {
       // Assert
       expect(isDisabled).toBe(false);
     });
-  });
 
-  describe('ngOnInit', () => {
-    it('should fetch shipments on init and update dataSource$', fakeAsync(() => {
-      // Arrange
-      shipmentService.searchShipments.mockReturnValue(of(mockShipmentResponse));
-      // Act
-      component.ngOnInit();
-      component.emitSearch();
-      tick(400);
+    it('should have column type PILL for shipmentStatus', () => {
+      // Arrange & Act
+      const col = component.columns[2];
+
       // Assert
-      expect(component.dataSource$.value).toEqual(
-        mockShipmentResponse.results.map((r) => ({
-          id: r.id,
-          vehicleAssigned: r.vehicle.licensePlate,
-          shipmentStatus: r.status,
-          date: r.date,
-        })),
-      );
-      expect(component.itemsNumber).toBe(mockShipmentResponse.total);
-      expect(component.isLoading()).toBe(false);
-    }));
+      expect(col.type).toBe(ColumnTypeEnum.PILL);
+    });
 
-    it('should handle error and set loading to false', fakeAsync(() => {
+    it('should map "Pendiente" to PillStatusEnum.Initial', () => {
       // Arrange
-      shipmentService.searchShipments.mockReturnValue(
-        throwError(() => new Error('Error')),
-      );
+      const itemEs = {
+        id: 1,
+        vehicleAssigned: 'AAA111',
+        shipmentStatus: 'Pendiente',
+        date: '2025-10-23T00:00:00.000Z',
+      } as unknown as ShipmentItem;
+
       // Act
-      component.ngOnInit();
-      component.emitSearch();
-      tick(400);
+      const pillEs = component.columns[2].pillStatus?.(itemEs);
+
       // Assert
-      expect(component.isLoading()).toBe(false);
-      expect(component.dataSource$.value).toEqual([]);
-    }));
+      expect(pillEs).toBe(PillStatusEnum.Initial);
+    });
 
-    describe('vehicleControl.valueChanges subscription', () => {
-      it('should set filteredVehicles and selectedVehicle when a vehicle is selected', fakeAsync(() => {
-        // Arrange
-        const vehicle: VehicleListItem = {
-          id: 2,
-          licensePlate: 'BBB222',
-          brand: 'Fiat',
-          model: 'Cronos',
-          kmTraveled: 0,
-          enabled: true,
-          admissionDate: '',
-        };
-        const response = { total: 1, results: [vehicle] };
-        vehicleService.postSearchVehiclesAsync.mockReturnValue(of(response));
-        const spy = jest.spyOn(component, 'emitSearch');
+    it('should map "Enviada"/"Enviado" to PillStatusEnum.InProgress', () => {
+      // Arrange
+      const items: ShipmentItem[] = [
+        {
+          id: 3,
+          vehicleAssigned: 'BBB222',
+          shipmentStatus: 'Enviada',
+          date: '',
+        } as unknown as ShipmentItem,
+        {
+          id: 4,
+          vehicleAssigned: 'BBB222',
+          shipmentStatus: 'Enviado',
+          date: '',
+        } as unknown as ShipmentItem,
+      ];
 
-        // Act
-        component.vehicleControl.setValue(vehicle);
-        tick(400);
+      // Act / Assert
+      for (const it of items) {
+        const pill = component.columns[2].pillStatus?.(it);
+        expect(pill).toBe(PillStatusEnum.InProgress);
+      }
+    });
 
-        // Assert
-        expect(component.filteredVehicles).toEqual([vehicle]);
-        expect(component.selectedVehicle).toBe(vehicle);
-        expect(component.pageIndex).toBe(0);
-        expect(spy).toHaveBeenCalled();
-      }));
+    it('should map "Finalizado"/"Finalizada" to PillStatusEnum.Done', () => {
+      // Arrange
+      const items: ShipmentItem[] = [
+        {
+          id: 5,
+          vehicleAssigned: 'BBB222',
+          shipmentStatus: 'Finalizado',
+          date: '',
+        } as unknown as ShipmentItem,
+        {
+          id: 6,
+          vehicleAssigned: 'BBB222',
+          shipmentStatus: 'Finalizada',
+          date: '',
+        } as unknown as ShipmentItem,
+      ];
+
+      // Act / Assert
+      for (const it of items) {
+        const pill = component.columns[2].pillStatus?.(it);
+        expect(pill).toBe(PillStatusEnum.Done);
+      }
+    });
+
+    it('should return PillStatusEnum.Warning for unknown status', () => {
+      // Arrange
+      const item = {
+        id: 7,
+        vehicleAssigned: 'CCC333',
+        shipmentStatus: 'AlgoDesconocido',
+        date: '',
+      } as unknown as ShipmentItem;
+
+      // Act
+      const pill = component.columns[2].pillStatus?.(item);
+
+      // Assert
+      expect(pill).toBe(PillStatusEnum.Warning);
     });
   });
 

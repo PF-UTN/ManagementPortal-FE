@@ -12,6 +12,7 @@ import {
   TableComponent,
   LateralDrawerService,
   ModalComponent,
+  PillStatusEnum,
 } from '@Common-UI';
 
 import { DatePipe, CommonModule } from '@angular/common';
@@ -84,8 +85,10 @@ export class ShipmentListComponent implements OnInit {
     {
       columnDef: 'shipmentStatus',
       header: 'ESTADO DEL ENVÍO',
-      type: ColumnTypeEnum.VALUE,
+      type: ColumnTypeEnum.PILL,
       value: (element: ShipmentItem) => element.shipmentStatus,
+      pillStatus: (element: ShipmentItem) =>
+        this.mapShipmentStatusToPill(element.shipmentStatus),
     },
     {
       columnDef: 'date',
@@ -162,19 +165,14 @@ export class ShipmentListComponent implements OnInit {
       .subscribe({
         next: (response) => {
           this.dataSource$.next(
-            response.results.map((item) => ({
-              id: item.id,
-              vehicleAssigned: item.vehicle.licensePlate,
-              shipmentStatus:
-                item.status === 'Pendiente'
-                  ? ShipmentStatusOptions.Pending
-                  : item.status === 'Enviado'
-                    ? ShipmentStatusOptions.Shipped
-                    : item.status === 'Finalizado'
-                      ? ShipmentStatusOptions.Finished
-                      : ShipmentStatusOptions.Pending,
-              date: item.date,
-            })),
+            response.results.map((item) => {
+              return {
+                id: item.id,
+                vehicleAssigned: item.vehicle.licensePlate,
+                shipmentStatus: item.status,
+                date: item.date,
+              } as unknown as ShipmentItem;
+            }),
           );
           this.itemsNumber = response.total;
           this.isLoading.set(false);
@@ -237,6 +235,15 @@ export class ShipmentListComponent implements OnInit {
 
   displayVehicle(vehicle: VehicleListItem | null): string {
     return vehicle ? `${vehicle.licensePlate}` : '';
+  }
+
+  private mapShipmentStatusToPill(status: string | undefined): PillStatusEnum {
+    if (!status) return PillStatusEnum.Warning;
+    const s = status.toLowerCase().trim();
+    if (s === 'pendiente') return PillStatusEnum.Initial;
+    if (s === 'enviada' || s === 'enviado') return PillStatusEnum.InProgress;
+    if (s === 'finalizado' || s === 'finalizada') return PillStatusEnum.Done;
+    return PillStatusEnum.Warning;
   }
 
   onVehicleSearchChange(): void {
