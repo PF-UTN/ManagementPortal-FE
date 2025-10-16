@@ -1,4 +1,5 @@
 import { OrderService } from '@Common';
+import { LateralDrawerService } from '@Common-UI';
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -6,6 +7,7 @@ import { of, Subject, throwError } from 'rxjs';
 
 import { ShipmentSendDrawerComponent } from './shipment-send-drawer.component';
 import { ShipmentDetail } from '../../models/shipment-deatil.model';
+import { statusOptions } from '../../models/shipment-status-option.model';
 import { ShipmentService } from '../../services/shipment.service';
 
 describe('ShipmentSendDrawerComponent', () => {
@@ -15,6 +17,7 @@ describe('ShipmentSendDrawerComponent', () => {
   let snackBar: jest.Mocked<MatSnackBar>;
   let detail: ShipmentDetail;
   let orderService: jest.Mocked<OrderService>;
+  let lateralDrawerService: jest.Mocked<LateralDrawerService>;
 
   beforeEach(async () => {
     shipmentService = {
@@ -29,6 +32,12 @@ describe('ShipmentSendDrawerComponent', () => {
     snackBar = {
       open: jest.fn(),
     } as unknown as jest.Mocked<MatSnackBar>;
+
+    lateralDrawerService = {
+      config: {},
+      updateConfig: jest.fn(),
+      close: jest.fn(),
+    } as unknown as jest.Mocked<LateralDrawerService>;
 
     detail = {
       id: 1,
@@ -60,6 +69,7 @@ describe('ShipmentSendDrawerComponent', () => {
         { provide: ShipmentService, useValue: shipmentService },
         { provide: MatSnackBar, useValue: snackBar },
         { provide: OrderService, useValue: orderService },
+        { provide: LateralDrawerService, useValue: lateralDrawerService },
       ],
     }).compileComponents();
 
@@ -101,6 +111,69 @@ describe('ShipmentSendDrawerComponent', () => {
 
       // Assert
       expect(component.isLoading()).toBe(false);
+    });
+
+    it('should call lateralDrawerService.updateConfig with footer buttons', () => {
+      // Arrange & Act
+      const lastCallArg = lateralDrawerService.updateConfig.mock.calls.slice(
+        -1,
+      )[0]?.[0] as Partial<Record<string, unknown>> | undefined;
+
+      // Assert
+      expect(lastCallArg).toBeDefined();
+      type FooterShape = {
+        firstButton?: { text?: string; click?: () => void; disabled?: boolean };
+        secondButton?: { text?: string };
+      };
+      const footer = (lastCallArg as { footer?: unknown })?.footer as
+        | FooterShape
+        | undefined;
+      expect(footer).toBeDefined();
+      expect(footer!.firstButton).toBeDefined();
+      expect(footer!.firstButton!.text).toBe('Enviar');
+      expect(footer!.secondButton).toBeDefined();
+      expect(footer!.secondButton!.text).toBe('Cerrar');
+    });
+
+    it('firstButton.click should call confirmSendShipment -> sendShipment and show snackbar', () => {
+      // Arrange
+      component.shipmentId = 123;
+      shipmentService.sendShipment.mockReturnValue(of({ link: 'test' }));
+      const cfg = lateralDrawerService.updateConfig.mock.calls.slice(
+        -1,
+      )[0]?.[0] as Partial<Record<string, unknown>> | undefined;
+      expect(cfg).toBeDefined();
+      const footer = (cfg as { footer?: unknown })?.footer as
+        | {
+            firstButton?: { click?: () => void };
+          }
+        | undefined;
+      expect(footer).toBeDefined();
+      expect(footer!.firstButton).toBeDefined();
+      const clickFn = footer!.firstButton!.click as () => void;
+
+      // Act
+      clickFn();
+
+      // Assert
+      expect(shipmentService.sendShipment).toHaveBeenCalledWith(123);
+      expect(snackBar.open).toHaveBeenCalledWith(
+        'Envío iniciado con éxito',
+        'Cerrar',
+        { duration: 3000 },
+      );
+      expect(component.buttonLoading()).toBe(false);
+    });
+
+    it('getStatusLabel should return mapped value from statusOptions when key matches', () => {
+      // Arrange
+      const opt = statusOptions[0];
+
+      // Act
+      const result = component.getStatusLabel(opt.key);
+
+      // Assert
+      expect(result).toBe(opt.value);
     });
   });
 
@@ -153,6 +226,90 @@ describe('ShipmentSendDrawerComponent', () => {
 
       // Assert
       expect(result).toBe(false);
+    });
+
+    it('should initialize orderLockedIds for Prepared orders on ngOnInit', () => {
+      // Arrange
+      const preparedDetail: ShipmentDetail = {
+        ...detail,
+        orders: [{ id: 99, status: 'Prepared' }],
+      } as ShipmentDetail;
+      shipmentService.getShipmentById.mockReturnValue(of(preparedDetail));
+      component.shipmentId = 1;
+
+      // Act
+      component.ngOnInit();
+
+      // Assert
+      expect(component.orderLockedIds()[99]).toBe(true);
+    });
+
+    it('completed column disabled when order.status === "Prepared"', () => {
+      // Arrange
+      const completedCol = component.orderTableColumns.find(
+        (c) => c.columnDef === 'completed',
+      )!;
+      const orderItem = {
+        id: 2,
+        status: 'Prepared',
+        completed: false,
+        selected: true,
+      };
+
+      // Act
+      const disabled =
+        typeof completedCol.disabled === 'function'
+          ? completedCol.disabled(orderItem)
+          : !!completedCol.disabled;
+
+      // Assert
+      expect(disabled).toBe(true);
+    });
+
+    it('completed column disabled when order is updating (orderUpdatingIds flag)', () => {
+      // Arrange
+      const completedCol = component.orderTableColumns.find(
+        (c) => c.columnDef === 'completed',
+      )!;
+      component.orderUpdatingIds.set({ 55: true });
+      const orderItem = {
+        id: 55,
+        status: 'Pending',
+        completed: false,
+        selected: false,
+      };
+
+      // Act
+      const disabled =
+        typeof completedCol.disabled === 'function'
+          ? completedCol.disabled(orderItem)
+          : !!completedCol.disabled;
+
+      // Assert
+      expect(disabled).toBe(true);
+    });
+
+    it('completed column disabled when order is locked (orderLockedIds flag)', () => {
+      // Arrange
+      const completedCol = component.orderTableColumns.find(
+        (c) => c.columnDef === 'completed',
+      )!;
+      component.orderLockedIds.set({ 77: true });
+      const orderItem = {
+        id: 77,
+        status: 'Pending',
+        completed: false,
+        selected: false,
+      };
+
+      // Act
+      const disabled =
+        typeof completedCol.disabled === 'function'
+          ? completedCol.disabled(orderItem)
+          : !!completedCol.disabled;
+
+      // Assert
+      expect(disabled).toBe(true);
     });
   });
 

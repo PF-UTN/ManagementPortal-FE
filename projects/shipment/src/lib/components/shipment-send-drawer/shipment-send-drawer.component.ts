@@ -108,7 +108,7 @@ export class ShipmentSendDrawerComponent
         string,
         number | string
       >;
-      if (Object.prototype.hasOwnProperty.call(enumMap, status)) {
+      if (Object.hasOwn(enumMap, status)) {
         keyToMatch = enumMap[status];
       }
     }
@@ -137,7 +137,7 @@ export class ShipmentSendDrawerComponent
   onSelectedRows(rows: { id: number; selected: boolean }[]) {
     const prevStates = this.orderStates();
     const newStates: Record<number, boolean> = {};
-    rows.forEach((row) => {
+    for (const row of rows) {
       if (this.orderLockedIds()[row.id]) {
         newStates[row.id] = true;
         return;
@@ -193,7 +193,7 @@ export class ShipmentSendDrawerComponent
             },
           });
       }
-    });
+    }
     this.orderStates.set(newStates);
   }
 
@@ -212,9 +212,9 @@ export class ShipmentSendDrawerComponent
       next: (data: ShipmentDetail) => {
         this.data.set(data);
         const initialLocked: Record<number, boolean> = {};
-        data.orders?.forEach((o) => {
+        for (const o of data.orders ?? []) {
           if (o.status === 'Prepared') initialLocked[o.id] = true;
-        });
+        }
         this.orderLockedIds.set(initialLocked);
 
         this.isLoading.set(false);
