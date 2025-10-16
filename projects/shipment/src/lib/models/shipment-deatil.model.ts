@@ -5,6 +5,11 @@ export interface Vehicle {
   model: string;
 }
 
+export interface ShipmentOrder {
+  id: number;
+  status: string;
+}
+
 export interface ShipmentDetail {
   id: number;
   date: string;
@@ -14,5 +19,5 @@ export interface ShipmentDetail {
   routeLink: string | null;
   vehicle: Vehicle;
   status: string;
-  orders: number[];
+  orders: ShipmentOrder[];
 }

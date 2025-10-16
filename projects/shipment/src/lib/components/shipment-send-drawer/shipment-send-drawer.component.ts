@@ -1,3 +1,4 @@
+import { OrderService } from '@Common';
 import {
   LateralDrawerContainer,
   LoadingComponent,
@@ -16,6 +17,7 @@ import { of } from 'rxjs';
 
 import { ShipmentDetail } from '../../models/shipment-deatil.model';
 import { statusOptions } from '../../models/shipment-status-option.model';
+import { ShipmentStatusOptions } from '../../models/shipment-status.enum';
 import { ShipmentService } from '../../services/shipment.service';
 
 @Component({
@@ -35,7 +37,12 @@ export class ShipmentSendDrawerComponent
   extends LateralDrawerContainer
   implements OnInit
 {
-  orderTableColumns: TableColumn<{ id: number; completed: boolean }>[] = [
+  orderTableColumns: TableColumn<{
+    id: number;
+    completed: boolean;
+    selected?: boolean;
+    status?: string;
+  }>[] = [
     {
       columnDef: 'id',
       header: 'N° Orden',
@@ -47,7 +54,10 @@ export class ShipmentSendDrawerComponent
       columnDef: 'completed',
       header: 'Completada',
       type: ColumnTypeEnum.SELECT,
-      disabled: () => false,
+      disabled: (order) =>
+        order.status === 'Prepared' ||
+        !!this.orderUpdatingIds()[order.id] ||
+        !!this.orderLockedIds()[order.id],
       width: '10%',
       align: 'center',
     },
@@ -59,10 +69,15 @@ export class ShipmentSendDrawerComponent
   data = signal<ShipmentDetail | null>(null);
   orderStates = signal<Record<number, boolean>>({});
 
+  public orderStatusToSet = 6;
+  orderUpdatingIds = signal<Record<number, boolean>>({});
+  orderLockedIds = signal<Record<number, boolean>>({});
+
   constructor(
     private readonly shipmentService: ShipmentService,
     private readonly lateralDrawerService: LateralDrawerService,
     private readonly snackBar: MatSnackBar,
+    private readonly orderService: OrderService,
   ) {
     super();
     effect(() => {
@@ -85,27 +100,99 @@ export class ShipmentSendDrawerComponent
     });
   }
 
-  getStatusLabel(status: string): string {
-    const found = statusOptions.find((opt) => opt.key === status);
-    return found ? found.value : status;
+  getStatusLabel(status: string | number): string {
+    let keyToMatch: string | number = status;
+
+    if (typeof status === 'string') {
+      const enumMap = ShipmentStatusOptions as unknown as Record<
+        string,
+        number | string
+      >;
+      if (Object.prototype.hasOwnProperty.call(enumMap, status)) {
+        keyToMatch = enumMap[status];
+      }
+    }
+
+    const found = statusOptions.find(
+      (opt) => String(opt.key) === String(keyToMatch),
+    );
+    if (found) return found.value;
+
+    return String(status);
   }
 
   get orderTableItems$() {
     const detail = this.data();
     const states = this.orderStates();
     const items =
-      detail?.orders?.map((id) => ({
-        id,
+      detail?.orders?.map((order) => ({
+        id: order.id,
         completed: false,
-        selected: states[id] ?? false,
+        selected: states[order.id] ?? order.status === 'Prepared',
+        status: order.status,
       })) ?? [];
     return of(items);
   }
 
   onSelectedRows(rows: { id: number; selected: boolean }[]) {
+    const prevStates = this.orderStates();
     const newStates: Record<number, boolean> = {};
     rows.forEach((row) => {
+      if (this.orderLockedIds()[row.id]) {
+        newStates[row.id] = true;
+        return;
+      }
+
       newStates[row.id] = row.selected;
+
+      const wasSelected = !!prevStates[row.id];
+      if (row.selected && !wasSelected) {
+        const start = { ...this.orderUpdatingIds() };
+        start[row.id] = true;
+        this.orderUpdatingIds.set(start);
+
+        this.buttonLoading.set(true);
+        this.orderService
+          .updateOrderStatus(row.id, this.orderStatusToSet)
+          .subscribe({
+            next: () => {
+              this.buttonLoading.set(false);
+              const done = { ...this.orderUpdatingIds() };
+              const doneWithout = Object.fromEntries(
+                Object.entries(done).filter(([k]) => k !== String(row.id)),
+              ) as Record<number, boolean>;
+              this.orderUpdatingIds.set(doneWithout);
+
+              const locked = { ...this.orderLockedIds() };
+              locked[row.id] = true;
+              this.orderLockedIds.set(locked);
+
+              this.snackBar.open('Estado de orden actualizado', 'Cerrar', {
+                duration: 2000,
+              });
+            },
+            error: () => {
+              this.buttonLoading.set(false);
+              const reverted = { ...this.orderStates() };
+              reverted[row.id] = false;
+              this.orderStates.set(reverted);
+
+              const done = { ...this.orderUpdatingIds() };
+              const doneWithout = Object.fromEntries(
+                Object.entries(done).filter(([k]) => k !== String(row.id)),
+              ) as Record<number, boolean>;
+              this.orderUpdatingIds.set(doneWithout);
+
+              this.snackBar.open(
+                'Error al actualizar el estado de la orden',
+                'Cerrar',
+                {
+                  duration: 3000,
+                },
+              );
+            },
+          });
+      }
     });
     this.orderStates.set(newStates);
   }
@@ -115,13 +202,21 @@ export class ShipmentSendDrawerComponent
     const orders = detail?.orders ?? [];
     const states = this.orderStates();
     if (orders.length === 0) return false;
-    return orders.every((id) => states[id]);
+    return orders.every(
+      (order) => states[order.id] ?? order.status === 'Prepared',
+    );
   }
 
   ngOnInit(): void {
     this.shipmentService.getShipmentById(this.shipmentId).subscribe({
       next: (data: ShipmentDetail) => {
         this.data.set(data);
+        const initialLocked: Record<number, boolean> = {};
+        data.orders?.forEach((o) => {
+          if (o.status === 'Prepared') initialLocked[o.id] = true;
+        });
+        this.orderLockedIds.set(initialLocked);
+
         this.isLoading.set(false);
       },
       error: () => {
