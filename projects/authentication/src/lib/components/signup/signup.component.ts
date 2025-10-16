@@ -5,6 +5,7 @@ import {
   AuthTitleComponent,
 } from '@Common-UI';
 
+import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, signal, WritableSignal } from '@angular/core';
@@ -29,6 +30,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
+import { MatStepperModule } from '@angular/material/stepper';
 import { Router, RouterModule } from '@angular/router';
 import { Observable, finalize } from 'rxjs';
 import { debounceTime, map, startWith, switchMap } from 'rxjs/operators';
@@ -63,6 +65,7 @@ const PHONE_REGEX = /^[+]?\d{1,4}?[-.\s]?(\d{1,3}[-.\s]?){1,4}$/;
     MatSnackBarModule,
     MatAutocompleteModule,
     InputComponent,
+    MatStepperModule,
   ],
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.scss'],
@@ -90,6 +93,15 @@ export class SignupComponent implements OnInit {
     { id: 2, name: IvaCategory.Exento },
     { id: 3, name: IvaCategory.Monotributo },
     { id: 4, name: IvaCategory.ConsumidorFinal },
+  ];
+
+  private stepControls: string[][] = [
+    // Sección 1 - Usuario
+    ['firstName', 'lastName', 'email', 'password', 'confirmPassword'],
+    // Sección 2 - Información Personal
+    ['birthdate', 'town', 'street', 'streetNumber', 'phone'],
+    // Sección 3 - Documentación
+    ['documentType', 'documentNumber', 'taxCategory', 'companyName'],
   ];
 
   filteredTowns$: Observable<Town[]>;
@@ -128,6 +140,25 @@ export class SignupComponent implements OnInit {
           .pipe(map((response) => response.results)),
       ),
     );
+  }
+
+  onStepChange(event: StepperSelectionEvent): void {
+    const idx = event.selectedIndex ?? 0;
+    const controls = this.stepControls[idx] ?? [];
+    this.signupForm.setErrors(null);
+
+    for (const name of controls) {
+      const ctrl = this.signupForm.get(name);
+      if (!ctrl) continue;
+
+      if (!ctrl.dirty && !ctrl.touched) {
+        ctrl.setErrors(null);
+        ctrl.markAsUntouched();
+        ctrl.markAsPristine();
+      } else {
+        ctrl.updateValueAndValidity({ onlySelf: true, emitEvent: false });
+      }
+    }
   }
 
   private translateErrorMessage(message: string): string {

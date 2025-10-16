@@ -2,23 +2,18 @@
 @import 'bootstrap/scss/variables';
 @import '../../../../../../src/styles/varibles';
 
-.custom-account-icon {
-  font-size: 64px;
-  color: $lavander-color;
-  text-align: center;
-  margin-bottom: 1rem;
-  margin-top: 1rem;
-}
-
 .container {
+  max-width: 600px;
+  width: 100%;
+  margin: 0 auto;
+  margin-top: 80px;
+  margin-bottom: 30px;
+  position: relative;
+  overflow: visible;
   background-color: $white-color;
-  padding: 5px;
   border-radius: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-  width: auto;
-  margin: auto;
-  margin-top: 30px;
-  margin-bottom: 30px;
+  padding: 100px 24px 24px;
 }
 
 .error-message {
@@ -34,10 +29,11 @@
 }
 
 .form .form-group {
-  margin-bottom: 20px;
-  margin-left: 20px;
-  margin-right: 20px;
-  width: calc(100% / 2 - 100px);
+  width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  margin-bottom: 16px;
+  box-sizing: border-box;
 }
 
 .form .mat-form-field {
@@ -56,18 +52,28 @@
 }
 
 .custom-account-icon {
-  width: 75px;
-  height: 75px;
-  padding: 0;
-  margin-bottom: 12px;
+  position: absolute;
+  left: 50%;
+  top: -75px;
+  transform: translateX(-50%);
+  width: 150px;
+  height: 150px;
+  padding: 5px;
+  border-radius: 50%;
+  background-color: $white-color;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+  z-index: 9994099;
+  display: block;
 }
 
-@media (max-width: map-get($grid-breakpoints, 'md')) {
+@media (max-width: 420px) {
   .container {
-    width: 100%;
+    padding: 100px 12px 20px;
   }
-  .form .form-group {
-    width: 100%;
-    margin-bottom: 10px;
+
+  .custom-account-icon {
+    width: 130px;
+    height: 130px;
+    top: -65px;
   }
 }
