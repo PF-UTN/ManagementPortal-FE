@@ -367,7 +367,8 @@ describe('ProductListComponent', () => {
         DeletedProductLateralDrawerComponent,
         { productId: request.id },
         expect.objectContaining({
-          title: 'Eliminar producto',
+          title: 'Eliminar Producto',
+          size: 'small',
           footer: expect.objectContaining({
             firstButton: expect.objectContaining({
               text: 'Eliminar',
@@ -399,7 +400,8 @@ describe('ProductListComponent', () => {
         ToggleProductLatearalDrawerComponent,
         { productId: request.id, isPause: true },
         expect.objectContaining({
-          title: 'Pausar producto',
+          title: 'Pausar Producto',
+          size: 'small',
           footer: expect.objectContaining({
             firstButton: expect.objectContaining({
               text: 'Pausar',
@@ -429,7 +431,8 @@ describe('ProductListComponent', () => {
         ToggleProductLatearalDrawerComponent,
         { productId: request.id, isPause: true },
         expect.objectContaining({
-          title: 'Pausar producto',
+          title: 'Reanudar Producto',
+          size: 'small',
           footer: expect.objectContaining({
             firstButton: expect.objectContaining({
               text: 'Reanudar',

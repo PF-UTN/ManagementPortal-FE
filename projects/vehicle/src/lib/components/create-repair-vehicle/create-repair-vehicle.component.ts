@@ -84,6 +84,7 @@ export class CreateRepairVehicleComponent implements OnInit {
     id: -1,
     businessName: '+ Gestionar proveedores',
   };
+  title = 'Registrar Reparación';
 
   constructor(
     public fb: FormBuilder,
@@ -125,6 +126,7 @@ export class CreateRepairVehicleComponent implements OnInit {
         : undefined;
 
     if (repairState) {
+      this.title = 'Editar Reparación';
       this.isSupplierLoading = true;
       this.repairId = repairState.id;
       this.repairForm.patchValue({
