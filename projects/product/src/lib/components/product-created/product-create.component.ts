@@ -111,6 +111,7 @@ export class ProductCreateComponent {
 
   isLoading = signal(true);
   stockOnlyMode = false;
+  title = 'Nuevo Producto';
 
   public readonly MANAGE_CATEGORY_OPTION: ProductCategoryResponse = {
     id: -1,
@@ -146,6 +147,11 @@ export class ProductCreateComponent {
 
     this.initSelectors().subscribe(() => {
       this.loadProductIfEditing();
+
+      const productId = this.route.snapshot.paramMap.get('id');
+      if (productId) {
+        this.title = this.stockOnlyMode ? 'Ajustar stock' : 'Editar Producto';
+      }
     });
   }
 

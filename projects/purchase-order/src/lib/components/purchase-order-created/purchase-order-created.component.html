@@ -1,11 +1,11 @@
 <mp-loading *ngIf="isLoading() || isLoadingInitialData()"></mp-loading>
 
 <div *ngIf="!isLoading() && !isLoadingInitialData()">
-    <div class="d-flex align-items-center mb-2">
+    <div class="d-flex align-items-center mb-2 pt-3">
         <button mat-icon-button (click)="goBack()" aria-label="Volver">
             <mat-icon>arrow_back</mat-icon>
         </button>
-        <mp-title>Nueva Orden de Compra</mp-title>
+        <mp-title>{{ title }}</mp-title>
     </div>
     <hr />
 
