@@ -47,6 +47,7 @@ describe('ShipmentSendDrawerComponent', () => {
         licensePlate: '',
         brand: '',
         model: '',
+        kmTraveled: 0,
       },
       routeLink: '',
     };
