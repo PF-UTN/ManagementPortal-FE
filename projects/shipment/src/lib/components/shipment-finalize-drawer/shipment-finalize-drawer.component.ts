@@ -31,7 +31,7 @@ import { statusOptions } from '../../models/shipment-status-option.model';
 import { ShipmentService } from '../../services/shipment.service';
 
 @Component({
-  selector: 'mp-shipment-finalice-drawer',
+  selector: 'mp-shipment-finalize-drawer',
   standalone: true,
   imports: [
     LoadingComponent,
@@ -46,10 +46,10 @@ import { ShipmentService } from '../../services/shipment.service';
     MatCheckboxModule,
   ],
   providers: [provideNativeDateAdapter()],
-  templateUrl: './shipment-finalice-drawer.component.html',
-  styleUrl: './shipment-finalice-drawer.component.scss',
+  templateUrl: './shipment-finalize-drawer.component.html',
+  styleUrl: './shipment-finalize-drawer.component.scss',
 })
-export class ShipmentFinaliceDrawerComponent
+export class ShipmentFinalizeDrawerComponent
   extends LateralDrawerContainer
   implements OnInit
 {
@@ -64,6 +64,7 @@ export class ShipmentFinaliceDrawerComponent
   data = signal<ShipmentDetail | null>(null);
   isLoading = signal(true);
   buttonLoading = signal(false);
+  validForm = signal(false);
   orderStates = signal<Record<number, boolean>>({});
 
   constructor(
@@ -74,25 +75,22 @@ export class ShipmentFinaliceDrawerComponent
   ) {
     super();
     effect(() => {
-      if (!this.finalizeForm) return;
-      this.finalizeForm.statusChanges.subscribe(() => {
-        const drawerConfig = {
-          ...this.lateralDrawerService.config,
-          footer: {
-            firstButton: {
-              text: 'Finalizar',
-              click: () => this.finalizeShipment(),
-              loading: this.buttonLoading(),
-              disabled: !this.finalizeForm.valid,
-            },
-            secondButton: {
-              text: 'Cerrar',
-              click: () => this.lateralDrawerService.close(),
-            },
+      const drawerConfig = {
+        ...this.lateralDrawerService.config,
+        footer: {
+          firstButton: {
+            text: 'Finalizar',
+            click: () => this.finalizeShipment(),
+            loading: this.buttonLoading(),
+            disabled: !this.validForm(),
           },
-        };
-        this.lateralDrawerService.updateConfig(drawerConfig);
-      });
+          secondButton: {
+            text: 'Cerrar',
+            click: () => this.lateralDrawerService.close(),
+          },
+        },
+      };
+      this.lateralDrawerService.updateConfig(drawerConfig);
     });
   }
 
@@ -105,6 +103,10 @@ export class ShipmentFinaliceDrawerComponent
       ]),
       orderChecks: new FormArray<FormControl<boolean>>([]),
     });
+
+    this.finalizeForm.valueChanges.subscribe(() =>
+      this.validForm.set(this.finalizeForm.valid),
+    );
 
     this.shipmentService.getShipmentById(this.shipmentId).subscribe({
       next: (data: ShipmentDetail) => {
