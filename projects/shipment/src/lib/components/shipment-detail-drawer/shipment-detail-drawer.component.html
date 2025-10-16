@@ -65,10 +65,14 @@
       </div>
       <hr>
       <div class="container__order text-center">
-        <div class="container__order__title">Órdenes</div>
-          <ng-container *ngFor="let order of detail.orders; let i = index">
-            {{ order }}<span *ngIf="i < detail.orders.length - 1"> - </span>
-          </ng-container>
+        <div class="container__order__title mb-2">Órdenes</div>
+          <mp-table
+          [columns]="orderColumns"
+          [dataSource$]="orderDataSource$"
+          [showPaginator]="false"
+          [isLoading]="isLoading()"
+          [noDataMessage]="'No hay órdenes en este envío'"
+        ></mp-table>
       </div>
-    </div>
-  </ng-container>
+  </div>
+</ng-container>

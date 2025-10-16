@@ -3,6 +3,12 @@ export interface Vehicle {
   licensePlate: string;
   brand: string;
   model: string;
+  kmTraveled: number;
+}
+
+export interface ShipmentOrder {
+  id: number;
+  status: string;
 }
 
 export interface ShipmentDetail {
@@ -14,5 +20,5 @@ export interface ShipmentDetail {
   routeLink: string | null;
   vehicle: Vehicle;
   status: string;
-  orders: number[];
+  orders: ShipmentOrder[];
 }
