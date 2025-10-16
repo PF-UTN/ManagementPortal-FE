@@ -1,0 +1,66 @@
+@import '../../../../../../src/styles/varibles';
+
+.container {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  position: relative;
+  background: linear-gradient(135deg, $white-color 60%, $lavander-color 100%);
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__order {
+    &__title {
+      color: $lavander-primary-dark;
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 0;
+    }
+  }
+}
+
+.order-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+
+  &__header-row {
+    background-color: $lavander-primary-dark;
+  }
+
+  th.order-table__cell {
+    color: $white-color;
+    font-weight: 600;
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 2px solid $lavander-color;
+  }
+
+  td.order-table__cell {
+    padding: 0.75rem;
+    vertical-align: middle;
+    border-bottom: 1px solid $lavander-light;
+  }
+
+  &__cell {
+    &__id {
+      width: 90%;
+      text-align: left;
+    }
+
+    &__check {
+      width: 10%;
+      text-align: center;
+    }
+  }
+
+  &__checkbox-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+}
