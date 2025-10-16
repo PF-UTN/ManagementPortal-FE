@@ -236,7 +236,7 @@ describe('ShipmentListComponent', () => {
         id: 123,
         vehicleAssigned: 'AAA111',
         shipmentStatus: ShipmentStatusOptions.Pending,
-        createdAt: '2025-10-23T00:00:00.000Z',
+        date: '2025-10-23T00:00:00.000Z',
       };
       // Act
       const isDisabled = component.columns[4]?.actions?.[2].disabled?.(item);
@@ -250,7 +250,7 @@ describe('ShipmentListComponent', () => {
         id: 124,
         vehicleAssigned: 'BBB222',
         shipmentStatus: ShipmentStatusOptions.Shipped,
-        createdAt: '2025-10-24T00:00:00.000Z',
+        date: '2025-10-24T00:00:00.000Z',
       };
       // Act
       const isDisabled = component.columns[4]?.actions?.[2].disabled?.(item);
@@ -734,7 +734,7 @@ describe('ShipmentListComponent', () => {
         id: 123,
         vehicleAssigned: 'AAA111',
         shipmentStatus: ShipmentStatusOptions.Shipped,
-        createdAt: '2025-10-23T00:00:00.000Z',
+        date: '2025-10-23T00:00:00.000Z',
       };
 
       // Act
