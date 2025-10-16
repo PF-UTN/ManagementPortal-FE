@@ -88,11 +88,11 @@ export class ShipmentListComponent implements OnInit {
       value: (element: ShipmentItem) => element.shipmentStatus,
     },
     {
-      columnDef: 'createdAt',
-      header: 'FECHA DE CREACIÓN',
+      columnDef: 'date',
+      header: 'FECHA DE ENVÍO',
       type: ColumnTypeEnum.VALUE,
       value: (element: ShipmentItem) =>
-        this.datePipe.transform(element.createdAt, 'dd/MM/yyyy')!,
+        this.datePipe.transform(element.date, 'dd/MM/yyyy')!,
     },
     {
       columnDef: 'actions',
@@ -173,7 +173,7 @@ export class ShipmentListComponent implements OnInit {
                     : item.status === 'Finalizado'
                       ? ShipmentStatusOptions.Finished
                       : ShipmentStatusOptions.Pending,
-              createdAt: item.date,
+              date: item.date,
             })),
           );
           this.itemsNumber = response.total;
