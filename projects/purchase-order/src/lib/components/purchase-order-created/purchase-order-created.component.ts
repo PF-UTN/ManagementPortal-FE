@@ -94,6 +94,7 @@ export class PurchaseOrderCreatedComponent implements OnInit {
   isLoadingProducts = signal(false);
   isModification = false;
   searchText = '';
+  title = 'Nueva Orden de Compra';
 
   readonly STATUS_DRAFT = PurchaseOrderStatusOptionsId.Draft;
   readonly STATUS_ORDERED = PurchaseOrderStatusOptionsId.Ordered;
@@ -190,6 +191,10 @@ export class PurchaseOrderCreatedComponent implements OnInit {
   ngOnInit(): void {
     this.existingPurchaseOrderId = this.route.snapshot.params['id'];
     this.isModification = !!this.existingPurchaseOrderId;
+
+    this.title = this.isModification
+      ? 'Modificar Orden de Compra'
+      : 'Nueva Orden de Compra';
 
     this.form = new FormGroup<PurchaseOrderForm>({
       header: new FormGroup<PurchaseHeaderForm>({

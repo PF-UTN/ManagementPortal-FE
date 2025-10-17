@@ -91,10 +91,10 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
       const drawerConfig = {
         ...this.lateralDrawerService.config,
         title: isUpdate
-          ? 'Editar categoría'
+          ? 'Editar Categoría'
           : isCreate
-            ? 'Nueva categoría'
-            : 'Gestionar categoría',
+            ? 'Nueva Categoría'
+            : 'Gestionar Categoría',
         footer: {
           firstButton: {
             click: () => this.onSubmit(),

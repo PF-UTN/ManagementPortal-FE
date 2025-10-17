@@ -85,6 +85,7 @@ export class PerformMaintenancePlanComponent implements OnInit {
     id: -1,
     businessName: '+ Gestionar proveedores',
   };
+  title = 'Realizar Mantenimiento';
 
   constructor(
     public fb: FormBuilder,
@@ -117,6 +118,10 @@ export class PerformMaintenancePlanComponent implements OnInit {
       history.state && 'maintenance' in history.state
         ? history.state.maintenance
         : null;
+
+    if (this.maintenanceFromState) {
+      this.title = 'Editar Mantenimiento';
+    }
 
     if (this.maintenanceFromState) {
       this.isLoading = true;

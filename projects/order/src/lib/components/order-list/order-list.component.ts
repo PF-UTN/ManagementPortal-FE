@@ -29,8 +29,8 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTooltip } from '@angular/material/tooltip';
-import { BehaviorSubject, Subject, Subscription } from 'rxjs';
-import { debounceTime, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, of, Subject, Subscription } from 'rxjs';
+import { catchError, debounceTime, switchMap, tap } from 'rxjs/operators';
 
 import { OrderItem } from '../../../../../common/src/models/order/order-item-general.model';
 import {
@@ -117,6 +117,15 @@ export class OrderListComponent implements OnInit {
       value: (element: OrderItem) => element.deliveryMethod,
     },
     {
+      columnDef: 'shipmentId',
+      header: 'ENVÍO',
+      type: ColumnTypeEnum.VALUE,
+      value: (element: OrderItem) =>
+        element.shipmentId !== null && element.shipmentId !== undefined
+          ? `Envío #${element.shipmentId}`
+          : 'Sin asignar',
+    },
+    {
       columnDef: 'price',
       header: 'PRECIO',
       type: ColumnTypeEnum.VALUE,
@@ -163,6 +172,11 @@ export class OrderListComponent implements OnInit {
 
   doSearchSubject$ = new Subject<void>();
   searchText: string = '';
+  shipmentIdOptions: { key: number; value: string }[] = [
+    { key: -2, value: 'Sin asignar' },
+  ];
+  selectedShipmentId: number = -1;
+  allShipmentIds: (number | null)[] = [];
 
   statusOptions = statusOptions;
   selectedStatuses: { key: OrderStatusOptions; value: string }[] = [];
@@ -170,7 +184,7 @@ export class OrderListComponent implements OnInit {
   toDate: Date | null = null;
   selectedStatus: string[] = [];
   orderByOptions = ORDER_LIST_ORDER_OPTIONS;
-  selectedOrderBy: OrderListOrderOption = this.orderByOptions[0];
+  selectedOrderBy: OrderListOrderOption = this.orderByOptions[1];
   selectedCreationDateRange: { start: Date | null; end: Date | null } = {
     start: null,
     end: null,
@@ -188,6 +202,8 @@ export class OrderListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.loadAllShipmentIds();
+
     this.searchSubscription = this.doSearchSubject$
       .pipe(
         debounceTime(400),
@@ -195,6 +211,13 @@ export class OrderListComponent implements OnInit {
           this.isLoading = true;
         }),
         switchMap(() => {
+          const shipmentIdFilter: { shipmentId?: number | null } = {};
+          if (this.selectedShipmentId === -2) {
+            shipmentIdFilter.shipmentId = null;
+          } else if (this.selectedShipmentId !== -1) {
+            shipmentIdFilter.shipmentId = this.selectedShipmentId;
+          }
+
           const body = {
             searchText: this.searchText ?? '',
             page: this.pageIndex + 1,
@@ -214,6 +237,7 @@ export class OrderListComponent implements OnInit {
                 this.selectedDeliveryTypes.length > 0
                   ? this.selectedDeliveryTypes
                   : undefined,
+              ...shipmentIdFilter,
             },
             orderBy: {
               field:
@@ -223,6 +247,7 @@ export class OrderListComponent implements OnInit {
               direction: this.selectedOrderBy.direction,
             },
           };
+
           return this.orderService.searchOrders(body);
         }),
       )
@@ -231,6 +256,7 @@ export class OrderListComponent implements OnInit {
           const mapped = response.results.map((r) => this.mapToOrderItem(r));
           this.dataSource$.next(mapped);
           this.itemsNumber = response.total;
+          this.updateShipmentIdOptions();
           this.isLoading = false;
         },
         error: () => {
@@ -244,6 +270,36 @@ export class OrderListComponent implements OnInit {
   }
   get isDateRangeValid(): boolean {
     return !this.fromDate || !this.toDate || this.fromDate <= this.toDate;
+  }
+
+  loadAllShipmentIds() {
+    this.orderService
+      .searchOrders({
+        searchText: '',
+        page: 1,
+        pageSize: 100,
+        filters: {},
+        orderBy: {
+          field: 'createdAt',
+          direction: 'desc',
+        },
+      })
+      .pipe(catchError(() => of({ results: [] })))
+      .subscribe((response) => {
+        this.allShipmentIds = Array.from(
+          new Set(response.results.map((r) => r.shipmentId)),
+        );
+        this.updateShipmentIdOptions();
+      });
+  }
+
+  updateShipmentIdOptions() {
+    this.shipmentIdOptions = [
+      { key: -2, value: 'Sin asignar' },
+      ...this.allShipmentIds
+        .filter((id) => id !== null)
+        .map((id) => ({ key: id, value: `Envío #${id}` })),
+    ];
   }
 
   ngOnDestroy(): void {
@@ -263,6 +319,11 @@ export class OrderListComponent implements OnInit {
     this.doSearchSubject$.next();
   }
 
+  onShipmentIdFilterChange(): void {
+    this.pageIndex = 0;
+    this.doSearchSubject$.next();
+  }
+
   private mapToOrderItem(apiResult: OrderSearchResult): OrderItem {
     return {
       id: apiResult.id,
@@ -276,6 +337,7 @@ export class OrderListComponent implements OnInit {
         )?.key ?? OrderStatusOptions.Pending,
       totalAmount: apiResult.totalAmount,
       deliveryMethod: apiResult.deliveryMethod,
+      shipmentId: apiResult.shipmentId,
     };
   }
 
@@ -362,6 +424,12 @@ export class OrderListComponent implements OnInit {
     }
     if (this.selectedDeliveryTypes.length > 0) {
       params.filters.deliveryMethod = this.selectedDeliveryTypes;
+    }
+
+    if (this.selectedShipmentId === -2) {
+      params.filters.shipmentId = null;
+    } else if (this.selectedShipmentId !== -1) {
+      params.filters.shipmentId = this.selectedShipmentId;
     }
     return params;
   }

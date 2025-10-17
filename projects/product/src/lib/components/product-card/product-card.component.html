@@ -25,7 +25,7 @@
       [text]="product.name"
     ></mp-ellipsis-text>
     <div class="product-card__row">
-      <span class="product-card__content-price">$ {{ product.price }}</span>
+      <span class="product-card__content-price">${{ product.price  | number: '1.2-2' }}</span>
     </div>
     <div class="product-card__row">
       <div class="product-card__quantity">

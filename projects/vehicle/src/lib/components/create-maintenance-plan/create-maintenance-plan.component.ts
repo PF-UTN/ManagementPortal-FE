@@ -74,6 +74,7 @@ export class CreateMaintenancePlanComponent implements OnInit {
   isInitialLoading = false;
   isSearching = false;
   isEditMode = false;
+  title = 'Crear plan de mantenimiento';
 
   maintenanceItems: MaintenanceItemSearchResult[] = [];
   filteredMaintenanceItems$!: Observable<MaintenanceItemSearchResult[]>;
@@ -100,6 +101,10 @@ export class CreateMaintenancePlanComponent implements OnInit {
     } | null =
       history.state && 'plan' in history.state ? history.state.plan : null;
     this.isEditMode = !!planFromState;
+
+    this.title = this.isEditMode
+      ? 'Editar plan de mantenimiento'
+      : 'Crear plan de mantenimiento';
 
     if (this.isEditMode) {
       this.isInitialLoading = true;

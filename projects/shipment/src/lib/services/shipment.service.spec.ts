@@ -200,9 +200,13 @@ describe('ShipmentService', () => {
           licensePlate: 'AAA111',
           brand: 'Focus',
           model: 'Focus',
+          kmTraveled: 15000,
         },
         status: 'Shipped',
-        orders: [42, 24],
+        orders: [
+          { id: 42, status: 'Prepared' },
+          { id: 24, status: 'InPreparation' },
+        ],
       };
 
       let response: ShipmentDetail | undefined;

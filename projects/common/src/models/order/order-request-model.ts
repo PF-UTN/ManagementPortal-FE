@@ -7,6 +7,7 @@ export interface OrderSearchRequest {
     deliveryMethod?: string[];
     fromCreatedAtDate?: string;
     toCreatedAtDate?: string;
+    shipmentId?: number | null;
   };
   orderBy?: {
     field: string;

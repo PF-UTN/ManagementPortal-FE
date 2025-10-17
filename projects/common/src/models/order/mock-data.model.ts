@@ -31,6 +31,7 @@ export const mockOrderSearchResponse: OrderSearchResponse = {
       orderStatus: 'Finished',
       totalAmount: 500,
       deliveryMethod: 'Express',
+      shipmentId: 101,
     },
     {
       id: 2,
@@ -39,6 +40,7 @@ export const mockOrderSearchResponse: OrderSearchResponse = {
       orderStatus: 'Cancelled',
       totalAmount: 300,
       deliveryMethod: 'Standard',
+      shipmentId: null,
     },
   ],
 };
