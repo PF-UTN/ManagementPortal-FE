@@ -61,7 +61,7 @@ export class NavBarComponent implements OnInit {
         title: 'Inicio',
         icon: 'home',
         route: 'inicio',
-        shouldRender: true,
+        shouldRender: this.authService.hasAccess([RolesEnum.Employee]),
       },
       {
         title: 'Solicitudes de Registro',
