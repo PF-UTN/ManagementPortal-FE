@@ -42,6 +42,7 @@ import { ShipmentSearchRequest } from '../../models/shipment-search.model';
 import { statusOptions } from '../../models/shipment-status-option.model';
 import { ShipmentStatusOptions } from '../../models/shipment-status.enum';
 import { ShipmentService } from '../../services/shipment.service';
+import { ShipmentListUtils } from '../../utils/shipment-list-utils';
 import { ShipmentDetailDrawerComponent } from '../shipment-detail-drawer/shipment-detail-drawer.component';
 
 @Component({
@@ -88,7 +89,7 @@ export class ShipmentListComponent implements OnInit {
       type: ColumnTypeEnum.PILL,
       value: (element: ShipmentItem) => element.shipmentStatus,
       pillStatus: (element: ShipmentItem) =>
-        this.mapShipmentStatusToPill(element.shipmentStatus),
+        this.mapStatusToPillStatus(element.shipmentStatus),
     },
     {
       columnDef: 'date',
@@ -169,7 +170,12 @@ export class ShipmentListComponent implements OnInit {
               return {
                 id: item.id,
                 vehicleAssigned: item.vehicle.licensePlate,
-                shipmentStatus: item.status,
+                shipmentStatus:
+                  this.statusOptions.find(
+                    (opt) =>
+                      opt.value.toLowerCase() ===
+                      (item.status ?? '').toLowerCase(),
+                  )?.key ?? ShipmentStatusOptions.Pending,
                 date: item.date,
               } as unknown as ShipmentItem;
             }),
@@ -237,13 +243,8 @@ export class ShipmentListComponent implements OnInit {
     return vehicle ? `${vehicle.licensePlate}` : '';
   }
 
-  private mapShipmentStatusToPill(status: string | undefined): PillStatusEnum {
-    if (!status) return PillStatusEnum.Warning;
-    const s = status.toLowerCase().trim();
-    if (s === 'pendiente') return PillStatusEnum.Initial;
-    if (s === 'enviada' || s === 'enviado') return PillStatusEnum.InProgress;
-    if (s === 'finalizado' || s === 'finalizada') return PillStatusEnum.Done;
-    return PillStatusEnum.Warning;
+  private mapStatusToPillStatus(status: ShipmentStatusOptions): PillStatusEnum {
+    return ShipmentListUtils.mapStatusToPillStatus(status);
   }
 
   onVehicleSearchChange(): void {

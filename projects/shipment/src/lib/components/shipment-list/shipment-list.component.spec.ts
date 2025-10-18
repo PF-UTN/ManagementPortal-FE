@@ -207,21 +207,15 @@ describe('ShipmentListComponent', () => {
       expect(pillEs).toBe(PillStatusEnum.Initial);
     });
 
-    it('should map "Enviada"/"Enviado" to PillStatusEnum.InProgress', () => {
+    it('should map Shipped to PillStatusEnum.InProgress', () => {
       // Arrange
       const items: ShipmentItem[] = [
         {
           id: 3,
           vehicleAssigned: 'BBB222',
-          shipmentStatus: 'Enviada',
+          shipmentStatus: ShipmentStatusOptions.Shipped,
           date: '',
-        } as unknown as ShipmentItem,
-        {
-          id: 4,
-          vehicleAssigned: 'BBB222',
-          shipmentStatus: 'Enviado',
-          date: '',
-        } as unknown as ShipmentItem,
+        },
       ];
 
       // Act / Assert
@@ -231,21 +225,15 @@ describe('ShipmentListComponent', () => {
       }
     });
 
-    it('should map "Finalizado"/"Finalizada" to PillStatusEnum.Done', () => {
+    it('should map Finished to PillStatusEnum.Done', () => {
       // Arrange
       const items: ShipmentItem[] = [
         {
           id: 5,
           vehicleAssigned: 'BBB222',
-          shipmentStatus: 'Finalizado',
+          shipmentStatus: ShipmentStatusOptions.Finished,
           date: '',
-        } as unknown as ShipmentItem,
-        {
-          id: 6,
-          vehicleAssigned: 'BBB222',
-          shipmentStatus: 'Finalizada',
-          date: '',
-        } as unknown as ShipmentItem,
+        },
       ];
 
       // Act / Assert
