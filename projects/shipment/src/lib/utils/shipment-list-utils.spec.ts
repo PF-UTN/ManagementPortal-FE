@@ -16,6 +16,17 @@ describe('ShipmentListUtils', () => {
         ShipmentListUtils.getStatusLabel(ShipmentStatusOptions.Shipped),
       ).toBe('Enviada');
     });
+
+    it('should return correct label for Pending', () => {
+      expect(
+        ShipmentListUtils.getStatusLabel(ShipmentStatusOptions.Pending),
+      ).toBe('Pendiente');
+    });
+
+    it('should return "Pendiente" for unknown status (default case)', () => {
+      // @ts-expect-error purposely passing an invalid value
+      expect(ShipmentListUtils.getStatusLabel('UNKNOWN')).toBe('Pendiente');
+    });
   });
 
   describe('mapStatusToPillStatus', () => {

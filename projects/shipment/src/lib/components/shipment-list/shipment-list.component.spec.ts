@@ -665,4 +665,80 @@ describe('ShipmentListComponent', () => {
       );
     });
   });
+
+  describe('ngOnInit data mapping', () => {
+    it('should map API response to ShipmentItem correctly', (done) => {
+      // Arrange
+      const apiResponse = {
+        total: 1,
+        results: [
+          {
+            id: 42,
+            vehicle: {
+              id: 1,
+              licensePlate: 'ABC123',
+              brand: 'Toyota',
+              model: 'Corolla',
+            },
+            status: 'Pendiente',
+            date: '2025-10-23T00:00:00.000Z',
+            orders: [],
+            estimatedKm: 0,
+            effectiveKm: 0,
+            routeLink: null,
+          },
+        ],
+      };
+      const expectedItem: ShipmentItem = {
+        id: 42,
+        vehicleAssigned: 'ABC123',
+        shipmentStatus: ShipmentStatusOptions.Pending,
+        date: '2025-10-23T00:00:00.000Z',
+      };
+      shipmentService.searchShipments.mockReturnValue(of(apiResponse));
+
+      // Act
+      component.emitSearch();
+
+      // Assert
+      component.dataSource$.subscribe((items) => {
+        expect(items[0]).toEqual(expectedItem);
+        done();
+      });
+    });
+
+    it('should fallback to Pending if status is unknown', (done) => {
+      // Arrange
+      const apiResponse = {
+        total: 1,
+        results: [
+          {
+            id: 99,
+            vehicle: {
+              id: 2,
+              licensePlate: 'ZZZ999',
+              brand: 'Ford',
+              model: 'Focus',
+            },
+            status: 'Desconocido',
+            date: '2025-10-24T00:00:00.000Z',
+            orders: [],
+            estimatedKm: 0,
+            effectiveKm: 0,
+            routeLink: null,
+          },
+        ],
+      };
+      shipmentService.searchShipments.mockReturnValue(of(apiResponse));
+
+      // Act
+      component.emitSearch();
+
+      // Assert
+      component.dataSource$.subscribe((items) => {
+        expect(items[0].shipmentStatus).toBe(ShipmentStatusOptions.Pending);
+        done();
+      });
+    });
+  });
 });
