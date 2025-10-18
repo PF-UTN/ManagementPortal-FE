@@ -4,6 +4,7 @@ import {
   mockInvalidUser,
   mockUser,
   NavBarService,
+  RolesEnum,
 } from '@Common';
 
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
@@ -284,6 +285,28 @@ describe('LoginComponent', () => {
 
       // Assert
       expect(routerSpy).toHaveBeenCalledWith(['autenticacion/registro']);
+    });
+  });
+  describe('onSubmit role-based redirect', () => {
+    it('should navigate to /productos/cliente when userRole is Client', () => {
+      // Arrange
+      const credentials = mockUser;
+      jest
+        .spyOn(authService, 'logInAsync')
+        .mockReturnValue(of({ access_token: 'mockToken' }));
+      Object.assign(authService, { userRole: RolesEnum.Client });
+
+      component.loginForm.setValue(credentials);
+      const routerSpy = jest.spyOn(router, 'navigate');
+
+      // Act
+      component.onSubmit();
+
+      // Assert
+      expect(routerSpy).toHaveBeenCalledWith(['/productos/cliente']);
+      const navBarSpy = jest.spyOn(navBarService, 'showNavBar');
+      expect(navBarSpy).toHaveBeenCalled();
+      expect(component.isSubmitting()).toBe(false);
     });
   });
 });

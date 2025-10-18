@@ -15,7 +15,7 @@ export const routes: Routes = [
     path: 'inicio',
     loadChildren: () => import('@Home').then((m) => m.HomeRoutingModule),
     canActivate: [RoleGuard],
-    data: { admittedRoles: [RolesEnum.Employee, RolesEnum.Client] },
+    data: { admittedRoles: [RolesEnum.Employee] },
   },
   {
     path: 'solicitudes-registro',

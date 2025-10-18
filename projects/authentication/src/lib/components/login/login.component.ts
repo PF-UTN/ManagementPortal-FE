@@ -1,4 +1,4 @@
-import { AuthService, environment, NavBarService } from '@Common';
+import { AuthService, environment, NavBarService, RolesEnum } from '@Common';
 import {
   ButtonComponent,
   InputComponent,
@@ -92,7 +92,12 @@ export class LoginComponent implements OnInit {
 
       this.authService.logInAsync(credentials).subscribe({
         next: () => {
-          this.router.navigate(['inicio']);
+          const role = this.authService.userRole ?? null;
+          if (role === RolesEnum.Client) {
+            this.router.navigate(['/productos/cliente']);
+          } else {
+            this.router.navigate(['inicio']);
+          }
           this.navBarService.showNavBar();
           this.isSubmitting.set(false);
         },
