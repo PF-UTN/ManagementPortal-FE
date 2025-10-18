@@ -804,4 +804,39 @@ describe('SignupComponent', () => {
       expect(component.errorMessage).toBe(errorMessage);
     });
   });
+
+  describe('onStepChange', () => {
+    it('clears errors for untouched controls when switching to step', () => {
+      const streetControl = component.signupForm.controls.street;
+      streetControl.setErrors({ required: true });
+      streetControl.markAsUntouched();
+      streetControl.markAsPristine();
+
+      const event = {
+        selectedIndex: 1,
+      } as unknown as import('@angular/cdk/stepper').StepperSelectionEvent;
+      component.onStepChange(event);
+
+      expect(streetControl.errors).toBeNull();
+      expect(streetControl.pristine).toBeTruthy();
+      expect(streetControl.touched).toBeFalsy();
+    });
+
+    it('keeps errors for dirty or touched controls when switching', () => {
+      const phoneControl = component.signupForm.controls.phone;
+      phoneControl.setValue('invalid-phone');
+      phoneControl.markAsDirty();
+      phoneControl.markAsTouched();
+      phoneControl.updateValueAndValidity({ onlySelf: true, emitEvent: false });
+      expect(phoneControl.invalid).toBeTruthy();
+
+      const event = {
+        selectedIndex: 1,
+      } as unknown as import('@angular/cdk/stepper').StepperSelectionEvent;
+      component.onStepChange(event);
+
+      expect(phoneControl.invalid).toBeTruthy();
+      expect(phoneControl.errors).toBeTruthy();
+    });
+  });
 });
