@@ -158,8 +158,8 @@ export class OrderListComponent implements OnInit {
   ];
 
   deliveryTypeOptions = [
-    { key: 'Retiro en Local', value: 'Retiro en Local' },
-    { key: 'Entrega a Domicilio', value: 'Entrega a Domicilio' },
+    { key: 1, value: 'Retiro en Local' },
+    { key: 2, value: 'Entrega a Domicilio' },
   ];
 
   dataSource$ = new BehaviorSubject<OrderItem[]>([]);
@@ -168,7 +168,7 @@ export class OrderListComponent implements OnInit {
 
   pageIndex: number = 0;
   pageSize: number = 10;
-  selectedDeliveryTypes: string[] = [];
+  selectedDeliveryTypes: number[] = [];
 
   doSearchSubject$ = new Subject<void>();
   searchText: string = '';
@@ -233,7 +233,7 @@ export class OrderListComponent implements OnInit {
               toCreatedAtDate: this.toDate
                 ? this.toDate.toISOString().slice(0, 10)
                 : undefined,
-              deliveryMethod:
+              deliveryMethodId:
                 this.selectedDeliveryTypes.length > 0
                   ? this.selectedDeliveryTypes
                   : undefined,
@@ -422,8 +422,9 @@ export class OrderListComponent implements OnInit {
     if (this.toDate) {
       params.filters.toCreatedAtDate = this.toDate.toISOString().slice(0, 10);
     }
+
     if (this.selectedDeliveryTypes.length > 0) {
-      params.filters.deliveryMethod = this.selectedDeliveryTypes;
+      params.filters.deliveryMethodId = this.selectedDeliveryTypes;
     }
 
     if (this.selectedShipmentId === -2) {

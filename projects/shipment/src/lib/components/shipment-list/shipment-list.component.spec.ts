@@ -17,7 +17,6 @@ import {
   fakeAsync,
   tick,
 } from '@angular/core/testing';
-import { MatDialog } from '@angular/material/dialog';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
 
@@ -27,6 +26,7 @@ import { ShipmentSearchRequest } from '../../models/shipment-search.model';
 import { ShipmentStatusOptions } from '../../models/shipment-status.enum';
 import { ShipmentService } from '../../services/shipment.service';
 import { ShipmentDetailDrawerComponent } from '../shipment-detail-drawer/shipment-detail-drawer.component';
+import { ShipmentSendDrawerComponent } from '../shipment-send-drawer/shipment-send-drawer.component';
 
 jest.mock('@Common', () => ({
   ...jest.requireActual('@Common'),
@@ -134,8 +134,14 @@ describe('ShipmentListComponent', () => {
         date: '2025-10-23T00:00:00.000Z',
       };
       const spy = jest.spyOn(component, 'onSend');
+      const lateralDrawerService = TestBed.inject(LateralDrawerService);
+      jest
+        .spyOn(lateralDrawerService, 'open')
+        .mockImplementation(() => of(undefined));
+
       // Act
       component.columns[4]?.actions?.[1].action(item);
+
       // Assert
       expect(spy).toHaveBeenCalledWith(item);
     });
@@ -622,8 +628,12 @@ describe('ShipmentListComponent', () => {
   });
 
   describe('onSend', () => {
-    it('should set isLoading to true when modal is confirmed', () => {
+    it('should open the drawer with correct parameters', () => {
       // Arrange
+      const lateralDrawerService = TestBed.inject(LateralDrawerService);
+      const spy = jest
+        .spyOn(lateralDrawerService, 'open')
+        .mockImplementation(() => of(undefined));
       const item: ShipmentItem = {
         id: 123,
         vehicleAssigned: 'AAA111',
@@ -631,25 +641,28 @@ describe('ShipmentListComponent', () => {
         date: '2025-10-23T00:00:00.000Z',
       };
 
-      // Mock dialog
-      const dialogRef = {
-        afterClosed: () => of(true),
-      };
-      const dialog = TestBed.inject(MatDialog);
-      jest
-        .spyOn(dialog, 'open')
-        .mockReturnValue(
-          dialogRef as unknown as ReturnType<typeof dialog.open>,
-        );
-      jest
-        .spyOn(shipmentService, 'sendShipment')
-        .mockReturnValue(of({ link: 'test' }));
-
       // Act
       component.onSend(item);
 
       // Assert
-      expect(component.isLoading()).toBe(true);
+      expect(spy).toHaveBeenCalledWith(
+        ShipmentSendDrawerComponent,
+        { shipmentId: item.id },
+        {
+          title: `Iniciar Envío #${item.id}`,
+          footer: {
+            firstButton: {
+              text: 'Enviar',
+              click: expect.any(Function),
+            },
+            secondButton: {
+              text: 'Cerrar',
+              click: expect.any(Function),
+            },
+          },
+          size: 'small',
+        },
+      );
     });
   });
 });
