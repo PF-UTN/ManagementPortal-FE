@@ -603,4 +603,52 @@ describe('OrderService', () => {
       expect((errorResponse as { status: number }).status).toBe(400);
     });
   });
+
+  describe('updateOrderStatus', () => {
+    it('should PATCH to /order/:orderId with correct body', () => {
+      // Arrange
+      const orderId = 10;
+      const orderStatusId = 2;
+      let response: unknown;
+
+      // Act
+      service.updateOrderStatus(orderId, orderStatusId).subscribe((res) => {
+        response = res;
+      });
+
+      const req = httpMock.expectOne(`${baseUrl}/${orderId}`);
+      expect(req.request.method).toBe('PATCH');
+      expect(req.request.body).toEqual({ orderStatusId });
+
+      req.flush(null);
+
+      // Assert
+      expect(response).toBeNull();
+    });
+
+    it('should handle HTTP errors', () => {
+      // Arrange
+      const orderId = 10;
+      const orderStatusId = 2;
+      let errorResponse: unknown;
+
+      // Act
+      service.updateOrderStatus(orderId, orderStatusId).subscribe({
+        next: () => {
+          fail('Expected an error, but got a successful response');
+        },
+        error: (err) => {
+          errorResponse = err;
+        },
+      });
+
+      const req = httpMock.expectOne(`${baseUrl}/${orderId}`);
+      expect(req.request.method).toBe('PATCH');
+      req.flush('Error', { status: 400, statusText: 'Bad Request' });
+
+      // Assert
+      expect(errorResponse).toBeDefined();
+      expect((errorResponse as { status: number }).status).toBe(400);
+    });
+  });
 });

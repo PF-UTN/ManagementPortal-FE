@@ -11,7 +11,6 @@ import {
   TableColumn,
   TableComponent,
   LateralDrawerService,
-  ModalComponent,
 } from '@Common-UI';
 
 import { DatePipe, CommonModule } from '@angular/common';
@@ -42,6 +41,7 @@ import { statusOptions } from '../../models/shipment-status-option.model';
 import { ShipmentStatusOptions } from '../../models/shipment-status.enum';
 import { ShipmentService } from '../../services/shipment.service';
 import { ShipmentDetailDrawerComponent } from '../shipment-detail-drawer/shipment-detail-drawer.component';
+import { ShipmentSendDrawerComponent } from '../shipment-send-drawer/shipment-send-drawer.component';
 
 @Component({
   selector: 'mp-shipment-list',
@@ -327,31 +327,24 @@ export class ShipmentListComponent implements OnInit {
   }
 
   onSend(element: ShipmentItem): void {
-    const dialogRef = this.dialog.open(ModalComponent, {
-      data: {
-        title: 'Confirmar envío',
-        message: '¿Está seguro de que desea realizar este envío?',
-        confirmText: 'Aceptar',
-        cancelText: 'Cancelar',
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result: boolean) => {
-      if (result) {
-        this.isLoading.set(true);
-        this.shipmentService.sendShipment(element.id).subscribe({
-          next: () => {
-            this.snackBar.open('Envío realizado con éxito', 'Cerrar', {
-              duration: 3000,
-            });
-            this.emitSearch();
-            this.onDetailDrawer(element);
-            this.isLoading.set(false);
+    this.lateralDrawerService.open(
+      ShipmentSendDrawerComponent,
+      { shipmentId: element.id },
+      {
+        title: `Iniciar Envío #${element.id}`,
+        footer: {
+          firstButton: {
+            text: 'Enviar',
+            click: () => {},
           },
-          error: () => {},
-        });
-      }
-    });
+          secondButton: {
+            text: 'Cerrar',
+            click: () => this.lateralDrawerService.close(),
+          },
+        },
+        size: 'small',
+      },
+    );
   }
 
   onFinish(element: ShipmentItem): void {
