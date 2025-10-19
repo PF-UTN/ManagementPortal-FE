@@ -54,7 +54,7 @@
             [min]="(data()?.vehicle?.kmTraveled ?? 0) + 1"
             placeholder="Ingrese el kilometraje"
             [errorMessages]="{
-              min: 'El kilometraje debe ser mayor a ' + (data()?.vehicle?.kmTraveled ?? 0)
+              minOdometer: 'El kilometraje debe ser mayor a ' + (data()?.vehicle?.kmTraveled ?? 0),
             }"
           ></mp-input>
         </form>

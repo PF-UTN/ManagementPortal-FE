@@ -14,6 +14,8 @@ import {
   FormControl,
   Validators,
   FormArray,
+  ValidatorFn,
+  AbstractControl,
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -96,7 +98,7 @@ export class ShipmentFinalizeDrawerComponent
   }
 
   ngOnInit(): void {
-    this.finalizeForm = this.fb.group({
+    this.finalizeForm = new FormGroup({
       finishedAt: new FormControl<Date | null>(this.today, Validators.required),
       odometer: new FormControl<number | null>(null, [
         Validators.required,
@@ -112,25 +114,26 @@ export class ShipmentFinalizeDrawerComponent
     this.shipmentService.getShipmentById(this.shipmentId).subscribe({
       next: (data: ShipmentDetail) => {
         this.data.set(data);
+
         const checksArray = new FormArray<FormControl<boolean>>(
           (data.orders ?? []).map(
             () => new FormControl<boolean>(true, { nonNullable: true }),
           ),
         );
         this.finalizeForm.setControl('orderChecks', checksArray);
+
         const initialStates: Record<number, boolean> = {};
         (data.orders ?? []).forEach((order) => {
           initialStates[order.id] = true;
         });
-
         this.orderStates.set(initialStates);
 
         const odometerControl = this.finalizeForm.get(
           'odometer',
-        ) as FormControl;
+        ) as FormControl<number | null>;
         odometerControl.setValidators([
           Validators.required,
-          Validators.min(data.vehicle.kmTraveled + 1),
+          this.odometerGreaterThanKmTraveledValidator(data.vehicle.kmTraveled),
         ]);
         odometerControl.updateValueAndValidity();
 
@@ -150,6 +153,18 @@ export class ShipmentFinalizeDrawerComponent
       },
     });
   }
+
+  odometerGreaterThanKmTraveledValidator = (
+    kmTraveled: number,
+  ): ValidatorFn => {
+    return (control: AbstractControl) => {
+      const value = control.value as number | null;
+      if (value !== null && value <= kmTraveled) {
+        return { minOdometer: { requiredMin: kmTraveled + 1, actual: value } };
+      }
+      return null;
+    };
+  };
 
   onOrderCheckChange(orderId: number, checked: boolean) {
     const detail = this.data();

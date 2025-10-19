@@ -93,6 +93,25 @@ describe('ShipmentFinalizeDrawerComponent', () => {
       expect(odometerControl?.validator).toBeDefined();
       expect(component.isLoading()).toBe(false);
     });
+
+    it('should show minOdometer error in finalizeForm when odometer is too low', () => {
+      // Arrange
+      shipmentServiceMock.getShipmentById.mockReturnValue(
+        of(mockShipmentDetail),
+      );
+      component.ngOnInit();
+      const odometerControl = component.finalizeForm.get(
+        'odometer',
+      ) as FormControl<number | null>;
+
+      // Act
+      odometerControl.setValue(999);
+      odometerControl.markAsTouched();
+      odometerControl.updateValueAndValidity();
+
+      // Assert
+      expect(odometerControl.hasError('minOdometer')).toBe(true);
+    });
   });
 
   describe('onOrderCheckChange', () => {
@@ -226,6 +245,38 @@ describe('ShipmentFinalizeDrawerComponent', () => {
         'Cerrar',
         { duration: 3000 },
       );
+    });
+  });
+
+  describe('odometerGreaterThanKmTraveledValidator', () => {
+    it('should set minOdometer error if odometer is less than or equal to kmTraveled', () => {
+      // Arrange
+      const kmTraveled = 1000;
+      const validator =
+        component.odometerGreaterThanKmTraveledValidator(kmTraveled);
+      const control = new FormControl<number | null>(1000);
+
+      // Act
+      const error = validator(control);
+
+      // Assert
+      expect(error).toEqual({
+        minOdometer: { requiredMin: 1001, actual: 1000 },
+      });
+    });
+
+    it('should not set error if odometer is greater than kmTraveled', () => {
+      // Arrange
+      const kmTraveled = 1000;
+      const validator =
+        component.odometerGreaterThanKmTraveledValidator(kmTraveled);
+      const control = new FormControl<number | null>(1001);
+
+      // Act
+      const error = validator(control);
+
+      // Assert
+      expect(error).toBeNull();
     });
   });
 });
