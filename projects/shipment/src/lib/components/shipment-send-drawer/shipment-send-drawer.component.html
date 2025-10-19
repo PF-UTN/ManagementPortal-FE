@@ -20,14 +20,6 @@
             </div>
         </div>
         <div class="row">
-          <div class="col-12">
-              @if (detail.finishedAt) {
-              <strong>Finalizado</strong>
-              <p>{{ detail.finishedAt | date:'dd/MM/yyyy' }}</p>
-            }
-            </div>
-        </div>
-        <div class="row">
           <div class="col-4">
             <strong>Estado</strong>
             <p>{{ getStatusLabel(detail.status)}}</p>

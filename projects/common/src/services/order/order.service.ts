@@ -88,4 +88,9 @@ export class OrderService {
     const url = `${this.baseUrl}/${orderId}`;
     return this.http.patch<void>(url, { orderStatusId });
   }
+
+  updateOrderStatus(orderId: number, orderStatusId: number): Observable<void> {
+    const url = `${this.baseUrl}/${orderId}`;
+    return this.http.patch<void>(url, { orderStatusId });
+  }
 }

@@ -11,6 +11,7 @@ import {
   TableColumn,
   TableComponent,
   LateralDrawerService,
+  PillStatusEnum,
 } from '@Common-UI';
 
 import { DatePipe, CommonModule } from '@angular/common';
@@ -40,6 +41,7 @@ import { ShipmentSearchRequest } from '../../models/shipment-search.model';
 import { statusOptions } from '../../models/shipment-status-option.model';
 import { ShipmentStatusOptions } from '../../models/shipment-status.enum';
 import { ShipmentService } from '../../services/shipment.service';
+import { ShipmentListUtils } from '../../utils/shipment-list-utils';
 import { ShipmentDetailDrawerComponent } from '../shipment-detail-drawer/shipment-detail-drawer.component';
 import { ShipmentFinalizeDrawerComponent } from '../shipment-finalize-drawer/shipment-finalize-drawer.component';
 import { ShipmentSendDrawerComponent } from '../shipment-send-drawer/shipment-send-drawer.component';
@@ -85,8 +87,10 @@ export class ShipmentListComponent implements OnInit {
     {
       columnDef: 'shipmentStatus',
       header: 'ESTADO DEL ENVÍO',
-      type: ColumnTypeEnum.VALUE,
+      type: ColumnTypeEnum.PILL,
       value: (element: ShipmentItem) => element.shipmentStatus,
+      pillStatus: (element: ShipmentItem) =>
+        this.mapStatusToPillStatus(element.shipmentStatus),
     },
     {
       columnDef: 'date',
@@ -165,19 +169,19 @@ export class ShipmentListComponent implements OnInit {
       .subscribe({
         next: (response) => {
           this.dataSource$.next(
-            response.results.map((item) => ({
-              id: item.id,
-              vehicleAssigned: item.vehicle.licensePlate,
-              shipmentStatus:
-                item.status === 'Pendiente'
-                  ? ShipmentStatusOptions.Pending
-                  : item.status === 'Enviado'
-                    ? ShipmentStatusOptions.Shipped
-                    : item.status === 'Finalizado'
-                      ? ShipmentStatusOptions.Finished
-                      : ShipmentStatusOptions.Pending,
-              date: item.date,
-            })),
+            response.results.map((item) => {
+              return {
+                id: item.id,
+                vehicleAssigned: item.vehicle.licensePlate,
+                shipmentStatus:
+                  this.statusOptions.find(
+                    (opt) =>
+                      opt.value.toLowerCase() ===
+                      (item.status ?? '').toLowerCase(),
+                  )?.key ?? ShipmentStatusOptions.Pending,
+                date: item.date,
+              } as unknown as ShipmentItem;
+            }),
           );
           this.itemsNumber = response.total;
           this.isLoading.set(false);
@@ -240,6 +244,10 @@ export class ShipmentListComponent implements OnInit {
 
   displayVehicle(vehicle: VehicleListItem | null): string {
     return vehicle ? `${vehicle.licensePlate}` : '';
+  }
+
+  private mapStatusToPillStatus(status: ShipmentStatusOptions): PillStatusEnum {
+    return ShipmentListUtils.mapStatusToPillStatus(status);
   }
 
   onVehicleSearchChange(): void {

@@ -314,19 +314,13 @@ describe('OrderListComponent', () => {
 
     it('should include deliveryMethod filter if selectedDeliveryTypes is set', () => {
       // Arrange
-      component.selectedDeliveryTypes = [
-        'Entrega a Domicilio',
-        'Retiro en Local',
-      ];
+      component.selectedDeliveryTypes = [2, 1];
 
       // Act
       const params = component['getOrderParams']();
 
       // Assert
-      expect(params.filters.deliveryMethod).toEqual([
-        'Entrega a Domicilio',
-        'Retiro en Local',
-      ]);
+      expect(params.filters.deliveryMethodId).toEqual([2, 1]);
     });
 
     it('should not include deliveryMethod filter if selectedDeliveryTypes is empty', () => {
@@ -337,7 +331,7 @@ describe('OrderListComponent', () => {
       const params = component['getOrderParams']();
 
       // Assert
-      expect(params.filters.deliveryMethod).toBeUndefined();
+      expect(params.filters.deliveryMethodId).toBeUndefined();
     });
 
     it('should not include shipmentId filter if selectedShipmentId is -1', () => {

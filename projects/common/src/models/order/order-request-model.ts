@@ -4,7 +4,7 @@ export interface OrderSearchRequest {
   pageSize: number;
   filters?: {
     statusName?: string[];
-    deliveryMethod?: string[];
+    deliveryMethodId?: number[];
     fromCreatedAtDate?: string;
     toCreatedAtDate?: string;
     shipmentId?: number | null;
