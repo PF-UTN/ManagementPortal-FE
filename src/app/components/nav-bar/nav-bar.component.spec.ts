@@ -218,7 +218,7 @@ describe('NavBarComponent', () => {
         title: 'Inicio',
         icon: 'home',
         route: 'inicio',
-        shouldRender: true,
+        shouldRender: false,
       },
       {
         title: 'Solicitudes de Registro',
