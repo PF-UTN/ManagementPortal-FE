@@ -100,7 +100,7 @@ export class CreateUpdateSupplierLateralDrawerComponent
         footer: {
           firstButton: {
             click: () => this.onSubmit(),
-            text: isCreating ? 'Crear' : isUpdating ? 'Modificar' : 'Confirmar',
+            text: isCreating ? 'Crear' : isUpdating ? 'Editar' : 'Confirmar',
             loading: this.isLoading(),
             disabled: !isFormValid,
           },

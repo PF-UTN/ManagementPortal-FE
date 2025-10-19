@@ -115,10 +115,6 @@ export class OrderListClientComponent implements OnInit {
           description: 'Ver Detalle',
           action: (element: OrderItem) => this.onDetailDrawer(element),
         },
-        {
-          description: 'Repetir pedido',
-          action: (element: OrderItem) => this.onRepeatOrder(element),
-        },
       ],
     },
   ];
@@ -270,10 +266,6 @@ export class OrderListClientComponent implements OnInit {
         size: 'medium',
       },
     );
-  }
-
-  onRepeatOrder(order: OrderItem) {
-    console.log('Repetir pedido', order);
   }
 
   onSearchTextChange(): void {

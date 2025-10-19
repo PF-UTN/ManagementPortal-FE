@@ -119,7 +119,7 @@ describe('MaintenanceRepairListComponent', () => {
       expect(result).toBe('12,345 km');
     });
 
-    it('should navigate with correct state when Modificar action is triggered', () => {
+    it('should navigate with correct state when Editar action is triggered', () => {
       // Arrange
       const routerMock = TestBed.inject(Router) as unknown as {
         navigate: jest.Mock;
@@ -128,7 +128,7 @@ describe('MaintenanceRepairListComponent', () => {
       const item: RepairItem = {
         id: 5,
         date: '2024-10-01',
-        description: 'Test Modificar',
+        description: 'Test Editar',
         kmPerformed: 1234,
         serviceSupplierId: 42,
       };

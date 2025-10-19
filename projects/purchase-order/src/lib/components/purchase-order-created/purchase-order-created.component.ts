@@ -193,7 +193,7 @@ export class PurchaseOrderCreatedComponent implements OnInit {
     this.isModification = !!this.existingPurchaseOrderId;
 
     this.title = this.isModification
-      ? 'Modificar Orden de Compra'
+      ? 'Editar Orden de Compra'
       : 'Nueva Orden de Compra';
 
     this.form = new FormGroup<PurchaseOrderForm>({
@@ -504,13 +504,9 @@ export class PurchaseOrderCreatedComponent implements OnInit {
           this.router.navigate(['/ordenes-compra']);
         },
         error: () => {
-          this.snackBar.open(
-            'Error al modificar la orden de compra',
-            'Cerrar',
-            {
-              duration: 3000,
-            },
-          );
+          this.snackBar.open('Error al editar la orden de compra', 'Cerrar', {
+            duration: 3000,
+          });
           this.isLoading.set(false);
         },
       });

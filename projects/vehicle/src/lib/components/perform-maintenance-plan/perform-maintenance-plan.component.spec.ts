@@ -420,7 +420,7 @@ describe('PerformMaintenancePlanComponent', () => {
       component.onSave();
       // Assert
       expect(snackBarMock.open).toHaveBeenCalledWith(
-        'Ocurrió un error al modificar el mantenimiento',
+        'Ocurrió un error al editar el mantenimiento',
         'Cerrar',
         { duration: 3000 },
       );
