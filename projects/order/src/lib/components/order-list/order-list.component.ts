@@ -472,6 +472,7 @@ export class OrderListComponent implements OnInit {
       )
       .subscribe(() => {
         this.doSearchSubject$.next();
+        this.loadAllShipmentIds();
       });
   }
 
@@ -499,7 +500,8 @@ export class OrderListComponent implements OnInit {
             this.snackBar.open('Orden preparada con éxito', 'Cerrar', {
               duration: 3000,
             });
-            this.doSearchSubject$.next();
+            globalThis.location.reload();
+            this.loadAllShipmentIds();
           },
           error: () => {
             this.snackBar.open('Error al preparar la orden', 'Cerrar', {
