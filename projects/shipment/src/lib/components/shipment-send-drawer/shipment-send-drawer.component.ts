@@ -242,8 +242,8 @@ export class ShipmentSendDrawerComponent
         });
         this.lateralDrawerService.close();
         setTimeout(() => {
-          window.location.reload();
-        }, 500);
+          globalThis.location.reload();
+        }, 700);
       },
       error: () => {
         this.buttonLoading.set(false);

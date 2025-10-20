@@ -123,9 +123,9 @@ export class ShipmentFinalizeDrawerComponent
         this.finalizeForm.setControl('orderChecks', checksArray);
 
         const initialStates: Record<number, boolean> = {};
-        (data.orders ?? []).forEach((order) => {
+        for (const order of data.orders ?? []) {
           initialStates[order.id] = true;
-        });
+        }
         this.orderStates.set(initialStates);
 
         const odometerControl = this.finalizeForm.get(
@@ -140,9 +140,10 @@ export class ShipmentFinalizeDrawerComponent
         checksArray.valueChanges.subscribe((values: boolean[]) => {
           const orders = data.orders ?? [];
           const newStates: Record<number, boolean> = {};
-          orders.forEach((order, idx) => {
+          for (let idx = 0; idx < orders.length; idx++) {
+            const order = orders[idx];
             newStates[order.id] = values[idx];
-          });
+          }
           this.orderStates.set(newStates);
         });
 
@@ -187,7 +188,7 @@ export class ShipmentFinalizeDrawerComponent
         string,
         number | string
       >;
-      if (Object.prototype.hasOwnProperty.call(enumMap, status)) {
+      if (Object.hasOwn(enumMap, status)) {
         keyToMatch = enumMap[status];
       }
     }
@@ -244,7 +245,7 @@ export class ShipmentFinalizeDrawerComponent
         });
         this.lateralDrawerService.close();
         setTimeout(() => {
-          window.location.reload();
+          globalThis.location.reload();
         }, 700);
       },
       error: () => {},
