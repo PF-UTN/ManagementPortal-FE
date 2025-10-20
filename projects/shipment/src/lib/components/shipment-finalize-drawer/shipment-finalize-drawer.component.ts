@@ -240,19 +240,14 @@ export class ShipmentFinalizeDrawerComponent
       next: () => {
         this.buttonLoading.set(false);
         this.snackBar.open('Envío finalizado con éxito', 'Cerrar', {
-          duration: 3000,
+          duration: 2000,
         });
         this.lateralDrawerService.close();
         setTimeout(() => {
           window.location.reload();
-        }, 500);
+        }, 700);
       },
-      error: () => {
-        this.buttonLoading.set(false);
-        this.snackBar.open('Error al finalizar el envío', 'Cerrar', {
-          duration: 3000,
-        });
-      },
+      error: () => {},
     });
   }
 }

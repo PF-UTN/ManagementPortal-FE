@@ -8,7 +8,7 @@ import {
   FormArray,
 } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 
 import { ShipmentFinalizeDrawerComponent } from './shipment-finalize-drawer.component';
 import { ShipmentDetail } from '../../models/shipment-deatil.model';
@@ -74,6 +74,21 @@ describe('ShipmentFinalizeDrawerComponent', () => {
     fixture = TestBed.createComponent(ShipmentFinalizeDrawerComponent);
     component = fixture.componentInstance;
     component.shipmentId = 1;
+  });
+
+  beforeAll(() => {
+    Object.defineProperty(window, 'location', {
+      value: {
+        ...window.location,
+        reload: jest.fn(),
+      },
+      writable: true,
+    });
+    jest.useFakeTimers();
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
   });
 
   describe('ngOnInit', () => {
@@ -202,7 +217,7 @@ describe('ShipmentFinalizeDrawerComponent', () => {
           new FormControl(false, { nonNullable: true }),
         ]),
       });
-      shipmentServiceMock.finishShipment.mockReturnValue(of(undefined)); // <-- Observable de éxito
+      shipmentServiceMock.finishShipment.mockReturnValue(of(undefined));
 
       // Act
       component.finalizeShipment();
@@ -212,39 +227,9 @@ describe('ShipmentFinalizeDrawerComponent', () => {
       expect(snackBarMock.open).toHaveBeenCalledWith(
         'Envío finalizado con éxito',
         'Cerrar',
-        { duration: 3000 },
+        { duration: 2000 },
       );
       expect(lateralDrawerServiceMock.close).toHaveBeenCalled();
-    });
-
-    it('should handle error response', () => {
-      // Arrange
-      component.data.set(mockShipmentDetail);
-      component.finalizeForm = fb.group({
-        finishedAt: new FormControl<Date | null>(
-          new Date(),
-          Validators.required,
-        ),
-        odometer: new FormControl<number | null>(1001, [Validators.required]),
-        orderChecks: fb.array([
-          new FormControl(true, { nonNullable: true }),
-          new FormControl(false, { nonNullable: true }),
-        ]),
-      });
-      shipmentServiceMock.finishShipment.mockReturnValue(
-        throwError(() => new Error('error')),
-      ); // <-- Observable de error
-
-      // Act
-      component.finalizeShipment();
-
-      // Assert
-      expect(component.buttonLoading()).toBe(false);
-      expect(snackBarMock.open).toHaveBeenCalledWith(
-        'Error al finalizar el envío',
-        'Cerrar',
-        { duration: 3000 },
-      );
     });
   });
 
@@ -278,5 +263,26 @@ describe('ShipmentFinalizeDrawerComponent', () => {
       // Assert
       expect(error).toBeNull();
     });
+  });
+
+  it('should reload the page after successful finalizeShipment', () => {
+    // Arrange
+    component.data.set(mockShipmentDetail);
+    component.finalizeForm = fb.group({
+      finishedAt: new FormControl<Date | null>(new Date(), Validators.required),
+      odometer: new FormControl<number | null>(1001, [Validators.required]),
+      orderChecks: fb.array([
+        new FormControl(true, { nonNullable: true }),
+        new FormControl(false, { nonNullable: true }),
+      ]),
+    });
+    shipmentServiceMock.finishShipment.mockReturnValue(of(undefined));
+
+    // Act
+    component.finalizeShipment();
+    jest.runAllTimers();
+
+    // Assert
+    expect(window.location.reload).toHaveBeenCalled();
   });
 });

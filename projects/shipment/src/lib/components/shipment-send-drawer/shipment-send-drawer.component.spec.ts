@@ -538,4 +538,27 @@ describe('ShipmentSendDrawerComponent', () => {
       expect(component.orderLockedIds()[21]).toBe(true);
     });
   });
+
+  it('should skip locked orders and keep their state as true', () => {
+    // Arrange
+    component.orderLockedIds.set({ 1: true });
+    component.orderStates.set({ 1: false, 2: false });
+
+    // Act
+    component.onSelectedRows([
+      { id: 1, selected: false },
+      { id: 2, selected: true },
+    ]);
+
+    // Assert
+    expect(component.orderStates()).toEqual({ 1: true, 2: true });
+    expect(orderService.updateOrderStatus).toHaveBeenCalledWith(
+      2,
+      component.orderStatusToSet,
+    );
+    expect(orderService.updateOrderStatus).not.toHaveBeenCalledWith(
+      1,
+      component.orderStatusToSet,
+    );
+  });
 });
