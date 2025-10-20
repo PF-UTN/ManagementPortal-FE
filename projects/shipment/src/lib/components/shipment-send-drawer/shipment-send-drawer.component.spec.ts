@@ -311,6 +311,64 @@ describe('ShipmentSendDrawerComponent', () => {
       // Assert
       expect(disabled).toBe(true);
     });
+
+    it('should keep buttonLoading true until all concurrent updates finish', () => {
+      // Arrange
+      const subjA = new Subject<void>();
+      const subjB = new Subject<void>();
+      orderService.updateOrderStatus.mockImplementation((orderId: number) =>
+        orderId === 20 ? subjA.asObservable() : subjB.asObservable(),
+      );
+      component.data.set(detail);
+      component.orderStates.set({});
+
+      // Act
+      component.onSelectedRows([{ id: 20, selected: true }]);
+      component.onSelectedRows([{ id: 21, selected: true }]);
+
+      // Assert
+      expect(component.orderUpdatingIds()[20]).toBe(true);
+      expect(component.orderUpdatingIds()[21]).toBe(true);
+      expect(component.buttonLoading()).toBe(true);
+      subjA.next();
+      subjA.complete();
+
+      // Assert
+      expect(component.orderUpdatingIds()[20]).toBeUndefined();
+      expect(component.orderUpdatingIds()[21]).toBe(true);
+      expect(component.buttonLoading()).toBe(true);
+
+      subjB.next();
+      subjB.complete();
+
+      // Assert
+      expect(component.orderUpdatingIds()[21]).toBeUndefined();
+      expect(component.buttonLoading()).toBe(false);
+      expect(component.orderLockedIds()[20]).toBe(true);
+      expect(component.orderLockedIds()[21]).toBe(true);
+    });
+
+    it('should set buttonLoading false only when last update finishes', () => {
+      // Arrange
+      const subj = new Subject<void>();
+      orderService.updateOrderStatus.mockReturnValue(subj.asObservable());
+      component.data.set(detail);
+      component.orderStates.set({});
+
+      // Act
+      component.onSelectedRows([{ id: 10, selected: true }]);
+
+      // Assert
+      expect(component.orderUpdatingIds()[10]).toBe(true);
+      expect(component.buttonLoading()).toBe(true);
+      subj.next();
+      subj.complete();
+
+      // Assert
+      expect(component.orderUpdatingIds()[10]).toBeUndefined();
+      expect(component.buttonLoading()).toBe(false);
+      expect(component.orderLockedIds()[10]).toBe(true);
+    });
   });
 
   describe('Send shipment', () => {
