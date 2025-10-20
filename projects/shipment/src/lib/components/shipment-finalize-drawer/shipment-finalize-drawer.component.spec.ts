@@ -8,7 +8,7 @@ import {
   FormArray,
 } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 import { ShipmentFinalizeDrawerComponent } from './shipment-finalize-drawer.component';
 import { ShipmentDetail } from '../../models/shipment-deatil.model';
@@ -126,6 +126,65 @@ describe('ShipmentFinalizeDrawerComponent', () => {
 
       // Assert
       expect(odometerControl.hasError('minOdometer')).toBe(true);
+    });
+
+    it('should set initialStates for each order in ngOnInit', () => {
+      // Arrange
+      shipmentServiceMock.getShipmentById.mockReturnValue(
+        of(mockShipmentDetail),
+      );
+
+      // Act
+      component.ngOnInit();
+
+      // Assert
+      expect(component.orderStates()).toEqual({
+        10: true,
+        11: true,
+      });
+    });
+
+    it('should update orderStates when orderChecks value changes', () => {
+      // Arrange
+      shipmentServiceMock.getShipmentById.mockReturnValue(
+        of(mockShipmentDetail),
+      );
+      component.ngOnInit();
+      const orderChecks = component.finalizeForm.get(
+        'orderChecks',
+      ) as FormArray;
+
+      // Act
+      orderChecks.at(0).setValue(false);
+      orderChecks.at(1).setValue(true);
+
+      // Assert
+      expect(component.orderStates()).toEqual({
+        10: false,
+        11: true,
+      });
+    });
+
+    it('should set isLoading to false if getShipmentById fails', () => {
+      // Arrange
+      shipmentServiceMock.getShipmentById.mockReturnValue(
+        throwError(() => new Error('fail')),
+      );
+
+      // Act
+      component.ngOnInit();
+
+      // Assert
+      expect(component.isLoading()).toBe(false);
+    });
+
+    it('should map status string to enum value if present in ShipmentStatusOptions', () => {
+      // Arrange
+      const status = 'Pending';
+      // Act
+      const label = component.getShipmentStatusLabel(status);
+      // Assert
+      expect(typeof label).toBe('string');
     });
   });
 

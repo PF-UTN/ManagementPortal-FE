@@ -79,6 +79,21 @@ describe('ShipmentSendDrawerComponent', () => {
     fixture.detectChanges();
   });
 
+  beforeAll(() => {
+    Object.defineProperty(globalThis, 'location', {
+      value: {
+        ...window.location,
+        reload: jest.fn(),
+      },
+      writable: true,
+    });
+    jest.useFakeTimers();
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+  });
+
   describe('Initialization', () => {
     it('should create', () => {
       // Arrange & Act
@@ -560,5 +575,18 @@ describe('ShipmentSendDrawerComponent', () => {
       1,
       component.orderStatusToSet,
     );
+  });
+
+  it('should reload the page after successful confirmSendShipment', () => {
+    // Arrange
+    component.shipmentId = 1;
+    shipmentService.sendShipment.mockReturnValue(of({ link: 'test' }));
+
+    // Act
+    component.confirmSendShipment();
+    jest.runAllTimers();
+
+    // Assert
+    expect(globalThis.location.reload).toHaveBeenCalled();
   });
 });
