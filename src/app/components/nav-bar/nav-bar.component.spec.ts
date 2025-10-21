@@ -3,6 +3,7 @@ import { NotificationService } from '@Notification';
 
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 import { mockDeep } from 'jest-mock-extended';
 import { of } from 'rxjs';
@@ -330,6 +331,39 @@ describe('NavBarComponent', () => {
 
       // Assert
       expect(component.isOpen).toBe(true);
+    });
+  });
+
+  describe('NavBarComponent visual', () => {
+    it('should render logo and title when isOpen is true', () => {
+      component.isOpen = true;
+      fixture.detectChanges();
+
+      const logo = fixture.debugElement.query(
+        By.css('.container__header__logo'),
+      );
+      const title = fixture.debugElement.query(
+        By.css('.container__header__title'),
+      );
+
+      expect(logo).toBeTruthy();
+      expect(title).toBeTruthy();
+      expect(title.nativeElement.textContent).toContain('MANAGEMENT PORTAL');
+    });
+
+    it('should not render logo and title when isOpen is false', () => {
+      component.isOpen = false;
+      fixture.detectChanges();
+
+      const logo = fixture.debugElement.query(
+        By.css('.container__header__logo'),
+      );
+      const title = fixture.debugElement.query(
+        By.css('.container__header__title'),
+      );
+
+      expect(logo).toBeNull();
+      expect(title).toBeNull();
     });
   });
 });
