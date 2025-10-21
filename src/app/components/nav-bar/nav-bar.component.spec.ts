@@ -168,7 +168,7 @@ describe('NavBarComponent', () => {
           title: 'Productos',
           icon: 'storefront',
           route: 'productos/cliente',
-          shouldRender: true,
+          shouldRender: false,
         },
         {
           title: 'Vehiculos',

@@ -85,10 +85,7 @@ export class NavBarComponent implements OnInit {
         title: 'Productos',
         icon: 'storefront',
         route: 'productos/cliente',
-        shouldRender: this.authService.hasAccess([
-          RolesEnum.Employee,
-          RolesEnum.Client,
-        ]),
+        shouldRender: this.authService.hasAccess([RolesEnum.Client]),
       },
       {
         title: 'Vehiculos',
