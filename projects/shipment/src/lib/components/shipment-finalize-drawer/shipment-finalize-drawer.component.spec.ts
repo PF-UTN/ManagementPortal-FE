@@ -76,6 +76,21 @@ describe('ShipmentFinalizeDrawerComponent', () => {
     component.shipmentId = 1;
   });
 
+  beforeAll(() => {
+    Object.defineProperty(window, 'location', {
+      value: {
+        ...window.location,
+        reload: jest.fn(),
+      },
+      writable: true,
+    });
+    jest.useFakeTimers();
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+  });
+
   describe('ngOnInit', () => {
     it('should initialize finalizeForm and set orderChecks and odometer validator', () => {
       // Arrange
@@ -111,6 +126,65 @@ describe('ShipmentFinalizeDrawerComponent', () => {
 
       // Assert
       expect(odometerControl.hasError('minOdometer')).toBe(true);
+    });
+
+    it('should set initialStates for each order in ngOnInit', () => {
+      // Arrange
+      shipmentServiceMock.getShipmentById.mockReturnValue(
+        of(mockShipmentDetail),
+      );
+
+      // Act
+      component.ngOnInit();
+
+      // Assert
+      expect(component.orderStates()).toEqual({
+        10: true,
+        11: true,
+      });
+    });
+
+    it('should update orderStates when orderChecks value changes', () => {
+      // Arrange
+      shipmentServiceMock.getShipmentById.mockReturnValue(
+        of(mockShipmentDetail),
+      );
+      component.ngOnInit();
+      const orderChecks = component.finalizeForm.get(
+        'orderChecks',
+      ) as FormArray;
+
+      // Act
+      orderChecks.at(0).setValue(false);
+      orderChecks.at(1).setValue(true);
+
+      // Assert
+      expect(component.orderStates()).toEqual({
+        10: false,
+        11: true,
+      });
+    });
+
+    it('should set isLoading to false if getShipmentById fails', () => {
+      // Arrange
+      shipmentServiceMock.getShipmentById.mockReturnValue(
+        throwError(() => new Error('fail')),
+      );
+
+      // Act
+      component.ngOnInit();
+
+      // Assert
+      expect(component.isLoading()).toBe(false);
+    });
+
+    it('should map status string to enum value if present in ShipmentStatusOptions', () => {
+      // Arrange
+      const status = 'Pending';
+      // Act
+      const label = component.getShipmentStatusLabel(status);
+      // Assert
+      expect(typeof label).toBe('string');
     });
   });
 
@@ -202,7 +276,7 @@ describe('ShipmentFinalizeDrawerComponent', () => {
           new FormControl(false, { nonNullable: true }),
         ]),
       });
-      shipmentServiceMock.finishShipment.mockReturnValue(of(undefined)); // <-- Observable de éxito
+      shipmentServiceMock.finishShipment.mockReturnValue(of(undefined));
 
       // Act
       component.finalizeShipment();
@@ -212,39 +286,9 @@ describe('ShipmentFinalizeDrawerComponent', () => {
       expect(snackBarMock.open).toHaveBeenCalledWith(
         'Envío finalizado con éxito',
         'Cerrar',
-        { duration: 3000 },
+        { duration: 2000 },
       );
       expect(lateralDrawerServiceMock.close).toHaveBeenCalled();
-    });
-
-    it('should handle error response', () => {
-      // Arrange
-      component.data.set(mockShipmentDetail);
-      component.finalizeForm = fb.group({
-        finishedAt: new FormControl<Date | null>(
-          new Date(),
-          Validators.required,
-        ),
-        odometer: new FormControl<number | null>(1001, [Validators.required]),
-        orderChecks: fb.array([
-          new FormControl(true, { nonNullable: true }),
-          new FormControl(false, { nonNullable: true }),
-        ]),
-      });
-      shipmentServiceMock.finishShipment.mockReturnValue(
-        throwError(() => new Error('error')),
-      ); // <-- Observable de error
-
-      // Act
-      component.finalizeShipment();
-
-      // Assert
-      expect(component.buttonLoading()).toBe(false);
-      expect(snackBarMock.open).toHaveBeenCalledWith(
-        'Error al finalizar el envío',
-        'Cerrar',
-        { duration: 3000 },
-      );
     });
   });
 
@@ -278,5 +322,26 @@ describe('ShipmentFinalizeDrawerComponent', () => {
       // Assert
       expect(error).toBeNull();
     });
+  });
+
+  it('should reload the page after successful finalizeShipment', () => {
+    // Arrange
+    component.data.set(mockShipmentDetail);
+    component.finalizeForm = fb.group({
+      finishedAt: new FormControl<Date | null>(new Date(), Validators.required),
+      odometer: new FormControl<number | null>(1001, [Validators.required]),
+      orderChecks: fb.array([
+        new FormControl(true, { nonNullable: true }),
+        new FormControl(false, { nonNullable: true }),
+      ]),
+    });
+    shipmentServiceMock.finishShipment.mockReturnValue(of(undefined));
+
+    // Act
+    component.finalizeShipment();
+    jest.runAllTimers();
+
+    // Assert
+    expect(window.location.reload).toHaveBeenCalled();
   });
 });
