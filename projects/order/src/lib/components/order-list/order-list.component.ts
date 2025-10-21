@@ -500,7 +500,7 @@ export class OrderListComponent implements OnInit {
             this.snackBar.open('Orden preparada con éxito', 'Cerrar', {
               duration: 3000,
             });
-            globalThis.location.reload();
+            this.doSearchSubject$.next();
             this.loadAllShipmentIds();
           },
           error: () => {

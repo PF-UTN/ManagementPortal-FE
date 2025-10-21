@@ -14,7 +14,6 @@ import {
   tick,
 } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
-import { MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { of, throwError } from 'rxjs';
@@ -59,16 +58,6 @@ describe('OrderListComponent', () => {
     fixture = TestBed.createComponent(OrderListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  });
-
-  beforeAll(() => {
-    Object.defineProperty(globalThis, 'location', {
-      value: {
-        ...window.location,
-        reload: jest.fn(),
-      },
-      writable: true,
-    });
   });
 
   it('should create', () => {
@@ -636,9 +625,10 @@ describe('OrderListComponent', () => {
       jest.clearAllMocks();
     });
 
-    it('should reload the page after marking order as prepared', () => {
+    it('should open the modal, call markOrderAsPrepared, show snackbar, refresh list and shipment ids if confirmed', () => {
       // Arrange
       const dialog = TestBed.inject(MatDialog);
+      const snackBar = TestBed.inject(MatSnackBar);
       const order: OrderItem = {
         id: 3,
         createdAt: '',
@@ -649,19 +639,31 @@ describe('OrderListComponent', () => {
         deliveryMethod: 'Entrega a Domicilio',
         shipmentId: null,
       };
-      const dialogRef = {
-        afterClosed: () => of(true),
-      } as Partial<MatDialogRef<unknown>>;
+      const dialogRef = { afterClosed: () => of(true) };
       jest
         .spyOn(dialog, 'open')
-        .mockReturnValue(dialogRef as MatDialogRef<unknown>);
-      jest.spyOn(service, 'markOrderAsPrepared').mockReturnValue(of(undefined));
+        .mockReturnValue(dialogRef as ReturnType<typeof dialog.open>);
+      const markSpy = jest
+        .spyOn(service, 'markOrderAsPrepared')
+        .mockReturnValue(of(undefined));
+      const snackSpy = jest.spyOn(snackBar, 'open');
+      const searchSpy = jest.spyOn(component.doSearchSubject$, 'next');
+      const loadShipmentsSpy = jest.spyOn(component, 'loadAllShipmentIds');
 
       // Act
       component.onMarkAsPrepared(order);
 
       // Assert
-      expect(globalThis.location.reload).toHaveBeenCalled();
+      expect(dialog.open).toHaveBeenCalled();
+      expect(markSpy).toHaveBeenCalledWith(order.id, 6);
+      expect(snackSpy).toHaveBeenCalledWith(
+        'Orden preparada con éxito',
+        'Cerrar',
+        { duration: 3000 },
+      );
+      expect(searchSpy).toHaveBeenCalled();
+      expect(loadShipmentsSpy).toHaveBeenCalled();
+      expect(component.isLoading).toBe(true);
     });
   });
 
