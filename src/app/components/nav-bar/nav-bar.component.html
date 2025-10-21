@@ -1,7 +1,7 @@
 <div class="container" [class.closed]="!isOpen">
     <div class="container__header">
-      <a [routerLink]="'/'" class="container__header__link">
       @if (isOpen) {
+        <a [routerLink]="'/'" class="container__header__link">
         <img
           [src]="logoUrl"
           alt="Logo"
@@ -10,8 +10,8 @@
         <span class="container__header__title">
           MANAGEMENT PORTAL
         </span>
+        </a>
       }
-      </a>
       <button
         mat-icon-button
         (click)="toggleNavBar()"
