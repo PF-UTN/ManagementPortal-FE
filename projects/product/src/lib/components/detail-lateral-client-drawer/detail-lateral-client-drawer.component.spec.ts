@@ -343,14 +343,12 @@ describe('DetailLateralClientDrawerComponent', () => {
       };
       component.data.set(product);
       component.isLoading.set(false);
-
       // Act
       const disabled =
         component.isLoading() ||
         (component.data()
           ? component.data()!.stock.quantityAvailable <= 0
           : true);
-
       // Assert
       expect(disabled).toBe(false);
     });
