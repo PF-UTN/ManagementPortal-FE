@@ -120,3 +120,30 @@
     padding-left: 26px;
   }
 }
+
+.nav-profile {
+  border-radius: 18px;
+  padding-top: 0.3rem;
+  padding-bottom: 0.3rem;
+  cursor: pointer;
+  transition: background-color 120ms ease;
+
+  &:hover,
+  &:focus {
+    background-color: $lavender-gray;
+  }
+
+  ::ng-deep mp-button button {
+    &:hover:not([disabled]),
+    &:focus:not([disabled]),
+    &:focus-visible:not([disabled]) {
+      background-color: transparent !important;
+    }
+
+    .mat-mdc-button-persistent-ripple::before,
+    .mdc-button__ripple::before,
+    .mat-ripple-element {
+      opacity: 0 !important;
+    }
+  }
+}
