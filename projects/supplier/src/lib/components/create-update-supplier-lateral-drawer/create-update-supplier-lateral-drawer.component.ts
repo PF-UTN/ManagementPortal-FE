@@ -117,7 +117,7 @@ export class CreateUpdateSupplierLateralDrawerComponent
 
   ngOnInit(): void {
     this.initForm();
-    this.isFormValid.set(this.supplierForm.valid ? true : false);
+    this.isFormValid.set(this.supplierForm.valid);
     this.disableSupplierFields();
     this.setupDocumentWatcher();
     this.setupFormWatchers();

@@ -13,7 +13,7 @@ import {
 } from '@Common-UI';
 
 import { DatePipe, CurrencyPipe, CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -64,7 +64,7 @@ import { DetailLateralDrawerClientComponent } from '../detail-lateral-drawer-cli
   templateUrl: './order-list-client.component.html',
   styleUrl: './order-list-client.component.scss',
 })
-export class OrderListClientComponent implements OnInit {
+export class OrderListClientComponent implements OnInit, OnDestroy {
   columns: TableColumn<OrderItem>[] = [
     {
       columnDef: 'orderId',
@@ -139,10 +139,10 @@ export class OrderListClientComponent implements OnInit {
   private searchSubscription?: Subscription;
 
   constructor(
-    private datePipe: DatePipe,
-    private currencyPipe: CurrencyPipe,
-    private orderService: OrderService,
-    private lateralDrawerService: LateralDrawerService,
+    private readonly datePipe: DatePipe,
+    private readonly currencyPipe: CurrencyPipe,
+    private readonly orderService: OrderService,
+    private readonly lateralDrawerService: LateralDrawerService,
   ) {}
 
   ngOnInit(): void {
