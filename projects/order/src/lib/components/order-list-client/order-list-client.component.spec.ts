@@ -1,5 +1,9 @@
 import { OrderDirection, mockOrderItem } from '@Common';
-import { LateralDrawerService, PillStatusEnum } from '@Common-UI';
+import {
+  CheckoutService,
+  LateralDrawerService,
+  PillStatusEnum,
+} from '@Common-UI';
 
 import { registerLocaleData } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
@@ -38,6 +42,10 @@ describe('OrderListClientComponent', () => {
         {
           provide: LateralDrawerService,
           useValue: mockDeep<LateralDrawerService>(),
+        },
+        {
+          provide: CheckoutService,
+          useValue: mockDeep<CheckoutService>(),
         },
       ],
     }).compileComponents();
