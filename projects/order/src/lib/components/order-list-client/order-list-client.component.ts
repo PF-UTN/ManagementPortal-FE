@@ -14,7 +14,7 @@ import {
 } from '@Common-UI';
 
 import { DatePipe, CurrencyPipe, CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -65,7 +65,7 @@ import { DetailLateralDrawerClientComponent } from '../detail-lateral-drawer-cli
   templateUrl: './order-list-client.component.html',
   styleUrl: './order-list-client.component.scss',
 })
-export class OrderListClientComponent implements OnInit {
+export class OrderListClientComponent implements OnInit, OnDestroy {
   columns: TableColumn<OrderItem>[] = [
     {
       columnDef: 'orderId',
@@ -115,10 +115,6 @@ export class OrderListClientComponent implements OnInit {
         {
           description: 'Ver Detalle',
           action: (element: OrderItem) => this.onDetailDrawer(element),
-        },
-        {
-          description: 'Repetir pedido',
-          action: (element: OrderItem) => this.onRepeatOrder(element),
         },
         {
           description: 'Realizar Pago',
@@ -290,10 +286,6 @@ export class OrderListClientComponent implements OnInit {
         size: 'medium',
       },
     );
-  }
-
-  onRepeatOrder(order: OrderItem) {
-    console.log('Repetir pedido', order);
   }
 
   onSearchTextChange(): void {

@@ -97,7 +97,7 @@ export class MaintenancePlanListComponent implements OnInit {
           },
         },
         {
-          description: 'Modificar',
+          description: 'Editar',
           action: (element: MaintenancePlanListItem) => {
             this.router.navigate(['crear-plan-mantenimiento'], {
               relativeTo: this.route,

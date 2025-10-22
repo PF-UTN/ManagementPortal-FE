@@ -197,27 +197,6 @@ describe('OrderListClientComponent', () => {
       );
     });
   });
-  describe('onRepeatOrder', () => {
-    it('should log repeat order', () => {
-      // Arrange
-      const order: OrderItem = {
-        id: 1,
-        createdAt: '14/09/2025',
-        status: OrderStatusOptions.Pending,
-        totalAmount: 100,
-        quantityProducts: 2,
-      };
-      const logSpy = jest.spyOn(console, 'log').mockImplementation();
-
-      // Act
-      component.onRepeatOrder(order);
-
-      // Assert
-      expect(logSpy).toHaveBeenCalledWith('Repetir pedido', order);
-
-      logSpy.mockRestore();
-    });
-  });
 
   describe('onSearchTextChange', () => {
     it('should reset pageIndex, set isLoading and emit doSearchSubject$', () => {
