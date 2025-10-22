@@ -16,6 +16,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { interval, Subscription } from 'rxjs';
 
@@ -32,6 +33,7 @@ import { NavBarItem } from '../../models/nav-bar-item.model';
     MatButtonModule,
     EllipsisTextComponent,
     ButtonComponent,
+    MatTooltipModule,
   ],
 })
 export class NavBarComponent implements OnInit {

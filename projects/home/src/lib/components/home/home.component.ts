@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import { NotificationService } from '@Notification';
+
+import { Component, OnInit } from '@angular/core';
+import { catchError, of, take } from 'rxjs';
 
 @Component({
   selector: 'mp-home',
@@ -13,4 +16,16 @@ import { Component } from '@angular/core';
   `,
   styles: ``,
 })
-export class HomeComponent {}
+export class HomeComponent implements OnInit {
+  constructor(private notificationService: NotificationService) {}
+
+  ngOnInit(): void {
+    this.notificationService
+      .getNotifications()
+      .pipe(
+        take(1),
+        catchError(() => of(null)),
+      )
+      .subscribe();
+  }
+}
