@@ -30,7 +30,7 @@
       >
         <div class="notification-row__info">
           <span class="notification-row__timestamp">
-            {{ notification.timestamp | date: 'dd/MM/yyyy HH:mm' }}
+            {{ notification.timestamp | date: 'dd/MM/yyyy HH:mm' : '-0300' }}
           </span>
           <p class="notification-row__message">{{ notification.message }}</p>
         </div>
