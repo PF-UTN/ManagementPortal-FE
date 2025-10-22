@@ -117,10 +117,6 @@ export class OrderListClientComponent implements OnInit, OnDestroy {
           action: (element: OrderItem) => this.onDetailDrawer(element),
         },
         {
-          description: 'Repetir pedido',
-          action: (element: OrderItem) => this.onRepeatOrder(element),
-        },
-        {
           description: 'Realizar Pago',
           action: (element: OrderItem) => {
             this.isLoading = true;
