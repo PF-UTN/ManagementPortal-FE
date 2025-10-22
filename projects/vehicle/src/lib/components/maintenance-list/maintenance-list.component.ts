@@ -55,7 +55,7 @@ export class MaintenanceListComponent implements OnInit {
       type: ColumnTypeEnum.ACTIONS,
       actions: [
         {
-          description: 'Modificar',
+          description: 'Editar',
           action: (element: MaintenanceItem) => {
             this.router.navigate(['realizar', element.id], {
               relativeTo: this.route,

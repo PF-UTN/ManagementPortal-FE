@@ -377,6 +377,28 @@ describe('OrderListComponent', () => {
       // Assert
       expect(params.filters.shipmentId).toBeNull();
     });
+
+    it('should filter out null shipmentIds and sort them in descending order', () => {
+      // Arrange
+      const mockResponse = {
+        results: [
+          { shipmentId: 5 } as OrderSearchResult,
+          { shipmentId: null } as OrderSearchResult,
+          { shipmentId: 2 } as OrderSearchResult,
+          { shipmentId: 10 } as OrderSearchResult,
+          { shipmentId: null } as OrderSearchResult,
+          { shipmentId: 7 } as OrderSearchResult,
+        ],
+        total: 6,
+      };
+      jest.spyOn(service, 'searchOrders').mockReturnValue(of(mockResponse));
+
+      // Act
+      component.loadAllShipmentIds();
+
+      // Assert
+      expect(component.allShipmentIds).toEqual([10, 7, 5, 2]);
+    });
   });
 
   describe('select column', () => {
@@ -577,7 +599,6 @@ describe('OrderListComponent', () => {
         .spyOn(service, 'markOrderAsPrepared')
         .mockReturnValue(of(undefined));
       const snackSpy = jest.spyOn(snackBar, 'open');
-      const searchSpy = jest.spyOn(component.doSearchSubject$, 'next');
 
       // Act
       component.onMarkAsPrepared(order);
@@ -590,7 +611,6 @@ describe('OrderListComponent', () => {
         'Cerrar',
         { duration: 3000 },
       );
-      expect(searchSpy).toHaveBeenCalled();
       expect(component.isLoading).toBe(true);
     });
 
@@ -625,6 +645,47 @@ describe('OrderListComponent', () => {
 
     afterEach(() => {
       jest.clearAllMocks();
+    });
+
+    it('should open the modal, call markOrderAsPrepared, show snackbar, refresh list and shipment ids if confirmed', () => {
+      // Arrange
+      const dialog = TestBed.inject(MatDialog);
+      const snackBar = TestBed.inject(MatSnackBar);
+      const order: OrderItem = {
+        id: 3,
+        createdAt: '',
+        clientName: '',
+        orderStatus: OrderStatusOptions.InPreparation,
+        totalAmount: 300,
+        selected: false,
+        deliveryMethod: 'Entrega a Domicilio',
+        shipmentId: null,
+      };
+      const dialogRef = { afterClosed: () => of(true) };
+      jest
+        .spyOn(dialog, 'open')
+        .mockReturnValue(dialogRef as ReturnType<typeof dialog.open>);
+      const markSpy = jest
+        .spyOn(service, 'markOrderAsPrepared')
+        .mockReturnValue(of(undefined));
+      const snackSpy = jest.spyOn(snackBar, 'open');
+      const searchSpy = jest.spyOn(component.doSearchSubject$, 'next');
+      const loadShipmentsSpy = jest.spyOn(component, 'loadAllShipmentIds');
+
+      // Act
+      component.onMarkAsPrepared(order);
+
+      // Assert
+      expect(dialog.open).toHaveBeenCalled();
+      expect(markSpy).toHaveBeenCalledWith(order.id, 6);
+      expect(snackSpy).toHaveBeenCalledWith(
+        'Orden preparada con éxito',
+        'Cerrar',
+        { duration: 3000 },
+      );
+      expect(searchSpy).toHaveBeenCalled();
+      expect(loadShipmentsSpy).toHaveBeenCalled();
+      expect(component.isLoading).toBe(true);
     });
   });
 

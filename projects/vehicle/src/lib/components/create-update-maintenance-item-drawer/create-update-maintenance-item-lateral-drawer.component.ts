@@ -52,7 +52,7 @@ export class CreateUpdateMaintenanceItemLateralDrawerComponent
         footer: {
           firstButton: {
             click: () => this.onSubmit(),
-            text: this.isUpdating() ? 'Modificar' : 'Crear',
+            text: this.isUpdating() ? 'Editar' : 'Crear',
             loading: this.isLoading(),
             disabled: !this.isFormValid(),
           },

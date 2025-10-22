@@ -1,16 +1,25 @@
 <div class="container" [class.closed]="!isOpen">
-  <div class="container__header">
-    @if(isOpen) {
-      <span class="container__header__title">MANAGEMENT PORTAL</span>
-    }
-    <button
-      mat-icon-button
-      (click)="toggleNavBar()"
-      class="container__header__toggle"
-    >
-      <mat-icon>menu</mat-icon>
-    </button> 
-  </div>
+    <div class="container__header">
+      @if (isOpen) {
+        <a [routerLink]="'/'" class="container__header__link">
+        <img
+          [src]="logoUrl"
+          alt="Logo"
+          class="container__header__logo"
+        />
+        <span class="container__header__title">
+          MANAGEMENT PORTAL
+        </span>
+        </a>
+      }
+      <button
+        mat-icon-button
+        (click)="toggleNavBar()"
+        class="container__header__toggle"
+      >
+        <mat-icon>menu</mat-icon>
+      </button>
+    </div>
   <div class="container__body">
     <div class="container__body__menu">
       <nav>
@@ -32,25 +41,33 @@
       </nav>
     </div>
     <div class="container__body__footer">
-      <div class="container__body__footer__user-info"
+      <div
+        class="container__body__footer__user-info"
         [class.only-client]="!canSeeNotifications"
+      >
+        <div
+          class="nav-profile"
+          (click)="openNotifications()"
+          (keydown.enter)="openNotifications()"
+          matTooltip="Notificaciones"
+          matTooltipPosition="above"
         >
-        @if (canSeeNotifications) {
-          <mp-button
-            type="icon"
-            icon="notifications"
-            ariaLabel="Notificaciones"
-            tooltip="Notificaciones"
-            (onClick)="openNotifications()"
-            [badge]="notificationsCount > 0 ? notificationsCount : null"
-            [badgeColor]="'warn'"
-            [badgeOverlap]="true"
-            [badgePosition]="'above after'"
-          ></mp-button>
+          @if (canSeeNotifications) {
+            <mp-button
+              type="icon"
+              icon="notifications"
+              ariaLabel="Notificaciones"
+              (onClick)="openNotifications()"
+              [badge]="notificationsCount > 0 ? notificationsCount : null"
+              [badgeColor]="'warn'"
+              [badgeOverlap]="true"
+              [badgePosition]="'above after'"
+            ></mp-button>
           }
           @if (isOpen) {
             <mp-ellipsis-text [text]="userName"></mp-ellipsis-text>
           }
+        </div>
       </div>
 
       <div class="container__body__menu__item" (click)="handleLogOutClick()">

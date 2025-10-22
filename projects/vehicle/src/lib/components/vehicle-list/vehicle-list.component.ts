@@ -110,7 +110,7 @@ export class VehicleListComponent implements OnInit {
           },
         },
         {
-          description: 'Modificar',
+          description: 'Editar',
           action: (element: VehicleListItem) => {
             this.lateralDrawerService
               .open(

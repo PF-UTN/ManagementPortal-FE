@@ -109,7 +109,7 @@ describe('MaintenanceListComponent', () => {
       expect(result).toBe('12,345 km');
     });
 
-    it('should call router.navigate with correct params when Modificar action is triggered', () => {
+    it('should call router.navigate with correct params when Editar action is triggered', () => {
       // Arrange
       const item: MaintenanceItem = {
         id: 1,
