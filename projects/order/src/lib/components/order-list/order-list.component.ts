@@ -288,7 +288,9 @@ export class OrderListComponent implements OnInit {
       .subscribe((response) => {
         this.allShipmentIds = Array.from(
           new Set(response.results.map((r) => r.shipmentId)),
-        );
+        )
+          .filter((id) => id !== null)
+          .sort((a, b) => (b as number) - (a as number));
         this.updateShipmentIdOptions();
       });
   }
@@ -472,6 +474,7 @@ export class OrderListComponent implements OnInit {
       )
       .subscribe(() => {
         this.doSearchSubject$.next();
+        this.loadAllShipmentIds();
       });
   }
 
@@ -500,6 +503,7 @@ export class OrderListComponent implements OnInit {
               duration: 3000,
             });
             this.doSearchSubject$.next();
+            this.loadAllShipmentIds();
           },
           error: () => {
             this.snackBar.open('Error al preparar la orden', 'Cerrar', {

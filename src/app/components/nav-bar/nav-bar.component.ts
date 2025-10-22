@@ -1,4 +1,4 @@
-import { AuthService, RolesEnum } from '@Common';
+import { AuthService, environment, RolesEnum } from '@Common';
 import {
   ButtonComponent,
   EllipsisTextComponent,
@@ -44,6 +44,7 @@ export class NavBarComponent implements OnInit {
   notificationsCount = 0;
   private notifSub?: Subscription;
   private notifIntervalSub?: Subscription;
+  logoUrl = `${environment.cdnBaseUrl}/images/dog.png`;
 
   constructor(
     private authService: AuthService,
