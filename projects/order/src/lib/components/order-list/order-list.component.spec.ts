@@ -377,6 +377,28 @@ describe('OrderListComponent', () => {
       // Assert
       expect(params.filters.shipmentId).toBeNull();
     });
+
+    it('should filter out null shipmentIds and sort them in descending order', () => {
+      // Arrange
+      const mockResponse = {
+        results: [
+          { shipmentId: 5 } as OrderSearchResult,
+          { shipmentId: null } as OrderSearchResult,
+          { shipmentId: 2 } as OrderSearchResult,
+          { shipmentId: 10 } as OrderSearchResult,
+          { shipmentId: null } as OrderSearchResult,
+          { shipmentId: 7 } as OrderSearchResult,
+        ],
+        total: 6,
+      };
+      jest.spyOn(service, 'searchOrders').mockReturnValue(of(mockResponse));
+
+      // Act
+      component.loadAllShipmentIds();
+
+      // Assert
+      expect(component.allShipmentIds).toEqual([10, 7, 5, 2]);
+    });
   });
 
   describe('select column', () => {

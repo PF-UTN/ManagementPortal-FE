@@ -288,7 +288,9 @@ export class OrderListComponent implements OnInit {
       .subscribe((response) => {
         this.allShipmentIds = Array.from(
           new Set(response.results.map((r) => r.shipmentId)),
-        );
+        )
+          .filter((id) => id !== null)
+          .sort((a, b) => (b as number) - (a as number));
         this.updateShipmentIdOptions();
       });
   }
