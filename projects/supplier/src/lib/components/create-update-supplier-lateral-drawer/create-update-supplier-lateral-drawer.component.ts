@@ -90,17 +90,26 @@ export class CreateUpdateSupplierLateralDrawerComponent
       const isUpdating = this.isUpdating();
       const isFormValid = this.isFormValid();
 
+      let drawerTitle = 'Gestionar Proveedor';
+      if (isCreating) {
+        drawerTitle = 'Crear Proveedor';
+      } else if (isUpdating) {
+        drawerTitle = 'Editar Proveedor';
+      }
+
+      const firstButtonText = isCreating
+        ? 'Crear'
+        : isUpdating
+          ? 'Editar'
+          : 'Confirmar';
+
       const drawerConfig = {
         ...this.lateralDrawerService.config,
-        title: isCreating
-          ? 'Crear Proveedor'
-          : isUpdating
-            ? 'Editar Proveedor'
-            : 'Gestionar Proveedor',
+        title: drawerTitle,
         footer: {
           firstButton: {
             click: () => this.onSubmit(),
-            text: isCreating ? 'Crear' : isUpdating ? 'Editar' : 'Confirmar',
+            text: firstButtonText,
             loading: this.isLoading(),
             disabled: !isFormValid,
           },

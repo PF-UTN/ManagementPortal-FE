@@ -88,13 +88,16 @@ export class CreateUpdateProductCategoryLateralDrawerComponent
       const isCreate = this.isCreating();
       const isFormValid = this.isFormValid();
 
+      let drawerTitle = 'Gestionar Categoría';
+      if (isUpdate) {
+        drawerTitle = 'Editar Categoría';
+      } else if (isCreate) {
+        drawerTitle = 'Nueva Categoría';
+      }
+
       const drawerConfig = {
         ...this.lateralDrawerService.config,
-        title: isUpdate
-          ? 'Editar Categoría'
-          : isCreate
-            ? 'Nueva Categoría'
-            : 'Gestionar Categoría',
+        title: drawerTitle,
         footer: {
           firstButton: {
             click: () => this.onSubmit(),
