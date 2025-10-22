@@ -77,7 +77,7 @@ export class ProductListClientComponent {
   isCartLoadingMap = signal<Record<number, boolean>>({});
   hasMoreProducts: boolean = true;
   currentPage: number = 1;
-  pageSize: number = 5;
+  pageSize: number = 15;
   private filters$ = new Subject<void>();
 
   filterForm: FormGroup<{

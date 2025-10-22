@@ -137,15 +137,16 @@ export class ShipmentSendDrawerComponent
   onSelectedRows(rows: { id: number; selected: boolean }[]) {
     const prevStates = this.orderStates();
     const newStates: Record<number, boolean> = {};
+
     for (const row of rows) {
       if (this.orderLockedIds()[row.id]) {
         newStates[row.id] = true;
-        return;
+        continue;
       }
 
       newStates[row.id] = row.selected;
-
       const wasSelected = !!prevStates[row.id];
+
       if (row.selected && !wasSelected) {
         const start = { ...this.orderUpdatingIds() };
         start[row.id] = true;
@@ -156,12 +157,15 @@ export class ShipmentSendDrawerComponent
           .updateOrderStatus(row.id, this.orderStatusToSet)
           .subscribe({
             next: () => {
-              this.buttonLoading.set(false);
               const done = { ...this.orderUpdatingIds() };
               const doneWithout = Object.fromEntries(
                 Object.entries(done).filter(([k]) => k !== String(row.id)),
               ) as Record<number, boolean>;
               this.orderUpdatingIds.set(doneWithout);
+
+              if (Object.keys(this.orderUpdatingIds()).length === 0) {
+                this.buttonLoading.set(false);
+              }
 
               const locked = { ...this.orderLockedIds() };
               locked[row.id] = true;
@@ -172,7 +176,6 @@ export class ShipmentSendDrawerComponent
               });
             },
             error: () => {
-              this.buttonLoading.set(false);
               const reverted = { ...this.orderStates() };
               reverted[row.id] = false;
               this.orderStates.set(reverted);
@@ -182,6 +185,10 @@ export class ShipmentSendDrawerComponent
                 Object.entries(done).filter(([k]) => k !== String(row.id)),
               ) as Record<number, boolean>;
               this.orderUpdatingIds.set(doneWithout);
+
+              if (Object.keys(this.orderUpdatingIds()).length === 0) {
+                this.buttonLoading.set(false);
+              }
 
               this.snackBar.open(
                 'Error al actualizar el estado de la orden',
@@ -234,7 +241,9 @@ export class ShipmentSendDrawerComponent
           duration: 3000,
         });
         this.lateralDrawerService.close();
-        this.emitSuccess();
+        setTimeout(() => {
+          globalThis.location.reload();
+        }, 700);
       },
       error: () => {
         this.buttonLoading.set(false);

@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { ShipmentDetail } from '../models/shipment-deatil.model';
+import { ShipmentFinishRequest } from '../models/shipment-finisih-request.model';
 import {
   ShipmentSearchFilters,
   ShipmentSearchRequest,
@@ -45,5 +46,13 @@ export class ShipmentService {
   sendShipment(shipmentId: number): Observable<{ link: string }> {
     const url = `${this.baseUrl}/${shipmentId}/send`;
     return this.http.patch<{ link: string }>(url, {});
+  }
+
+  finishShipment(
+    shipmentId: number,
+    body: ShipmentFinishRequest,
+  ): Observable<void> {
+    const url = `${this.baseUrl}/${shipmentId}/finish`;
+    return this.http.patch<void>(url, body);
   }
 }

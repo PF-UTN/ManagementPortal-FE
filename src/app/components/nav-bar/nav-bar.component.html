@@ -1,16 +1,25 @@
 <div class="container" [class.closed]="!isOpen">
-  <div class="container__header">
-    @if(isOpen) {
-      <span class="container__header__title">MANAGEMENT PORTAL</span>
-    }
-    <button
-      mat-icon-button
-      (click)="toggleNavBar()"
-      class="container__header__toggle"
-    >
-      <mat-icon>menu</mat-icon>
-    </button> 
-  </div>
+    <div class="container__header">
+      @if (isOpen) {
+        <a [routerLink]="'/'" class="container__header__link">
+        <img
+          [src]="logoUrl"
+          alt="Logo"
+          class="container__header__logo"
+        />
+        <span class="container__header__title">
+          MANAGEMENT PORTAL
+        </span>
+        </a>
+      }
+      <button
+        mat-icon-button
+        (click)="toggleNavBar()"
+        class="container__header__toggle"
+      >
+        <mat-icon>menu</mat-icon>
+      </button>
+    </div>
   <div class="container__body">
     <div class="container__body__menu">
       <nav>

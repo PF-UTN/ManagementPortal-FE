@@ -10,6 +10,7 @@ import {
   ButtonComponent,
   LateralDrawerService,
   CartButtonComponent,
+  CheckoutService,
 } from '@Common-UI';
 
 import { DatePipe, CurrencyPipe, CommonModule } from '@angular/common';
@@ -115,6 +116,28 @@ export class OrderListClientComponent implements OnInit, OnDestroy {
           description: 'Ver Detalle',
           action: (element: OrderItem) => this.onDetailDrawer(element),
         },
+        {
+          description: 'Repetir pedido',
+          action: (element: OrderItem) => this.onRepeatOrder(element),
+        },
+        {
+          description: 'Realizar Pago',
+          action: (element: OrderItem) => {
+            this.isLoading = true;
+            this.checkoutService
+              .createOrderCheckoutPreferences(element.id.toString())
+              .subscribe((checkoutPreferences) => {
+                if (checkoutPreferences?.init_point) {
+                  globalThis.location.href = checkoutPreferences.init_point;
+                }
+              });
+          },
+          disabled: (element: OrderItem) =>
+            ![
+              OrderStatusOptions.PaymentPending,
+              OrderStatusOptions.PaymentRejected,
+            ].includes(element.status),
+        },
       ],
     },
   ];
@@ -139,10 +162,11 @@ export class OrderListClientComponent implements OnInit, OnDestroy {
   private searchSubscription?: Subscription;
 
   constructor(
-    private readonly datePipe: DatePipe,
-    private readonly currencyPipe: CurrencyPipe,
-    private readonly orderService: OrderService,
-    private readonly lateralDrawerService: LateralDrawerService,
+    private datePipe: DatePipe,
+    private currencyPipe: CurrencyPipe,
+    private orderService: OrderService,
+    private lateralDrawerService: LateralDrawerService,
+    private checkoutService: CheckoutService,
   ) {}
 
   ngOnInit(): void {

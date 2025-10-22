@@ -12,9 +12,26 @@
     display: flex;
     padding: 1rem 0;
     height: 76px;
-    justify-content: right;
+    justify-content: flex-start;
     align-items: center;
     transition: justify-content 0.2s;
+
+    &__logo {
+      height: 32px;
+      width: 32px;
+      margin-right: 12px;
+      border-radius: 8px;
+      object-fit: contain;
+      box-shadow: none;
+    }
+
+    &__link {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: inherit;
+      cursor: pointer;
+    }
 
     &__title {
       font-size: 1rem;
@@ -44,6 +61,7 @@
       }
 
       scrollbar-width: none;
+
       &__item {
         display: flex;
         align-items: center;
@@ -66,6 +84,7 @@
         }
       }
     }
+
     &__footer {
       padding-top: 1rem;
       border-top: 1px solid $gray-medium;
@@ -82,6 +101,7 @@
     .container__header {
       justify-content: center;
     }
+
     .container__body__menu__item__title {
       margin-left: 0;
     }
@@ -89,6 +109,7 @@
 
   .active-link {
     background-color: $lavender-gray;
+
     img {
       filter: invert(48%) sepia(86%) saturate(1679%) hue-rotate(159deg)
         brightness(91%) contrast(101%);
