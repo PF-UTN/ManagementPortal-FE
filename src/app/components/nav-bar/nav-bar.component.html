@@ -48,8 +48,7 @@
         <div
           class="nav-profile"
           (click)="openNotifications()"
-          (keyup.enter)="openNotifications()"
-          (keyup.space)="openNotifications()"
+          (keydown.enter)="openNotifications()"
           matTooltip="Notificaciones"
           matTooltipPosition="above"
         >
