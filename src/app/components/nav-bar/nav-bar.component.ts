@@ -12,7 +12,7 @@ import {
 } from '@Notification';
 
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -36,7 +36,7 @@ import { NavBarItem } from '../../models/nav-bar-item.model';
     MatTooltipModule,
   ],
 })
-export class NavBarComponent implements OnInit {
+export class NavBarComponent implements OnInit, OnDestroy {
   items: NavBarItem[];
   isOpen = true;
   canSeeNotifications = false;
@@ -49,8 +49,8 @@ export class NavBarComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private dialog: MatDialog,
-    private lateralDrawerService: LateralDrawerService,
-    private notificationService: NotificationService,
+    private readonly lateralDrawerService: LateralDrawerService,
+    private readonly notificationService: NotificationService,
   ) {}
 
   ngOnInit(): void {
@@ -88,10 +88,7 @@ export class NavBarComponent implements OnInit {
         title: 'Productos',
         icon: 'storefront',
         route: 'productos/cliente',
-        shouldRender: this.authService.hasAccess([
-          RolesEnum.Employee,
-          RolesEnum.Client,
-        ]),
+        shouldRender: this.authService.hasAccess([RolesEnum.Client]),
       },
       {
         title: 'Vehiculos',
