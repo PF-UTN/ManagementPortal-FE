@@ -45,6 +45,7 @@ describe('ShipmentListComponent', () => {
       searchShipments: jest.fn(),
       downloadShipments: jest.fn(),
       sendShipment: jest.fn(),
+      downloadReport: jest.fn(),
     } as unknown as jest.Mocked<ShipmentService>;
 
     vehicleService = {
@@ -811,6 +812,29 @@ describe('ShipmentListComponent', () => {
           },
           size: 'small',
         },
+      );
+    });
+  });
+  describe('handleDownloadReport', () => {
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('should call shipmentService.downloadReport and trigger file download', () => {
+      // arrange
+      const shipmentId = 123;
+      const mockBlob = new Blob(['pdf'], { type: 'application/pdf' });
+      const mockResponse = new HttpResponse({ body: mockBlob, status: 200 });
+      shipmentService.downloadReport.mockReturnValue(of(mockResponse));
+
+      // act
+      component.handleDownloadReport(shipmentId);
+
+      // assert
+      expect(shipmentService.downloadReport).toHaveBeenCalledWith(shipmentId);
+      expect(downloadFileFromResponse).toHaveBeenCalledWith(
+        mockResponse,
+        `envio-${shipmentId}.pdf`,
       );
     });
   });
