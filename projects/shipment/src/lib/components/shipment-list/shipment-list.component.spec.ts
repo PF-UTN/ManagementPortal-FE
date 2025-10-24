@@ -838,4 +838,55 @@ describe('ShipmentListComponent', () => {
       );
     });
   });
+  describe('handleDownloadReport', () => {
+    afterEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('should call shipmentService.downloadReport and trigger file download', () => {
+      // Arrange
+      const shipmentId = 123;
+      const mockBlob = new Blob(['pdf'], { type: 'application/pdf' });
+      const mockResponse = new HttpResponse({ body: mockBlob, status: 200 });
+      shipmentService.downloadReport.mockReturnValue(of(mockResponse));
+
+      // Act
+      component.handleDownloadReport(shipmentId);
+
+      // Assert
+      expect(shipmentService.downloadReport).toHaveBeenCalledWith(shipmentId);
+      expect(downloadFileFromResponse).toHaveBeenCalledWith(
+        mockResponse,
+        `envio-${shipmentId}.pdf`,
+      );
+    });
+
+    it('should show snackbar error message when download fails', () => {
+      // Arrange
+      const shipmentId = 999;
+      const error = new Error('Network error');
+      shipmentService.downloadReport.mockReturnValue(throwError(() => error));
+
+      // Act
+      component.handleDownloadReport(shipmentId);
+
+      // Assert
+      expect(shipmentService.downloadReport).toHaveBeenCalledWith(shipmentId);
+      expect(downloadFileFromResponse).not.toHaveBeenCalled();
+    });
+
+    it('should not call downloadFileFromResponse on HTTP 404 error', () => {
+      // Arrange
+      const shipmentId = 456;
+      shipmentService.downloadReport.mockReturnValue(
+        throwError(() => ({ status: 404, statusText: 'Not Found' })),
+      );
+
+      // Act
+      component.handleDownloadReport(shipmentId);
+
+      // Assert
+      expect(downloadFileFromResponse).not.toHaveBeenCalled();
+    });
+  });
 });
