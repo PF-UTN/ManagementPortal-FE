@@ -88,7 +88,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
         title: 'Productos',
         icon: 'storefront',
         route: 'productos/cliente',
-        shouldRender: this.authService.hasAccess([RolesEnum.Client]),
+        shouldRender: this.authService.hasAccess([RolesEnum.Client],[RolesEnum.Admin]),
       },
       {
         title: 'Vehiculos',
@@ -100,7 +100,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
         title: 'Mis pedidos',
         icon: 'assignment',
         route: 'pedidos/cliente',
-        shouldRender: this.authService.hasAccess([RolesEnum.Client]),
+        shouldRender: this.authService.hasAccess([RolesEnum.Client],[RolesEnum.Admin]),
       },
       {
         title: 'Pedidos',

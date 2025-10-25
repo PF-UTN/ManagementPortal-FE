@@ -52,12 +52,16 @@ export class AuthService {
       );
   }
 
-  hasAccess(allowedRoles: string[]): boolean {
+  hasAccess(allowedRoles: string[], deniedRoles: string[] = []): boolean {
     if (allowedRoles.length === 0) {
       return true;
     }
 
     if (!this.userRole) {
+      return false;
+    }
+
+    if (deniedRoles.includes(this.userRole)) {
       return false;
     }
 
