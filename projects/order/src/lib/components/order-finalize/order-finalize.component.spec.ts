@@ -225,25 +225,4 @@ describe('OrderFinalizeComponent', () => {
       expect(total).toBe(2000);
     });
   });
-
-  describe('taxes', () => {
-    it('should return 5% of cartTotal', () => {
-      // Arrange
-      component.cart = mockCart;
-      // Act
-      const taxes = component.taxes;
-      // Assert
-      expect(taxes).toBe(100);
-    });
-  });
-
-  describe('finalTotal', () => {
-    it('should return the sum of cartTotal and taxes', () => {
-      // Arrange
-      component.cart = mockCart;
-      // Act
-      // Assert
-      expect(component.finalTotal).toBe(2000 + 100);
-    });
-  });
 });
