@@ -61,6 +61,10 @@ export class AuthService {
       return false;
     }
 
+    if (deniedRoles.includes(this.userRole)) {
+      return false;
+    }
+
     const userAccessibleRoles = RoleHierarchy[this.userRole];
 
     if (
