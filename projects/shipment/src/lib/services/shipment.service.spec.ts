@@ -1,4 +1,4 @@
-import { provideHttpClient } from '@angular/common/http';
+import { HttpHeaders, provideHttpClient } from '@angular/common/http';
 import {
   provideHttpClientTesting,
   HttpTestingController,
@@ -349,5 +349,155 @@ describe('ShipmentService', () => {
       expect(errorResponse).toBeDefined();
       expect((errorResponse as { status: number }).status).toBe(400);
     });
+  });
+  describe('downloadReport', () => {
+    it('should GET /shipment/:id/report with blob response and Accept header', () => {
+      // Arrange
+      const shipmentId = 123;
+      const url = `${baseUrl}/${shipmentId}/report`;
+      const mockBlob = new Blob(['%PDF-1.7'], { type: 'application/pdf' });
+      let responseStatus: number | undefined;
+      let responseBody: Blob | null | undefined;
+
+      // Act
+      service.downloadReport(shipmentId).subscribe((res) => {
+        responseStatus = res.status;
+        responseBody = res.body;
+      });
+
+      const req = httpMock.expectOne(url);
+      // Assert request
+      expect(req.request.method).toBe('GET');
+      expect(req.request.responseType).toBe('blob');
+      expect(req.request.headers.get('Accept')).toBe('application/pdf');
+
+      // Respond
+      const headers = new HttpHeaders({
+        'Content-Disposition': 'attachment; filename="shipment-123.pdf"',
+      });
+      req.flush(mockBlob, { status: 200, statusText: 'OK', headers });
+
+      // Assert response
+      expect(responseStatus).toBe(200);
+      expect(responseBody).toEqual(mockBlob);
+      expect((responseBody as Blob).type).toBe('application/pdf');
+    });
+
+    it('should propagate HTTP errors', () => {
+      // Arrange
+      const shipmentId = 999;
+      const url = `${baseUrl}/${shipmentId}/report`;
+      let errorStatus: number | undefined;
+
+      // Act
+      service.downloadReport(shipmentId).subscribe({
+        next: () => fail('Expected error but got success'),
+        error: (err) => (errorStatus = err.status),
+      });
+
+      const req = httpMock.expectOne(url);
+      expect(req.request.method).toBe('GET');
+      const errorBlob = new Blob(['Not Found'], { type: 'text/plain' });
+      req.flush(errorBlob, { status: 404, statusText: 'Not Found' });
+
+      // Assert
+      expect(errorStatus).toBe(404);
+    });
+  });
+  it('should handle Content-Disposition header with UTF-8 encoded filename', () => {
+    // Arrange
+    const shipmentId = 456;
+    const url = `${baseUrl}/${shipmentId}/report`;
+    const mockBlob = new Blob(['%PDF-1.7'], { type: 'application/pdf' });
+    const encodedFilename = encodeURIComponent('envío-456-ñ.pdf');
+    let responseHeaders: HttpHeaders | undefined;
+
+    // Act
+    service.downloadReport(shipmentId).subscribe((res) => {
+      responseHeaders = res.headers;
+    });
+
+    const req = httpMock.expectOne(url);
+    const headers = new HttpHeaders({
+      'Content-Disposition': `attachment; filename*=UTF-8''${encodedFilename}`,
+    });
+    req.flush(mockBlob, { status: 200, statusText: 'OK', headers });
+
+    // Assert
+    expect(responseHeaders?.get('Content-Disposition')).toContain(
+      encodedFilename,
+    );
+  });
+  it('should handle response without Content-Disposition header', () => {
+    // Arrange
+    const shipmentId = 789;
+    const url = `${baseUrl}/${shipmentId}/report`;
+    const mockBlob = new Blob(['%PDF-1.7'], { type: 'application/pdf' });
+    let responseHeaders: HttpHeaders | undefined;
+
+    // Act
+    service.downloadReport(shipmentId).subscribe((res) => {
+      responseHeaders = res.headers;
+    });
+
+    const req = httpMock.expectOne(url);
+    // Sin header Content-Disposition
+    req.flush(mockBlob, { status: 200, statusText: 'OK' });
+
+    // Assert
+    expect(responseHeaders?.get('Content-Disposition')).toBeNull();
+    expect(responseHeaders).toBeDefined();
+  });
+  it('should handle large PDF files', () => {
+    // Arrange
+    const shipmentId = 999;
+    const url = `${baseUrl}/${shipmentId}/report`;
+    // Simular un PDF grande (2MB)
+    const largePdfContent = new Array(2 * 1024 * 1024).fill('x').join('');
+    const mockBlob = new Blob([largePdfContent], {
+      type: 'application/pdf',
+    });
+    let responseBody: Blob | null | undefined;
+
+    // Act
+    service.downloadReport(shipmentId).subscribe((res) => {
+      responseBody = res.body;
+    });
+
+    const req = httpMock.expectOne(url);
+    req.flush(mockBlob, { status: 200, statusText: 'OK' });
+
+    // Assert
+    expect(responseBody?.size).toBe(mockBlob.size);
+    expect(responseBody?.type).toBe('application/pdf');
+  });
+  it('should handle 500 Internal Server Error', () => {
+    // Arrange
+    const shipmentId = 111;
+    const url = `${baseUrl}/${shipmentId}/report`;
+    let errorStatus: number | undefined;
+    let errorMessage: string | undefined;
+
+    // Act
+    service.downloadReport(shipmentId).subscribe({
+      next: () => fail('Expected error but got success'),
+      error: (err) => {
+        errorStatus = err.status;
+        errorMessage = err.statusText;
+      },
+    });
+
+    const req = httpMock.expectOne(url);
+    const errorBlob = new Blob(['Internal Server Error'], {
+      type: 'text/plain',
+    });
+    req.flush(errorBlob, {
+      status: 500,
+      statusText: 'Internal Server Error',
+    });
+
+    // Assert
+    expect(errorStatus).toBe(500);
+    expect(errorMessage).toBe('Internal Server Error');
   });
 });
