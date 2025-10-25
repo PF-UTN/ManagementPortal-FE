@@ -125,12 +125,19 @@
   border-radius: 18px;
   padding-top: 0.3rem;
   padding-bottom: 0.3rem;
-  cursor: pointer;
   transition: background-color 120ms ease;
 
-  &:hover,
-  &:focus {
-    background-color: $lavender-gray;
+  &.clickable {
+    cursor: pointer;
+
+    &:hover,
+    &:focus {
+      background-color: $lavender-gray;
+    }
+  }
+
+  &:not(.clickable) {
+    cursor: default;
   }
 
   ::ng-deep mp-button button {

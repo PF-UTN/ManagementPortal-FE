@@ -45,13 +45,17 @@
         class="container__body__footer__user-info"
         [class.only-client]="!canSeeNotifications"
       >
-        <div
-          class="nav-profile"
-          (click)="openNotifications()"
-          (keydown.enter)="openNotifications()"
-          matTooltip="Notificaciones"
-          matTooltipPosition="above"
-        >
+    <div
+      class="nav-profile"
+      [class.clickable]="canSeeNotifications"
+      [attr.role]="canSeeNotifications ? 'button' : null"
+      [attr.tabindex]="canSeeNotifications ? '0' : null"
+      (click)="canSeeNotifications ? openNotifications() : null"
+      (keydown.enter)="canSeeNotifications ? openNotifications() : null"
+      [matTooltip]="canSeeNotifications ? 'Notificaciones' : ''"
+      [matTooltipDisabled]="!canSeeNotifications"
+      matTooltipPosition="above"
+    >
           @if (canSeeNotifications) {
             <mp-button
               type="icon"
