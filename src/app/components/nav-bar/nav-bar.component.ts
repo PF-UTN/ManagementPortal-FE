@@ -115,6 +115,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
         shouldRender: this.authService.hasAccess([RolesEnum.Employee]),
       },
     ];
+
     this.subscribeToNotifications();
   }
 

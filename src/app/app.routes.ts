@@ -43,7 +43,7 @@ export const routes: Routes = [
     path: 'pedidos',
     loadChildren: () => import('@Order').then((m) => m.OrderRoutingModule),
     canActivate: [RoleGuard],
-    data: { admittedRoles: [RolesEnum.Client] },
+    data: { admittedRoles: [RolesEnum.Client, RolesEnum.Employee] },
   },
   {
     path: 'vehiculos',
@@ -55,14 +55,14 @@ export const routes: Routes = [
     path: 'carrito',
     loadChildren: () => import('@Cart').then((m) => m.CartRoutingModule),
     canActivate: [RoleGuard],
-    data: { admittedRoles: [RolesEnum.Client, RolesEnum.Admin] },
+    data: { admittedRoles: [RolesEnum.Client] },
   },
   {
     path: 'envios',
     loadChildren: () =>
       import('@Shipment').then((m) => m.ShipmentRoutingModule),
     canActivate: [RoleGuard],
-    data: { admittedRoles: [RolesEnum.Client, RolesEnum.Admin] },
+    data: { admittedRoles: [RolesEnum.Employee] },
   },
   { path: 'unauthorized', pathMatch: 'full', component: UnauthorizedComponent },
   { path: '**', pathMatch: 'full', redirectTo: 'inicio' },
