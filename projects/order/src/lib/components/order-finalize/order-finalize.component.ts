@@ -145,12 +145,4 @@ export class OrderFinalizeComponent implements OnInit {
       0,
     );
   }
-
-  get finalTotal(): number {
-    return this.cartTotal + this.taxes;
-  }
-
-  get taxes(): number {
-    return this.cartTotal * 0.05;
-  }
 }

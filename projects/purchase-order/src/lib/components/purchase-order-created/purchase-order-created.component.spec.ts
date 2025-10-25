@@ -846,7 +846,7 @@ describe('PurchaseOrderCreatedComponent', () => {
 
       // Assert
       expect(spySnackBar).toHaveBeenCalledWith(
-        'Error al modificar la orden de compra',
+        'Error al editar la orden de compra',
         'Cerrar',
         { duration: 3000 },
       );

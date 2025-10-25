@@ -55,4 +55,13 @@ export class ShipmentService {
     const url = `${this.baseUrl}/${shipmentId}/finish`;
     return this.http.patch<void>(url, body);
   }
+
+  downloadReport(shipmentId: number) {
+    const url = `${this.baseUrl}/${shipmentId}/report`;
+    return this.http.get(url, {
+      observe: 'response',
+      responseType: 'blob',
+      headers: { Accept: 'application/pdf' },
+    });
+  }
 }

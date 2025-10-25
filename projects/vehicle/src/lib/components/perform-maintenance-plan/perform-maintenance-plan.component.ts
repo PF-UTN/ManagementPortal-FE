@@ -249,7 +249,7 @@ export class PerformMaintenancePlanComponent implements OnInit {
           },
           error: () => {
             this.snackBar.open(
-              'Ocurrió un error al modificar el mantenimiento',
+              'Ocurrió un error al editar el mantenimiento',
               'Cerrar',
               { duration: 3000 },
             );

@@ -120,6 +120,11 @@ export class ShipmentListComponent implements OnInit {
           disabled: (element: ShipmentItem) =>
             element.shipmentStatus !== ShipmentStatusOptions.Shipped,
         },
+        {
+          description: 'Descargar',
+          action: (element: ShipmentItem) =>
+            this.handleDownloadReport(element.id),
+        },
       ],
     },
   ];
@@ -157,6 +162,7 @@ export class ShipmentListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.isLoading.set(true);
     this.searchParams$
       .pipe(
         debounceTime(300),
@@ -406,6 +412,22 @@ export class ShipmentListComponent implements OnInit {
     const params = this.getSearchRequest();
     this.shipmentService.downloadShipments(params).subscribe((response) => {
       downloadFileFromResponse(response, 'envios.xlsx');
+    });
+  }
+  handleDownloadReport(shipmentId: number): void {
+    this.shipmentService.downloadReport(shipmentId).subscribe({
+      next: (response) => {
+        downloadFileFromResponse(response, `envio-${shipmentId}.pdf`);
+      },
+      error: () => {
+        this.snackBar.open(
+          'No se pudo descargar el reporte del envío.',
+          'Cerrar',
+          {
+            duration: 3000,
+          },
+        );
+      },
     });
   }
 }

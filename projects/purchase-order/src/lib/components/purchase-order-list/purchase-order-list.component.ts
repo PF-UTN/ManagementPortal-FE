@@ -148,7 +148,7 @@ export class PurchaseOrderListComponent implements OnInit {
           action: (element: PurchaseOrderItem) => this.onDetailDrawer(element),
         },
         {
-          description: 'Modificar',
+          description: 'Editar',
           disabled: (element: PurchaseOrderItem) =>
             !PurchaseOrderStatusEnabledForModification.includes(
               element.purchaseOrderStatusName,

@@ -1,7 +1,7 @@
 <div class="container" [class.closed]="!isOpen">
     <div class="container__header">
       @if (isOpen) {
-        <a [routerLink]="'/'" class="container__header__link">
+        <a [routerLink]="logoRedirectUrl" class="container__header__link">
         <img
           [src]="logoUrl"
           alt="Logo"
@@ -41,25 +41,37 @@
       </nav>
     </div>
     <div class="container__body__footer">
-      <div class="container__body__footer__user-info"
+      <div
+        class="container__body__footer__user-info"
         [class.only-client]="!canSeeNotifications"
-        >
-        @if (canSeeNotifications) {
-          <mp-button
-            type="icon"
-            icon="notifications"
-            ariaLabel="Notificaciones"
-            tooltip="Notificaciones"
-            (onClick)="openNotifications()"
-            [badge]="notificationsCount > 0 ? notificationsCount : null"
-            [badgeColor]="'warn'"
-            [badgeOverlap]="true"
-            [badgePosition]="'above after'"
-          ></mp-button>
+      >
+    <div
+      class="nav-profile"
+      [class.clickable]="canSeeNotifications"
+      [attr.role]="canSeeNotifications ? 'button' : null"
+      [attr.tabindex]="canSeeNotifications ? '0' : null"
+      (click)="canSeeNotifications ? openNotifications() : null"
+      (keydown.enter)="canSeeNotifications ? openNotifications() : null"
+      [matTooltip]="canSeeNotifications ? 'Notificaciones' : ''"
+      [matTooltipDisabled]="!canSeeNotifications"
+      matTooltipPosition="above"
+    >
+          @if (canSeeNotifications) {
+            <mp-button
+              type="icon"
+              icon="notifications"
+              ariaLabel="Notificaciones"
+              (onClick)="openNotifications()"
+              [badge]="notificationsCount > 0 ? notificationsCount : null"
+              [badgeColor]="'warn'"
+              [badgeOverlap]="true"
+              [badgePosition]="'above after'"
+            ></mp-button>
           }
           @if (isOpen) {
             <mp-ellipsis-text [text]="userName"></mp-ellipsis-text>
           }
+        </div>
       </div>
 
       <div class="container__body__menu__item" (click)="handleLogOutClick()">

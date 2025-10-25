@@ -127,7 +127,7 @@ export class ProductListComponent implements OnInit {
           action: (element: ProductListItem) => this.onDetailDrawer(element),
         },
         {
-          description: 'Modificar',
+          description: 'Editar',
           action: (element: ProductListItem) => this.onModifyProduct(element),
         },
         {

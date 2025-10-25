@@ -80,7 +80,7 @@
                                         [(ngModel)]="selectedPayment"/>
                                     <span class="option-text">Tarjeta de Crédito/Débito</span>
                                     <span class="option-price">
-                                        {{ finalTotal | currency: 'ARS' : 'symbol' : '1.2-2' }}
+                                        {{ cartTotal | currency: 'ARS' : 'symbol' : '1.2-2' }}
                                     </span>
                                 </label>
                                 <label class="shipping-option" [class.selected]="selectedPayment === 'entrega'">
@@ -94,7 +94,7 @@
                                         <div class="option-address">No se da cambio en caso de pagar en efectivo</div>
                                     </span>
                                     <span class="option-price">
-                                        {{ finalTotal | currency: 'ARS' : 'symbol' : '1.2-2' }}
+                                        {{ cartTotal | currency: 'ARS' : 'symbol' : '1.2-2' }}
                                     </span>
                                 </label>
                             </div>
@@ -158,14 +158,10 @@
                                         <span>Subtotal</span>
                                         <span>{{ cartTotal | currency: 'ARS' : 'symbol' : '1.2-2' }}</span>
                                     </div>
-                                    <div class="d-flex justify-content-between">
-                                        <span>Impuestos</span>
-                                        <span>{{ taxes | currency: 'ARS' : 'symbol' : '1.2-2' }}</span>
-                                    </div>
                                     <hr>
                                     <div class="d-flex justify-content-between fw-bold">
                                         <span>Total</span>
-                                        <span>{{ finalTotal | currency: 'ARS' : 'symbol' : '1.2-2' }}</span>
+                                        <span>{{ cartTotal | currency: 'ARS' : 'symbol' : '1.2-2' }}</span>
                                     </div>
                                 </div>
                                 <div class="mt-4 d-flex justify-content-between">
@@ -201,14 +197,10 @@
                             </div>
                         </div>
                         <div class="body__summary__detail mt-3">
-                            <div class="d-flex justify-content-between">
-                                <span>Impuestos</span>
-                                <span>{{ taxes | currency: 'ARS' : 'symbol' : '1.2-2' }}</span>
-                            </div>
                             <hr>
                             <div class="d-flex justify-content-between fw-bold">
                                 <span>Total</span>
-                                <span>{{ finalTotal | currency: 'ARS' : 'symbol' : '1.2-2' }}</span>
+                                <span>{{ cartTotal | currency: 'ARS' : 'symbol' : '1.2-2' }}</span>
                             </div>
                         </div>
                     </ng-container>

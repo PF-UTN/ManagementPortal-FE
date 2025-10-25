@@ -1,3 +1,5 @@
+import { RoleGuard, RolesEnum } from '@Common';
+
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
@@ -9,14 +11,20 @@ const routes: Routes = [
   {
     path: 'cliente',
     component: OrderListClientComponent,
+    canActivate: [RoleGuard],
+    data: { admittedRoles: [RolesEnum.Client] },
   },
   {
     path: 'finalizar',
     component: OrderFinalizeComponent,
+    canActivate: [RoleGuard],
+    data: { admittedRoles: [RolesEnum.Client] },
   },
   {
     path: '',
     component: OrderListComponent,
+    canActivate: [RoleGuard],
+    data: { admittedRoles: [RolesEnum.Employee] },
   },
 ];
 

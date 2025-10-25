@@ -103,8 +103,8 @@ export class CreateMaintenancePlanComponent implements OnInit {
     this.isEditMode = !!planFromState;
 
     this.title = this.isEditMode
-      ? 'Editar plan de mantenimiento'
-      : 'Crear plan de mantenimiento';
+      ? 'Editar Plan de Mantenimiento'
+      : 'Crear Plan de Mantenimiento';
 
     if (this.isEditMode) {
       this.isInitialLoading = true;

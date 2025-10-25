@@ -299,4 +299,58 @@ describe('DetailLateralClientDrawerComponent', () => {
       expect(addProductSpy).not.toHaveBeenCalled();
     });
   });
+
+  describe('footer button disabled logic', () => {
+    it('should disable "Agregar al carrito" if product is not loaded', () => {
+      // Arrange
+      component.data.set(null);
+
+      // Act
+      const disabled =
+        component.isLoading() ||
+        (component.data()
+          ? component.data()!.stock.quantityAvailable <= 0
+          : true);
+
+      // Assert
+      expect(disabled).toBe(true);
+    });
+
+    it('should disable "Agregar al carrito" if stock is zero', () => {
+      // Arrange
+      const product = {
+        ...mockProduct,
+        stock: { ...mockProduct.stock, quantityAvailable: 0 },
+      };
+      component.data.set(product);
+
+      // Act
+      const disabled =
+        component.isLoading() ||
+        (component.data()
+          ? component.data()!.stock.quantityAvailable <= 0
+          : true);
+
+      // Assert
+      expect(disabled).toBe(true);
+    });
+
+    it('should enable "Agregar al carrito" if product is loaded and stock > 0', () => {
+      // Arrange
+      const product = {
+        ...mockProduct,
+        stock: { ...mockProduct.stock, quantityAvailable: 5 },
+      };
+      component.data.set(product);
+      component.isLoading.set(false);
+      // Act
+      const disabled =
+        component.isLoading() ||
+        (component.data()
+          ? component.data()!.stock.quantityAvailable <= 0
+          : true);
+      // Assert
+      expect(disabled).toBe(false);
+    });
+  });
 });

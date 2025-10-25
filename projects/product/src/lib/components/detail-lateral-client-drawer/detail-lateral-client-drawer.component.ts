@@ -48,7 +48,7 @@ export class DetailLateralClientDrawerComponent
             loading: this.isLoading(),
             disabled:
               this.isLoading() ||
-              (this.data() ? this.data()!.stock.quantityAvailable === 0 : true),
+              (this.data() ? this.data()!.stock.quantityAvailable <= 0 : true),
           },
           secondButton: {
             click: () => this.closeDrawer(),

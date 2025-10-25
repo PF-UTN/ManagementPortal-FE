@@ -12,10 +12,11 @@ import {
 } from '@Notification';
 
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { interval, Subscription } from 'rxjs';
 
@@ -32,9 +33,10 @@ import { NavBarItem } from '../../models/nav-bar-item.model';
     MatButtonModule,
     EllipsisTextComponent,
     ButtonComponent,
+    MatTooltipModule,
   ],
 })
-export class NavBarComponent implements OnInit {
+export class NavBarComponent implements OnInit, OnDestroy {
   items: NavBarItem[];
   isOpen = true;
   canSeeNotifications = false;
@@ -43,15 +45,20 @@ export class NavBarComponent implements OnInit {
   private notifSub?: Subscription;
   private notifIntervalSub?: Subscription;
   logoUrl = `${environment.cdnBaseUrl}/images/dog.png`;
+  logoRedirectUrl: string;
 
   constructor(
     private authService: AuthService,
     private dialog: MatDialog,
-    private lateralDrawerService: LateralDrawerService,
-    private notificationService: NotificationService,
+    private readonly lateralDrawerService: LateralDrawerService,
+    private readonly notificationService: NotificationService,
   ) {}
 
   ngOnInit(): void {
+    this.logoRedirectUrl = this.authService.hasAccess([RolesEnum.Employee])
+      ? '/inicio'
+      : '/productos/cliente';
+
     this.canSeeNotifications = this.authService.hasAccess([
       RolesEnum.Employee,
       RolesEnum.Admin,
@@ -86,10 +93,10 @@ export class NavBarComponent implements OnInit {
         title: 'Productos',
         icon: 'storefront',
         route: 'productos/cliente',
-        shouldRender: this.authService.hasAccess([
-          RolesEnum.Employee,
-          RolesEnum.Client,
-        ]),
+        shouldRender: this.authService.hasAccess(
+          [RolesEnum.Client],
+          [RolesEnum.Admin],
+        ),
       },
       {
         title: 'Vehiculos',
@@ -101,7 +108,10 @@ export class NavBarComponent implements OnInit {
         title: 'Mis pedidos',
         icon: 'assignment',
         route: 'pedidos/cliente',
-        shouldRender: this.authService.hasAccess([RolesEnum.Client]),
+        shouldRender: this.authService.hasAccess(
+          [RolesEnum.Client],
+          [RolesEnum.Admin],
+        ),
       },
       {
         title: 'Pedidos',
@@ -116,6 +126,7 @@ export class NavBarComponent implements OnInit {
         shouldRender: this.authService.hasAccess([RolesEnum.Employee]),
       },
     ];
+
     this.subscribeToNotifications();
   }
 

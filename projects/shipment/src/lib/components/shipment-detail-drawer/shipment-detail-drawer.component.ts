@@ -17,7 +17,7 @@ import {
   ShipmentOrder,
 } from '../../models/shipment-deatil.model';
 import { orderStatusOptions } from '../../models/shipment-order-status.model';
-import { statusOptions } from '../../models/shipment-status-option.model';
+import { ShipmentStatusOptions } from '../../models/shipment-status.enum';
 import { ShipmentService } from '../../services/shipment.service';
 
 @Component({
@@ -64,8 +64,9 @@ export class ShipmentDetailDrawerComponent
   }
 
   getStatusLabel(status: string): string {
-    const found = statusOptions.find((opt) => opt.key === status);
-    return found ? found.value : status;
+    const label =
+      ShipmentStatusOptions[status as keyof typeof ShipmentStatusOptions];
+    return label || status;
   }
 
   getOrderStatusLabel(status: string): string {

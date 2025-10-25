@@ -202,6 +202,7 @@ export class OrderListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.loadAllShipmentIds();
 
     this.searchSubscription = this.doSearchSubject$
