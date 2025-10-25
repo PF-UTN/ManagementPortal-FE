@@ -9,7 +9,7 @@ import { catchError, of, take } from 'rxjs';
   selector: 'mp-home',
   standalone: true,
   imports: [],
-  template: ` <iframe [src]="lookerUrl" width="100%" height="99%"></iframe> `,
+  template: ` <iframe [src]="lookerUrl" width="100%" height="100%"></iframe>`,
   styles: ``,
 })
 export class HomeComponent implements OnInit {
