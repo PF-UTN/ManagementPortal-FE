@@ -45,6 +45,7 @@ export class NavBarComponent implements OnInit, OnDestroy {
   private notifSub?: Subscription;
   private notifIntervalSub?: Subscription;
   logoUrl = `${environment.cdnBaseUrl}/images/dog.png`;
+  logoRedirectUrl: string;
 
   constructor(
     private authService: AuthService,
@@ -54,6 +55,10 @@ export class NavBarComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.logoRedirectUrl = this.authService.hasAccess([RolesEnum.Employee])
+      ? '/inicio'
+      : '/productos/cliente';
+
     this.canSeeNotifications = this.authService.hasAccess([
       RolesEnum.Employee,
       RolesEnum.Admin,
