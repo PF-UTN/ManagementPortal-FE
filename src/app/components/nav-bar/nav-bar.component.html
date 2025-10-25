@@ -1,7 +1,7 @@
 <div class="container" [class.closed]="!isOpen">
     <div class="container__header">
       @if (isOpen) {
-        <a [routerLink]="'/'" class="container__header__link">
+        <a [routerLink]="logoRedirectUrl" class="container__header__link">
         <img
           [src]="logoUrl"
           alt="Logo"
