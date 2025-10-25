@@ -8,7 +8,7 @@ import {
   fakeAsync,
   tick,
 } from '@angular/core/testing';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
 import { mockDeep } from 'jest-mock-extended';
@@ -89,7 +89,9 @@ describe('SignupComponent', () => {
 
     describe('Name field validation', () => {
       it('should set name error if name control is empty', () => {
-        const nameControl = component.signupForm.controls.firstName;
+        const nameControl = component.signupForm.get(
+          'user.firstName',
+        ) as FormControl;
         // Arrange
         nameControl.setValue('');
         // Act & Assert
@@ -97,7 +99,9 @@ describe('SignupComponent', () => {
       });
 
       it('should set name error if name control is invalid', () => {
-        const nameControl = component.signupForm.controls.firstName;
+        const nameControl = component.signupForm.get(
+          'user.firstName',
+        ) as FormControl;
         // Arrange
         nameControl.setValue('J');
         // Act & Assert
@@ -105,7 +109,9 @@ describe('SignupComponent', () => {
       });
 
       it('should not set name error if name control is valid', () => {
-        const nameControl = component.signupForm.controls.firstName;
+        const nameControl = component.signupForm.get(
+          'user.firstName',
+        ) as FormControl;
         // Arrange
         nameControl.setValue(clientData.firstName);
         // Act & Assert
@@ -116,7 +122,9 @@ describe('SignupComponent', () => {
 
     describe('Lastname field validation', () => {
       it('should set lastname error if lastname control is empty', () => {
-        const lastnameControl = component.signupForm.controls.lastName;
+        const lastnameControl = component.signupForm.get(
+          'user.lastName',
+        ) as FormControl;
         // Arrange
         lastnameControl.setValue('');
         // Act & Assert
@@ -124,7 +132,9 @@ describe('SignupComponent', () => {
       });
 
       it('should set lastname error if lastname control is invalid', () => {
-        const lastnameControl = component.signupForm.controls.lastName;
+        const lastnameControl = component.signupForm.get(
+          'user.lastName',
+        ) as FormControl;
         // Arrange
         lastnameControl.setValue('J');
         // Act & Assert
@@ -132,7 +142,9 @@ describe('SignupComponent', () => {
       });
 
       it('should not set lastname error if lastname control is valid', () => {
-        const lastnameControl = component.signupForm.controls.lastName;
+        const lastnameControl = component.signupForm.get(
+          'user.lastName',
+        ) as FormControl;
         // Arrange
         lastnameControl.setValue(clientData.lastName);
         // Act & Assert
@@ -143,21 +155,27 @@ describe('SignupComponent', () => {
 
     describe('Email field validation', () => {
       it('should set email error if email control is empty', () => {
-        const emailControl = component.signupForm.controls.email;
+        const emailControl = component.signupForm.get(
+          'user.email',
+        ) as FormControl;
         // Arrange
         emailControl.setValue('');
         // Act & Assert
         expect(emailControl.hasError('required')).toBeTruthy();
       });
       it('should set email error if email control is invalid', () => {
-        const emailControl = component.signupForm.controls.email;
+        const emailControl = component.signupForm.get(
+          'user.email',
+        ) as FormControl;
         // Arrange
         emailControl.setValue('invalid-email');
         // Act & Assert
         expect(emailControl.hasError('invalidEmail')).toBeTruthy();
       });
       it('should not set email error if email control is valid', () => {
-        const emailControl = component.signupForm.controls.email;
+        const emailControl = component.signupForm.get(
+          'user.email',
+        ) as FormControl;
         // Arrange
         emailControl.setValue(clientData.email);
         // Act & Assert
@@ -168,7 +186,9 @@ describe('SignupComponent', () => {
 
     describe('Password field validation', () => {
       it('should set password error if password control is empty', () => {
-        const passwordControl = component.signupForm.controls.password;
+        const passwordControl = component.signupForm.get(
+          'user.password',
+        ) as FormControl;
         // Arrange
         passwordControl.setValue('');
         // Act & Assert
@@ -176,14 +196,18 @@ describe('SignupComponent', () => {
       });
 
       it('should set password error if password control is invalid', () => {
-        const passwordControl = component.signupForm.controls.password;
+        const passwordControl = component.signupForm.get(
+          'user.password',
+        ) as FormControl;
         // Arrange
         passwordControl.setValue('12345');
         // Act & Assert
         expect(passwordControl.hasError('minlength')).toBeTruthy();
       });
       it('should set password error if password control does not match pattern', () => {
-        const passwordControl = component.signupForm.controls.password;
+        const passwordControl = component.signupForm.get(
+          'user.password',
+        ) as FormControl;
         // Arrange
         passwordControl.setValue('password');
         // Act & Assert
@@ -191,7 +215,9 @@ describe('SignupComponent', () => {
       });
 
       it('should not set password error if password control is valid', () => {
-        const passwordControl = component.signupForm.controls.password;
+        const passwordControl = component.signupForm.get(
+          'user.password',
+        ) as FormControl;
         // Arrange
         passwordControl.setValue(clientData.password);
         // Act & Assert
@@ -200,9 +226,12 @@ describe('SignupComponent', () => {
         expect(passwordControl.hasError('pattern')).toBeFalsy();
       });
       it('should show error on confirmPassword control if passwords do not match', () => {
-        const passwordControl = component.signupForm.controls.password;
-        const confirmPasswordControl =
-          component.signupForm.controls.confirmPassword;
+        const passwordControl = component.signupForm.get(
+          'user.password',
+        ) as FormControl;
+        const confirmPasswordControl = component.signupForm.get(
+          'user.confirmPassword',
+        ) as FormControl;
         // Arrange
         passwordControl.setValue(clientData.password);
         confirmPasswordControl.setValue(clientInvalidData.password);
@@ -214,21 +243,27 @@ describe('SignupComponent', () => {
     });
     describe('Confirm phone field validation', () => {
       it('should set phone error if phone control is empty', () => {
-        const phoneControl = component.signupForm.controls.phone;
+        const phoneControl = component.signupForm.get(
+          'personal.phone',
+        ) as FormControl;
         // Arrange
         phoneControl.setValue('');
         // Act & Assert
         expect(phoneControl.hasError('required')).toBeTruthy();
       });
       it('should set phone error if phone control is invalid', () => {
-        const phoneControl = component.signupForm.controls.phone;
+        const phoneControl = component.signupForm.get(
+          'personal.phone',
+        ) as FormControl;
         // Arrange
         phoneControl.setValue(clientInvalidData.phone);
         // Act & Assert
         expect(phoneControl.hasError('pattern')).toBeTruthy();
       });
       it('should not set phone error if phone control is valid', () => {
-        const phoneControl = component.signupForm.controls.phone;
+        const phoneControl = component.signupForm.get(
+          'personal.phone',
+        ) as FormControl;
         // Arrange
         phoneControl.setValue(clientData.phone);
         // Act & Assert
@@ -236,7 +271,9 @@ describe('SignupComponent', () => {
         expect(phoneControl.hasError('required')).toBeFalsy();
       });
       it('should set phone error if phone control does not match pattern', () => {
-        const phoneControl = component.signupForm.controls.phone;
+        const phoneControl = component.signupForm.get(
+          'personal.phone',
+        ) as FormControl;
         // Arrange
         phoneControl.setValue('123456789@012345');
         // Act & Assert
@@ -245,7 +282,9 @@ describe('SignupComponent', () => {
     });
     describe('Birthdate field validation', () => {
       it('should set birthdate error if birthdate control is empty', () => {
-        const birthdateControl = component.signupForm.controls.birthdate;
+        const birthdateControl = component.signupForm.get(
+          'personal.birthdate',
+        ) as FormControl;
         // Arrange
         // Act & Assert
         expect(birthdateControl.hasError('required')).toBeTruthy();
@@ -253,14 +292,18 @@ describe('SignupComponent', () => {
     });
     describe('Town fields validation', () => {
       it('should set town error if town control is empty', () => {
-        const townControl = component.signupForm.controls.town;
+        const townControl = component.signupForm.get(
+          'personal.town',
+        ) as FormControl;
         // Arrange
         townControl.setValue(null);
         // Act & Assert
         expect(townControl.hasError('required')).toBeTruthy();
       });
       it('should not set town error if town control is valid', () => {
-        const townControl = component.signupForm.controls.town;
+        const townControl = component.signupForm.get(
+          'personal.town',
+        ) as FormControl;
         // Arrange
         townControl.setValue(mockTown);
         // Act & Assert
@@ -283,10 +326,10 @@ describe('SignupComponent', () => {
       it('should require town field', () => {
         // Arrange
         component.ngOnInit();
-        component.signupForm.controls.town.setValue(null);
+        component.signupForm.get('personal.town')?.setValue(null);
 
         // Act
-        const errors = component.signupForm.controls.town.errors;
+        const errors = component.signupForm.get('personal.town')?.errors;
 
         // Assert
         expect(errors).toBeTruthy();
@@ -303,7 +346,7 @@ describe('SignupComponent', () => {
 
         // Act
         component.filteredTowns$.subscribe();
-        component.signupForm.controls.town.setValue(mockTown);
+        component.signupForm.get('personal.town')?.setValue(mockTown);
         tick(350);
 
         // Assert
@@ -325,7 +368,7 @@ describe('SignupComponent', () => {
 
         // Act
         component.filteredTowns$.subscribe();
-        component.signupForm.controls.town.setValue(null);
+        component.signupForm.get('personal.town')?.setValue(null);
         tick(350);
 
         // Assert
@@ -340,7 +383,9 @@ describe('SignupComponent', () => {
 
   describe('Street field validation', () => {
     it('should set street error if street control is empty', () => {
-      const streetControl = component.signupForm.controls.street;
+      const streetControl = component.signupForm.get(
+        'personal.street',
+      ) as FormControl;
       // Arrange
       streetControl.setValue('');
       // Act & Assert
@@ -348,7 +393,9 @@ describe('SignupComponent', () => {
     });
 
     it('should not set street error if street control is valid', () => {
-      const streetControl = component.signupForm.controls.street;
+      const streetControl = component.signupForm.get(
+        'personal.street',
+      ) as FormControl;
       // Arrange
       streetControl.setValue(clientData.address.street);
       // Act & Assert
@@ -390,14 +437,18 @@ describe('SignupComponent', () => {
 
   describe('Street Number field validation', () => {
     it('should set streetNumber error if streetNumber control is empty', () => {
-      const streetNumberControl = component.signupForm.controls.streetNumber;
+      const streetNumberControl = component.signupForm.get(
+        'personal.streetNumber',
+      ) as FormControl;
       // Arrange
       // Act & Assert
       expect(streetNumberControl.hasError('required')).toBeTruthy();
     });
 
     it('should not set streetNumber error if streetNumber control is valid', () => {
-      const streetNumberControl = component.signupForm.controls.streetNumber;
+      const streetNumberControl = component.signupForm.get(
+        'personal.streetNumber',
+      ) as FormControl;
       // Arrange
       streetNumberControl.setValue(clientData.address.streetNumber);
       // Act & Assert
@@ -447,14 +498,18 @@ describe('SignupComponent', () => {
   });
   describe('Tax Category field validation', () => {
     it('should set taxCategory error if taxCategory control is empty', () => {
-      const taxCategoryControl = component.signupForm.controls.taxCategory;
+      const taxCategoryControl = component.signupForm.get(
+        'documentation.taxCategory',
+      ) as FormControl;
       // Arrange
       // Act & Assert
       expect(taxCategoryControl.hasError('required')).toBeTruthy();
     });
 
     it('should not set taxCategory error if taxCategory control is valid', () => {
-      const taxCategoryControl = component.signupForm.controls.taxCategory;
+      const taxCategoryControl = component.signupForm.get(
+        'documentation.taxCategory',
+      ) as FormControl;
       // Arrange
       taxCategoryControl.setValue(clientData.taxCategoryId);
       // Act & Assert
@@ -481,13 +536,17 @@ describe('SignupComponent', () => {
   });
   describe('Tax ID Type field validation', () => {
     it('should set documentType error if documentType control is empty', () => {
-      const documentTypeControl = component.signupForm.controls.documentType;
+      const documentTypeControl = component.signupForm.get(
+        'documentation.documentType',
+      ) as FormControl;
       // Arrange
       // Act & Assert
       expect(documentTypeControl.hasError('required')).toBeTruthy();
     });
     it('should not set documentType error if documentType control is valid', () => {
-      const documentTypeControl = component.signupForm.controls.documentType;
+      const documentTypeControl = component.signupForm.get(
+        'documentation.documentType',
+      ) as FormControl;
       // Arrange
       documentTypeControl.setValue(clientData.documentType);
       // Act & Assert
@@ -496,14 +555,18 @@ describe('SignupComponent', () => {
   });
   describe('Tax field validation', () => {
     it('should set tax error if tax control is empty', () => {
-      const taxControl = component.signupForm.controls.documentNumber;
+      const taxControl = component.signupForm.get(
+        'documentation.documentNumber',
+      ) as FormControl;
       // Arrange
       taxControl.setValue(clientInvalidData.documentNumber);
       // Act & Assert
       expect(taxControl.hasError('required')).toBeTruthy();
     });
     it('should not set tax error if tax control is valid', () => {
-      const taxControl = component.signupForm.controls.documentNumber;
+      const taxControl = component.signupForm.get(
+        'documentation.documentNumber',
+      ) as FormControl;
       // Arrange
       taxControl.setValue(clientData.documentNumber);
       // Act & Assert
@@ -513,20 +576,26 @@ describe('SignupComponent', () => {
   describe('CompanyName field validation', () => {
     it('should set companyName as required', () => {
       // Arrange
-      const companyNameControl = component.signupForm.controls.companyName;
+      const companyNameControl = component.signupForm.get(
+        'documentation.companyName',
+      ) as FormControl;
       companyNameControl.setValue('');
       // Act & Assert
       expect(companyNameControl.hasError('required')).toBeTruthy();
     });
     it('should set companyName error if companyName control is empty', () => {
-      const companyNameControl = component.signupForm.controls.companyName;
+      const companyNameControl = component.signupForm.get(
+        'documentation.companyName',
+      ) as FormControl;
       // Arrange
       companyNameControl.setValue('');
       // Act & Assert
       expect(companyNameControl.hasError('required')).toBeTruthy();
     });
     it('should not set companyName error if companyName control is valid', () => {
-      const companyNameControl = component.signupForm.controls.companyName;
+      const companyNameControl = component.signupForm.get(
+        'documentation.companyName',
+      ) as FormControl;
       // Arrange
       companyNameControl.setValue(clientData.companyName);
       // Act & Assert
@@ -538,32 +607,41 @@ describe('SignupComponent', () => {
     it('should be valid if all fields are filled correctly', () => {
       const clientData = mockClient;
       // Arrange
-      component.signupForm.controls.firstName.setValue(clientData.firstName);
-      component.signupForm.controls.lastName.setValue(clientData.lastName);
-      component.signupForm.controls.email.setValue(clientData.email);
-      component.signupForm.controls.password.setValue(clientData.password);
-      component.signupForm.controls.confirmPassword.setValue(
-        clientData.password,
-      );
-      component.signupForm.controls.phone.setValue(clientData.phone);
-      component.signupForm.controls.birthdate.setValue(clientData.birthdate);
-      component.signupForm.controls.town.setValue(mockTown);
-      component.signupForm.controls.street.setValue(clientData.address.street);
-      component.signupForm.controls.streetNumber.setValue(
-        clientData.address.streetNumber,
-      );
-      component.signupForm.controls.taxCategory.setValue(
-        clientData.taxCategoryId,
-      );
-      component.signupForm.controls.documentType.setValue(
-        clientData.documentType,
-      );
-      component.signupForm.controls.documentNumber.setValue(
-        clientData.documentNumber,
-      );
-      component.signupForm.controls.companyName.setValue(
-        clientData.companyName,
-      );
+      component.signupForm
+        .get('user.firstName')
+        ?.setValue(clientData.firstName);
+      component.signupForm.get('user.lastName')?.setValue(clientData.lastName);
+      component.signupForm.get('user.email')?.setValue(clientData.email);
+      component.signupForm.get('user.password')?.setValue(clientData.password);
+      component.signupForm
+        .get('user.confirmPassword')
+        ?.setValue(clientData.password);
+
+      component.signupForm.get('personal.phone')?.setValue(clientData.phone);
+      component.signupForm
+        .get('personal.birthdate')
+        ?.setValue(clientData.birthdate);
+      component.signupForm.get('personal.town')?.setValue(mockTown);
+      component.signupForm
+        .get('personal.street')
+        ?.setValue(clientData.address.street);
+      component.signupForm
+        .get('personal.streetNumber')
+        ?.setValue(clientData.address.streetNumber);
+
+      component.signupForm
+        .get('documentation.taxCategory')
+        ?.setValue(clientData.taxCategoryId);
+      component.signupForm
+        .get('documentation.documentType')
+        ?.setValue(clientData.documentType);
+      component.signupForm
+        .get('documentation.documentNumber')
+        ?.setValue(clientData.documentNumber);
+      component.signupForm
+        .get('documentation.companyName')
+        ?.setValue(clientData.companyName);
+
       fixture.detectChanges();
 
       // Act & Assert
@@ -578,20 +656,26 @@ describe('SignupComponent', () => {
         .spyOn(authService, 'signUpAsync')
         .mockReturnValue(of({ access_token: 'mockToken' }));
       component.signupForm.setValue({
-        firstName: clientData.firstName,
-        lastName: clientData.lastName,
-        email: clientData.email,
-        password: clientData.password,
-        confirmPassword: clientData.password,
-        phone: clientData.phone,
-        birthdate: clientData.birthdate,
-        town: mockTown,
-        street: clientData.address.street,
-        streetNumber: clientData.address.streetNumber,
-        taxCategory: clientData.taxCategoryId,
-        documentType: clientData.documentType,
-        documentNumber: clientData.documentNumber,
-        companyName: clientData.companyName,
+        user: {
+          firstName: clientData.firstName,
+          lastName: clientData.lastName,
+          email: clientData.email,
+          password: clientData.password,
+          confirmPassword: clientData.password,
+        },
+        personal: {
+          phone: clientData.phone,
+          birthdate: clientData.birthdate,
+          town: mockTown,
+          street: clientData.address.street,
+          streetNumber: clientData.address.streetNumber,
+        },
+        documentation: {
+          taxCategory: clientData.taxCategoryId,
+          documentType: clientData.documentType,
+          documentNumber: clientData.documentNumber,
+          companyName: clientData.companyName,
+        },
       });
       fixture.detectChanges();
       // Act
@@ -614,20 +698,26 @@ describe('SignupComponent', () => {
         .mockReturnValue(throwError(() => errorResponse));
 
       component.signupForm.setValue({
-        firstName: clientData.firstName,
-        lastName: clientData.lastName,
-        email: clientData.email,
-        password: clientData.password,
-        confirmPassword: clientData.password,
-        phone: clientData.phone,
-        birthdate: clientData.birthdate,
-        town: mockTown,
-        street: clientData.address.street,
-        streetNumber: clientData.address.streetNumber,
-        taxCategory: clientData.taxCategoryId,
-        documentType: clientData.documentType,
-        documentNumber: clientData.documentNumber,
-        companyName: clientData.companyName,
+        user: {
+          firstName: clientData.firstName,
+          lastName: clientData.lastName,
+          email: clientData.email,
+          password: clientData.password,
+          confirmPassword: clientData.password,
+        },
+        personal: {
+          phone: clientData.phone,
+          birthdate: clientData.birthdate,
+          town: mockTown,
+          street: clientData.address.street,
+          streetNumber: clientData.address.streetNumber,
+        },
+        documentation: {
+          taxCategory: clientData.taxCategoryId,
+          documentType: clientData.documentType,
+          documentNumber: clientData.documentNumber,
+          companyName: clientData.companyName,
+        },
       });
 
       // Act
@@ -661,20 +751,26 @@ describe('SignupComponent', () => {
         .mockReturnValue(throwError(() => errorResponse));
 
       component.signupForm.setValue({
-        firstName: mockClient.firstName,
-        lastName: mockClient.lastName,
-        email: mockClient.email,
-        password: mockClient.password,
-        confirmPassword: mockClient.password,
-        phone: mockClient.phone,
-        birthdate: mockClient.birthdate,
-        town: mockTown,
-        street: mockClient.address.street,
-        streetNumber: mockClient.address.streetNumber,
-        taxCategory: mockClient.taxCategoryId,
-        documentType: mockClient.documentType,
-        documentNumber: mockClient.documentNumber,
-        companyName: mockClient.companyName,
+        user: {
+          firstName: clientData.firstName,
+          lastName: clientData.lastName,
+          email: clientData.email,
+          password: clientData.password,
+          confirmPassword: clientData.password,
+        },
+        personal: {
+          phone: clientData.phone,
+          birthdate: clientData.birthdate,
+          town: mockTown,
+          street: clientData.address.street,
+          streetNumber: clientData.address.streetNumber,
+        },
+        documentation: {
+          taxCategory: clientData.taxCategoryId,
+          documentType: clientData.documentType,
+          documentNumber: clientData.documentNumber,
+          companyName: clientData.companyName,
+        },
       });
 
       component.onSubmit();
@@ -687,7 +783,9 @@ describe('SignupComponent', () => {
   describe('Document Type Change Logic', () => {
     it('should set maxDocumentLength to 8 when documentType is DNI', () => {
       // Arrange
-      const documentTypeControl = component.signupForm.controls.documentType;
+      const documentTypeControl = component.signupForm.get(
+        'documentation.documentType',
+      ) as FormControl;
 
       // Act
       documentTypeControl.setValue('DNI');
@@ -698,9 +796,12 @@ describe('SignupComponent', () => {
 
     it('should add maxLength(8) validator when documentType is DNI', () => {
       // Arrange
-      const documentTypeControl = component.signupForm.controls.documentType;
-      const documentNumberControl =
-        component.signupForm.controls.documentNumber;
+      const documentTypeControl = component.signupForm.get(
+        'documentation.documentType',
+      ) as FormControl;
+      const documentNumberControl = component.signupForm.get(
+        'documentation.documentNumber',
+      ) as FormControl;
 
       // Act
       documentTypeControl.setValue('DNI');
@@ -708,10 +809,13 @@ describe('SignupComponent', () => {
 
       // Assert
       expect(documentNumberControl.valid).toBe(false);
+      expect(documentNumberControl.hasError('maxlength')).toBe(true);
     });
     it('should set maxDocumentLength to 1 when documentType is CUIT', () => {
       // Arrange
-      const documentTypeControl = component.signupForm.controls.documentType;
+      const documentTypeControl = component.signupForm.get(
+        'documentation.documentType',
+      ) as FormControl;
 
       // Act
       documentTypeControl.setValue('CUIT');
@@ -721,9 +825,12 @@ describe('SignupComponent', () => {
     });
     it('should add maxLength(11) validator when documentType is CUIT', () => {
       // Arrange
-      const documentTypeControl = component.signupForm.controls.documentType;
-      const documentNumberControl =
-        component.signupForm.controls.documentNumber;
+      const documentTypeControl = component.signupForm.get(
+        'documentation.documentType',
+      ) as FormControl;
+      const documentNumberControl = component.signupForm.get(
+        'documentation.documentNumber',
+      ) as FormControl;
 
       // Act
       documentTypeControl.setValue('CUIT');
@@ -734,7 +841,9 @@ describe('SignupComponent', () => {
     });
     it('should set maxDocumentLength to null when documentType is unknown', () => {
       // Arrange
-      const documentTypeControl = component.signupForm.controls.documentType;
+      const documentTypeControl = component.signupForm.get(
+        'documentation.documentType',
+      ) as FormControl;
 
       // Act
       documentTypeControl.setValue('');
@@ -781,20 +890,26 @@ describe('SignupComponent', () => {
         .mockReturnValue(throwError(() => errorResponse));
 
       component.signupForm.setValue({
-        firstName: clientData.firstName,
-        lastName: clientData.lastName,
-        email: clientData.email,
-        password: clientData.password,
-        confirmPassword: clientData.password,
-        phone: clientData.phone,
-        birthdate: clientData.birthdate,
-        town: mockTown,
-        street: clientData.address.street,
-        streetNumber: clientData.address.streetNumber,
-        taxCategory: clientData.taxCategoryId,
-        documentType: clientData.documentType,
-        documentNumber: clientData.documentNumber,
-        companyName: clientData.companyName,
+        user: {
+          firstName: clientData.firstName,
+          lastName: clientData.lastName,
+          email: clientData.email,
+          password: clientData.password,
+          confirmPassword: clientData.password,
+        },
+        personal: {
+          phone: clientData.phone,
+          birthdate: clientData.birthdate,
+          town: mockTown,
+          street: clientData.address.street,
+          streetNumber: clientData.address.streetNumber,
+        },
+        documentation: {
+          taxCategory: clientData.taxCategoryId,
+          documentType: clientData.documentType,
+          documentNumber: clientData.documentNumber,
+          companyName: clientData.companyName,
+        },
       });
 
       // Act
@@ -807,7 +922,10 @@ describe('SignupComponent', () => {
 
   describe('onStepChange', () => {
     it('clears errors for untouched controls when switching to step', () => {
-      const streetControl = component.signupForm.controls.street;
+      // Arrange
+      const streetControl = component.signupForm.get(
+        'personal.street',
+      ) as FormControl;
       streetControl.setErrors({ required: true });
       streetControl.markAsUntouched();
       streetControl.markAsPristine();
@@ -815,15 +933,21 @@ describe('SignupComponent', () => {
       const event = {
         selectedIndex: 1,
       } as unknown as import('@angular/cdk/stepper').StepperSelectionEvent;
+
+      // Act
       component.onStepChange(event);
 
+      // Assert
       expect(streetControl.errors).toBeNull();
       expect(streetControl.pristine).toBeTruthy();
       expect(streetControl.touched).toBeFalsy();
     });
 
     it('keeps errors for dirty or touched controls when switching', () => {
-      const phoneControl = component.signupForm.controls.phone;
+      // Arrange
+      const phoneControl = component.signupForm.get(
+        'personal.phone',
+      ) as FormControl;
       phoneControl.setValue('invalid-phone');
       phoneControl.markAsDirty();
       phoneControl.markAsTouched();
@@ -833,8 +957,11 @@ describe('SignupComponent', () => {
       const event = {
         selectedIndex: 1,
       } as unknown as import('@angular/cdk/stepper').StepperSelectionEvent;
+
+      // Act
       component.onStepChange(event);
 
+      // Assert
       expect(phoneControl.invalid).toBeTruthy();
       expect(phoneControl.errors).toBeTruthy();
     });
