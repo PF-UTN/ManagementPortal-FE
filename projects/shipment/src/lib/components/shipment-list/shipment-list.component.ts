@@ -162,6 +162,7 @@ export class ShipmentListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.isLoading.set(true);
     this.searchParams$
       .pipe(
         debounceTime(300),

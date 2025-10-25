@@ -166,6 +166,7 @@ export class OrderListClientComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.searchSubscription = this.doSearchSubject$
       .pipe(
         debounceTime(400),
@@ -217,7 +218,6 @@ export class OrderListClientComponent implements OnInit, OnDestroy {
         },
       });
 
-    // Primera carga
     this.doSearchSubject$.next();
   }
 
