@@ -52,7 +52,7 @@ export class AuthService {
       );
   }
 
-  hasAccess(allowedRoles: string[]): boolean {
+  hasAccess(allowedRoles: string[], deniedRoles: string[] = []): boolean {
     if (allowedRoles.length === 0) {
       return true;
     }
@@ -62,6 +62,12 @@ export class AuthService {
     }
 
     const userAccessibleRoles = RoleHierarchy[this.userRole];
+
+    if (
+      deniedRoles.some((deniedRole) => userAccessibleRoles.includes(deniedRole))
+    ) {
+      return false;
+    }
 
     return allowedRoles.some((allowedRole) =>
       userAccessibleRoles.includes(allowedRole),
