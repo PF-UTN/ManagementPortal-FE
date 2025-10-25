@@ -72,20 +72,26 @@ const PHONE_REGEX = /^[+]?\d{1,4}?[-.\s]?(\d{1,3}[-.\s]?){1,4}$/;
 })
 export class SignupComponent implements OnInit {
   signupForm: FormGroup<{
-    firstName: FormControl<string | null>;
-    lastName: FormControl<string | null>;
-    email: FormControl<string | null>;
-    password: FormControl<string | null>;
-    confirmPassword: FormControl<string | null>;
-    phone: FormControl<string | null>;
-    birthdate: FormControl<Date | null>;
-    town: FormControl<Town | null>;
-    street: FormControl<string | null>;
-    streetNumber: FormControl<number | null>;
-    taxCategory: FormControl<number | null>;
-    documentType: FormControl<string | null>;
-    documentNumber: FormControl<string | null>;
-    companyName: FormControl<string | null>;
+    user: FormGroup<{
+      firstName: FormControl<string | null>;
+      lastName: FormControl<string | null>;
+      email: FormControl<string | null>;
+      password: FormControl<string | null>;
+      confirmPassword: FormControl<string | null>;
+    }>;
+    personal: FormGroup<{
+      phone: FormControl<string | null>;
+      birthdate: FormControl<Date | null>;
+      town: FormControl<Town | null>;
+      street: FormControl<string | null>;
+      streetNumber: FormControl<number | null>;
+    }>;
+    documentation: FormGroup<{
+      taxCategory: FormControl<number | null>;
+      documentType: FormControl<string | null>;
+      documentNumber: FormControl<string | null>;
+      companyName: FormControl<string | null>;
+    }>;
   }>;
 
   ivaCategories = [
@@ -96,11 +102,8 @@ export class SignupComponent implements OnInit {
   ];
 
   private stepControls: string[][] = [
-    // Sección 1 - Usuario
     ['firstName', 'lastName', 'email', 'password', 'confirmPassword'],
-    // Sección 2 - Información Personal
     ['birthdate', 'town', 'street', 'streetNumber', 'phone'],
-    // Sección 3 - Documentación
     ['documentType', 'documentNumber', 'taxCategory', 'companyName'],
   ];
 
@@ -126,20 +129,24 @@ export class SignupComponent implements OnInit {
   ngOnInit(): void {
     this.navBarService.hideNavBar();
     this.initForm();
-    this.filteredTowns$ = this.signupForm.controls.town.valueChanges.pipe(
-      debounceTime(300),
-      startWith(''),
-      map((value) => (typeof value === 'string' ? value : (value?.name ?? ''))),
-      switchMap((query) =>
-        this.townService
-          .searchTowns({
-            searchText: query,
-            page: 1,
-            pageSize: 5,
-          })
-          .pipe(map((response) => response.results)),
-      ),
-    );
+    this.filteredTowns$ = this.signupForm
+      .get('personal.town')!
+      .valueChanges.pipe(
+        debounceTime(300),
+        startWith(''),
+        map((value: Town | string | null) =>
+          typeof value === 'string' ? value : (value?.name ?? ''),
+        ),
+        switchMap((query: string) =>
+          this.townService
+            .searchTowns({
+              searchText: query,
+              page: 1,
+              pageSize: 5,
+            })
+            .pipe(map((response) => response.results)),
+        ),
+      );
   }
 
   onStepChange(event: StepperSelectionEvent): void {
@@ -147,8 +154,11 @@ export class SignupComponent implements OnInit {
     const controls = this.stepControls[idx] ?? [];
     this.signupForm.setErrors(null);
 
+    const groupPaths = ['user', 'personal', 'documentation'];
+    const groupPath = groupPaths[idx];
+
     for (const name of controls) {
-      const ctrl = this.signupForm.get(name);
+      const ctrl = this.signupForm.get(`${groupPath}.${name}`);
       if (!ctrl) continue;
 
       if (!ctrl.dirty && !ctrl.touched) {
@@ -173,32 +183,38 @@ export class SignupComponent implements OnInit {
   }
 
   private initForm() {
-    this.signupForm = new FormGroup(
-      {
-        firstName: new FormControl<string | null>(null, [
-          Validators.required,
-          Validators.minLength(2),
-          Validators.maxLength(50),
-        ]),
-        lastName: new FormControl<string | null>(null, [
-          Validators.required,
-          Validators.minLength(2),
-          Validators.maxLength(50),
-        ]),
-        email: new FormControl<string | null>(null, [
-          Validators.required,
-          customEmailValidator(),
-        ]),
-        password: new FormControl<string | null>(null, [
-          Validators.required,
-          Validators.minLength(8),
-          Validators.pattern(PASSWORD_REGEX),
-          Validators.maxLength(255),
-        ]),
-        confirmPassword: new FormControl<string | null>(null, [
-          Validators.required,
-          Validators.minLength(8),
-        ]),
+    this.signupForm = new FormGroup({
+      user: new FormGroup(
+        {
+          firstName: new FormControl<string | null>(null, [
+            Validators.required,
+            Validators.minLength(2),
+            Validators.maxLength(50),
+          ]),
+          lastName: new FormControl<string | null>(null, [
+            Validators.required,
+            Validators.minLength(2),
+            Validators.maxLength(50),
+          ]),
+          email: new FormControl<string | null>(null, [
+            Validators.required,
+            customEmailValidator(),
+          ]),
+          password: new FormControl<string | null>(null, [
+            Validators.required,
+            Validators.minLength(8),
+            Validators.pattern(PASSWORD_REGEX),
+            Validators.maxLength(255),
+          ]),
+          confirmPassword: new FormControl<string | null>(null, [
+            Validators.required,
+            Validators.minLength(8),
+          ]),
+        },
+        { validators: matchPasswords('password', 'confirmPassword') },
+      ),
+
+      personal: new FormGroup({
         phone: new FormControl<string | null>(null, [
           Validators.required,
           Validators.pattern(PHONE_REGEX),
@@ -211,6 +227,9 @@ export class SignupComponent implements OnInit {
         ]),
         street: new FormControl<string | null>(null, Validators.required),
         streetNumber: new FormControl<number | null>(null, Validators.required),
+      }),
+
+      documentation: new FormGroup({
         taxCategory: new FormControl<number | null>(null, Validators.required),
         documentType: new FormControl<string | null>(null, Validators.required),
         documentNumber: new FormControl<string | null>(
@@ -218,39 +237,42 @@ export class SignupComponent implements OnInit {
           Validators.required,
         ),
         companyName: new FormControl<string | null>(null, Validators.required),
-      },
-      { validators: matchPasswords('password', 'confirmPassword') },
-    );
-
-    this.signupForm.get('documentType')?.valueChanges.subscribe(() => {
-      this.signupForm.get('documentNumber')?.reset();
+      }),
     });
 
-    this.signupForm.controls.documentType.valueChanges.subscribe((value) => {
-      switch (value) {
-        case DocumentType.CUIT:
-          this.maxDocumentLength = 11;
-          break;
-        case DocumentType.CUIL:
-          this.maxDocumentLength = 11;
-          break;
-        case DocumentType.DNI:
-          this.maxDocumentLength = 8;
-          break;
-        default:
-          this.maxDocumentLength = null;
-      }
+    this.signupForm
+      .get('documentation.documentType')
+      ?.valueChanges.subscribe(() => {
+        this.signupForm.get('documentation.documentNumber')?.reset();
+      });
 
-      const docNumberControl = this.signupForm.controls.documentNumber;
-      const validators = [Validators.required];
+    this.signupForm
+      .get('documentation.documentType')
+      ?.valueChanges.subscribe((value) => {
+        switch (value) {
+          case DocumentType.CUIT:
+          case DocumentType.CUIL:
+            this.maxDocumentLength = 11;
+            break;
+          case DocumentType.DNI:
+            this.maxDocumentLength = 8;
+            break;
+          default:
+            this.maxDocumentLength = null;
+        }
 
-      if (this.maxDocumentLength) {
-        validators.push(Validators.maxLength(this.maxDocumentLength));
-      }
+        const docNumberControl = this.signupForm.get(
+          'documentation.documentNumber',
+        );
+        const validators = [Validators.required];
 
-      docNumberControl.setValidators(validators);
-      docNumberControl.updateValueAndValidity();
-    });
+        if (this.maxDocumentLength) {
+          validators.push(Validators.maxLength(this.maxDocumentLength));
+        }
+
+        docNumberControl?.setValidators(validators);
+        docNumberControl?.updateValueAndValidity();
+      });
   }
 
   preventNonNumericInput(event: KeyboardEvent): void {
@@ -295,49 +317,48 @@ export class SignupComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.signupForm.valid) {
-      this.isSubmitting.set(true);
+    this.signupForm.markAllAsTouched();
+    if (this.signupForm.invalid) return;
 
-      const client: Client = {
-        firstName: this.signupForm.controls.firstName.value!,
-        lastName: this.signupForm.controls.lastName.value!,
-        email: this.signupForm.controls.email.value!,
-        password: this.signupForm.controls.password.value!,
-        phone: this.signupForm.controls.phone.value!,
-        birthdate: this.signupForm.controls.birthdate.value!,
-        taxCategoryId: this.signupForm.controls.taxCategory.value!,
-        documentType: this.signupForm.controls.documentType.value!,
-        documentNumber: this.signupForm.controls.documentNumber.value!,
-        companyName: this.signupForm.controls.companyName.value!,
-        address: {
-          street: this.signupForm.controls.street.value!,
-          streetNumber: this.signupForm.controls.streetNumber.value!,
-          townId: this.signupForm.controls.town.value!.id,
+    this.isSubmitting.set(true);
+
+    const user = this.signupForm.get('user')!.value;
+    const personal = this.signupForm.get('personal')!.value;
+    const documentation = this.signupForm.get('documentation')!.value;
+
+    const client: Client = {
+      firstName: user.firstName!,
+      lastName: user.lastName!,
+      email: user.email!,
+      password: user.password!,
+      phone: personal.phone!,
+      birthdate: personal.birthdate!,
+      taxCategoryId: documentation.taxCategory!,
+      documentType: documentation.documentType!,
+      documentNumber: documentation.documentNumber!,
+      companyName: documentation.companyName!,
+      address: {
+        street: personal.street!,
+        streetNumber: personal.streetNumber!,
+        townId: personal.town!.id,
+      },
+    };
+    this.authService
+      .signUpAsync(client)
+      .pipe(finalize(() => this.isSubmitting.set(false)))
+      .subscribe({
+        next: () => {
+          void this.router.navigate(['autenticacion/inicio-sesion']);
+          this.snackBar.open(
+            'Solicitud de registro enviada con éxito. Recibirás un email con los pasos a seguir.',
+            'Cerrar',
+            { duration: 5000 },
+          );
         },
-      };
-      this.authService
-        .signUpAsync(client)
-        .pipe(
-          finalize(() => {
-            this.isSubmitting.set(false);
-          }),
-        )
-        .subscribe({
-          next: () => {
-            void this.router.navigate(['autenticacion/inicio-sesion']);
-            this.snackBar.open(
-              'Solicitud de registro enviada con éxito. Recibirás un email con los pasos a seguir.',
-              'Cerrar',
-              {
-                duration: 5000,
-              },
-            );
-          },
-          error: (error: HttpErrorResponse) => {
-            const errMessage = error.error?.message ?? error.message;
-            this.errorMessage = this.translateErrorMessage(errMessage);
-          },
-        });
-    }
+        error: (error: HttpErrorResponse) => {
+          const errMessage = error.error?.message ?? error.message;
+          this.errorMessage = this.translateErrorMessage(errMessage);
+        },
+      });
   }
 }
