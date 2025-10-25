@@ -326,7 +326,7 @@ export class SignupComponent implements OnInit {
           next: () => {
             void this.router.navigate(['autenticacion/inicio-sesion']);
             this.snackBar.open(
-              'Solicitud de registro enviada con éxito. Recibirás un email con los pasos a seguir.',
+              'Tu solicitud de registro se envió correctamente. Serás notificado por email una vez que sea evaluada.',
               'Cerrar',
               {
                 duration: 5000,
