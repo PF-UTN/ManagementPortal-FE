@@ -6,8 +6,8 @@
     <mp-auth-title>REGISTRO</mp-auth-title>
   </div>
 
-  <form [formGroup]="signupForm" class="form" (keydown.enter)="onSubmit()">
-  <mat-vertical-stepper #stepper (selectionChange)="onStepChange($event)">
+  <form [formGroup]="signupForm" class="form">
+  <mat-vertical-stepper #stepper [linear]="true">
     <mat-step [stepControl]="signupForm.get('user')!">
       <ng-template matStepLabel>Usuario</ng-template>
       <div formGroupName="user">
@@ -101,7 +101,21 @@
           </div>
           <div class="col-7">
             <div class="form-group" style="width:100%">
-              <mp-input label="Número Documento" formControlName="documentNumber" [icon]="'close'" type="text" (keydown)="preventNonNumericInput($event)"></mp-input>
+              <mp-input
+                label="Número Documento"
+                formControlName="documentNumber"
+                [icon]="'close'"
+                type="text"
+                [errorMessages]="{
+                  required: 'El número de documento es obligatorio',
+                  minlength: signupForm.get('documentation.documentType')?.value === 'DNI'
+                    ? 'El número de documento debe tener entre 7 y 8 caracteres'
+                    : 'El número de documento debe tener exactamente 11 caracteres',
+                  maxlength: signupForm.get('documentation.documentType')?.value === 'DNI'
+                    ? 'El número de documento debe tener entre 7 y 8 caracteres'
+                    : 'El número de documento debe tener exactamente 11 caracteres'
+                }"
+              ></mp-input>
             </div>
           </div>
         </div>
