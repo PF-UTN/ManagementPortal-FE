@@ -4,6 +4,7 @@ import {
   VehicleListItem,
 } from '@Common';
 import { LateralDrawerService, ModalComponent } from '@Common-UI';
+import { NotificationService } from '@Notification';
 
 import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
 import { HttpResponse } from '@angular/common/http';
@@ -43,8 +44,13 @@ describe('VehicleListComponent', () => {
   let lateralDrawerService: LateralDrawerService;
   let decimalPipe: DecimalPipe;
   let datePipe: DatePipe;
+  let notificationService: jest.Mocked<NotificationService>;
 
   beforeEach(async () => {
+    const notificationServiceMock = {
+      getNotifications: jest.fn().mockReturnValue(of([])),
+    } as unknown as jest.Mocked<NotificationService>;
+
     await TestBed.configureTestingModule({
       imports: [
         VehicleListComponent,
@@ -65,6 +71,10 @@ describe('VehicleListComponent', () => {
           provide: LateralDrawerService,
           useValue: mockDeep<LateralDrawerService>(),
         },
+        {
+          provide: NotificationService,
+          useValue: notificationServiceMock,
+        },
         DecimalPipe,
         DatePipe,
       ],
@@ -74,6 +84,9 @@ describe('VehicleListComponent', () => {
     decimalPipe = TestBed.inject(DecimalPipe);
     datePipe = TestBed.inject(DatePipe);
     lateralDrawerService = TestBed.inject(LateralDrawerService);
+    notificationService = TestBed.inject(
+      NotificationService,
+    ) as jest.Mocked<NotificationService>;
 
     jest.spyOn(lateralDrawerService, 'open').mockReturnValue(of(void 0));
 
@@ -133,6 +146,32 @@ describe('VehicleListComponent', () => {
 
       // Assert
       expect(component.isLoading).toBe(false);
+    }));
+  });
+
+  describe('Notifications', () => {
+    it('should call NotificationService.getNotifications on init', () => {
+      expect(notificationService.getNotifications).toHaveBeenCalledTimes(1);
+    });
+
+    it('should handle errors from NotificationService.getNotifications without throwing', fakeAsync(() => {
+      // Arrange
+      notificationService.getNotifications.mockReturnValueOnce(
+        throwError(() => new Error('Notification fetch failed')),
+      );
+
+      // Act
+      const anotherFixture = TestBed.createComponent(VehicleListComponent);
+      anotherFixture.detectChanges(); // dispara ngOnInit
+      tick(1000);
+
+      // Assert
+      expect(() => {
+        anotherFixture.detectChanges(); // dispara ngOnInit
+        tick(1000);
+      }).not.toThrow();
+
+      expect(notificationService.getNotifications).toHaveBeenCalledTimes(2);
     }));
   });
   describe('handlePageChange', () => {
