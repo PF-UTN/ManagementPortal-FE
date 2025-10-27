@@ -11,6 +11,7 @@ import {
   PillStatusEnum,
   TitleComponent,
 } from '@Common-UI';
+import { NotificationService } from '@Notification';
 
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
@@ -18,7 +19,16 @@ import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { BehaviorSubject, debounceTime, Subject, switchMap, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  debounceTime,
+  of,
+  Subject,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs';
 
 import { VehicleListItem } from '../../../../../common/src/models/vehicle/vehicle-item.model';
 import { VehicleParams } from '../../../../../common/src/models/vehicle/vehicle-params.model';
@@ -230,9 +240,18 @@ export class VehicleListComponent implements OnInit {
     private readonly decimalPipe: DecimalPipe,
     private readonly datePipe: DatePipe,
     private readonly router: Router,
+    private readonly notificationService: NotificationService,
   ) {}
 
   ngOnInit(): void {
+    this.notificationService
+      .getNotifications()
+      .pipe(
+        take(1),
+        catchError(() => of(null)),
+      )
+      .subscribe();
+
     this.doSearchSubject$
       .pipe(
         debounceTime(500),

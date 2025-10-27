@@ -1,9 +1,9 @@
 import { environment } from '@Common';
 import { NotificationService } from '@Notification';
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { catchError, of, take } from 'rxjs';
+import { catchError, interval, of, Subscription, take } from 'rxjs';
 
 @Component({
   selector: 'mp-home',
@@ -12,8 +12,9 @@ import { catchError, of, take } from 'rxjs';
   template: ` <iframe [src]="lookerUrl" width="100%" height="100%"></iframe>`,
   styles: ``,
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
   lookerUrl: string;
+  private notifIntervalSub?: Subscription;
 
   constructor(
     private notificationService: NotificationService,
@@ -32,5 +33,19 @@ export class HomeComponent implements OnInit {
         catchError(() => of(null)),
       )
       .subscribe();
+
+    this.notifIntervalSub = interval(21_600_000).subscribe(() => {
+      this.notificationService
+        .getNotifications()
+        .pipe(
+          take(1),
+          catchError(() => of(null)),
+        )
+        .subscribe();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.notifIntervalSub?.unsubscribe();
   }
 }

@@ -18,7 +18,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
-import { interval, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 import { NavBarItem } from '../../models/nav-bar-item.model';
 @Component({
@@ -43,7 +43,6 @@ export class NavBarComponent implements OnInit, OnDestroy {
   userName: string;
   notificationsCount = 0;
   private notifSub?: Subscription;
-  private notifIntervalSub?: Subscription;
   logoUrl = `${environment.cdnBaseUrl}/images/dog.png`;
   logoRedirectUrl: string;
 
@@ -174,13 +173,8 @@ export class NavBarComponent implements OnInit, OnDestroy {
     this.notifSub = this.notificationService.unreadCount$.subscribe((count) => {
       this.notificationsCount = count;
     });
-    this.notificationService.getNotifications().subscribe();
-    this.notifIntervalSub = interval(21_600_000).subscribe(() => {
-      this.notificationService.getNotifications().subscribe();
-    });
   }
   ngOnDestroy(): void {
     this.notifSub?.unsubscribe();
-    this.notifIntervalSub?.unsubscribe();
   }
 }
