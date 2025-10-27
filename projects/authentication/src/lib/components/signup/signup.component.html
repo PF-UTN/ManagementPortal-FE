@@ -6,128 +6,141 @@
     <mp-auth-title>REGISTRO</mp-auth-title>
   </div>
 
-  <form [formGroup]="signupForm" class="form" (keydown.enter)="onSubmit()">
-  <mat-vertical-stepper #stepper (selectionChange)="onStepChange($event)">
-    <mat-step [stepControl]="signupForm.get('user')!">
-      <ng-template matStepLabel>Usuario</ng-template>
-      <div formGroupName="user">
-        <div class="form-group mt-2" style="width:100%">
-          <mp-input label="Nombre" formControlName="firstName" [icon]="'close'" type="text"></mp-input>
-        </div>
-        <div class="form-group" style="width:100%">
-          <mp-input label="Apellido" formControlName="lastName" [icon]="'close'" type="text"></mp-input>
-        </div>
-        <div class="form-group" style="width:100%">
-          <mp-input label="Email" formControlName="email" [icon]="'close'" [iconAction]="signupForm.get('user.email')?.reset" type="email" placeholder="Ej. pat@example.com"></mp-input>
-        </div>
-        <div class="form-group" style="width:100%">
-          <mp-input label="Contraseña" formControlName="password" [errorMessages]="{ pattern: 'Debe contener al menos 8 caracteres, una letra mayúscula, una minúscula, un número y un caracter especial', }" type="password" [showPasswordToggle]="true"></mp-input>
-        </div>
-        <div class="form-group" style="width:100%">
-          <mp-input label="Confirmar Contraseña" formControlName="confirmPassword" [errorMessages]="{ mismatch: 'Las contraseñas no coinciden' }" type="password" [showPasswordToggle]="true"></mp-input>
-        </div>
-      </div>
-      <div class="d-flex justify-content-end mt-3">
-        <button mat-button matStepperNext> Siguiente </button>
-      </div>
-    </mat-step>
-
-    <mat-step [stepControl]="signupForm.get('personal')!">
-      <ng-template matStepLabel>Información Personal</ng-template>
-      <div formGroupName="personal">
-        <div class="form-group mt-2" style="width:100%">
-          <mat-form-field class="w-100" appearance="outline">
-            <mat-label>Fecha de Nacimiento</mat-label>
-            <input matInput [matDatepicker]="picker" formControlName="birthdate" readonly />
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
-            <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('personal.birthdate')?.reset()">
-              <mat-icon>close</mat-icon>
-            </button>
-            <mat-error *ngIf="signupForm.get('personal.birthdate')?.hasError('required') && signupForm.get('personal.birthdate')?.touched">Fecha de Nacimiento es requerida</mat-error>
-          </mat-form-field>
-        </div>
-        <div class="form-group" style="width:100%">
-          <mp-input label="Ciudad" formControlName="town" [icon]="'close'" [errorMessages]="{ invalidTown: 'Debe seleccionar una ciudad de la lista.' }" type="text" placeholder="Buscar ciudad o código postal" [matAutocomplete]="auto"></mp-input>
-          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayTown.bind(this)">
-            <mat-option *ngFor="let town of filteredTowns$ | async" [value]="town">
-              {{ town.name }} ({{ town.zipCode }})
-            </mat-option>
-          </mat-autocomplete>
-        </div>
-        <div class="row">
-          <div class="col-7">
-            <div class="form-group">
-              <mp-input label="Calle" formControlName="street" [icon]="'close'" type="text"></mp-input>
-            </div>
+  <form [formGroup]="signupForm" class="form">
+    <mat-vertical-stepper [linear]="true">
+      <mat-step [stepControl]="signupForm.controls.user">
+        <ng-template matStepLabel>Usuario</ng-template>
+        <div [formGroup]="signupForm.controls.user">
+          <div class="form-group mt-2" style="width:100%">
+            <mp-input label="Nombre" formControlName="firstName" [icon]="'close'"></mp-input>
           </div>
-          <div class="col-5">
-            <div class="form-group">
-              <mp-input label="Número de Calle" formControlName="streetNumber" [icon]="'close'" type="number"></mp-input>
-            </div>
+          <div class="form-group" style="width:100%">
+            <mp-input label="Apellido" formControlName="lastName" [icon]="'close'"></mp-input>
+          </div>
+          <div class="form-group" style="width:100%">
+            <mp-input label="Email" formControlName="email" [icon]="'close'" [iconAction]="signupForm.controls.user.controls.email.reset" type="email" placeholder="Ej. pat@example.com"></mp-input>
+          </div>
+          <div class="form-group" style="width:100%">
+            <mp-input label="Contraseña" formControlName="password" [errorMessages]="{ pattern: 'Debe contener al menos 8 caracteres, una letra mayúscula, una minúscula, un número y un caracter especial', }" type="password" [showPasswordToggle]="true"></mp-input>
+          </div>
+          <div class="form-group" style="width:100%">
+            <mp-input label="Confirmar Contraseña" formControlName="confirmPassword" [errorMessages]="{ mismatch: 'Las contraseñas no coinciden' }" type="password" [showPasswordToggle]="true"></mp-input>
           </div>
         </div>
-        <div class="form-group" style="width:100%">
-          <mp-input label="Teléfono" formControlName="phone" [icon]="'close'" type="text" [placeholder]="'555-555-1234'" (keydown)="preventNonNumericInput($event)">
-            <span matTextPrefix class="phone-prefix">+54</span>
-          </mp-input>
+        <div class="d-flex justify-content-end mt-3">
+          <button mat-button matStepperNext (click)="signupForm.controls.user.markAllAsTouched()"> Siguiente </button>
         </div>
-      </div>
-      <div class="d-flex justify-content-between mt-3">
-        <button mat-button matStepperPrevious> Volver </button>
-        <button mat-button matStepperNext> Siguiente </button>
-      </div>
-    </mat-step>
-
-    <mat-step [stepControl]="signupForm.get('documentation')!">
-      <ng-template matStepLabel>Documentación</ng-template>
-      <div formGroupName="documentation">
-        <div class="row mt-2">
-          <div class="col-5">
-            <div class="form-group" style="width:100%">
-              <mat-form-field class="w-100" appearance="outline">
-                <mat-label>Tipo de Documento</mat-label>
-                <mat-select type="text" formControlName="documentType">
-                  <mat-option *ngFor="let type of documentTypes" [value]="type">
-                    {{ type }}
-                  </mat-option>
-                </mat-select>
-                <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.get('documentation.documentType')?.reset()">
-                  <mat-icon>close</mat-icon>
-                </button>
-                <mat-error *ngIf="signupForm.get('documentation.documentType')?.hasError('required') && signupForm.get('documentation.documentType')?.touched">Tipo de Documento es requerido</mat-error>
-              </mat-form-field>
-            </div>
+      </mat-step>
+      <mat-step [stepControl]="signupForm.controls.personal">
+        <ng-template matStepLabel>Información Personal</ng-template>
+        <div [formGroup]="signupForm.controls.personal">
+          <div class="form-group mt-2" style="width:100%">
+            <mat-form-field class="w-100" appearance="outline">
+              <mat-label>Fecha de Nacimiento</mat-label>
+              <input matInput [matDatepicker]="picker" formControlName="birthdate" readonly />
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+              <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.controls.personal.controls.birthdate.reset()">
+                <mat-icon>close</mat-icon>
+              </button>
+              <mat-error *ngIf="signupForm.controls.personal.controls.birthdate.hasError('required') && signupForm.controls.personal.controls.birthdate.touched">Fecha de Nacimiento es requerida</mat-error>
+            </mat-form-field>
           </div>
-          <div class="col-7">
-            <div class="form-group" style="width:100%">
-              <mp-input label="Número Documento" formControlName="documentNumber" [icon]="'close'" type="text" (keydown)="preventNonNumericInput($event)"></mp-input>
-            </div>
-          </div>
-        </div>
-        <div class="form-group" style="width:100%">
-          <mat-form-field class="w-100" appearance="outline">
-            <mat-label>Categoría IVA</mat-label>
-            <mat-select formControlName="taxCategory">
-              <mat-option *ngFor="let category of ivaCategories" [value]="category.id">
-                {{ category.name }}
+          <div class="form-group" style="width:100%">
+            <mp-input label="Ciudad" formControlName="town" [icon]="'close'" [errorMessages]="{ invalidTown: 'Debe seleccionar una ciudad de la lista.' }" placeholder="Buscar ciudad o código postal" [matAutocomplete]="auto"></mp-input>
+            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayTown.bind(this)">
+              <mat-option *ngFor="let town of filteredTowns$ | async" [value]="town">
+                {{ town.name }} ({{ town.zipCode }})
               </mat-option>
-            </mat-select>
-            <button *ngIf="signupForm.get('documentation.taxCategory')?.value" mat-icon-button matSuffix type="button" aria-label="Clear" (click)="signupForm.get('documentation.taxCategory')?.reset()">
-              <mat-icon>close</mat-icon>
-            </button>
-            <mat-error *ngIf="signupForm.get('documentation.taxCategory')?.hasError('required') && signupForm.get('documentation.taxCategory')?.touched">Categoría IVA es requerido</mat-error>
-          </mat-form-field>
+            </mat-autocomplete>
+          </div>
+          <div class="row">
+            <div class="col-7">
+              <div class="form-group">
+                <mp-input label="Calle" formControlName="street" [icon]="'close'"></mp-input>
+              </div>
+            </div>
+            <div class="col-5">
+              <div class="form-group">
+                <mp-input label="Número de Calle" formControlName="streetNumber" [icon]="'close'" type="number"></mp-input>
+              </div>
+            </div>
+          </div>
+          <div class="form-group" style="width:100%">
+            <mp-input label="Teléfono" formControlName="phone" [icon]="'close'" [placeholder]="'555-555-1234'" (keydown)="preventNonNumericInput($event)">
+              <span matTextPrefix class="phone-prefix">+54</span>
+            </mp-input>
+          </div>
         </div>
-        <div class="form-group" style="width:100%">
-          <mp-input label="Nombre de Compañia" formControlName="companyName" [icon]="'close'" type="text"></mp-input>
+        <div class="d-flex justify-content-between mt-3">
+          <button mat-button matStepperPrevious (click)="signupForm.controls.personal.markAllAsTouched()"> Volver </button>
+          <button mat-button matStepperNext> Siguiente </button>
         </div>
-      </div>
-      <div class="d-flex justify-content-between mt-3">
-        <button mat-button matStepperPrevious> Volver </button>
-        <mp-button type="primary" [loading]="isSubmitting()" [disabled]="signupForm.invalid" (onClick)="onSubmit()">Registrar</mp-button>
-      </div>
-    </mat-step>
-  </mat-vertical-stepper>
-</form>
+      </mat-step>
+
+      <mat-step [stepControl]="signupForm.controls.documentation">
+        <ng-template matStepLabel>Documentación</ng-template>
+        <div [formGroup]="signupForm.controls.documentation">
+          <div class="row mt-2">
+            <div class="col-5">
+              <div class="form-group" style="width:100%">
+                <mat-form-field class="w-100" appearance="outline">
+                  <mat-label>Tipo de Documento</mat-label>
+                  <mat-select formControlName="documentType">
+                    <mat-option *ngFor="let type of documentTypes" [value]="type">
+                      {{ type }}
+                    </mat-option>
+                  </mat-select>
+                  <button type="button" matSuffix mat-icon-button aria-label="Clear" (click)="signupForm.controls.documentation.controls.documentType.reset()">
+                    <mat-icon>close</mat-icon>
+                  </button>
+                  <mat-error *ngIf="signupForm.controls.documentation.controls.documentType.hasError('required') && signupForm.controls.documentation.controls.documentType.touched">Tipo de Documento es requerido</mat-error>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="col-7">
+              <div class="form-group" style="width:100%">
+                <mp-input
+                  label="Número Documento"
+                  formControlName="documentNumber"
+                  [icon]="'close'"
+                
+                  [errorMessages]="{
+                    required: 'El número de documento es obligatorio',
+                    minlength: signupForm.controls.documentation.controls.documentType.value === 'DNI'
+                      ? 'El número de documento debe tener entre 7 y 8 caracteres'
+                      : 'El número de documento debe tener exactamente 11 caracteres',
+                    maxlength: signupForm.controls.documentation.controls.documentType.value === 'DNI'
+                      ? 'El número de documento debe tener entre 7 y 8 caracteres'
+                      : 'El número de documento debe tener exactamente 11 caracteres'
+                  }"
+                ></mp-input>
+              </div>
+            </div>
+          </div>
+          <div class="form-group" style="width:100%">
+            <mat-form-field class="w-100" appearance="outline">
+              <mat-label>Categoría IVA</mat-label>
+              <mat-select formControlName="taxCategory">
+                <mat-option *ngFor="let category of ivaCategories" [value]="category.id">
+                  {{ category.name }}
+                </mat-option>
+              </mat-select>
+              <button *ngIf="signupForm.controls.documentation.controls.taxCategory.value" mat-icon-button matSuffix type="button" aria-label="Clear" (click)="signupForm.controls.documentation.controls.taxCategory.reset()">
+                <mat-icon>close</mat-icon>
+              </button>
+              <mat-error *ngIf="signupForm.controls.documentation.controls.taxCategory.hasError('required') && signupForm.controls.documentation.controls.taxCategory.touched">Categoría IVA es requerido</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="form-group" style="width:100%">
+            <mp-input label="Nombre de Compañia" formControlName="companyName" [icon]="'close'"></mp-input>
+          </div>
+        </div>
+        <div class="d-flex justify-content-between mt-3">
+          <button mat-button matStepperPrevious > Volver </button>
+          <mp-button type="primary" [loading]="isSubmitting()" [disabled]="signupForm.invalid" (onClick)="onSubmit()">Registrar</mp-button>
+        </div>
+      </mat-step>
+    </mat-vertical-stepper>
+  </form>
 </div>

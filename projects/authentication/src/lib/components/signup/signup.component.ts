@@ -5,7 +5,6 @@ import {
   AuthTitleComponent,
 } from '@Common-UI';
 
-import { StepperSelectionEvent } from '@angular/cdk/stepper';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, signal, WritableSignal } from '@angular/core';
@@ -149,28 +148,6 @@ export class SignupComponent implements OnInit {
       );
   }
 
-  onStepChange(event: StepperSelectionEvent): void {
-    const idx = event.selectedIndex ?? 0;
-    const controls = this.stepControls[idx] ?? [];
-    this.signupForm.setErrors(null);
-
-    const groupPaths = ['user', 'personal', 'documentation'];
-    const groupPath = groupPaths[idx];
-
-    for (const name of controls) {
-      const ctrl = this.signupForm.get(`${groupPath}.${name}`);
-      if (!ctrl) continue;
-
-      if (!ctrl.dirty && !ctrl.touched) {
-        ctrl.setErrors(null);
-        ctrl.markAsUntouched();
-        ctrl.markAsPristine();
-      } else {
-        ctrl.updateValueAndValidity({ onlySelf: true, emitEvent: false });
-      }
-    }
-  }
-
   private translateErrorMessage(message: string): string {
     if (
       message?.includes(
@@ -268,6 +245,7 @@ export class SignupComponent implements OnInit {
 
         if (this.maxDocumentLength) {
           validators.push(Validators.maxLength(this.maxDocumentLength));
+          validators.push(Validators.minLength(this.maxDocumentLength));
         }
 
         docNumberControl?.setValidators(validators);
