@@ -9,7 +9,12 @@ import { catchError, interval, of, Subscription, take } from 'rxjs';
   selector: 'mp-home',
   standalone: true,
   imports: [],
-  template: ` <iframe [src]="lookerUrl" width="100%" height="100%"></iframe>`,
+  template: ` <iframe
+    [src]="lookerUrl"
+    width="100%"
+    height="100%"
+    class="d-block"
+  ></iframe>`,
   styles: ``,
 })
 export class HomeComponent implements OnInit, OnDestroy {
