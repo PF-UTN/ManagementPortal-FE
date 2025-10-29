@@ -449,7 +449,7 @@ describe('OrderListComponent', () => {
       // Arrange
       const column = component.columns.find((c) => c.columnDef === 'actions');
       const action = column?.actions?.find(
-        (a) => a.description === 'Marcar como preparada',
+        (a) => a.description === 'Marcar como Preparada',
       );
       const order: OrderItem = {
         id: 1,
@@ -473,7 +473,7 @@ describe('OrderListComponent', () => {
       // Arrange
       const column = component.columns.find((c) => c.columnDef === 'actions');
       const action = column?.actions?.find(
-        (a) => a.description === 'Marcar como preparada',
+        (a) => a.description === 'Marcar como Preparada',
       );
       const order: OrderItem = {
         id: 2,

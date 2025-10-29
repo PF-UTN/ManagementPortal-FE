@@ -148,7 +148,7 @@ export class OrderListComponent implements OnInit {
           action: (element: OrderItem) => this.onDetailDrawer(element),
         },
         {
-          description: 'Marcar como preparada',
+          description: 'Marcar como Preparada',
           action: (element: OrderItem) => this.onMarkAsPrepared(element),
           disabled: (element: OrderItem) =>
             element.orderStatus !== OrderStatusOptions.InPreparation,
