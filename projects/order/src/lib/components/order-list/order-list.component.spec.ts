@@ -923,7 +923,7 @@ describe('OrderListComponent', () => {
 
       // Assert
       expect(snackSpy).toHaveBeenCalledWith(
-        'Error al preparar la orden',
+        'Error al finalizar la orden',
         'Cerrar',
         { duration: 3000 },
       );

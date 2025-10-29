@@ -545,7 +545,7 @@ export class OrderListComponent implements OnInit {
             this.loadAllShipmentIds();
           },
           error: () => {
-            this.snackBar.open('Error al preparar la orden', 'Cerrar', {
+            this.snackBar.open('Error al finalizar la orden', 'Cerrar', {
               duration: 3000,
             });
           },
