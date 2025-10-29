@@ -148,10 +148,17 @@ export class OrderListComponent implements OnInit {
           action: (element: OrderItem) => this.onDetailDrawer(element),
         },
         {
-          description: 'Marcar como preparada',
+          description: 'Marcar como Preparada',
           action: (element: OrderItem) => this.onMarkAsPrepared(element),
           disabled: (element: OrderItem) =>
             element.orderStatus !== OrderStatusOptions.InPreparation,
+        },
+        {
+          description: 'Marcar como Finalizada',
+          action: (element: OrderItem) => this.onMarkAsFinalized(element),
+          disabled: (element: OrderItem) =>
+            element.orderStatus !== OrderStatusOptions.Prepared ||
+            element.deliveryMethod === 'Entrega a Domicilio',
         },
       ],
     },
@@ -498,7 +505,7 @@ export class OrderListComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result: boolean) => {
       if (result) {
         this.isLoading = true;
-        this.orderService.markOrderAsPrepared(order.id, 6).subscribe({
+        this.orderService.markOrderAs(order.id, 6).subscribe({
           next: () => {
             this.snackBar.open('Orden preparada con éxito', 'Cerrar', {
               duration: 3000,
@@ -508,6 +515,37 @@ export class OrderListComponent implements OnInit {
           },
           error: () => {
             this.snackBar.open('Error al preparar la orden', 'Cerrar', {
+              duration: 3000,
+            });
+          },
+        });
+      }
+    });
+  }
+
+  onMarkAsFinalized(order: OrderItem) {
+    const dialogRef = this.dialog.open(ModalComponent, {
+      data: {
+        title: 'Finalizar orden #' + order.id,
+        message: '¿Estas seguro que deseas marcar esta orden como finalizada?',
+        confirmText: 'Confirmar',
+        cancelText: 'Cancelar',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: boolean) => {
+      if (result) {
+        this.isLoading = true;
+        this.orderService.markOrderAs(order.id, 4).subscribe({
+          next: () => {
+            this.snackBar.open('Orden finalizada con éxito', 'Cerrar', {
+              duration: 3000,
+            });
+            this.doSearchSubject$.next();
+            this.loadAllShipmentIds();
+          },
+          error: () => {
+            this.snackBar.open('Error al finalizar la orden', 'Cerrar', {
               duration: 3000,
             });
           },
