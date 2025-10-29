@@ -564,7 +564,7 @@ describe('OrderService', () => {
       let response: unknown;
 
       // Act
-      service.markOrderAsPrepared(orderId, orderStatusId).subscribe((res) => {
+      service.markOrderAs(orderId, orderStatusId).subscribe((res) => {
         response = res;
       });
 
@@ -585,7 +585,7 @@ describe('OrderService', () => {
       let errorResponse: unknown;
 
       // Act
-      service.markOrderAsPrepared(orderId, orderStatusId).subscribe({
+      service.markOrderAs(orderId, orderStatusId).subscribe({
         next: () => {
           fail('Expected an error, but got a successful response');
         },

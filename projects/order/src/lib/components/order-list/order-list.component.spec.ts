@@ -41,7 +41,7 @@ describe('OrderListComponent', () => {
   const orderServiceMock = {
     searchOrders: jest.fn().mockReturnValue(of(mockOrderSearchResponse)),
     downloadOrderList: jest.fn(),
-    markOrderAsPrepared: jest.fn(),
+    markOrderAs: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -58,6 +58,7 @@ describe('OrderListComponent', () => {
     fixture = TestBed.createComponent(OrderListComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    orderServiceMock.markOrderAs.mockClear();
   });
 
   it('should create', () => {
@@ -491,6 +492,69 @@ describe('OrderListComponent', () => {
       // Assert
       expect(result).toBe(false);
     });
+
+    it('should disable "Marcar como Finalizada" if status is not Prepared', () => {
+      const column = component.columns.find((c) => c.columnDef === 'actions');
+      const action = column?.actions?.find(
+        (a) => a.description === 'Marcar como Finalizada',
+      );
+      const order: OrderItem = {
+        id: 1,
+        createdAt: '',
+        clientName: '',
+        orderStatus: OrderStatusOptions.Pending,
+        totalAmount: 100,
+        selected: false,
+        deliveryMethod: 'Retiro en Local',
+        shipmentId: null,
+      };
+
+      const result = action?.disabled?.(order);
+
+      expect(result).toBe(true);
+    });
+
+    it('should disable "Marcar como Finalizada" if deliveryMethod is Entrega a Domicilio', () => {
+      const column = component.columns.find((c) => c.columnDef === 'actions');
+      const action = column?.actions?.find(
+        (a) => a.description === 'Marcar como Finalizada',
+      );
+      const order: OrderItem = {
+        id: 2,
+        createdAt: '',
+        clientName: '',
+        orderStatus: OrderStatusOptions.Prepared,
+        totalAmount: 100,
+        selected: false,
+        deliveryMethod: 'Entrega a Domicilio',
+        shipmentId: null,
+      };
+
+      const result = action?.disabled?.(order);
+
+      expect(result).toBe(true);
+    });
+
+    it('should enable "Marcar como Finalizada" if status is Prepared and delivery is not Entrega a Domicilio', () => {
+      const column = component.columns.find((c) => c.columnDef === 'actions');
+      const action = column?.actions?.find(
+        (a) => a.description === 'Marcar como Finalizada',
+      );
+      const order: OrderItem = {
+        id: 3,
+        createdAt: '',
+        clientName: '',
+        orderStatus: OrderStatusOptions.Prepared,
+        totalAmount: 100,
+        selected: false,
+        deliveryMethod: 'Retiro en Local',
+        shipmentId: null,
+      };
+
+      const result = action?.disabled?.(order);
+
+      expect(result).toBe(false);
+    });
   });
 
   describe('onCreateShipment', () => {
@@ -596,7 +660,7 @@ describe('OrderListComponent', () => {
         .spyOn(dialog, 'open')
         .mockReturnValue(dialogRef as ReturnType<typeof dialog.open>);
       const markSpy = jest
-        .spyOn(service, 'markOrderAsPrepared')
+        .spyOn(service, 'markOrderAs')
         .mockReturnValue(of(undefined));
       const snackSpy = jest.spyOn(snackBar, 'open');
 
@@ -632,7 +696,7 @@ describe('OrderListComponent', () => {
         .spyOn(dialog, 'open')
         .mockReturnValue(dialogRef as ReturnType<typeof dialog.open>);
       const markSpy = jest
-        .spyOn(service, 'markOrderAsPrepared')
+        .spyOn(service, 'markOrderAs')
         .mockReturnValue(of(undefined));
 
       // Act
@@ -666,7 +730,7 @@ describe('OrderListComponent', () => {
         .spyOn(dialog, 'open')
         .mockReturnValue(dialogRef as ReturnType<typeof dialog.open>);
       const markSpy = jest
-        .spyOn(service, 'markOrderAsPrepared')
+        .spyOn(service, 'markOrderAs')
         .mockReturnValue(of(undefined));
       const snackSpy = jest.spyOn(snackBar, 'open');
       const searchSpy = jest.spyOn(component.doSearchSubject$, 'next');
@@ -787,6 +851,108 @@ describe('OrderListComponent', () => {
       // Assert
       expect(component.pageIndex).toBe(0);
       expect(spy).toHaveBeenCalledWith();
+    });
+  });
+  describe('onMarkAsFinalized', () => {
+    it('should open the modal and call markOrderAs with status 4 if confirmed', () => {
+      // Arrange
+      const dialog = TestBed.inject(MatDialog);
+      const snackBar = TestBed.inject(MatSnackBar);
+      const order: OrderItem = {
+        id: 10,
+        createdAt: '',
+        clientName: '',
+        orderStatus: OrderStatusOptions.Prepared,
+        totalAmount: 100,
+        selected: false,
+        deliveryMethod: 'Retiro en Local',
+        shipmentId: null,
+      };
+      const dialogRef = { afterClosed: () => of(true) };
+      jest
+        .spyOn(dialog, 'open')
+        .mockReturnValue(dialogRef as ReturnType<typeof dialog.open>);
+      const markSpy = jest
+        .spyOn(service, 'markOrderAs')
+        .mockReturnValue(of(undefined));
+      const snackSpy = jest.spyOn(snackBar, 'open');
+      const searchSpy = jest.spyOn(component.doSearchSubject$, 'next');
+      const loadShipmentsSpy = jest.spyOn(component, 'loadAllShipmentIds');
+
+      // Act
+      component.onMarkAsFinalized(order);
+
+      // Assert
+      expect(dialog.open).toHaveBeenCalled();
+      expect(markSpy).toHaveBeenCalledWith(order.id, 4);
+      expect(snackSpy).toHaveBeenCalledWith(
+        'Orden finalizada con éxito',
+        'Cerrar',
+        { duration: 3000 },
+      );
+      expect(searchSpy).toHaveBeenCalled();
+      expect(loadShipmentsSpy).toHaveBeenCalled();
+      expect(component.isLoading).toBe(true);
+    });
+
+    it('should show error snackbar if markOrderAs fails', () => {
+      // Arrange
+      const dialog = TestBed.inject(MatDialog);
+      const snackBar = TestBed.inject(MatSnackBar);
+      const order: OrderItem = {
+        id: 11,
+        createdAt: '',
+        clientName: '',
+        orderStatus: OrderStatusOptions.Prepared,
+        totalAmount: 100,
+        selected: false,
+        deliveryMethod: 'Retiro en Local',
+        shipmentId: null,
+      };
+      const dialogRef = { afterClosed: () => of(true) };
+      jest
+        .spyOn(dialog, 'open')
+        .mockReturnValue(dialogRef as ReturnType<typeof dialog.open>);
+      jest
+        .spyOn(service, 'markOrderAs')
+        .mockReturnValue(throwError(() => new Error('fail')));
+      const snackSpy = jest.spyOn(snackBar, 'open');
+
+      // Act
+      component.onMarkAsFinalized(order);
+
+      // Assert
+      expect(snackSpy).toHaveBeenCalledWith(
+        'Error al preparar la orden',
+        'Cerrar',
+        { duration: 3000 },
+      );
+    });
+
+    it('should do nothing if dialog is cancelled', () => {
+      // Arrange
+      const dialog = TestBed.inject(MatDialog);
+      const order: OrderItem = {
+        id: 12,
+        createdAt: '',
+        clientName: '',
+        orderStatus: OrderStatusOptions.Prepared,
+        totalAmount: 100,
+        selected: false,
+        deliveryMethod: 'Retiro en Local',
+        shipmentId: null,
+      };
+      const dialogRef = { afterClosed: () => of(false) };
+      jest
+        .spyOn(dialog, 'open')
+        .mockReturnValue(dialogRef as ReturnType<typeof dialog.open>);
+      const markSpy = jest.spyOn(service, 'markOrderAs');
+
+      // Act
+      component.onMarkAsFinalized(order);
+
+      // Assert
+      expect(markSpy).not.toHaveBeenCalled();
     });
   });
 });
